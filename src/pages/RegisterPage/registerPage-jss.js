@@ -1,12 +1,14 @@
 const styles = {
-    authContainer: {
-        width: '100%',
-        minHeight: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
+  wrapper: {
+    width: '60vw',
+    padding: '90px',
+  },
+  link: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '20px',
+    textDecoration: 'none',
+  },
 };
 
 export default styles;
