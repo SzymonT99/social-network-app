@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Link, useHistory } from 'react-router-dom';
 import { endpoints } from '../../api/endpoints';
+import logoWhite from '../../assets/logo-white.png';
 import { useDispatch } from 'react-redux';
 import {
   saveAccessToken,
@@ -16,6 +17,7 @@ import {
   saveRefreshToken,
   saveUserId,
 } from '../../redux/actions/authActions';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 const validationSchema = yup.object({
   login: yup
@@ -34,7 +36,7 @@ const LoginPage = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const [authenticateError, setAuthenticateError] = useState(' ');
+  const [authenticateError, setAuthenticateError] = useState('');
 
   const formik = useFormik({
     initialValues: {
@@ -70,7 +72,6 @@ const LoginPage = (props) => {
                 currentDate.getMilliseconds() + tokenTime
               )
             );
-
             dispatch(saveAccessToken(accessToken));
             dispatch(saveExpirationDateToken(tokenExpirationDate));
             dispatch(saveRefreshToken(refreshToken));
@@ -78,9 +79,13 @@ const LoginPage = (props) => {
           });
           history.push('/test');
         } else if (code === 401) {
-          setAuthenticateError(
-            ' Niepoprawna nazwa użytkownika/email lub hasło'
-          );
+          setAuthenticateError('Niepoprawna nazwa użytkownika/email lub hasło');
+        } else if (code === 403) {
+          setAuthenticateError('Konto zostało zablokowane');
+        } else if (code === 409) {
+          setAuthenticateError('Konto nie zostało aktywowane');
+        } else {
+          setAuthenticateError('Niepoprawny format danych');
         }
       })
       .catch((error) => {
@@ -90,54 +95,111 @@ const LoginPage = (props) => {
 
   return (
     <>
-      <Paper className={classes.wrapper} elevation={7}>
-        <Typography variant="h3" align="center" marginBottom="40px">
-          Logowanie
-        </Typography>
-        <form onSubmit={formik.handleSubmit}>
-          <TextField
-            style={{ marginTop: '26px' }}
-            fullWidth
-            id="login"
-            name="login"
-            label="Email lub nazwa użytkownika"
-            value={formik.values.login}
-            onChange={formik.handleChange}
-            error={formik.touched.login && Boolean(formik.errors.login)}
-            helperText={formik.touched.login && formik.errors.login}
-          />
-          <TextField
-            style={{ marginTop: '26px' }}
-            fullWidth
-            id="password"
-            name="password"
-            label="Hasło"
-            type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password ? formik.errors.password : ' '}
-          />
-          <Button
-            style={{ marginTop: '14px' }}
-            color="primary"
-            variant="contained"
-            fullWidth
-            type="submit"
-          >
-            Zaloguj się
-          </Button>
-          <Typography
-            textAlign="center"
-            style={{ color: 'red', marginTop: '10px' }}
-          >
-            {authenticateError}
+      <div className={classes.wrapper}>
+        <div className={classes.loginColumn}>
+          <Typography variant="h1" gutterBottom className={classes.appName}>
+            <img src={logoWhite} className={classes.logo} alt="Logo" />
+            Social Network
           </Typography>
-        </form>
-        <Link className={classes.link} to="/auth/register">
-          Nie masz konta? Zarejestruj się.
-        </Link>
-      </Paper>
+          <Typography variant="h4" className={classes.appDescription}>
+            Serwis społecznościowy wykonywany w ramach pracy inżynierskiej na
+            Państwowej Wyższej Szkole Zawodowej w Tarnowie na kierunku
+            Informatyka.
+          </Typography>
+          <div className={classes.btnContainer}>
+            <Button
+              variant="outlined"
+              className={classes.registerBtn}
+              onClick={() => history.push('/auth/register')}
+            >
+              Założ konto
+            </Button>
+            <Button
+              variant="contained"
+              className={classes.publicContentBtn}
+              onClick={() => history.push('/app/public')}
+            >
+              Przeglądaj publiczne treści
+            </Button>
+          </div>
+        </div>
+        <div className={classes.loginColumn}>
+          <Paper
+            className={classes.loginForm}
+            elevation={7}
+            sx={{ borderRadius: '20px' }}
+          >
+            <Typography variant="h3" align="center" marginBottom="50px">
+              Logowanie
+            </Typography>
+            <form onSubmit={formik.handleSubmit}>
+              <TextField
+                style={{ marginBottom: '10px' }}
+                fullWidth
+                id="login"
+                name="login"
+                label="Email lub nazwa użytkownika"
+                value={formik.values.login}
+                onChange={formik.handleChange}
+                error={formik.touched.login && Boolean(formik.errors.login)}
+                helperText={
+                  formik.touched.login && formik.errors.login
+                    ? formik.errors.login
+                    : ' '
+                }
+              />
+              <TextField
+                fullWidth
+                id="password"
+                name="password"
+                label="Hasło"
+                type="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
+                helperText={
+                  formik.touched.password && formik.errors.password
+                    ? formik.errors.password
+                    : ' '
+                }
+              />
+              <div className={classes.afterInputContainer}>
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Zapamiętaj mnie"
+                />
+                <Link
+                  to="/auth/forget-password"
+                  className={classes.forgotPasswordLink}
+                >
+                  Nie pamiętam hasła
+                </Link>
+              </div>
+              <Button
+                color="secondary"
+                className={classes.loginBtn}
+                variant="contained"
+                fullWidth
+                type="submit"
+              >
+                Zaloguj się
+              </Button>
+              <Typography
+                variant="subtitle1"
+                textAlign="center"
+                className={classes.warningText}
+              >
+                {authenticateError}
+              </Typography>
+            </form>
+            <Link className={classes.registerLink} to="/auth/register">
+              Utwórz nowe konto
+            </Link>
+          </Paper>
+        </div>
+      </div>
     </>
   );
 };

@@ -1,16 +1,17 @@
 const styles = {
-    mainContainer: {
-        display: 'flex',
-        width: '100%',
-        minHeight: '100vh',
-    },
-    authContent: {
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: "#E1E1E1"
-    }
+  authContainer: {
+    display: 'flex',
+    width: '100%',
+    minHeight: '100vh',
+    backgroundSize: 'cover',
+  },
+  authContent: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 18, 38, 0.76)',
+  },
 };
 
 export default styles;
