@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import { endpoints } from '../../api/endpoints';
+import { endpoints } from '../../services/endpoints/endpoints';
 import { useFormik } from 'formik';
 import {
   FormControl,

@@ -18,7 +18,7 @@ const styles = (theme) => ({
     flexDirection: 'column',
   },
   registerLink: {
-    marginTop: '12px',
+    marginTop: '20px',
     textDecoration: 'none',
     alignSelf: 'center',
     fontSize: '17px',
@@ -52,7 +52,7 @@ const styles = (theme) => ({
       padding: '15px 60px',
       marginRight: '60px',
       '&:hover': {
-        borderColor: theme.palette.secondary.main,
+        border: `1.5px ${theme.palette.secondary.main} solid`,
         color: theme.palette.secondary.main,
       },
     },
@@ -98,11 +98,6 @@ const styles = (theme) => ({
     '&:hover': {
       textDecoration: 'underline',
     },
-  },
-  warningText: {
-    height: '40px',
-    paddingTop: '5px',
-    color: '#FF1C00',
   },
 });
 

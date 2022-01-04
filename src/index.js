@@ -13,7 +13,7 @@ const initialState = loadState();
 
 ReactDOM.render(
   <ThemeProvider theme={appTheme}>
-    <Provider store={configureStore(initialState)}>
+    <Provider store={configureStore(initialState, {})}>
       <App />
     </Provider>
   </ThemeProvider>,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux/actions/authActions';
-import { endpoints } from '../../api/endpoints';
+import { endpoints } from '../../services/endpoints/endpoints';
 import Button from '@mui/material/Button';
 
 const TestPage = (props) => {

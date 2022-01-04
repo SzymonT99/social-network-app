@@ -7,17 +7,12 @@ import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Link, useHistory } from 'react-router-dom';
-import { endpoints } from '../../api/endpoints';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import logoWhite from '../../assets/logo-white.png';
-import { useDispatch } from 'react-redux';
-import {
-  saveAccessToken,
-  saveExpirationDateToken,
-  saveRefreshToken,
-  saveUserId,
-} from '../../redux/actions/authActions';
+import { useDispatch, useSelector } from 'react-redux';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import { authenticate } from '../../redux/actions/authActions';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const validationSchema = yup.object({
   login: yup
@@ -36,62 +31,32 @@ const LoginPage = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const [authenticateError, setAuthenticateError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const { isLoggedIn } = useSelector((state) => state.auth);
 
   const formik = useFormik({
     initialValues: {
       login: '',
       password: '',
+      rememberUser: false,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      authenticateUser(values);
+      setLoading(true);
+      dispatch(
+        authenticate(values.login, values.password, values.rememberUser)
+      ).then((data) => {
+        if (data !== undefined) {
+          history.push('/app');
+        }
+      });
     },
   });
 
-  const authenticateUser = (loginValues) => {
-    fetch(endpoints.authenticate, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(loginValues),
-    })
-      .then((response) => {
-        const code = response.status;
-        if (code === 200) {
-          response.json().then((data) => {
-            const accessToken = data.accessToken;
-            const refreshToken = data.refreshToken;
-            const userId = data.userId;
-
-            const tokenTime = data.accessTokenExpiresIn;
-            const currentDate = new Date();
-            const tokenExpirationDate = new Date(
-              currentDate.setMilliseconds(
-                currentDate.getMilliseconds() + tokenTime
-              )
-            );
-            dispatch(saveAccessToken(accessToken));
-            dispatch(saveExpirationDateToken(tokenExpirationDate));
-            dispatch(saveRefreshToken(refreshToken));
-            dispatch(saveUserId(userId));
-          });
-          history.push('/test');
-        } else if (code === 401) {
-          setAuthenticateError('Niepoprawna nazwa użytkownika/email lub hasło');
-        } else if (code === 403) {
-          setAuthenticateError('Konto zostało zablokowane');
-        } else if (code === 409) {
-          setAuthenticateError('Konto nie zostało aktywowane');
-        } else {
-          setAuthenticateError('Niepoprawny format danych');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  if (isLoggedIn) {
+    return <Redirect to="/app" />;
+  }
 
   return (
     <>
@@ -167,7 +132,14 @@ const LoginPage = (props) => {
               />
               <div className={classes.afterInputContainer}>
                 <FormControlLabel
-                  control={<Checkbox />}
+                  control={
+                    <Checkbox
+                      id="rememberUser"
+                      name="rememberUser"
+                      value={formik.values.rememberUser}
+                      onChange={formik.handleChange}
+                    />
+                  }
                   label="Zapamiętaj mnie"
                 />
                 <Link
@@ -183,16 +155,14 @@ const LoginPage = (props) => {
                 variant="contained"
                 fullWidth
                 type="submit"
+                disabled={loading}
               >
-                Zaloguj się
+                {loading ? (
+                  <CircularProgress color="secondary" />
+                ) : (
+                  'Zaloguj się'
+                )}
               </Button>
-              <Typography
-                variant="subtitle1"
-                textAlign="center"
-                className={classes.warningText}
-              >
-                {authenticateError}
-              </Typography>
             </form>
             <Link className={classes.registerLink} to="/auth/register">
               Utwórz nowe konto
@@ -203,5 +173,4 @@ const LoginPage = (props) => {
     </>
   );
 };
-
 export default withStyles(styles)(LoginPage);
