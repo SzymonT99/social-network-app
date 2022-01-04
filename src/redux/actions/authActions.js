@@ -37,8 +37,22 @@ export const authenticate = (login, password, remember) => (dispatch) => {
     .authenticate(login, password)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(showNotification('success', 'Utworzono konto'));
-        return response.json();
+        dispatch(showNotification('success', 'Pomyślnie zalogowano'));
+        return response.json().then((data) => {
+          dispatch(saveAuthenticatedUser(data));
+          const currentDate = new Date();
+          const tokenExpirationDate = new Date(
+            currentDate.setMilliseconds(
+              currentDate.getMilliseconds() + data.accessTokenExpiresIn
+            )
+          );
+          dispatch(saveExpirationDateToken(tokenExpirationDate));
+          dispatch(rememberUser(remember));
+          return data;
+        });
+      } else if (response.status === 401) {
+        dispatch({ type: authTypes.LOGIN_FAIL });
+        dispatch(showNotification('error', 'Niepoprawny login lub hasło'));
       } else if (response.status === 403) {
         dispatch({ type: authTypes.LOGIN_FAIL });
         dispatch(showNotification('error', 'Konto jest zablokowane'));
@@ -49,18 +63,6 @@ export const authenticate = (login, password, remember) => (dispatch) => {
         dispatch({ type: authTypes.LOGIN_FAIL });
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
-    })
-    .then((data) => {
-      dispatch(saveAuthenticatedUser(data));
-      const currentDate = new Date();
-      const tokenExpirationDate = new Date(
-        currentDate.setMilliseconds(
-          currentDate.getMilliseconds() + data.accessTokenExpiresIn
-        )
-      );
-      dispatch(saveExpirationDateToken(tokenExpirationDate));
-      dispatch(rememberUser(remember));
-      return data;
     })
     .catch((error) => {
       dispatch({ type: authTypes.LOGIN_FAIL });
