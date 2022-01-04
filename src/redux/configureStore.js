@@ -1,5 +1,7 @@
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import rootReducer from './reducers';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
 import { loadState, saveState } from '../localStorage';
 
 const configureStore = (initialState = {}) => {
@@ -7,9 +9,8 @@ const configureStore = (initialState = {}) => {
 
   const store = createStore(
     rootReducer,
-    {},
-    window.__REDUX_DEVTOOLS_EXTENSION__ &&
-      window.__REDUX_DEVTOOLS_EXTENSION__(),
+    initialState,
+    composeWithDevTools(applyMiddleware(thunk)),
     persistedState
   );
 
