@@ -8,7 +8,7 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.primary.contrastText,
   },
   rightbarWrapper: {
-    padding: '20px',
+    padding: '15px',
   },
   friendsHeading: {
     paddingBottom: '10px',

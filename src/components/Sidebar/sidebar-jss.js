@@ -8,7 +8,7 @@ const styles = (theme) => ({
     color: theme.palette.primary.contrastText,
   },
   sidebarWrapper: {
-    padding: '20px',
+    padding: '15px',
   },
   userProfile: {
     width: '100%',

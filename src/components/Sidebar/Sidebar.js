@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './sidebar-jss';
 import { PropTypes } from 'prop-types';
@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -19,6 +19,9 @@ import EventIcon from '@mui/icons-material/Event';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useDispatch, useSelector } from 'react-redux';
+import { endpoints } from '../../services/endpoints/endpoints';
+import { logoutUser } from '../../redux/actions/authActions';
 
 const ListItem = withStyles((theme) => ({
   root: {
@@ -51,6 +54,42 @@ const Sidebar = (props) => {
   const { classes } = props;
   const [selectedItem, setSelectedItem] = useState(0);
 
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const [userDetails, setUserDetails] = useState({});
+
+  let userId = useSelector((state) => state.auth.user.userId);
+  let accessToken = useSelector((state) => state.auth.user.accessToken);
+
+  useEffect(() => {
+    (async () => {
+      await getUserProfileDetails();
+    })();
+  }, [userId]);
+
+  const getUserProfileDetails = () => {
+    fetch(endpoints.userProfile.replace('{userId}', userId), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + accessToken,
+      },
+    })
+      .then((response) => {
+        const code = response.status;
+        if (code === 200) {
+          response.json().then((data) => {
+            console.log(data);
+            setUserDetails(data);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleListItemClick = (index) => {
     setSelectedItem(index);
   };
@@ -69,7 +108,7 @@ const Sidebar = (props) => {
             component="div"
             className={classes.nameAndSurname}
           >
-            Jan Kowalski
+            {userDetails.firstName + ' ' + userDetails.lastName}
           </Typography>
         </Link>
         <Divider color="white" className={classes.divider} />
@@ -197,7 +236,12 @@ const Sidebar = (props) => {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding style={{ marginTop: '140px' }}>
-              <ListItemButton>
+              <ListItemButton
+                onClick={() => {
+                  dispatch(logoutUser());
+                  history.push('/auth/login');
+                }}
+              >
                 <ListItemIcon>
                   <LogoutIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
