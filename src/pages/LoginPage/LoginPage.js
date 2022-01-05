@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { authenticate } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
+import { PropTypes } from 'prop-types';
 
 const validationSchema = yup.object({
   login: yup
@@ -176,4 +177,9 @@ const LoginPage = (props) => {
     </>
   );
 };
+
+LoginPage.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
 export default withStyles(styles)(LoginPage);

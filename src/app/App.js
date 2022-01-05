@@ -8,10 +8,10 @@ const App = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route component={Auth} />
         <Route exact path="/app" component={MainApplication} />
+        <Route exact component={Auth} />
       </Switch>
-      <Copyright />
+      {/*<Copyright />*/}
       <Notification />
     </BrowserRouter>
   );

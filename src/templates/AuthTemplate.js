@@ -8,7 +8,7 @@ const AuthTemplate = (props) => {
 
   return (
     <div
-      style={{ backgroundImage: `url(${background})` }}
+      style={{ backgroundImage: `url('${background}')` }}
       className={classes.authContainer}
     >
       <main className={classes.authContent}>{children}</main>
