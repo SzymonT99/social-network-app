@@ -63,7 +63,7 @@ const Header = (props) => {
               },
             }}
             overlap="circular"
-            badgeContent={99}
+            badgeContent={1}
           >
             <PersonIcon
               color="primary"
@@ -78,7 +78,7 @@ const Header = (props) => {
               },
             }}
             overlap="circular"
-            badgeContent={99}
+            badgeContent={4}
           >
             <NotificationsIcon
               color="primary"
@@ -93,7 +93,7 @@ const Header = (props) => {
               },
             }}
             overlap="circular"
-            badgeContent={99}
+            badgeContent={4}
           >
             <MessageIcon
               color="primary"

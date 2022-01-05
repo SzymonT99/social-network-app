@@ -22,17 +22,17 @@ const styles = (theme) => ({
     margin: '20px',
   },
   searchContainer: {
-    flex: 5,
+    flex: 6,
     display: 'flex',
     justifyContent: 'center',
   },
   searchbar: {
-    width: '92%',
+    width: '94%',
     display: 'flex',
     alignItems: 'center',
   },
   actionContainer: {
-    flex: 5,
+    flex: 4,
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
