@@ -5,14 +5,17 @@ const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
     height: '50px',
-    position: 'fixed',
-    bottom: 0,
+    position: 'relative',
+    backgroundColor: theme.palette.primary.dark,
+  },
+  content: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.palette.primary.dark,
-  },
-  text: {
+    bottom: 0,
     color: 'white',
   },
 }));
@@ -21,11 +24,11 @@ const Copyright = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.container}>
-      <Typography variant="subtitle1" className={classes.text}>
+    <footer className={classes.container}>
+      <Typography variant="subtitle1" className={classes.content}>
         © 2022 Szymon Tyrka - Wszelkie prawa zastrzeżone
       </Typography>
-    </div>
+    </footer>
   );
 };
 

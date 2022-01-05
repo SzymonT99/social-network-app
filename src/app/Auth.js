@@ -7,7 +7,7 @@ const Auth = () => {
   return (
     <AuthTemplate>
       <Switch>
-        <Route path="/" exact component={LoginPage} />
+        {/*<Route exact path="/" component={LoginPage} />*/}
         <Route exact path="/auth/login" component={LoginPage} />
         <Route exact path="/auth/register" component={RegisterPage} />
       </Switch>

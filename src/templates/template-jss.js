@@ -1,4 +1,4 @@
-const styles = {
+const styles = (theme) => ({
   authContainer: {
     display: 'flex',
     width: '100%',
@@ -12,6 +12,23 @@ const styles = {
     justifyContent: 'center',
     backgroundColor: 'rgba(0, 18, 38, 0.76)',
   },
-};
-
+  appInnerContainer: {
+    display: 'flex',
+    width: '100%',
+  },
+  appContainer: {
+    display: 'flex',
+    width: '100%',
+  },
+  contentContainer: {
+    backgroundColor: '#E0E5EA',
+    flex: 8,
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  contentApp: {
+    width: '85%',
+    backgroundColor: ' red',
+  },
+});
 export default styles;

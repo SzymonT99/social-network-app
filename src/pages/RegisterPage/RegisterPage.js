@@ -18,6 +18,7 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
+import { PropTypes } from 'prop-types';
 
 const RegisterPage = (props) => {
   const { classes, children } = props;
@@ -259,6 +260,10 @@ const RegisterPage = (props) => {
       </Paper>
     </>
   );
+};
+
+RegisterPage.propTypes = {
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(RegisterPage);
