@@ -3,6 +3,7 @@ import { makeStyles } from '@mui/styles';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import React from 'react';
 import { Button } from '@mui/material';
+import { PropTypes } from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
   friendInvitation: {
@@ -15,8 +16,8 @@ const useStyles = makeStyles((theme) => ({
   },
   userPhoto: {
     display: 'block',
-    width: '40px',
-    height: '40px',
+    width: '45px',
+    height: '45px',
     borderRadius: '50px',
     marginRight: '20px',
   },
@@ -63,6 +64,12 @@ const FriendInvitation = ({ image, name }) => {
       </div>
     </div>
   );
+};
+
+FriendInvitation.propTypes = {
+  classes: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  image: PropTypes.string,
 };
 
 export default FriendInvitation;

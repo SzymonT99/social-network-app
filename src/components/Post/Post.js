@@ -88,7 +88,7 @@ const Post = (props) => {
         <img
           src={defaultUserPhoto}
           alt="Zdjęcie użytkownika"
-          className={classes.userPhoto}
+          className={classes.userPhotoSmall}
         />
         <TextField
           fullWidth

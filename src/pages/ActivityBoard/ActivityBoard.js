@@ -5,52 +5,24 @@ import { withStyles } from '@mui/styles';
 import styles from './activityBoard-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import { Divider, TextField } from '@mui/material';
+import { Button, Divider, InputAdornment, TextField } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import PhotoIcon from '@mui/icons-material/Photo';
 import FriendInvitation from '../../components/FriendInvitation/FriendInvitation';
 import Post from '../../components/Post/Post';
-import { endpoints } from '../../services/endpoints/endpoints';
-import { Redirect } from 'react-router-dom';
+import Popup from '../../components/Popup/Popup';
+import PostForm from '../../components/Forms/PostForm';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
 
-  const dispatch = useDispatch();
+  const [openPostCreation, setOpenPostCreation] = useState(false);
 
-  const [userDetails, setUserDetails] = useState({});
-
-  let userId = useSelector((state) => state.auth.user.userId);
-  let accessToken = useSelector((state) => state.auth.user.accessToken);
-  let isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-
-  useEffect(() => {
-    (async () => {
-      await getUserProfileDetails();
-    })();
-  }, [userId]);
-
-  const getUserProfileDetails = () => {
-    fetch(endpoints.userProfile.replace('{userId}', userId), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + accessToken,
-      },
-    })
-      .then((response) => {
-        const code = response.status;
-        if (code === 200) {
-          response.json().then((data) => {
-            console.log(data);
-            setUserDetails(data);
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const handleClosePostCreation = () => {
+    setOpenPostCreation(false);
   };
+
+  const dispatch = useDispatch();
 
   return (
     <div className={classes.boardContainer}>
@@ -71,26 +43,29 @@ const ActivityBoard = (props) => {
               />
               <TextField
                 fullWidth
-                id="createPostInput"
-                variant="filled"
-                placeholder="Napisz coś tutaj"
-                className={classes.postCreateInput}
+                placeholder="Napisz coś tutaj..."
+                multiline
+                rows={2}
+                className={classes.postInput}
+                onClick={() => setOpenPostCreation(true)}
                 InputProps={{
-                  disableUnderline: true,
-                  underline: {
-                    borderBottom: 'none',
-                  },
-                  endAdornment: <PhotoIcon />,
-                  style: {
-                    fontSize: 17,
-                    height: '100px',
-                    borderRadius: '20px',
-                    verticalAlign: 'center',
-                  },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <PhotoIcon className={classes.photoIcon} />
+                    </InputAdornment>
+                  ),
                 }}
               />
             </div>
           </Paper>
+          <Popup
+            open={openPostCreation}
+            type="createPost"
+            title="Utwórz post"
+            handleClose={handleClosePostCreation}
+          >
+            <PostForm />
+          </Popup>
           <Post />
           <Post />
           <Post />

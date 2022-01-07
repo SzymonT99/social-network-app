@@ -4,7 +4,7 @@ const styles = (theme) => ({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-between',
-    margin: '8px 0',
+    margin: '18px 0',
     '&:hover': {
       backgroundColor: '#f5f7f8',
       cursor: 'pointer',

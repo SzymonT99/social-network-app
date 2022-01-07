@@ -31,6 +31,9 @@ const FriendsListItem = (props) => {
 
 FriendsListItem.propTypes = {
   classes: PropTypes.object.isRequired,
+  image: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(FriendsListItem);

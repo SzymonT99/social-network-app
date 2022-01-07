@@ -10,6 +10,13 @@ const styles = (theme) => ({
     marginBottom: '15px',
   },
   userPhoto: {
+    width: '60px',
+    height: '60px',
+    borderRadius: '60px',
+    cursor: 'pointer',
+    marginRight: '20px',
+  },
+  userPhotoSmall: {
     width: '50px',
     height: '50px',
     borderRadius: '60px',

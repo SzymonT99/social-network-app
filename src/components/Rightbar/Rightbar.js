@@ -11,9 +11,7 @@ const Rightbar = (props) => {
   return (
     <div className={classes.rightbarContainer}>
       <div className={classes.rightbarWrapper}>
-        <Typography variant="h6" className={classes.friendsHeading}>
-          Lista znajomych
-        </Typography>
+        <Typography variant="h6">Lista znajomych</Typography>
         <FriendListItem name="Tester Tester" status="online" />
         <FriendListItem name="Tester Tester" status="offline" />
         <FriendListItem name="Tester Tester" status="beRightBack" />

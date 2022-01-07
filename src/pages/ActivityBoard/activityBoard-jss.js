@@ -24,19 +24,38 @@ const styles = (theme) => ({
   },
   postCreateContent: {
     display: 'flex',
-    padding: '10px 0',
+    paddingTop: '10px',
   },
   userPhoto: {
     display: 'block',
-    width: '45px',
-    height: '45px',
+    width: '50px',
+    height: '50px',
     borderRadius: '50px',
     marginRight: '15px',
   },
-  postCreateInput: {
-    '& input': {
-      marginBottom: '20px',
+  postInput: {
+    '& .MuiInputBase-root': {
+      backgroundColor: '#ECEEF1',
+      borderRadius: '15px',
+      fontSize: '17px',
+      border: 'none',
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderWidth: 0,
+      },
     },
+  },
+  root: {
+    background: 'linear-gradient(45deg, green 30%, orange 90%)',
+    border: 0,
+    borderRadius: 100,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 98,
+    padding: '0 30px',
+  },
+  photoIcon: {
+    marginTop: '30px',
+    cursor: 'pointer',
   },
 });
 

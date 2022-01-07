@@ -20,23 +20,30 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useDispatch, useSelector } from 'react-redux';
-import { endpoints } from '../../services/endpoints/endpoints';
 import { logoutUser } from '../../redux/actions/authActions';
 
 const ListItem = withStyles((theme) => ({
   root: {
-    '&$:selected': {
-      backgroundColor: 'rgba(250, 99, 66, 0.3)',
-      color: theme.palette.secondary.dark,
+    '&.Mui-selected': {
+      color: theme.palette.secondary.light,
       '& .MuiListItemIcon-root': {
-        color: theme.palette.secondary.dark,
+        color: theme.palette.secondary.light,
       },
-    },
-    '&$selected:hover': {
-      backgroundColor: theme.palette.primary.light,
-      color: 'white',
-      '& .MuiListItemIcon-root': {
+      '& .MuiSvgIcon-root': {
+        color: theme.palette.secondary.light,
+      },
+      '& .MuiTouchRipple-root': {
+        backgroundColor: 'rgba(250, 99, 66, 0.26)',
+      },
+      '&:hover': {
+        backgroundColor: theme.palette.primary.light,
         color: 'white',
+        '& .MuiListItemIcon-root': {
+          color: 'white',
+        },
+        '& .MuiSvgIcon-root': {
+          color: 'white',
+        },
       },
     },
     '&:hover': {
@@ -47,7 +54,6 @@ const ListItem = withStyles((theme) => ({
       },
     },
   },
-  selected: {},
 }))(MuiListItem);
 
 const Sidebar = (props) => {
@@ -56,39 +62,6 @@ const Sidebar = (props) => {
 
   const dispatch = useDispatch();
   const history = useHistory();
-
-  const [userDetails, setUserDetails] = useState({});
-
-  let userId = useSelector((state) => state.auth.user.userId);
-  let accessToken = useSelector((state) => state.auth.user.accessToken);
-
-  useEffect(() => {
-    (async () => {
-      await getUserProfileDetails();
-    })();
-  }, [userId]);
-
-  const getUserProfileDetails = () => {
-    fetch(endpoints.userProfile.replace('{userId}', userId), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + accessToken,
-      },
-    })
-      .then((response) => {
-        const code = response.status;
-        if (code === 200) {
-          response.json().then((data) => {
-            console.log(data);
-            setUserDetails(data);
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   const handleListItemClick = (index) => {
     setSelectedItem(index);
@@ -108,7 +81,7 @@ const Sidebar = (props) => {
             component="div"
             className={classes.nameAndSurname}
           >
-            {userDetails.firstName + ' ' + userDetails.lastName}
+            undefined undefied
           </Typography>
         </Link>
         <Divider color="white" className={classes.divider} />
@@ -120,7 +93,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 0}
               onClick={() => handleListItemClick(0)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <HomeIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -138,7 +111,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 1}
               onClick={() => handleListItemClick(1)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <PeopleIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -154,7 +127,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 2}
               onClick={() => handleListItemClick(2)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <GroupsIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -172,7 +145,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 3}
               onClick={() => handleListItemClick(3)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <ChatBubbleIcon
                     fontSize="large"
@@ -191,7 +164,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 4}
               onClick={() => handleListItemClick(4)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <EventIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -207,7 +180,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 5}
               onClick={() => handleListItemClick(5)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <BookmarkIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -223,7 +196,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 6}
               onClick={() => handleListItemClick(6)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <SettingsIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>

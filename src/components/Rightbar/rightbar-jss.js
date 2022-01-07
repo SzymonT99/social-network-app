@@ -10,9 +10,6 @@ const styles = (theme) => ({
   rightbarWrapper: {
     padding: '15px',
   },
-  friendsHeading: {
-    paddingBottom: '10px',
-  },
 });
 
 export default styles;

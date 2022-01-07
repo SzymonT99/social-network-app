@@ -10,44 +10,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/Message';
-import { useSelector } from 'react-redux';
-import { endpoints } from '../../services/endpoints/endpoints';
 
 const Header = (props) => {
   const { classes } = props;
-
-  const [userDetails, setUserDetails] = useState({});
-
-  let userId = useSelector((state) => state.auth.user.userId);
-  let accessToken = useSelector((state) => state.auth.user.accessToken);
-
-  useEffect(() => {
-    (async () => {
-      await getUserProfileDetails();
-    })();
-  }, [userId]);
-
-  const getUserProfileDetails = () => {
-    fetch(endpoints.userProfile.replace('{userId}', userId), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + accessToken,
-      },
-    })
-      .then((response) => {
-        const code = response.status;
-        if (code === 200) {
-          response.json().then((data) => {
-            console.log(data);
-            setUserDetails(data);
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   return (
     <div className={classes.headerContainer}>
@@ -138,7 +103,7 @@ const Header = (props) => {
         </div>
         <div className={classes.userInfoBox}>
           <Typography variant="h4" className={classes.nameAndSurname}>
-            {userDetails.firstName + ' ' + userDetails.lastName}
+            undefined undefined
           </Typography>
           <img
             src={defaultUserPhoto}
