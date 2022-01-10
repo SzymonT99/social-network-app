@@ -48,7 +48,6 @@ const LoginPage = (props) => {
       dispatch(
         authenticate(values.login, values.password, values.rememberUser)
       ).then((data) => {
-        console.log(data);
         if (data !== undefined) {
           history.push('/app');
         } else {

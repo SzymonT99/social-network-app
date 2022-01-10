@@ -48,6 +48,26 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
+  commentInput: {
+    '& .MuiInputBase-root': {
+      backgroundColor: '#ECEEF1',
+      borderRadius: '15px',
+      fontSize: '17px',
+      border: 'none',
+      '&.Mui-focused': {
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderWidth: 0,
+        },
+      },
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderWidth: 0,
+      },
+    },
+  },
+  postImageList: {
+    width: '100%',
+    height: '300px',
+  },
 });
 
 export default styles;

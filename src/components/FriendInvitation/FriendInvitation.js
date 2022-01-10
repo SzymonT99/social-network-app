@@ -67,7 +67,6 @@ const FriendInvitation = ({ image, name }) => {
 };
 
 FriendInvitation.propTypes = {
-  classes: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   image: PropTypes.string,
 };

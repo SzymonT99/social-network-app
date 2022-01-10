@@ -30,6 +30,7 @@ const Header = (props) => {
           <Autocomplete
             fullWidth
             freeSolo
+            options={null}
             id="searchbar"
             renderInput={(params) => (
               <TextField
