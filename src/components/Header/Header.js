@@ -30,6 +30,7 @@ const Header = (props) => {
           <Autocomplete
             fullWidth
             freeSolo
+            options={null}
             id="searchbar"
             renderInput={(params) => (
               <TextField
@@ -103,7 +104,7 @@ const Header = (props) => {
         </div>
         <div className={classes.userInfoBox}>
           <Typography variant="h4" className={classes.nameAndSurname}>
-            Jan Kowalski
+            undefined undefined
           </Typography>
           <img
             src={defaultUserPhoto}

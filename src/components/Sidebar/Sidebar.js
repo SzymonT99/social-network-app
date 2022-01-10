@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './sidebar-jss';
 import { PropTypes } from 'prop-types';
@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -19,21 +19,31 @@ import EventIcon from '@mui/icons-material/Event';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../../redux/actions/authActions';
 
 const ListItem = withStyles((theme) => ({
   root: {
-    '&$:selected': {
-      backgroundColor: 'rgba(250, 99, 66, 0.3)',
-      color: theme.palette.secondary.dark,
+    '&.Mui-selected': {
+      color: theme.palette.secondary.light,
       '& .MuiListItemIcon-root': {
-        color: theme.palette.secondary.dark,
+        color: theme.palette.secondary.light,
       },
-    },
-    '&$selected:hover': {
-      backgroundColor: theme.palette.primary.light,
-      color: 'white',
-      '& .MuiListItemIcon-root': {
+      '& .MuiSvgIcon-root': {
+        color: theme.palette.secondary.light,
+      },
+      '& .MuiTouchRipple-root': {
+        backgroundColor: 'rgba(250, 99, 66, 0.26)',
+      },
+      '&:hover': {
+        backgroundColor: theme.palette.primary.light,
         color: 'white',
+        '& .MuiListItemIcon-root': {
+          color: 'white',
+        },
+        '& .MuiSvgIcon-root': {
+          color: 'white',
+        },
       },
     },
     '&:hover': {
@@ -44,12 +54,14 @@ const ListItem = withStyles((theme) => ({
       },
     },
   },
-  selected: {},
 }))(MuiListItem);
 
 const Sidebar = (props) => {
   const { classes } = props;
   const [selectedItem, setSelectedItem] = useState(0);
+
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleListItemClick = (index) => {
     setSelectedItem(index);
@@ -69,7 +81,7 @@ const Sidebar = (props) => {
             component="div"
             className={classes.nameAndSurname}
           >
-            Jan Kowalski
+            undefined undefied
           </Typography>
         </Link>
         <Divider color="white" className={classes.divider} />
@@ -81,7 +93,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 0}
               onClick={() => handleListItemClick(0)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <HomeIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -99,7 +111,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 1}
               onClick={() => handleListItemClick(1)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <PeopleIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -115,7 +127,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 2}
               onClick={() => handleListItemClick(2)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <GroupsIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -133,7 +145,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 3}
               onClick={() => handleListItemClick(3)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <ChatBubbleIcon
                     fontSize="large"
@@ -152,7 +164,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 4}
               onClick={() => handleListItemClick(4)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <EventIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -168,7 +180,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 5}
               onClick={() => handleListItemClick(5)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <BookmarkIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -184,7 +196,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 6}
               onClick={() => handleListItemClick(6)}
             >
-              <ListItemButton>
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <SettingsIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -197,7 +209,12 @@ const Sidebar = (props) => {
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding style={{ marginTop: '140px' }}>
-              <ListItemButton>
+              <ListItemButton
+                onClick={() => {
+                  dispatch(logoutUser());
+                  history.push('/auth/login');
+                }}
+              >
                 <ListItemIcon>
                   <LogoutIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>

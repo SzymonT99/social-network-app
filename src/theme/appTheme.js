@@ -34,6 +34,16 @@ const theme = createTheme({
     subtitle1: {
       fontSize: '17px',
     },
+    subtitle2: {
+      fontSize: '16px',
+      fontWeight: 400,
+    },
+    body1: {
+      fontSize: '15px',
+    },
+    body2: {
+      fontSize: '13px',
+    },
   },
 });
 export default theme;

@@ -28,7 +28,6 @@ const styles = (theme) => ({
   },
   contentApp: {
     width: '85%',
-    backgroundColor: ' red',
   },
 });
 export default styles;

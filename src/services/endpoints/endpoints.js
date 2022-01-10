@@ -4,4 +4,5 @@ export const endpoints = {
   authenticate: baseUrl + '/api/auth/login',
   userProfile: baseUrl + '/api/profile/{userId}/information',
   register: baseUrl + '/api/auth/register',
+  createPost: baseUrl + '/api/posts',
 };
