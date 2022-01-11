@@ -1,5 +1,9 @@
 const CREATE_POST = 'CREATE_POST';
+const LIKE_POST = 'LIKE_POST';
+const DISLIKE_POST = 'DISLIKE_POST';
 
 export default {
   CREATE_POST,
+  LIKE_POST,
+  DISLIKE_POST,
 };

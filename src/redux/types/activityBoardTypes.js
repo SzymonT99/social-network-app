@@ -1,0 +1,7 @@
+const FETCH_SUCCESS = 'FETCH_SUCCESS';
+const FETCH_FAILURE = 'FETCH_FAILURE';
+
+export default {
+  FETCH_SUCCESS,
+  FETCH_FAILURE,
+};

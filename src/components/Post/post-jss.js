@@ -14,7 +14,6 @@ const styles = (theme) => ({
     height: '60px',
     borderRadius: '60px',
     cursor: 'pointer',
-    marginRight: '20px',
   },
   userPhotoSmall: {
     width: '50px',
@@ -66,7 +65,23 @@ const styles = (theme) => ({
   },
   postImageList: {
     width: '100%',
-    height: '300px',
+    height: '330px',
+    '& img': {
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
+  },
+  likedBtn: {
+    textTransform: 'none',
+  },
+  likedBtnClicked: {
+    '&.MuiButton-root': {
+      backgroundColor: 'rgba(7, 220, 192, 0.3)',
+      '&:hover': {
+        backgroundColor: '#5fe8ce',
+      },
+    },
   },
 });
 
