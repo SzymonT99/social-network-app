@@ -16,15 +16,21 @@ import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-import { dislikePost, likePost } from '../../redux/actions/postActions';
+import {
+  commentPost,
+  dislikePost,
+  likePost,
+} from '../../redux/actions/postActions';
 import { useDispatch, useSelector } from 'react-redux';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import { showNotification } from '../../redux/actions/notificationActions';
+import PostComment from '../PostComment/PostComment';
 
 const formatPostTime = (createdDate) => {
-  let diffInMs = (new Date().getTime() - createdDate) / 1000;
+  let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
   let minutes = Math.floor(diffInMs / 60);
 
-  if (minutes < 5) {
+  if (minutes < 30) {
     return 'kilka minut temu';
   } else if (minutes < 90) {
     return '1 godz. temu';
@@ -40,10 +46,25 @@ const formatPostTime = (createdDate) => {
     return '1 dzień temu';
   } else if (minutes >= 1560 && minutes < 3000) {
     return '2 dni temu';
-  } else if (minutes >= 3000 && minutes < 4440) {
+  } else if (minutes >= 3000 && minutes < 3100) {
     return '3 dni temu';
   } else {
-    return 'kilka dni temu';
+    let day = createdDate.getDate();
+    let month = createdDate.getMonth() + 1;
+    let year = createdDate.getFullYear();
+    let hour = createdDate.getHours();
+    let minutes = createdDate.getMinutes();
+    return (
+      (day <= 9 ? '0' + day : day) +
+      '.' +
+      (month <= 9 ? '0' + month : month) +
+      '.' +
+      year +
+      ' r. ' +
+      (hour <= 9 ? '0' + hour : hour) +
+      ':' +
+      (minutes <= 9 ? '0' + minutes : minutes)
+    );
   }
 };
 
@@ -51,6 +72,8 @@ const Post = (props) => {
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.auth.user.userId);
+
+  const [comment, setComment] = useState('');
 
   const postIsLiked = (likes, userId) => {
     let state = false;
@@ -74,6 +97,7 @@ const Post = (props) => {
     userStatus,
     postId,
     likes,
+    comments,
   } = props;
 
   const activeStatus = {
@@ -88,6 +112,18 @@ const Post = (props) => {
       dispatch(likePost(postId));
     } else {
       dispatch(dislikePost(postId));
+    }
+  };
+
+  const handleCommentChange = (event) => {
+    setComment(event.target.value);
+  };
+
+  const addComment = () => {
+    if (comment === '') {
+      dispatch(showNotification('warning', 'Nie podano treści komentarza'));
+    } else {
+      dispatch(commentPost(postId, comment));
     }
   };
 
@@ -117,7 +153,7 @@ const Post = (props) => {
         <div>
           <Typography variant="subtitle1" component="div" fontWeight="bold">
             {authorName}
-            <span className={classes.actionName}> dodał nowy wpis</span>
+            <span className={classes.actionName}> dodał(a) nowy wpis</span>
           </Typography>
           <Typography variant="body2" component="div">
             {formatPostTime(createdDate)}
@@ -189,7 +225,22 @@ const Post = (props) => {
         </Typography>
       </div>
       <Divider className={classes.divider} />
-      <div className={classes.commentContainer}>
+      {comments.map((comment) => (
+        <PostComment
+          createdDate={Date.parse(comment.createdAt)}
+          authorName={
+            comment.commentAuthor.firstName +
+            ' ' +
+            comment.commentAuthor.lastName
+          }
+          userStatus={comment.commentAuthor.activityStatus}
+          content={comment.text}
+        />
+      ))}
+      {comments.length !== 0 && (
+        <Divider className={classes.divider} style={{ marginTop: '15px' }} />
+      )}
+      <div className={classes.addCommentContainer}>
         <img
           src={defaultUserPhoto}
           alt="Zdjęcie użytkownika"
@@ -199,8 +250,15 @@ const Post = (props) => {
           fullWidth
           placeholder="Napisz komentarz"
           multiline
-          rows={2}
+          maxRows={3}
           className={classes.commentInput}
+          value={comment}
+          onChange={handleCommentChange}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              addComment();
+            }
+          }}
         />
       </div>
     </Paper>

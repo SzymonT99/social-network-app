@@ -5,7 +5,6 @@ const createPost = (formData) => {
   return fetch(endpoints.createPost, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: authorization(),
     },
     body: formData,
@@ -32,8 +31,20 @@ const dislikePost = (postId) => {
   });
 };
 
+const commentPost = (postId, comment) => {
+  return fetch(endpoints.commentPost.replace('{postId}', postId), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify({ commentText: comment }),
+  });
+};
+
 export default {
   createPost,
   likePost,
   dislikePost,
+  commentPost,
 };

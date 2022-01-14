@@ -1,4 +1,4 @@
-import activityTypes from '../types/activityBoardTypes';
+import activityTypes from '../types/userActivityTypes';
 import activityService from '../../services/activityService';
 import { showNotification } from './notificationActions';
 import { push } from 'react-router-redux';
@@ -11,9 +11,9 @@ export const getActivityBoard = () => (dispatch) => {
         return response.json().then((data) => {
           console.log(data);
           dispatch({
-            type: activityTypes.FETCH_SUCCESS,
+            type: activityTypes.FETCH_BOARD_SUCCESS,
             payload: {
-              userActivity: data,
+              board: data,
             },
           });
         });
@@ -21,12 +21,12 @@ export const getActivityBoard = () => (dispatch) => {
         dispatch(push('/auth/login'));
         dispatch(showNotification('error', 'Niepoprawny login lub hasło'));
       } else {
-        dispatch({ type: activityTypes.FETCH_FAILURE });
+        dispatch({ type: activityTypes.FETCH_BOARD_FAILURE });
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
     })
     .catch((error) => {
-      dispatch({ type: activityTypes.FETCH_FAILURE });
+      dispatch({ type: activityTypes.FETCH_BOARD_FAILURE });
       console.log(error);
     });
 };

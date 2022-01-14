@@ -21,6 +21,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux/actions/authActions';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const ListItem = withStyles((theme) => ({
   root: {
@@ -60,6 +61,8 @@ const Sidebar = (props) => {
   const { classes } = props;
   const [selectedItem, setSelectedItem] = useState(0);
 
+  const userProfile = useSelector((state) => state.profile.userProfile);
+
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -72,16 +75,24 @@ const Sidebar = (props) => {
       <div className={classes.sidebarWrapper}>
         <Link className={classes.userProfile} to="/app/profile/">
           <img
-            src={defaultUserPhoto}
+            src={
+              userProfile && userProfile.profilePhoto !== null
+                ? userProfile.profilePhoto.url
+                : defaultUserPhoto
+            }
             alt="Zdjęcie użytkownika"
             className={classes.userPhoto}
           />
           <Typography
             variant="h4"
-            component="div"
+            textAlign="center"
             className={classes.nameAndSurname}
           >
-            undefined undefied
+            {userProfile ? (
+              userProfile.firstName + ' ' + userProfile.lastName
+            ) : (
+              <CircularProgress color="secondary" />
+            )}
           </Typography>
         </Link>
         <Divider color="white" className={classes.divider} />

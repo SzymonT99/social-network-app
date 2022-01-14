@@ -33,7 +33,7 @@ const authReducer = (state = initialState, action) => {
         ...state,
         remember: action.remember,
       };
-    case types.LOGOUT_USER:
+    case types.CLEAR_ALL:
       return initialState;
     default:
       return state;

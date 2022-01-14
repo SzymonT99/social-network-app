@@ -12,13 +12,13 @@ import FriendInvitation from '../../components/FriendInvitation/FriendInvitation
 import Post from '../../components/Post/Post';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
-import { getActivityBoard } from '../../redux/actions/activityBoardActions';
+import { getActivityBoard } from '../../redux/actions/userActivityActions';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
 
   const dispatch = useDispatch();
-  const activityBoard = useSelector((state) => state.activity.userActivity);
+  const activityBoard = useSelector((state) => state.activity.board);
 
   const [openPostCreation, setOpenPostCreation] = useState(false);
 
@@ -82,7 +82,7 @@ const ActivityBoard = (props) => {
                     ' ' +
                     item.activityAuthor.lastName
                   }
-                  createdDate={Date.parse(item.activityDate)}
+                  createdDate={new Date(item.activityDate)}
                   images={item.activity.images}
                   likesNumber={item.activity.likes.length}
                   sharesNumber={item.activity.sharing.length}
@@ -106,11 +106,11 @@ const ActivityBoard = (props) => {
             style={{ padding: '15px' }}
           >
             <Typography variant="h6">Zaproszenia do znajomych</Typography>
-            <FriendInvitation name="Tester Tester" />
-            <FriendInvitation name="Tester Tester" />
-            <FriendInvitation name="Tester Tester" />
-            <FriendInvitation name="Tester Tester" />
-            <FriendInvitation name="Tester Tester" />
+            <FriendInvitation name="Roman Romanowicz" />
+            <FriendInvitation name="Ewa Ewakowska" />
+            <FriendInvitation name="Tomasz Tomkowski" />
+            <FriendInvitation name="Florian Flor" />
+            <FriendInvitation name="Bartek Bartkowski" />
           </Paper>
         </div>
       </div>

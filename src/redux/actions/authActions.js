@@ -1,6 +1,7 @@
 import authTypes from '../types/authTypes';
 import authService from '../../services/authService';
 import { showNotification } from './notificationActions';
+import { getUserProfile } from './userProfileActions';
 
 export const register = (accountData) => (dispatch) => {
   return authService
@@ -39,15 +40,22 @@ export const authenticate = (login, password, remember) => (dispatch) => {
       if (response.status === 200) {
         dispatch(showNotification('success', 'Pomyślnie zalogowano'));
         return response.json().then((data) => {
-          dispatch(saveAuthenticatedUser(data));
+          dispatch({
+            type: authTypes.LOGIN_SUCCESS,
+            payload: { ...data },
+          });
           const currentDate = new Date();
           const tokenExpirationDate = new Date(
             currentDate.setMilliseconds(
               currentDate.getMilliseconds() + data.accessTokenExpiresIn
             )
           );
-          dispatch(saveExpirationDateToken(tokenExpirationDate));
-          dispatch(rememberUser(remember));
+          dispatch({
+            type: authTypes.SAVE_EXPIRATION_DATE_TOKEN,
+            payload: tokenExpirationDate,
+          });
+          dispatch({ type: authTypes.REMEMBER_USER, payload: remember });
+          dispatch(getUserProfile(data.userId));
           return data;
         });
       } else if (response.status === 401) {
@@ -70,16 +78,6 @@ export const authenticate = (login, password, remember) => (dispatch) => {
     });
 };
 
-export const saveAuthenticatedUser = (user) => ({
-  type: authTypes.LOGIN_SUCCESS,
-  payload: { ...user },
-});
-
-export const saveExpirationDateToken = (expirationDate) => ({
-  type: authTypes.SAVE_EXPIRATION_DATE_TOKEN,
-  expirationDate,
-});
-
 export const updateToken = (accessToken, refreshToken) => ({
   type: authTypes.UPDATE_TOKEN,
   payload: {
@@ -88,11 +86,6 @@ export const updateToken = (accessToken, refreshToken) => ({
   },
 });
 
-export const rememberUser = (remember) => ({
-  type: authTypes.REMEMBER_USER,
-  remember,
-});
-
 export const logoutUser = () => ({
-  type: authTypes.LOGOUT_USER,
+  type: 'CLEAR_ALL',
 });

@@ -8,4 +8,5 @@ export const endpoints = {
   getActivityBoard: baseUrl + '/api/activity',
   likePost: baseUrl + '/api/posts/{postId}/like',
   dislikePost: baseUrl + '/api/posts/{postId}/liked',
+  commentPost: baseUrl + '/api/posts/{postId}/comments',
 };
