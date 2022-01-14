@@ -1,8 +1,8 @@
 import { endpoints } from './endpoints/endpoints';
 import authorization from './authorization';
 
-const getUserProfile = (userId) => {
-  return fetch(endpoints.userProfile.replace('{userId}', userId), {
+const getActivityBoard = () => {
+  return fetch(endpoints.getActivityBoard, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -12,5 +12,5 @@ const getUserProfile = (userId) => {
 };
 
 export default {
-  getUserProfile,
+  getActivityBoard,
 };

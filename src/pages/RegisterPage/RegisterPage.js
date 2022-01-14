@@ -19,12 +19,18 @@ import {
   RadioGroup,
 } from '@mui/material';
 import { PropTypes } from 'prop-types';
+import { showNotification } from '../../redux/actions/notificationActions';
+import { useDispatch } from 'react-redux';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const RegisterPage = (props) => {
   const { classes, children } = props;
 
+  const dispatch = useDispatch();
+
   const [gender, setGender] = useState('');
   const [registrationError, setRegistrationError] = useState(' ');
+  const [loading, setLoading] = useState(false);
 
   const history = useHistory();
 
@@ -33,6 +39,7 @@ const RegisterPage = (props) => {
   };
 
   const registerUser = async (body) => {
+    setLoading(true);
     const response = await fetch(endpoints.register, {
       method: 'POST',
       headers: {
@@ -43,14 +50,21 @@ const RegisterPage = (props) => {
     const code = response.status;
 
     if (code === 201) {
+      setLoading(false);
       history.push('/auth/login');
+      dispatch(showNotification('success', 'Utworzono konto'));
     } else if (code === 403) {
-      setRegistrationError('Podany email lub nazwa użytkownika już istnieją');
+      dispatch(
+        showNotification(
+          'error',
+          'Podany email lub nazwa użytkownika już istnieją'
+        )
+      );
     } else if (code === 400) {
-      setRegistrationError('Niepoprawne dane');
+      dispatch(showNotification('warning', 'Niepoprawne dane'));
     } else {
       // code == 500
-      setRegistrationError('Błąd servera');
+      dispatch(showNotification('error', 'Błąd serwera'));
     }
   };
 
@@ -96,11 +110,18 @@ const RegisterPage = (props) => {
 
   return (
     <>
-      <Paper className={classes.wrapper} elevation={7}>
+      <Paper
+        className={classes.wrapper}
+        elevation={7}
+        sx={{ borderRadius: '20px' }}
+      >
         <Typography variant="h3" align="center" marginBottom="40px">
           Tworzenie konta
         </Typography>
-        <form onSubmit={formik.handleSubmit}>
+        <form
+          onSubmit={formik.handleSubmit}
+          style={{ display: 'flex', flexDirection: 'column' }}
+        >
           <Grid container columnSpacing={{ xs: 2 }} rowSpacing={{ xs: 3 }}>
             <Grid item xs={6}>
               <TextField
@@ -240,12 +261,13 @@ const RegisterPage = (props) => {
           </Grid>
           <Button
             style={{ marginTop: '30px' }}
-            color="primary"
+            color="secondary"
+            className={classes.registerBtn}
             variant="contained"
             fullWidth
             type="submit"
           >
-            Załóż konto
+            {loading ? <CircularProgress color="primary" /> : 'Załóż konto'}
           </Button>
           <Typography
             textAlign="center"

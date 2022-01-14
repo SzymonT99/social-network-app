@@ -5,7 +5,7 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.secondary.main,
     position: 'sticky',
     top: 0,
-    zIndex: 1,
+    zIndex: 100,
     display: 'flex',
   },
   logoContainer: {
@@ -34,14 +34,12 @@ const styles = (theme) => ({
   actionContainer: {
     flex: 4,
     display: 'flex',
-    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   actionIcons: {
     display: 'flex',
     justifyContent: 'space-between',
-    width: '200px',
-    marginRight: '120px',
+    width: '35%',
   },
   iconItem: {
     marginRight: '24px',
@@ -50,10 +48,13 @@ const styles = (theme) => ({
   userInfoBox: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    width: '75%',
+    justifyContent: 'flex-end',
     marginRight: '24px',
   },
   nameAndSurname: {
+    textAlign: 'right',
+    width: '320px',
     color: 'white',
     paddingRight: '30px',
   },

@@ -10,9 +10,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/Message';
+import { useSelector } from 'react-redux';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Header = (props) => {
   const { classes } = props;
+
+  const userProfile = useSelector((state) => state.profile.userProfile);
 
   return (
     <div className={classes.headerContainer}>
@@ -103,11 +107,24 @@ const Header = (props) => {
           </Badge>
         </div>
         <div className={classes.userInfoBox}>
-          <Typography variant="h4" className={classes.nameAndSurname}>
-            undefined undefined
+          <Typography
+            variant="h4"
+            component="div"
+            noWrap
+            className={classes.nameAndSurname}
+          >
+            {userProfile ? (
+              userProfile.firstName + ' ' + userProfile.lastName
+            ) : (
+              <CircularProgress color="primary" />
+            )}
           </Typography>
           <img
-            src={defaultUserPhoto}
+            src={
+              userProfile && userProfile.profilePhoto !== null
+                ? userProfile.profilePhoto.url
+                : defaultUserPhoto
+            }
             alt="Zdjęcie użytkownika"
             className={classes.userPhoto}
           />

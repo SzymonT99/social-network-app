@@ -12,12 +12,12 @@ const Rightbar = (props) => {
     <div className={classes.rightbarContainer}>
       <div className={classes.rightbarWrapper}>
         <Typography variant="h6">Lista znajomych</Typography>
-        <FriendListItem name="Tester Tester" status="online" />
-        <FriendListItem name="Tester Tester" status="offline" />
-        <FriendListItem name="Tester Tester" status="beRightBack" />
-        <FriendListItem name="Tester Tester" status="online" />
-        <FriendListItem name="Tester Tester" status="online" />
-        <FriendListItem name="Tester Tester" status="busy" />
+        <FriendListItem name="Dawid Dawidowski" status="online" />
+        <FriendListItem name="Celina Celinowska" status="offline" />
+        <FriendListItem name="Grzegorz Grzegowicz" status="beRightBack" />
+        <FriendListItem name="Piotr Piotrowski" status="online" />
+        <FriendListItem name="Patryk Patrykowski" status="online" />
+        <FriendListItem name="Rafał Rafałowski" status="busy" />
       </div>
     </div>
   );

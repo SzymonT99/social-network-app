@@ -1,0 +1,7 @@
+const FETCH_USER_PROFILE = 'FETCH_USER_PROFILE';
+const CLEAR_ALL = 'CLEAR_ALL';
+
+export default {
+  FETCH_USER_PROFILE,
+  CLEAR_ALL,
+};

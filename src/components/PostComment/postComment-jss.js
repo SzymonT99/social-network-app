@@ -34,8 +34,7 @@ const styles = (theme) => ({
       marginBottom: '20px',
     },
   },
-  addCommentContainer: {
-    display: 'flex',
+  commentContainer: {
     paddingTop: '15px',
   },
   postReactionContainer: {
@@ -73,14 +72,11 @@ const styles = (theme) => ({
     },
   },
   likedBtn: {
-    '&.MuiButton-root': {
-      textTransform: 'none',
-    },
+    textTransform: 'none',
   },
   likedBtnClicked: {
     '&.MuiButton-root': {
       backgroundColor: 'rgba(7, 220, 192, 0.3)',
-      textTransform: 'none',
       '&:hover': {
         backgroundColor: '#5fe8ce',
       },

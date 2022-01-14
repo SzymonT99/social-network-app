@@ -14,6 +14,7 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 import { authenticate } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PropTypes } from 'prop-types';
+import { getUserProfile } from '../../redux/actions/userProfileActions';
 
 const validationSchema = yup.object({
   login: yup
@@ -160,11 +161,7 @@ const LoginPage = (props) => {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? (
-                  <CircularProgress color="secondary" />
-                ) : (
-                  'Zaloguj się'
-                )}
+                {loading ? <CircularProgress color="primary" /> : 'Zaloguj się'}
               </Button>
             </form>
             <Link className={classes.registerLink} to="/auth/register">
