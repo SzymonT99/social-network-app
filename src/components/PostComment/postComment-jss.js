@@ -49,6 +49,39 @@ const styles = (theme) => ({
       },
     },
   },
+  commentInput: {
+    '& .MuiInputBase-root': {
+      '& .Mui-disabled': {
+        WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)',
+      },
+      fontSize: '15px',
+      padding: 0,
+      margin: 0,
+      '&.Mui-focused': {
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderWidth: 0,
+        },
+      },
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderWidth: 0,
+      },
+    },
+  },
+  editActionContainer: {
+    marginTop: '8px',
+  },
+  editActionBtn: {
+    '&.MuiButton-root': {
+      textTransform: 'none',
+      padding: '2px 15px',
+      margin: 0,
+      minWidth: 0,
+      fontSize: '15px',
+      borderRadius: '10px',
+      fontWeight: 500,
+      marginRight: '15px',
+    },
+  },
 });
 
 export default styles;

@@ -228,7 +228,10 @@ const Post = (props) => {
       <Divider />
       {comments.map((comment) => (
         <PostComment
-          createdDate={Date.parse(comment.createdAt)}
+          key={comment.comentId}
+          commentId={comment.commentId}
+          postId={postId}
+          createdDate={new Date(comment.createdAt)}
           authorName={
             comment.commentAuthor.firstName +
             ' ' +
@@ -271,7 +274,7 @@ const Post = (props) => {
 Post.propTypes = {
   classes: PropTypes.object.isRequired,
   authorName: PropTypes.string.isRequired,
-  createdDate: PropTypes.number.isRequired,
+  createdDate: PropTypes.object.isRequired,
   content: PropTypes.string.isRequired,
   likesNumber: PropTypes.number.isRequired,
   commentsNumber: PropTypes.number.isRequired,

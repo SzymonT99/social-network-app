@@ -42,9 +42,21 @@ const commentPost = (postId, comment) => {
   });
 };
 
+const editPostComment = (commentId, comment) => {
+  return fetch(endpoints.editComment.replace('{commentId}', commentId), {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify({ commentText: comment }),
+  });
+};
+
 export default {
   createPost,
   likePost,
   dislikePost,
   commentPost,
+  editPostComment,
 };

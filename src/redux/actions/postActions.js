@@ -1,6 +1,5 @@
 import postTypes from '../types/postTypes';
 import postService from '../../services/postService';
-import { push } from 'react-router-redux';
 import { showNotification } from './notificationActions';
 
 export const createPost = (postFormData) => (dispatch, getState) => {
@@ -31,8 +30,8 @@ export const createPost = (postFormData) => (dispatch, getState) => {
           });
         });
       } else if (response.status === 401) {
-        dispatch(push('/auth/login'));
-        dispatch(showNotification('warning', 'Nieautoryzowany dostęp'));
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
       } else {
@@ -67,8 +66,8 @@ export const likePost = (postId) => (dispatch, getState) => {
         });
         dispatch(showNotification('success', 'Polubiono post'));
       } else if (response.status === 401) {
-        dispatch(push('/auth/login'));
-        dispatch(showNotification('warning', 'Nieautoryzowany dostęp'));
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 409) {
         dispatch(
           showNotification('warning', 'Użytkownik już polubił ten post')
@@ -95,7 +94,7 @@ export const dislikePost = (postId) => (dispatch, getState) => {
         });
         dispatch(showNotification('success', 'Usunięto polubienie'));
       } else if (response.status === 401) {
-        dispatch(push('/auth/login'));
+        window.location.href = '/auth/login';
         dispatch(showNotification('warning', 'Nieautoryzowany dostęp'));
       } else if (response.status === 409) {
         dispatch(
@@ -125,8 +124,32 @@ export const commentPost = (postId, comment) => (dispatch) => {
           });
         });
       } else if (response.status === 401) {
-        dispatch(push('/auth/login'));
-        dispatch(showNotification('warning', 'Nieautoryzowany dostęp'));
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Błędny format danych'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const editPostComment = (postId, commentId, comment) => (dispatch) => {
+  return postService
+    .editPostComment(commentId, comment)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(showNotification('success', 'Komentarz został zmieniony'));
+        dispatch({
+          type: postTypes.EDIT_POST_COMMENT,
+          payload: { postId: postId, commentId: commentId, comment: comment },
+        });
+      } else if (response.status === 401) {
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
       } else {
