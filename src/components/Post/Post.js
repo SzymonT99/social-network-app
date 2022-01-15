@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { withStyles } from '@mui/styles';
 import styles from './post-jss';
@@ -124,6 +124,7 @@ const Post = (props) => {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
       dispatch(commentPost(postId, comment));
+      setComment('');
     }
   };
 
@@ -160,7 +161,7 @@ const Post = (props) => {
           </Typography>
         </div>
       </div>
-      <Divider className={classes.divider} />
+      <Divider />
       <div className={classes.postContent}>
         <Typography variant="body1" component="div">
           {content}
@@ -180,7 +181,7 @@ const Post = (props) => {
           ))}
         </ImageList>
       )}
-      <Divider className={classes.divider} />
+      <Divider />
       <div className={classes.postReactionContainer}>
         <Button
           onClick={() => postReaction()}
@@ -224,7 +225,7 @@ const Post = (props) => {
           {'Udostępnienia | ' + sharesNumber}
         </Typography>
       </div>
-      <Divider className={classes.divider} />
+      <Divider />
       {comments.map((comment) => (
         <PostComment
           createdDate={Date.parse(comment.createdAt)}
@@ -235,6 +236,7 @@ const Post = (props) => {
           }
           userStatus={comment.commentAuthor.activityStatus}
           content={comment.text}
+          authorId={comment.commentAuthor.userId}
         />
       ))}
       {comments.length !== 0 && (
@@ -257,6 +259,7 @@ const Post = (props) => {
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
               addComment();
+              e.preventDefault();
             }
           }}
         />

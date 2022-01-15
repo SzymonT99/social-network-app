@@ -2,7 +2,6 @@ import postTypes from '../types/postTypes';
 import postService from '../../services/postService';
 import { push } from 'react-router-redux';
 import { showNotification } from './notificationActions';
-import { getActivityBoard } from './userActivityActions';
 
 export const createPost = (postFormData) => (dispatch, getState) => {
   return postService
@@ -118,9 +117,13 @@ export const commentPost = (postId, comment) => (dispatch) => {
     .commentPost(postId, comment)
     .then((response) => {
       if (response.status === 201) {
-        dispatch({ type: postTypes.COMMENT_POST });
-        dispatch(getActivityBoard());
         dispatch(showNotification('success', 'Dodano komentarz'));
+        return response.json().then((data) => {
+          dispatch({
+            type: postTypes.COMMENT_POST,
+            payload: { postId: postId, comment: data },
+          });
+        });
       } else if (response.status === 401) {
         dispatch(push('/auth/login'));
         dispatch(showNotification('warning', 'Nieautoryzowany dostęp'));

@@ -51,6 +51,25 @@ const userActivityReducer = (state = initialState, action) => {
             : boardItem
         ),
       };
+    case postTypes.COMMENT_POST:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  comments: [
+                    action.payload.comment,
+                    ...boardItem.activity.comments,
+                  ],
+                },
+              }
+            : boardItem
+        ),
+      };
     case activityTypes.CLEAR_ALL:
       return initialState;
     default:

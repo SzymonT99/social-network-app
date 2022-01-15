@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './postComment-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import { Badge, TextField } from '@mui/material';
+import { Badge, Button, TextField } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
+import { useSelector } from 'react-redux';
 
 const formatTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate) / 1000;
@@ -41,17 +42,21 @@ const activeStatus = {
 };
 
 const PostComment = (props) => {
-  const { classes, content, authorName, createdDate, userStatus } = props;
+  const { classes, content, authorName, createdDate, userStatus, authorId } =
+    props;
+
+  const userId = useSelector((state) => state.auth.user.userId);
 
   return (
     <div className={classes.commentContainer}>
-      <div className={classes.authorContainer}>
+      <div>
         <Badge
           variant="dot"
           overlap="circular"
           sx={{
             marginRight: '20px',
             '& .MuiBadge-badge': {
+              position: 'absolute',
               backgroundColor: activeStatus[userStatus],
             },
           }}
@@ -59,26 +64,46 @@ const PostComment = (props) => {
           <img
             src={defaultUserPhoto}
             alt="Zdjęcie użytkownika"
-            className={classes.userPhoto}
+            className={classes.userPhotoSmall}
           />
         </Badge>
-        <div>
-          <Typography variant="subtitle1" component="div" fontWeight="bold">
-            {authorName}
-            <span className={classes.actionName}> dodał komentarz</span>
-          </Typography>
-          <Typography variant="body2" component="div">
-            {formatTime(createdDate)}
+      </div>
+      <div className={classes.commentContent}>
+        <div className={classes.commentText}>
+          <Typography variant="subtitle2" component="div" fontWeight="bold">
+            <span className={classes.authorName}>{authorName}</span>
+            <span className={classes.commentTime}>
+              {' ' + formatTime(createdDate)}
+            </span>
+            <Typography variant="body1" component="div">
+              {content}
+            </Typography>
           </Typography>
         </div>
+        <div className={classes.commentActions}>
+          <Button
+            style={{ display: 'block' }}
+            className={classes.commentActionItem}
+            variant="text"
+          >
+            Lubię to
+          </Button>
+          {authorId === userId && (
+            <div>
+              <Button
+                className={classes.commentActionItem}
+                style={{ marginRight: '20px' }}
+                variant="text"
+              >
+                Edytuj
+              </Button>
+              <Button className={classes.commentActionItem} variant="text">
+                Usuń
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
-      <TextField
-        fullWidth
-        multiline
-        maxRows={5}
-        className={classes.commentInput}
-        value={content}
-      />
     </div>
   );
 };
@@ -89,6 +114,7 @@ PostComment.propTypes = {
   authorName: PropTypes.string.isRequired,
   createdDate: PropTypes.number.isRequired,
   userStatus: PropTypes.string.isRequired,
+  authorId: PropTypes.number.isRequired,
 };
 
 export default withStyles(styles)(PostComment);
