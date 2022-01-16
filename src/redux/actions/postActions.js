@@ -1,6 +1,7 @@
 import postTypes from '../types/postTypes';
 import postService from '../../services/postService';
 import { showNotification } from './notificationActions';
+import { logoutUser } from './authActions';
 
 export const createPost = (postFormData) => (dispatch, getState) => {
   return postService
@@ -31,6 +32,7 @@ export const createPost = (postFormData) => (dispatch, getState) => {
         });
       } else if (response.status === 401) {
         window.location.href = '/auth/login';
+        dispatch(logoutUser());
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
@@ -66,6 +68,7 @@ export const likePost = (postId) => (dispatch, getState) => {
         });
         dispatch(showNotification('success', 'Polubiono post'));
       } else if (response.status === 401) {
+        dispatch(logoutUser());
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 409) {
@@ -94,14 +97,13 @@ export const dislikePost = (postId) => (dispatch, getState) => {
         });
         dispatch(showNotification('success', 'Usunięto polubienie'));
       } else if (response.status === 401) {
+        dispatch(logoutUser());
         window.location.href = '/auth/login';
         dispatch(showNotification('warning', 'Nieautoryzowany dostęp'));
       } else if (response.status === 409) {
         dispatch(
           showNotification('warning', 'Użytkownik nie lubił tego postu')
         );
-      } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Błędny format danych'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -124,6 +126,7 @@ export const commentPost = (postId, comment) => (dispatch) => {
           });
         });
       } else if (response.status === 401) {
+        dispatch(logoutUser());
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
@@ -148,10 +151,34 @@ export const editPostComment = (postId, commentId, comment) => (dispatch) => {
           payload: { postId: postId, commentId: commentId, comment: comment },
         });
       } else if (response.status === 401) {
+        dispatch(logoutUser());
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const deletePostComment = (postId, commentId) => (dispatch) => {
+  return postService
+    .deletePostComment(commentId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(showNotification('success', 'Komentarz został usunięty'));
+        dispatch({
+          type: postTypes.DELETE_POST_COMMENT,
+          payload: { postId: postId, commentId: commentId },
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }

@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { showNotification } from '../../redux/actions/notificationActions';
 import PostComment from '../PostComment/PostComment';
+import { getActivityBoard } from '../../redux/actions/userActivityActions';
 
 const formatPostTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -226,22 +227,24 @@ const Post = (props) => {
         </Typography>
       </div>
       <Divider />
-      {comments.map((comment) => (
-        <PostComment
-          key={comment.comentId}
-          commentId={comment.commentId}
-          postId={postId}
-          createdDate={new Date(comment.createdAt)}
-          authorName={
-            comment.commentAuthor.firstName +
-            ' ' +
-            comment.commentAuthor.lastName
-          }
-          userStatus={comment.commentAuthor.activityStatus}
-          content={comment.text}
-          authorId={comment.commentAuthor.userId}
-        />
-      ))}
+      {comments.map((comment) => {
+        return (
+          <PostComment
+            key={comment.commentId}
+            commentId={comment.commentId}
+            postId={postId}
+            createdDate={new Date(comment.createdAt)}
+            authorName={
+              comment.commentAuthor.firstName +
+              ' ' +
+              comment.commentAuthor.lastName
+            }
+            userStatus={comment.commentAuthor.activityStatus}
+            content={comment.text}
+            authorId={comment.commentAuthor.userId}
+          />
+        );
+      })}
       {comments.length !== 0 && (
         <Divider className={classes.divider} style={{ marginTop: '15px' }} />
       )}

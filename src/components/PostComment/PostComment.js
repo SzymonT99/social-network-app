@@ -3,11 +3,15 @@ import { withStyles } from '@mui/styles';
 import styles from './postComment-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import { Badge, Button, TextField } from '@mui/material';
+import { Badge, Button, Divider, TextField } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import { showNotification } from '../../redux/actions/notificationActions';
-import { editPostComment } from '../../redux/actions/postActions';
+import {
+  deletePostComment,
+  editPostComment,
+} from '../../redux/actions/postActions';
+import Popup from '../Popup/Popup';
 
 const formatTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -77,6 +81,7 @@ const PostComment = (props) => {
 
   const [commentText, setCommentText] = useState(content);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleCommentChange = (event) => {
     setCommentText(event.target.value);
@@ -93,8 +98,17 @@ const PostComment = (props) => {
     }
   };
 
-  const handleEditCommentClick = () => {
+  const editCommentClick = () => {
     setIsDisabled(false);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const deleteCommentClick = () => {
+    dispatch(deletePostComment(postId, commentId));
+    setOpenDialog(false);
   };
 
   useEffect(() => {
@@ -177,17 +191,53 @@ const PostComment = (props) => {
                 className={classes.commentActionItem}
                 style={{ marginRight: '20px' }}
                 variant="text"
-                onClick={handleEditCommentClick}
+                onClick={editCommentClick}
               >
                 Edytuj
               </Button>
-              <Button className={classes.commentActionItem} variant="text">
+              <Button
+                className={classes.commentActionItem}
+                variant="text"
+                onClick={() => setOpenDialog(true)}
+              >
                 Usuń
               </Button>
             </div>
           )}
         </div>
       </div>
+      <Popup
+        open={openDialog}
+        type="confirmation"
+        title="Usuwanie komentarza"
+        onClose={handleCloseDialog}
+      >
+        <>
+          <Typography variant="h6" style={{ marginBottom: '15px' }}>
+            Czy napewno chcesz usunąć wskazany komentarz?
+          </Typography>
+          <Divider />
+          <div className={classes.dialogActionContainer}>
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.dialogActionBtn}
+              style={{ marginRight: '20px' }}
+              onClick={deleteCommentClick}
+            >
+              Potwierdź
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.dialogActionBtn}
+              onClick={() => setOpenDialog(false)}
+            >
+              Anuluj
+            </Button>
+          </div>
+        </>
+      </Popup>
     </div>
   );
 };

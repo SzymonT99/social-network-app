@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Popup = (props) => {
-  const { children, classes, type, open, handleClose, title } = props;
+  const { children, classes, type, open, onClose, title } = props;
 
   const widthValues = {
     createPost: '43%',
@@ -15,6 +15,7 @@ const Popup = (props) => {
 
   return (
     <Dialog
+      onBackdropClick={onClose}
       open={open}
       fullWidth
       className={classes.dialogContainer}
@@ -27,7 +28,7 @@ const Popup = (props) => {
           <Typography variant="h4" fontWeight="bold">
             {title}
           </Typography>
-          <Button className={classes.closeButton} onClick={() => handleClose()}>
+          <Button className={classes.closeButton} onClick={() => onClose()}>
             <CloseIcon />
           </Button>
         </div>
@@ -42,7 +43,7 @@ Popup.propTypes = {
   children: PropTypes.element.isRequired,
   type: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
 };
 

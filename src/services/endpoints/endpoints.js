@@ -9,5 +9,5 @@ export const endpoints = {
   likePost: baseUrl + '/api/posts/{postId}/like',
   dislikePost: baseUrl + '/api/posts/{postId}/liked',
   commentPost: baseUrl + '/api/posts/{postId}/comments',
-  editComment: baseUrl + '/api/posts/comments/{commentId}',
+  manageComment: baseUrl + '/api/posts/comments/{commentId}',
 };

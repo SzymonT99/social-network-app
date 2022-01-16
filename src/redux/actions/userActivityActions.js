@@ -1,6 +1,7 @@
 import activityTypes from '../types/userActivityTypes';
 import activityService from '../../services/activityService';
 import { showNotification } from './notificationActions';
+import { logoutUser } from './authActions';
 
 export const getActivityBoard = () => (dispatch) => {
   return activityService
@@ -16,6 +17,7 @@ export const getActivityBoard = () => (dispatch) => {
           });
         });
       } else if (response.status === 401) {
+        dispatch(logoutUser());
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {

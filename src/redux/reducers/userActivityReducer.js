@@ -90,6 +90,24 @@ const userActivityReducer = (state = initialState, action) => {
             : boardItem
         ),
       };
+    case postTypes.DELETE_POST_COMMENT:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  comments: boardItem.activity.comments.filter(
+                    (comment) => comment.commentId !== action.payload.commentId
+                  ),
+                },
+              }
+            : boardItem
+        ),
+      };
     case activityTypes.CLEAR_ALL:
       return initialState;
     default:

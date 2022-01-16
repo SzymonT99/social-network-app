@@ -68,7 +68,7 @@ const ActivityBoard = (props) => {
             open={openPostCreation}
             type="createPost"
             title="Utwórz post"
-            handleClose={handleClosePostCreation}
+            onClose={handleClosePostCreation}
           >
             <PostForm closePopup={handleClosePostCreation} />
           </Popup>
@@ -94,7 +94,7 @@ const ActivityBoard = (props) => {
                   likes={item.activity.likes}
                 />
               );
-            } else return <div />;
+            } else return <div key={id} />;
           })}
         </div>
       </div>

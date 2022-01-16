@@ -43,7 +43,7 @@ const commentPost = (postId, comment) => {
 };
 
 const editPostComment = (commentId, comment) => {
-  return fetch(endpoints.editComment.replace('{commentId}', commentId), {
+  return fetch(endpoints.manageComment.replace('{commentId}', commentId), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -53,10 +53,21 @@ const editPostComment = (commentId, comment) => {
   });
 };
 
+const deletePostComment = (commentId) => {
+  return fetch(endpoints.manageComment.replace('{commentId}', commentId), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   createPost,
   likePost,
   dislikePost,
   commentPost,
   editPostComment,
+  deletePostComment,
 };
