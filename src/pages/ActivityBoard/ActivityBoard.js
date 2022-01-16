@@ -76,7 +76,7 @@ const ActivityBoard = (props) => {
             if (item.activityType === 'CREATE_POST') {
               return (
                 <Post
-                  key={id}
+                  key={item.activity.postId}
                   authorName={
                     item.activityAuthor.firstName +
                     ' ' +
@@ -94,7 +94,7 @@ const ActivityBoard = (props) => {
                   likes={item.activity.likes}
                 />
               );
-            } else return <div key={id} />;
+            }
           })}
         </div>
       </div>

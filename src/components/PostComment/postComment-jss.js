@@ -94,6 +94,24 @@ const styles = (theme) => ({
       fontWeight: 500,
     },
   },
+  likesContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  likeItem: {
+    '&.MuiSvgIcon-root': {
+      backgroundColor: theme.palette.secondary.main,
+      padding: '4px',
+      borderRadius: '40px',
+      fontSize: '24px',
+      marginRight: '6px',
+    },
+  },
+  likesCounter: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: '10px',
+  },
 });
 
 export default styles;

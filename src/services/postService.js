@@ -63,6 +63,26 @@ const deletePostComment = (commentId) => {
   });
 };
 
+const likePostComment = (commentId) => {
+  return fetch(endpoints.likePostComment.replace('{commentId}', commentId), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const dislikePostComment = (commentId) => {
+  return fetch(endpoints.dislikePostComment.replace('{commentId}', commentId), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   createPost,
   likePost,
@@ -70,4 +90,6 @@ export default {
   commentPost,
   editPostComment,
   deletePostComment,
+  likePostComment,
+  dislikePostComment,
 };

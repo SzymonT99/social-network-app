@@ -10,6 +10,7 @@ import {
   Divider,
   ImageList,
   ImageListItem,
+  Link,
   TextField,
 } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
@@ -25,7 +26,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { showNotification } from '../../redux/actions/notificationActions';
 import PostComment from '../PostComment/PostComment';
-import { getActivityBoard } from '../../redux/actions/userActivityActions';
 
 const formatPostTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -75,6 +75,8 @@ const Post = (props) => {
   const userId = useSelector((state) => state.auth.user.userId);
 
   const [comment, setComment] = useState('');
+  const [commentsDisplayed, setCommentsDisplayed] = useState(false);
+  const [allCommentsShown, setAllCommentsShown] = useState(false);
 
   const postIsLiked = (likes, userId) => {
     let state = false;
@@ -125,7 +127,16 @@ const Post = (props) => {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
       dispatch(commentPost(postId, comment));
+      setCommentsDisplayed(true);
       setComment('');
+    }
+  };
+
+  const specifyCommentsVisibility = () => {
+    if (commentsDisplayed) {
+      setCommentsDisplayed(false);
+    } else {
+      setCommentsDisplayed(true);
     }
   };
 
@@ -185,11 +196,11 @@ const Post = (props) => {
       <Divider />
       <div className={classes.postReactionContainer}>
         <Button
-          onClick={() => postReaction()}
+          onClick={postReaction}
           className={
             postIsLiked(likes, userId)
               ? classes.likedBtnClicked
-              : classes.likedBtn
+              : classes.postBtn
           }
         >
           <Typography
@@ -207,16 +218,18 @@ const Post = (props) => {
             {'Lubię to | ' + likesNumber}
           </Typography>
         </Button>
-        <Typography
-          variant="subtitle2"
-          component="div"
-          className={classes.postReactionItem}
-        >
-          <ChatBubbleOutlineOutlinedIcon
-            sx={{ fontSize: '35px', marginRight: '6px' }}
-          />
-          {'Komentarze | ' + commentsNumber}
-        </Typography>
+        <Button className={classes.postBtn} onClick={specifyCommentsVisibility}>
+          <Typography
+            variant="subtitle2"
+            component="div"
+            className={classes.postReactionItem}
+          >
+            <ChatBubbleOutlineOutlinedIcon
+              sx={{ fontSize: '35px', marginRight: '6px' }}
+            />
+            {'Komentarze | ' + commentsNumber}
+          </Typography>
+        </Button>
         <Typography
           variant="subtitle2"
           component="div"
@@ -227,25 +240,44 @@ const Post = (props) => {
         </Typography>
       </div>
       <Divider />
-      {comments.map((comment) => {
-        return (
-          <PostComment
-            key={comment.commentId}
-            commentId={comment.commentId}
-            postId={postId}
-            createdDate={new Date(comment.createdAt)}
-            authorName={
-              comment.commentAuthor.firstName +
-              ' ' +
-              comment.commentAuthor.lastName
-            }
-            userStatus={comment.commentAuthor.activityStatus}
-            content={comment.text}
-            authorId={comment.commentAuthor.userId}
-          />
-        );
-      })}
-      {comments.length !== 0 && (
+      {commentsDisplayed &&
+        comments.map((comment, index) => {
+          let numberShowedItems = allCommentsShown ? comments.length + 1 : 2;
+          if (index < numberShowedItems) {
+            return (
+              <PostComment
+                key={comment.commentId}
+                commentId={comment.commentId}
+                postId={postId}
+                createdDate={new Date(comment.createdAt)}
+                authorName={
+                  comment.commentAuthor.firstName +
+                  ' ' +
+                  comment.commentAuthor.lastName
+                }
+                userStatus={comment.commentAuthor.activityStatus}
+                content={comment.text}
+                authorId={comment.commentAuthor.userId}
+                likes={comment.userLikes}
+              />
+            );
+          }
+        })}
+      {allCommentsShown === false &&
+        commentsDisplayed === true &&
+        comments.length > 2 && (
+          <div className={classes.moreCommentsContainer}>
+            <Link
+              component="button"
+              variant="body1"
+              onClick={() => setAllCommentsShown(true)}
+              className={classes.moreCommentsLink}
+            >
+              Zobacz więcej komentarzy
+            </Link>
+          </div>
+        )}
+      {comments.length !== 0 && commentsDisplayed && (
         <Divider className={classes.divider} style={{ marginTop: '15px' }} />
       )}
       <div className={classes.addCommentContainer}>

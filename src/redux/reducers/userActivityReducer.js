@@ -108,6 +108,58 @@ const userActivityReducer = (state = initialState, action) => {
             : boardItem
         ),
       };
+    case postTypes.LIKE_POST_COMMENT:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  comments: boardItem.activity.comments.map((comment) =>
+                    comment.commentId === action.payload.commentId
+                      ? {
+                          ...comment,
+                          userLikes: [
+                            ...comment.userLikes,
+                            action.payload.likedUser,
+                          ],
+                        }
+                      : comment
+                  ),
+                },
+              }
+            : boardItem
+        ),
+      };
+    case postTypes.DISLIKE_POST_COMMENT:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  comments: boardItem.activity.comments.map((comment) =>
+                    comment.commentId === action.payload.commentId
+                      ? {
+                          ...comment,
+                          userLikes: comment.userLikes.filter(
+                            (userLiked) =>
+                              userLiked.userId !== action.payload.userId
+                          ),
+                        }
+                      : comment
+                  ),
+                },
+              }
+            : boardItem
+        ),
+      };
     case activityTypes.CLEAR_ALL:
       return initialState;
     default:

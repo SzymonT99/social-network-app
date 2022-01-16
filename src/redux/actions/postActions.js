@@ -61,7 +61,6 @@ export const likePost = (postId) => (dispatch, getState) => {
           },
           date: new Date(),
         };
-        console.log(liked);
         dispatch({
           type: postTypes.LIKE_POST,
           payload: { postId: postId, liked: liked },
@@ -95,7 +94,7 @@ export const dislikePost = (postId) => (dispatch, getState) => {
           type: postTypes.DISLIKE_POST,
           payload: { postId: postId, userId: getState().auth.user.userId },
         });
-        dispatch(showNotification('success', 'Usunięto polubienie'));
+        dispatch(showNotification('success', 'Usunięto polubienie postu'));
       } else if (response.status === 401) {
         dispatch(logoutUser());
         window.location.href = '/auth/login';
@@ -187,3 +186,76 @@ export const deletePostComment = (postId, commentId) => (dispatch) => {
       console.log(error);
     });
 };
+
+export const likePostComment = (postId, commentId) => (dispatch, getState) => {
+  return postService
+    .likePostComment(commentId)
+    .then((response) => {
+      if (response.status === 201) {
+        const likedUser = {
+          userId: getState().auth.user.userId,
+          activityStatus: 'ONLINE',
+          email: getState().profile.userProfile.email,
+          firstName: getState().profile.userProfile.firstName,
+          lastName: getState().profile.userProfile.lastName,
+          profilePhoto: getState().profile.userProfile.profilePhoto,
+        };
+        dispatch({
+          type: postTypes.LIKE_POST_COMMENT,
+          payload: {
+            postId: postId,
+            commentId: commentId,
+            likedUser: likedUser,
+          },
+        });
+        dispatch(showNotification('success', 'Polubiono komentarz'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 409) {
+        dispatch(
+          showNotification('warning', 'Użytkownik już polubił ten komentarz')
+        );
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const dislikePostComment =
+  (postId, commentId) => (dispatch, getState) => {
+    return postService
+      .dislikePostComment(commentId)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(
+            showNotification('success', 'Usunięto polubienie komentarza')
+          );
+          dispatch({
+            type: postTypes.DISLIKE_POST_COMMENT,
+            payload: {
+              postId: postId,
+              commentId: commentId,
+              userId: getState().auth.user.userId,
+            },
+          });
+        } else if (response.status === 401) {
+          dispatch(logoutUser());
+          window.location.href = '/auth/login';
+          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+        } else if (response.status === 409) {
+          dispatch(
+            showNotification('warning', 'Użytkownik nie lubił tego komentarza')
+          );
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };

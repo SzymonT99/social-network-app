@@ -9,9 +9,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showNotification } from '../../redux/actions/notificationActions';
 import {
   deletePostComment,
+  dislikePostComment,
   editPostComment,
+  likePostComment,
 } from '../../redux/actions/postActions';
 import Popup from '../Popup/Popup';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
 const formatTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -72,6 +75,7 @@ const PostComment = (props) => {
     createdDate,
     userStatus,
     authorId,
+    likes,
   } = props;
 
   const userId = useSelector((state) => state.auth.user.userId);
@@ -109,6 +113,27 @@ const PostComment = (props) => {
   const deleteCommentClick = () => {
     dispatch(deletePostComment(postId, commentId));
     setOpenDialog(false);
+  };
+
+  const commentIsLiked = (likes, userId) => {
+    let state = false;
+    if (likes === null) {
+      return false;
+    }
+    likes.forEach((likedUser) => {
+      if (likedUser.userId === userId) {
+        state = true;
+      }
+    });
+    return state;
+  };
+
+  const commentReaction = () => {
+    if (!commentIsLiked(likes, userId)) {
+      dispatch(likePostComment(postId, commentId));
+    } else {
+      dispatch(dislikePostComment(postId, commentId));
+    }
   };
 
   useEffect(() => {
@@ -178,13 +203,26 @@ const PostComment = (props) => {
           </div>
         )}
         <div className={classes.commentActions}>
-          <Button
-            style={{ display: 'block' }}
-            className={classes.commentActionItem}
-            variant="text"
-          >
-            Lubię to
-          </Button>
+          <div className={classes.likesContainer}>
+            <Button
+              style={{ display: 'block' }}
+              className={classes.commentActionItem}
+              variant="text"
+              onClick={commentReaction}
+            >
+              {commentIsLiked(likes, userId) ? 'Nie lubię tego' : 'Lubię to'}
+            </Button>
+            {likes !== null && likes.length !== 0 && (
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                className={classes.likesCounter}
+              >
+                <ThumbUpIcon color="primary" className={classes.likeItem} />
+                {likes.length}
+              </Typography>
+            )}
+          </div>
           {authorId === userId && (
             <div>
               <Button
@@ -251,6 +289,10 @@ PostComment.propTypes = {
   createdDate: PropTypes.object.isRequired,
   userStatus: PropTypes.string.isRequired,
   authorId: PropTypes.number.isRequired,
+};
+
+PostComment.defaultProps = {
+  likes: [],
 };
 
 export default withStyles(styles)(PostComment);
