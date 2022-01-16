@@ -42,9 +42,54 @@ const commentPost = (postId, comment) => {
   });
 };
 
+const editPostComment = (commentId, comment) => {
+  return fetch(endpoints.manageComment.replace('{commentId}', commentId), {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify({ commentText: comment }),
+  });
+};
+
+const deletePostComment = (commentId) => {
+  return fetch(endpoints.manageComment.replace('{commentId}', commentId), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const likePostComment = (commentId) => {
+  return fetch(endpoints.likePostComment.replace('{commentId}', commentId), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const dislikePostComment = (commentId) => {
+  return fetch(endpoints.dislikePostComment.replace('{commentId}', commentId), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   createPost,
   likePost,
   dislikePost,
   commentPost,
+  editPostComment,
+  deletePostComment,
+  likePostComment,
+  dislikePostComment,
 };

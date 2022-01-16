@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { withStyles } from '@mui/styles';
 import styles from './post-jss';
@@ -10,6 +10,7 @@ import {
   Divider,
   ImageList,
   ImageListItem,
+  Link,
   TextField,
 } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
@@ -74,6 +75,8 @@ const Post = (props) => {
   const userId = useSelector((state) => state.auth.user.userId);
 
   const [comment, setComment] = useState('');
+  const [commentsDisplayed, setCommentsDisplayed] = useState(false);
+  const [allCommentsShown, setAllCommentsShown] = useState(false);
 
   const postIsLiked = (likes, userId) => {
     let state = false;
@@ -124,6 +127,16 @@ const Post = (props) => {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
       dispatch(commentPost(postId, comment));
+      setCommentsDisplayed(true);
+      setComment('');
+    }
+  };
+
+  const specifyCommentsVisibility = () => {
+    if (commentsDisplayed) {
+      setCommentsDisplayed(false);
+    } else {
+      setCommentsDisplayed(true);
     }
   };
 
@@ -160,7 +173,7 @@ const Post = (props) => {
           </Typography>
         </div>
       </div>
-      <Divider className={classes.divider} />
+      <Divider />
       <div className={classes.postContent}>
         <Typography variant="body1" component="div">
           {content}
@@ -180,14 +193,14 @@ const Post = (props) => {
           ))}
         </ImageList>
       )}
-      <Divider className={classes.divider} />
+      <Divider />
       <div className={classes.postReactionContainer}>
         <Button
-          onClick={() => postReaction()}
+          onClick={postReaction}
           className={
             postIsLiked(likes, userId)
               ? classes.likedBtnClicked
-              : classes.likedBtn
+              : classes.postBtn
           }
         >
           <Typography
@@ -205,16 +218,18 @@ const Post = (props) => {
             {'Lubię to | ' + likesNumber}
           </Typography>
         </Button>
-        <Typography
-          variant="subtitle2"
-          component="div"
-          className={classes.postReactionItem}
-        >
-          <ChatBubbleOutlineOutlinedIcon
-            sx={{ fontSize: '35px', marginRight: '6px' }}
-          />
-          {'Komentarze | ' + commentsNumber}
-        </Typography>
+        <Button className={classes.postBtn} onClick={specifyCommentsVisibility}>
+          <Typography
+            variant="subtitle2"
+            component="div"
+            className={classes.postReactionItem}
+          >
+            <ChatBubbleOutlineOutlinedIcon
+              sx={{ fontSize: '35px', marginRight: '6px' }}
+            />
+            {'Komentarze | ' + commentsNumber}
+          </Typography>
+        </Button>
         <Typography
           variant="subtitle2"
           component="div"
@@ -224,20 +239,45 @@ const Post = (props) => {
           {'Udostępnienia | ' + sharesNumber}
         </Typography>
       </div>
-      <Divider className={classes.divider} />
-      {comments.map((comment) => (
-        <PostComment
-          createdDate={Date.parse(comment.createdAt)}
-          authorName={
-            comment.commentAuthor.firstName +
-            ' ' +
-            comment.commentAuthor.lastName
+      <Divider />
+      {commentsDisplayed &&
+        comments.map((comment, index) => {
+          let numberShowedItems = allCommentsShown ? comments.length + 1 : 2;
+          if (index < numberShowedItems) {
+            return (
+              <PostComment
+                key={comment.commentId}
+                commentId={comment.commentId}
+                postId={postId}
+                createdDate={new Date(comment.createdAt)}
+                authorName={
+                  comment.commentAuthor.firstName +
+                  ' ' +
+                  comment.commentAuthor.lastName
+                }
+                userStatus={comment.commentAuthor.activityStatus}
+                content={comment.text}
+                authorId={comment.commentAuthor.userId}
+                likes={comment.userLikes}
+              />
+            );
           }
-          userStatus={comment.commentAuthor.activityStatus}
-          content={comment.text}
-        />
-      ))}
-      {comments.length !== 0 && (
+        })}
+      {allCommentsShown === false &&
+        commentsDisplayed === true &&
+        comments.length > 2 && (
+          <div className={classes.moreCommentsContainer}>
+            <Link
+              component="button"
+              variant="body1"
+              onClick={() => setAllCommentsShown(true)}
+              className={classes.moreCommentsLink}
+            >
+              Zobacz więcej komentarzy
+            </Link>
+          </div>
+        )}
+      {comments.length !== 0 && commentsDisplayed && (
         <Divider className={classes.divider} style={{ marginTop: '15px' }} />
       )}
       <div className={classes.addCommentContainer}>
@@ -257,6 +297,7 @@ const Post = (props) => {
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
               addComment();
+              e.preventDefault();
             }
           }}
         />
@@ -268,7 +309,7 @@ const Post = (props) => {
 Post.propTypes = {
   classes: PropTypes.object.isRequired,
   authorName: PropTypes.string.isRequired,
-  createdDate: PropTypes.number.isRequired,
+  createdDate: PropTypes.object.isRequired,
   content: PropTypes.string.isRequired,
   likesNumber: PropTypes.number.isRequired,
   commentsNumber: PropTypes.number.isRequired,

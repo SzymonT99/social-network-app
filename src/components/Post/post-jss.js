@@ -72,7 +72,7 @@ const styles = (theme) => ({
       },
     },
   },
-  likedBtn: {
+  postBtn: {
     '&.MuiButton-root': {
       textTransform: 'none',
     },
@@ -83,6 +83,21 @@ const styles = (theme) => ({
       textTransform: 'none',
       '&:hover': {
         backgroundColor: '#5fe8ce',
+      },
+    },
+  },
+  moreCommentsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '15px',
+  },
+  moreCommentsLink: {
+    '&.MuiLink-root': {
+      textDecoration: 'none',
+      alignSelf: 'center',
+      '&:hover': {
+        textDecoration: 'underline',
       },
     },
   },

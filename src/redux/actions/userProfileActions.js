@@ -1,7 +1,7 @@
 import userProfileTypes from '../types/userProfileTypes';
 import userProfileService from '../../services/userService';
-import { push } from 'react-router-redux';
 import { showNotification } from './notificationActions';
+import { logoutUser } from './authActions';
 
 export const getUserProfile = (userId) => (dispatch) => {
   return userProfileService
@@ -15,8 +15,9 @@ export const getUserProfile = (userId) => (dispatch) => {
           });
         });
       } else if (response.status === 401) {
-        dispatch(push('/auth/login'));
-        dispatch(showNotification('error', 'Niepoprawny login lub hasło'));
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
