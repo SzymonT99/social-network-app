@@ -15,6 +15,7 @@ import {
 } from '../../redux/actions/postActions';
 import Popup from '../Popup/Popup';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import UsersListPopup from '../UsersListPopup/UsersListPopup';
 
 const formatTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -85,7 +86,8 @@ const PostComment = (props) => {
 
   const [commentText, setCommentText] = useState(content);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  const [openLikesPopup, setOpenLikesPopup] = useState(false);
 
   const handleCommentChange = (event) => {
     setCommentText(event.target.value);
@@ -106,13 +108,17 @@ const PostComment = (props) => {
     setIsDisabled(false);
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleCloseDeletePopup = () => {
+    setOpenDeletePopup(false);
+  };
+
+  const handleCloseLikesPopup = () => {
+    setOpenLikesPopup(false);
   };
 
   const deleteCommentClick = () => {
     dispatch(deletePostComment(postId, commentId));
-    setOpenDialog(false);
+    setOpenDeletePopup(false);
   };
 
   const commentIsLiked = (likes, userId) => {
@@ -217,6 +223,7 @@ const PostComment = (props) => {
                 variant="body1"
                 fontWeight="bold"
                 className={classes.likesCounter}
+                onClick={() => setOpenLikesPopup(true)}
               >
                 <ThumbUpIcon color="primary" className={classes.likeItem} />
                 {likes.length}
@@ -236,7 +243,7 @@ const PostComment = (props) => {
               <Button
                 className={classes.commentActionItem}
                 variant="text"
-                onClick={() => setOpenDialog(true)}
+                onClick={handleCloseDeletePopup}
               >
                 Usuń
               </Button>
@@ -245,10 +252,10 @@ const PostComment = (props) => {
         </div>
       </div>
       <Popup
-        open={openDialog}
+        open={openDeletePopup}
         type="confirmation"
         title="Usuwanie komentarza"
-        onClose={handleCloseDialog}
+        onClose={handleCloseDeletePopup}
       >
         <>
           <Typography variant="h6" style={{ marginBottom: '15px' }}>
@@ -269,13 +276,19 @@ const PostComment = (props) => {
               variant="contained"
               color="primary"
               className={classes.dialogActionBtn}
-              onClick={() => setOpenDialog(false)}
+              onClick={handleCloseDeletePopup}
             >
               Anuluj
             </Button>
           </div>
         </>
       </Popup>
+      <UsersListPopup
+        title="Polubienia użytkowników"
+        open={openLikesPopup}
+        users={likes}
+        onClose={handleCloseLikesPopup}
+      />
     </div>
   );
 };

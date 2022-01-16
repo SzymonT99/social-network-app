@@ -111,6 +111,9 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     paddingLeft: '10px',
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
 });
 
