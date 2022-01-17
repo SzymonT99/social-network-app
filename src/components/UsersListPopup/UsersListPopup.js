@@ -23,6 +23,7 @@ const UsersListPopup = (props) => {
       <List sx={{ pt: 0 }}>
         {users.map((user) => (
           <ListItemButton
+            key={user.userId}
             onClick={() => history.push('app/profile/' + user.userId)}
             sx={{ marginLeft: '10px' }}
           >

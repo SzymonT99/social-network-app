@@ -11,6 +11,25 @@ const createPost = (formData) => {
   });
 };
 
+const editPost = (postId, formData) => {
+  return fetch(endpoints.managePost.replace('{postId}', postId), {
+    method: 'PUT',
+    headers: {
+      Authorization: authorization(),
+    },
+    body: formData,
+  });
+};
+
+const deletePost = (postId) => {
+  return fetch(endpoints.managePost.replace('{postId}', postId) + '/archive', {
+    method: 'DELETE',
+    headers: {
+      Authorization: authorization(),
+    },
+  });
+};
+
 const likePost = (postId) => {
   return fetch(endpoints.likePost.replace('{postId}', postId), {
     method: 'POST',
@@ -85,6 +104,8 @@ const dislikePostComment = (commentId) => {
 
 export default {
   createPost,
+  editPost,
+  deletePost,
   likePost,
   dislikePost,
   commentPost,

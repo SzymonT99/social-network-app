@@ -17,6 +17,26 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: [action.payload.activity, ...state.board],
       };
+    case postTypes.EDIT_POST:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: action.payload.updatedPost,
+              }
+            : boardItem
+        ),
+      };
+    case postTypes.DELETE_POST:
+      return {
+        ...state,
+        board: state.board.filter(
+          (boardItem) => boardItem.activity.postId !== action.payload.postId
+        ),
+      };
     case postTypes.LIKE_POST:
       return {
         ...state,
@@ -82,7 +102,11 @@ const userActivityReducer = (state = initialState, action) => {
                   ...boardItem.activity,
                   comments: boardItem.activity.comments.map((comment) =>
                     comment.commentId === action.payload.commentId
-                      ? { ...comment, text: action.payload.comment }
+                      ? {
+                          ...comment,
+                          text: action.payload.comment,
+                          isEdited: true,
+                        }
                       : comment
                   ),
                 },

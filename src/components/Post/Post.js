@@ -8,9 +8,14 @@ import {
   Badge,
   Button,
   Divider,
+  IconButton,
   ImageList,
   ImageListItem,
   Link,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   TextField,
 } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
@@ -19,6 +24,7 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import {
   commentPost,
+  deletePost,
   dislikePost,
   likePost,
 } from '../../redux/actions/postActions';
@@ -26,6 +32,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { showNotification } from '../../redux/actions/notificationActions';
 import PostComment from '../PostComment/PostComment';
+import Avatar from '@mui/material/Avatar';
+import { AvatarGroup } from '@mui/material';
+import UsersListPopup from '../UsersListPopup/UsersListPopup';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import HomeIcon from '@mui/icons-material/Home';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const formatPostTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -73,10 +86,20 @@ const Post = (props) => {
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.auth.user.userId);
+  const userProfile = useSelector((state) => state.profile.userProfile);
 
   const [comment, setComment] = useState('');
   const [commentsDisplayed, setCommentsDisplayed] = useState(false);
   const [allCommentsShown, setAllCommentsShown] = useState(false);
+  const [openLikesPopup, setOpenLikesPopup] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClickPostOption = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClosePostOption = () => {
+    setAnchorEl(null);
+  };
 
   const postIsLiked = (likes, userId) => {
     let state = false;
@@ -91,6 +114,7 @@ const Post = (props) => {
   const {
     classes,
     authorName,
+    profilePhoto,
     createdDate,
     content,
     images,
@@ -140,44 +164,123 @@ const Post = (props) => {
     }
   };
 
+  const generateLikesAuthorNames = () => {
+    let names = '';
+    let counter = 0;
+
+    likes.forEach((like, index) => {
+      if (index < 2) {
+        counter++;
+        names +=
+          like.likedUser.firstName + ' ' + like.likedUser.lastName + ', ';
+      }
+    });
+
+    let otherUsersNumber = likes.length - counter;
+
+    if (likes.length === 1) {
+      names = names.substring(0, names.length - 2) + ' lubi post';
+    } else if (likes.length > 1) {
+      if (otherUsersNumber !== 0) {
+        names =
+          names.substring(0, names.length - 2) +
+          'oraz ' +
+          otherUsersNumber +
+          ' innych użytkowników';
+      }
+      names += ' lubią post';
+    } else {
+      names = '';
+    }
+
+    return names;
+  };
+
+  const handleCloseLikesPopup = () => {
+    setOpenLikesPopup(false);
+  };
+
+  const handleDeletePost = () => {
+    dispatch(deletePost(postId));
+  };
+
   return (
     <Paper
       elevation={7}
       sx={{ borderRadius: '10px' }}
       className={classes.postContainer}
     >
-      <div className={classes.authorContainer}>
-        <Badge
-          variant="dot"
-          overlap="circular"
-          sx={{
-            marginRight: '20px',
-            '& .MuiBadge-badge': {
-              backgroundColor: activeStatus[userStatus],
-            },
-          }}
-        >
-          <img
-            src={defaultUserPhoto}
-            alt="Zdjęcie użytkownika"
-            className={classes.userPhoto}
-          />
-        </Badge>
+      <div className={classes.headingBox}>
+        <div className={classes.authorContainer}>
+          <Badge
+            variant="dot"
+            overlap="circular"
+            sx={{
+              marginRight: '20px',
+              '& .MuiBadge-badge': {
+                backgroundColor: activeStatus[userStatus],
+              },
+            }}
+          >
+            <Avatar
+              src={profilePhoto ? profilePhoto.url : defaultUserPhoto}
+              alt={authorName}
+              className={classes.userPhoto}
+            />
+          </Badge>
+          <div>
+            <Typography variant="subtitle1" fontWeight="bold">
+              {authorName}
+              <span className={classes.actionName}> dodał(a) nowy wpis</span>
+            </Typography>
+            <Typography variant="body2" component="div">
+              {formatPostTime(createdDate)}
+            </Typography>
+          </div>
+        </div>
         <div>
-          <Typography variant="subtitle1" component="div" fontWeight="bold">
-            {authorName}
-            <span className={classes.actionName}> dodał(a) nowy wpis</span>
-          </Typography>
-          <Typography variant="body2" component="div">
-            {formatPostTime(createdDate)}
-          </Typography>
+          <IconButton onClick={handleClickPostOption}>
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClosePostOption}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <MenuItem>
+              <ListItemIcon>
+                <EditIcon fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2">Edytuj post</Typography>
+                }
+              />
+            </MenuItem>
+            <MenuItem onClick={handleDeletePost}>
+              <ListItemIcon>
+                <DeleteIcon fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={<Typography variant="subtitle2">Usuń post</Typography>}
+              />
+            </MenuItem>
+          </Menu>
         </div>
       </div>
       <Divider />
       <div className={classes.postContent}>
-        <Typography variant="body1" component="div">
-          {content}
-        </Typography>
+        <Typography variant="body1">{content}</Typography>
       </div>
       {images.length !== 0 && (
         <ImageList cols={1} rowHeight={300} className={classes.postImageList}>
@@ -193,6 +296,30 @@ const Post = (props) => {
           ))}
         </ImageList>
       )}
+      <div
+        className={classes.likesContainer}
+        onClick={() => setOpenLikesPopup(true)}
+      >
+        <AvatarGroup max={4} className={classes.likedUsersContainer}>
+          {likes.map((like) => (
+            <Avatar
+              key={like.likedUser.userId}
+              className={classes.likedUserAvatar}
+              alt={like.likedUser.firstName + ' ' + like.likedUser.lastName}
+              src={like.likedUser.profilePhoto.url}
+            />
+          ))}
+        </AvatarGroup>
+        <Typography variant="body2" marginLeft="6px">
+          {generateLikesAuthorNames()}
+        </Typography>
+      </div>
+      <UsersListPopup
+        title="Polubienia użytkowników"
+        open={openLikesPopup}
+        users={likes.map((like) => like.likedUser)}
+        onClose={handleCloseLikesPopup}
+      />
       <Divider />
       <div className={classes.postReactionContainer}>
         <Button
@@ -203,11 +330,7 @@ const Post = (props) => {
               : classes.postBtn
           }
         >
-          <Typography
-            variant="subtitle2"
-            component="div"
-            className={classes.postReactionItem}
-          >
+          <Typography variant="subtitle2" className={classes.postReactionItem}>
             {postIsLiked(likes, userId) ? (
               <ThumbUpIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
             ) : (
@@ -219,24 +342,16 @@ const Post = (props) => {
           </Typography>
         </Button>
         <Button className={classes.postBtn} onClick={specifyCommentsVisibility}>
-          <Typography
-            variant="subtitle2"
-            component="div"
-            className={classes.postReactionItem}
-          >
+          <Typography variant="subtitle2" className={classes.postReactionItem}>
             <ChatBubbleOutlineOutlinedIcon
               sx={{ fontSize: '35px', marginRight: '6px' }}
             />
             {'Komentarze | ' + commentsNumber}
           </Typography>
         </Button>
-        <Typography
-          variant="subtitle2"
-          component="div"
-          className={classes.postReactionItem}
-        >
+        <Typography variant="subtitle2" className={classes.postReactionItem}>
           <ShareOutlinedIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
-          {'Udostępnienia | ' + sharesNumber}
+          {'Udostępnij | ' + sharesNumber}
         </Typography>
       </div>
       <Divider />
@@ -259,6 +374,8 @@ const Post = (props) => {
                 content={comment.text}
                 authorId={comment.commentAuthor.userId}
                 likes={comment.userLikes}
+                isEdited={comment.isEdited}
+                authorProfilePhoto={comment.commentAuthor.profilePhoto}
               />
             );
           }
@@ -281,9 +398,13 @@ const Post = (props) => {
         <Divider className={classes.divider} style={{ marginTop: '15px' }} />
       )}
       <div className={classes.addCommentContainer}>
-        <img
-          src={defaultUserPhoto}
-          alt="Zdjęcie użytkownika"
+        <Avatar
+          src={userProfile ? userProfile.profilePhoto.url : defaultUserPhoto}
+          alt={
+            userProfile
+              ? userProfile.firstName + ' ' + userProfile.lastName
+              : 'Zalogowany użytkownik'
+          }
           className={classes.userPhotoSmall}
         />
         <TextField
@@ -309,6 +430,7 @@ const Post = (props) => {
 Post.propTypes = {
   classes: PropTypes.object.isRequired,
   authorName: PropTypes.string.isRequired,
+  profilePhoto: PropTypes.object.isRequired,
   createdDate: PropTypes.object.isRequired,
   content: PropTypes.string.isRequired,
   likesNumber: PropTypes.number.isRequired,

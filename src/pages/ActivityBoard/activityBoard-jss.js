@@ -27,11 +27,12 @@ const styles = (theme) => ({
     paddingTop: '10px',
   },
   userPhoto: {
-    display: 'block',
-    width: '50px',
-    height: '50px',
-    borderRadius: '50px',
-    marginRight: '15px',
+    '&.MuiAvatar-root': {
+      display: 'block',
+      width: '50px',
+      height: '50px',
+      marginRight: '15px',
+    },
   },
   postInput: {
     '& .MuiInputBase-root': {

@@ -3,7 +3,7 @@ import { withStyles } from '@mui/styles';
 import styles from './postComment-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import { Badge, Button, Divider, TextField } from '@mui/material';
+import { Avatar, Badge, Button, Divider, TextField } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import { showNotification } from '../../redux/actions/notificationActions';
@@ -77,6 +77,8 @@ const PostComment = (props) => {
     userStatus,
     authorId,
     likes,
+    isEdited,
+    authorProfilePhoto,
   } = props;
 
   const userId = useSelector((state) => state.auth.user.userId);
@@ -162,21 +164,26 @@ const PostComment = (props) => {
             },
           }}
         >
-          <img
-            src={defaultUserPhoto}
-            alt="Zdjęcie użytkownika"
+          <Avatar
+            src={authorProfilePhoto ? authorProfilePhoto.url : defaultUserPhoto}
+            alt={authorName}
             className={classes.userPhotoSmall}
           />
         </Badge>
       </div>
       <div className={classes.commentContent}>
         <div className={classes.commentText}>
-          <Typography variant="subtitle2" fontWeight="bold">
-            <span className={classes.authorName}>{authorName}</span>
-            <span className={classes.commentTime}>
-              {' ' + formatTime(createdDate)}
-            </span>
-          </Typography>
+          <div className={classes.commentTextHeading}>
+            <Typography variant="subtitle2" fontWeight="bold">
+              <span className={classes.authorName}>{authorName}</span>
+              <span className={classes.commentTime}>
+                {' ' + formatTime(createdDate)}
+              </span>
+            </Typography>
+            <Typography variant="body2" fontWeight="bold">
+              {isEdited ? 'Edytowano' : ' '}
+            </Typography>
+          </div>
           <TextField
             fullWidth
             multiline
@@ -243,7 +250,7 @@ const PostComment = (props) => {
               <Button
                 className={classes.commentActionItem}
                 variant="text"
-                onClick={handleCloseDeletePopup}
+                onClick={() => setOpenDeletePopup(true)}
               >
                 Usuń
               </Button>
@@ -302,6 +309,8 @@ PostComment.propTypes = {
   createdDate: PropTypes.object.isRequired,
   userStatus: PropTypes.string.isRequired,
   authorId: PropTypes.number.isRequired,
+  isEdited: PropTypes.bool.isRequired,
+  authorProfilePhoto: PropTypes.object.isRequired,
 };
 
 PostComment.defaultProps = {

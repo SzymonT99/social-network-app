@@ -5,7 +5,13 @@ import { withStyles } from '@mui/styles';
 import styles from './activityBoard-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import { Button, Divider, InputAdornment, TextField } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  Divider,
+  InputAdornment,
+  TextField,
+} from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import PhotoIcon from '@mui/icons-material/Photo';
 import FriendInvitation from '../../components/FriendInvitation/FriendInvitation';
@@ -19,6 +25,7 @@ const ActivityBoard = (props) => {
 
   const dispatch = useDispatch();
   const activityBoard = useSelector((state) => state.activity.board);
+  const userProfile = useSelector((state) => state.profile.userProfile);
 
   const [openPostCreation, setOpenPostCreation] = useState(false);
 
@@ -42,9 +49,15 @@ const ActivityBoard = (props) => {
             <Typography variant="h6"> Utwórz post</Typography>
             <Divider className={classes.divider} />
             <div className={classes.postCreateContent}>
-              <img
-                src={defaultUserPhoto}
-                alt="Zdjęcie użytkownika"
+              <Avatar
+                src={
+                  userProfile ? userProfile.profilePhoto.url : defaultUserPhoto
+                }
+                alt={
+                  userProfile
+                    ? userProfile.firstName + ' ' + userProfile.lastName
+                    : 'Zalogowany użytkownik'
+                }
                 className={classes.userPhoto}
               />
               <TextField
@@ -82,6 +95,7 @@ const ActivityBoard = (props) => {
                     ' ' +
                     item.activityAuthor.lastName
                   }
+                  profilePhoto={item.activityAuthor.profilePhoto}
                   createdDate={new Date(item.activityDate)}
                   images={item.activity.images}
                   likesNumber={item.activity.likes.length}
