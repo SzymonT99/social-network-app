@@ -5,13 +5,7 @@ import { withStyles } from '@mui/styles';
 import styles from './activityBoard-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import {
-  Avatar,
-  Button,
-  Divider,
-  InputAdornment,
-  TextField,
-} from '@mui/material';
+import { Avatar, Divider, InputAdornment, TextField } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import PhotoIcon from '@mui/icons-material/Photo';
 import FriendInvitation from '../../components/FriendInvitation/FriendInvitation';
@@ -106,6 +100,7 @@ const ActivityBoard = (props) => {
                   userStatus={item.activityAuthor.activityStatus}
                   postId={item.activity.postId}
                   likes={item.activity.likes}
+                  isPublic={item.activity.isPublic}
                 />
               );
             }

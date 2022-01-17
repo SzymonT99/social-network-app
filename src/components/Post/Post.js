@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { withStyles } from '@mui/styles';
 import styles from './post-jss';
@@ -36,9 +36,10 @@ import Avatar from '@mui/material/Avatar';
 import { AvatarGroup } from '@mui/material';
 import UsersListPopup from '../UsersListPopup/UsersListPopup';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import HomeIcon from '@mui/icons-material/Home';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Popup from '../Popup/Popup';
+import PostForm from '../Forms/PostForm';
 
 const formatPostTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -92,6 +93,7 @@ const Post = (props) => {
   const [commentsDisplayed, setCommentsDisplayed] = useState(false);
   const [allCommentsShown, setAllCommentsShown] = useState(false);
   const [openLikesPopup, setOpenLikesPopup] = useState(false);
+  const [openEditionPost, setOpenEditionPost] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClickPostOption = (event) => {
@@ -125,6 +127,7 @@ const Post = (props) => {
     postId,
     likes,
     comments,
+    isPublic,
   } = props;
 
   const activeStatus = {
@@ -204,6 +207,10 @@ const Post = (props) => {
     dispatch(deletePost(postId));
   };
 
+  const handleCloseEditionPost = () => {
+    setOpenEditionPost(false);
+  };
+
   return (
     <Paper
       elevation={7}
@@ -255,7 +262,7 @@ const Post = (props) => {
               horizontal: 'right',
             }}
           >
-            <MenuItem>
+            <MenuItem onClick={() => setOpenEditionPost(true)}>
               <ListItemIcon>
                 <EditIcon fontSize="medium" />
               </ListItemIcon>
@@ -423,6 +430,21 @@ const Post = (props) => {
           }}
         />
       </div>
+      <Popup
+        open={openEditionPost}
+        type="createPost"
+        title="Edytuj post"
+        onClose={handleCloseEditionPost}
+      >
+        <PostForm
+          edition
+          closePopup={handleCloseEditionPost}
+          postText={content}
+          postImages={images}
+          postIsPublic={isPublic}
+          editedPostId={postId}
+        />
+      </Popup>
     </Paper>
   );
 };
@@ -440,6 +462,7 @@ Post.propTypes = {
   userStatus: PropTypes.string.isRequired,
   postId: PropTypes.number.isRequired,
   likes: PropTypes.array.isRequired,
+  isPublic: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styles)(Post);

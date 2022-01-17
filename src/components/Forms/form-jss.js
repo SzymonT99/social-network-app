@@ -8,11 +8,12 @@ const styles = (theme) => ({
     display: 'flex',
   },
   userPhoto: {
-    display: 'block',
-    width: '60px',
-    height: '60px',
-    borderRadius: '50px',
-    marginRight: '15px',
+    '&.MuiAvatar-root': {
+      display: 'block',
+      width: '60px',
+      height: '60px',
+      marginRight: '15px',
+    },
   },
   postInput: {
     '& .MuiInputBase-root': {

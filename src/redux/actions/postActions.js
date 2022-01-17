@@ -46,6 +46,9 @@ export const createPost = (postFormData) => (dispatch, getState) => {
 };
 
 export const editPost = (postId, postFormData) => (dispatch) => {
+  console.log('postId');
+  console.log(postId);
+  console.log(postFormData);
   return postService
     .editPost(postId, postFormData)
     .then((response) => {
@@ -55,6 +58,7 @@ export const editPost = (postId, postFormData) => (dispatch) => {
           dispatch({
             type: postTypes.EDIT_POST,
             payload: {
+              postId: data.postId,
               updatedPost: data,
             },
           });
