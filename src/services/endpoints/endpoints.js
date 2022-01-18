@@ -13,4 +13,6 @@ export const endpoints = {
   likePostComment: baseUrl + '/api/posts/comments/{commentId}/like',
   dislikePostComment: baseUrl + '/api/posts/comments/{commentId}/liked',
   managePost: baseUrl + '/api/posts/{postId}',
+  postCommentsAccess: baseUrl + '/api/posts/{postId}/comments?blocked=',
+  postAccess: baseUrl + '/api/posts/{postId}/access?isPublic=',
 };

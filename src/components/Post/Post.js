@@ -27,6 +27,8 @@ import {
   deletePost,
   dislikePost,
   likePost,
+  manageAccess,
+  managePostCommentsAccess,
 } from '../../redux/actions/postActions';
 import { useDispatch, useSelector } from 'react-redux';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -39,6 +41,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import CommentIcon from '@mui/icons-material/Comment';
+import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import Popup from '../Popup/Popup';
 import PostForm from '../Forms/PostForm';
 
@@ -100,6 +105,7 @@ const Post = (props) => {
   const handleClickPostOption = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClosePostOption = () => {
     setAnchorEl(null);
   };
@@ -130,6 +136,7 @@ const Post = (props) => {
     comments,
     isPublic,
     isEdited,
+    isCommentingBlocked,
     editionDate,
   } = props;
 
@@ -220,8 +227,19 @@ const Post = (props) => {
     setOpenEditionPost(false);
   };
 
+  const handleManagePostAccess = () => {
+    dispatch(manageAccess(postId, !isPublic));
+    handleClosePostOption();
+  };
+
+  const handleManagePostCommentsAccess = () => {
+    dispatch(managePostCommentsAccess(postId, !isCommentingBlocked));
+    handleClosePostOption();
+  };
+
   const handleFavouritePost = () => {
     console.log('add to favourite');
+    handleClosePostOption();
   };
 
   return (
@@ -254,7 +272,8 @@ const Post = (props) => {
               <span className={classes.actionName}> dodał(a) nowy wpis</span>
               {isEdited && (
                 <Typography component="span" variant="body2" fontWeight="bold">
-                  {' - edytowano ' + editionDate}
+                  {' - edytowano ' +
+                    editionDate.substring(0, editionDate.length - 3)}
                 </Typography>
               )}
             </Typography>
@@ -281,7 +300,11 @@ const Post = (props) => {
               horizontal: 'right',
             }}
           >
-            <MenuItem onClick={handleFavouritePost}>
+            <MenuItem
+              onClick={handleFavouritePost}
+              className={classes.postMenuItem}
+              sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+            >
               <ListItemIcon>
                 <FavoriteIcon fontSize="medium" />
               </ListItemIcon>
@@ -294,7 +317,7 @@ const Post = (props) => {
                 }
               />
             </MenuItem>
-            <MenuItem onClick={handleEditPost}>
+            <MenuItem className={classes.postMenuItem} onClick={handleEditPost}>
               <ListItemIcon>
                 <EditIcon fontSize="medium" />
               </ListItemIcon>
@@ -305,7 +328,47 @@ const Post = (props) => {
                 }
               />
             </MenuItem>
-            <MenuItem onClick={handleDeletePost}>
+            <MenuItem
+              className={classes.postMenuItem}
+              onClick={handleManagePostAccess}
+            >
+              <ListItemIcon>
+                <PeopleAltIcon fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2">Edytuj dostępność</Typography>
+                }
+              />
+            </MenuItem>
+            <MenuItem
+              className={classes.postMenuItem}
+              sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+              onClick={handleManagePostCommentsAccess}
+            >
+              <ListItemIcon>
+                {isCommentingBlocked ? (
+                  <CommentIcon fontSize="medium" />
+                ) : (
+                  <CommentsDisabledIcon fontSize="medium" />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2">
+                    {!isCommentingBlocked
+                      ? 'Zablokuj komentowanie'
+                      : 'Odblokuj komentowanie'}
+                  </Typography>
+                }
+              />
+            </MenuItem>
+            <MenuItem
+              className={classes.postMenuItem}
+              onClick={handleDeletePost}
+            >
               <ListItemIcon>
                 <DeleteIcon fontSize="medium" />
               </ListItemIcon>
@@ -380,14 +443,22 @@ const Post = (props) => {
             {'Lubię to | ' + likesNumber}
           </Typography>
         </Button>
-        <Button className={classes.postBtn} onClick={specifyCommentsVisibility}>
-          <Typography variant="subtitle2" className={classes.postReactionItem}>
-            <ChatBubbleOutlineOutlinedIcon
-              sx={{ fontSize: '35px', marginRight: '6px' }}
-            />
-            {'Komentarze | ' + commentsNumber}
-          </Typography>
-        </Button>
+        {!isCommentingBlocked && (
+          <Button
+            className={classes.postBtn}
+            onClick={specifyCommentsVisibility}
+          >
+            <Typography
+              variant="subtitle2"
+              className={classes.postReactionItem}
+            >
+              <ChatBubbleOutlineOutlinedIcon
+                sx={{ fontSize: '35px', marginRight: '6px' }}
+              />
+              {'Komentarze | ' + commentsNumber}
+            </Typography>
+          </Button>
+        )}
         <Typography variant="subtitle2" className={classes.postReactionItem}>
           <ShareOutlinedIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
           {'Udostępnij | ' + sharesNumber}
@@ -395,6 +466,7 @@ const Post = (props) => {
       </div>
       <Divider />
       {commentsDisplayed &&
+        !isCommentingBlocked &&
         comments.map((comment, index) => {
           let numberShowedItems = allCommentsShown ? comments.length + 1 : 2;
           if (index < numberShowedItems) {
@@ -436,32 +508,34 @@ const Post = (props) => {
       {comments.length !== 0 && commentsDisplayed && (
         <Divider className={classes.divider} style={{ marginTop: '15px' }} />
       )}
-      <div className={classes.addCommentContainer}>
-        <Avatar
-          src={userProfile ? userProfile.profilePhoto.url : defaultUserPhoto}
-          alt={
-            userProfile
-              ? userProfile.firstName + ' ' + userProfile.lastName
-              : 'Zalogowany użytkownik'
-          }
-          className={classes.userPhotoSmall}
-        />
-        <TextField
-          fullWidth
-          placeholder="Napisz komentarz"
-          multiline
-          maxRows={3}
-          className={classes.commentInput}
-          value={comment}
-          onChange={handleCommentChange}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              addComment();
-              e.preventDefault();
+      {!isCommentingBlocked && (
+        <div className={classes.addCommentContainer}>
+          <Avatar
+            src={userProfile ? userProfile.profilePhoto.url : defaultUserPhoto}
+            alt={
+              userProfile
+                ? userProfile.firstName + ' ' + userProfile.lastName
+                : 'Zalogowany użytkownik'
             }
-          }}
-        />
-      </div>
+            className={classes.userPhotoSmall}
+          />
+          <TextField
+            fullWidth
+            placeholder="Napisz komentarz"
+            multiline
+            maxRows={3}
+            className={classes.commentInput}
+            value={comment}
+            onChange={handleCommentChange}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                addComment();
+                e.preventDefault();
+              }
+            }}
+          />
+        </div>
+      )}
       <Popup
         open={openEditionPost}
         type="createPost"
@@ -496,6 +570,7 @@ Post.propTypes = {
   likes: PropTypes.array.isRequired,
   isPublic: PropTypes.bool.isRequired,
   isEdited: PropTypes.bool.isRequired,
+  isCommentingBlocked: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styles)(Post);

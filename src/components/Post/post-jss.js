@@ -133,6 +133,11 @@ const styles = (theme) => ({
       padding: '6px',
     },
   },
+  postMenuItem: {
+    '&.MuiMenuItem-root': {
+      padding: '10px',
+    },
+  },
 });
 
 export default styles;

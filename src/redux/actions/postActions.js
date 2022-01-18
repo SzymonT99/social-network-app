@@ -319,3 +319,69 @@ export const dislikePostComment =
         console.log(error);
       });
   };
+
+export const manageAccess = (postId, isPublic) => (dispatch) => {
+  return postService
+    .managePostAccess(postId, isPublic)
+    .then((response) => {
+      if (response.status === 200) {
+        if (isPublic) {
+          dispatch(
+            showNotification('success', 'Zmieniono na publiczny dostęp')
+          );
+        } else {
+          dispatch(showNotification('success', 'Zmieniono na prywatny dostęp'));
+        }
+        dispatch({
+          type: postTypes.POST_ACCESS,
+          payload: {
+            postId: postId,
+            isPublic: isPublic,
+          },
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const managePostCommentsAccess = (postId, isBlocked) => (dispatch) => {
+  return postService
+    .managePostCommentsAccess(postId, isBlocked)
+    .then((response) => {
+      if (response.status === 200) {
+        if (isBlocked) {
+          dispatch(
+            showNotification('success', 'Zablokowano możliwość komentowania')
+          );
+        } else {
+          dispatch(
+            showNotification('success', 'Odblokowano możliwość komentowania')
+          );
+        }
+        dispatch({
+          type: postTypes.POST_COMMENTS_ACCESS,
+          payload: {
+            postId: postId,
+            isCommentingBlocked: isBlocked,
+          },
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
