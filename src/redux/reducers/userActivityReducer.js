@@ -184,6 +184,38 @@ const userActivityReducer = (state = initialState, action) => {
             : boardItem
         ),
       };
+    case postTypes.POST_ACCESS:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  isPublic: action.payload.isPublic,
+                },
+              }
+            : boardItem
+        ),
+      };
+    case postTypes.POST_COMMENTS_ACCESS:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  isCommentingBlocked: action.payload.isCommentingBlocked,
+                },
+              }
+            : boardItem
+        ),
+      };
     case activityTypes.CLEAR_ALL:
       return initialState;
     default:

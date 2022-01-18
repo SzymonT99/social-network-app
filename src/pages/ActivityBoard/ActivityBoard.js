@@ -102,6 +102,7 @@ const ActivityBoard = (props) => {
                   likes={item.activity.likes}
                   isEdited={item.activity.isEdited}
                   isPublic={item.activity.isPublic}
+                  isCommentingBlocked={item.activity.isCommentingBlocked}
                   editionDate={item.activity.editedAt}
                 />
               );

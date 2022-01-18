@@ -102,6 +102,29 @@ const dislikePostComment = (commentId) => {
   });
 };
 
+const managePostCommentsAccess = (postId, isBlocked) => {
+  return fetch(
+    endpoints.postCommentsAccess.replace('{postId}', postId) + isBlocked,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
+const managePostAccess = (postId, isPublic) => {
+  return fetch(endpoints.postAccess.replace('{postId}', postId) + isPublic, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   createPost,
   editPost,
@@ -113,4 +136,6 @@ export default {
   deletePostComment,
   likePostComment,
   dislikePostComment,
+  managePostCommentsAccess,
+  managePostAccess,
 };
