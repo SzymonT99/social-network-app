@@ -29,6 +29,7 @@ import {
   likePost,
   manageAccess,
   managePostCommentsAccess,
+  sharePost,
 } from '../../redux/actions/postActions';
 import { useDispatch, useSelector } from 'react-redux';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -46,6 +47,7 @@ import CommentIcon from '@mui/icons-material/Comment';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import Popup from '../Popup/Popup';
 import PostForm from '../Forms/PostForm';
+import SharePostForm from '../Forms/SharePostForm';
 
 const formatPostTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -99,8 +101,9 @@ const Post = (props) => {
   const [commentsDisplayed, setCommentsDisplayed] = useState(false);
   const [allCommentsShown, setAllCommentsShown] = useState(false);
   const [openLikesPopup, setOpenLikesPopup] = useState(false);
-  const [openEditionPost, setOpenEditionPost] = useState(false);
+  const [openEditionPostPopup, setOpenEditionPostPopup] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openSharePostPopup, setOpenSharePostPopup] = React.useState(false);
 
   const handleClickPostOption = (event) => {
     setAnchorEl(event.currentTarget);
@@ -219,12 +222,12 @@ const Post = (props) => {
   };
 
   const handleEditPost = () => {
-    setOpenEditionPost(true);
+    setOpenEditionPostPopup(true);
     handleClosePostOption();
   };
 
-  const handleCloseEditionPost = () => {
-    setOpenEditionPost(false);
+  const handleCloseEditionPostPopup = () => {
+    setOpenEditionPostPopup(false);
   };
 
   const handleManagePostAccess = () => {
@@ -240,6 +243,14 @@ const Post = (props) => {
   const handleFavouritePost = () => {
     console.log('add to favourite');
     handleClosePostOption();
+  };
+
+  const handleCloseSharePostPopup = () => {
+    setOpenSharePostPopup(false);
+  };
+
+  const handleSharePost = () => {
+    setOpenSharePostPopup(true);
   };
 
   return (
@@ -459,10 +470,12 @@ const Post = (props) => {
             </Typography>
           </Button>
         )}
-        <Typography variant="subtitle2" className={classes.postReactionItem}>
-          <ShareOutlinedIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
-          {'Udostępnij | ' + sharesNumber}
-        </Typography>
+        <Button className={classes.postBtn} onClick={handleSharePost}>
+          <Typography variant="subtitle2" className={classes.postReactionItem}>
+            <ShareOutlinedIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
+            {'Udostępnij | ' + sharesNumber}
+          </Typography>
+        </Button>
       </div>
       <Divider />
       {commentsDisplayed &&
@@ -537,18 +550,29 @@ const Post = (props) => {
         </div>
       )}
       <Popup
-        open={openEditionPost}
-        type="createPost"
+        open={openEditionPostPopup}
+        type="post"
         title="Edytuj post"
-        onClose={handleCloseEditionPost}
+        onClose={handleCloseEditionPostPopup}
       >
         <PostForm
           edition
-          closePopup={handleCloseEditionPost}
+          closePopup={handleCloseEditionPostPopup}
           postText={content}
           postImages={images}
           postIsPublic={isPublic}
           editedPostId={postId}
+        />
+      </Popup>
+      <Popup
+        open={openSharePostPopup}
+        type="post"
+        title="Udostępnij post"
+        onClose={handleCloseSharePostPopup}
+      >
+        <SharePostForm
+          closePopup={handleCloseSharePostPopup}
+          basePostId={postId}
         />
       </Popup>
     </Paper>

@@ -15,7 +15,7 @@ const userActivityReducer = (state = initialState, action) => {
     case postTypes.CREATE_POST:
       return {
         ...state,
-        board: [action.payload.activity, ...state.board],
+        board: [action.payload.boardItem, ...state.board],
       };
     case postTypes.EDIT_POST:
       return {
@@ -211,6 +211,30 @@ const userActivityReducer = (state = initialState, action) => {
                 activity: {
                   ...boardItem.activity,
                   isCommentingBlocked: action.payload.isCommentingBlocked,
+                },
+              }
+            : boardItem
+        ),
+      };
+    case postTypes.SHARE_POST:
+      return {
+        ...state,
+        board: [action.payload.boardItem, ...state.board],
+      };
+    case postTypes.UPDATE_SHARED_POST:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.basePostId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  sharing: [
+                    action.payload.sharingInfo,
+                    ...boardItem.activity.sharing,
+                  ],
                 },
               }
             : boardItem

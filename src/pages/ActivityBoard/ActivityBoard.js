@@ -73,7 +73,7 @@ const ActivityBoard = (props) => {
           </Paper>
           <Popup
             open={openPostCreation}
-            type="createPost"
+            type="post"
             title="Utwórz post"
             onClose={handleClosePostCreation}
           >
@@ -106,6 +106,7 @@ const ActivityBoard = (props) => {
                   editionDate={item.activity.editedAt}
                 />
               );
+            } else if (item.activityType === 'SHARE_POST') {
             }
           })}
         </div>

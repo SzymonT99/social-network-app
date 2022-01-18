@@ -26,7 +26,7 @@ export const createPost = (postFormData) => (dispatch, getState) => {
           dispatch({
             type: postTypes.CREATE_POST,
             payload: {
-              activity: addedPost,
+              boardItem: addedPost,
             },
           });
         });
@@ -377,6 +377,61 @@ export const managePostCommentsAccess = (postId, isBlocked) => (dispatch) => {
         dispatch(logoutUser());
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
+  return postService
+    .sharePost(basePostId, outerPost)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(showNotification('success', 'Udostępniono post'));
+        return response.json().then((data) => {
+          const sharedPost = {
+            activityDate: new Date(),
+            activityType: 'SHARE_POST',
+            activityAuthor: {
+              userId: getState().auth.user.userId,
+              activityStatus: 'ONLINE',
+              email: getState().profile.userProfile.email,
+              firstName: getState().profile.userProfile.firstName,
+              lastName: getState().profile.userProfile.lastName,
+              profilePhoto: getState().profile.userProfile.profilePhoto,
+            },
+            activity: data,
+          };
+          const sharingInfo = {
+            sharingText: outerPost.text,
+            authorOfSharing: sharedPost.activityAuthor,
+            date: sharedPost.activityAuthor,
+            isPublic: outerPost.isPublic,
+          };
+          dispatch({
+            type: postTypes.SHARE_POST,
+            payload: {
+              boardItem: sharedPost,
+            },
+          });
+          dispatch({
+            type: postTypes.UPDATE_SHARED_POST,
+            payload: {
+              basePostId: basePostId,
+              sharingInfo: sharingInfo,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Błędny format danych'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }

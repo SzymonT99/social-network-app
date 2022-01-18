@@ -10,7 +10,7 @@ const Popup = (props) => {
   const { children, classes, type, open, onClose, title } = props;
 
   const widthValues = {
-    createPost: '43%',
+    post: '43%',
   };
 
   return (
