@@ -19,6 +19,7 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost, editPost } from '../../redux/actions/postActions';
+import { showNotification } from '../../redux/actions/notificationActions';
 
 const PostForm = (props) => {
   const {
@@ -55,6 +56,7 @@ const PostForm = (props) => {
       postImages.forEach((image) =>
         convertUrlToFile(image.filename, image.url, image.type)
       );
+      setDisplayedImages(postImages.map((itemImage) => itemImage.url));
     }
   }, []);
 
@@ -92,12 +94,16 @@ const PostForm = (props) => {
       })
     );
 
-    if (!edition) {
-      dispatch(createPost(formData));
+    if (postContent !== '') {
+      if (!edition) {
+        dispatch(createPost(formData));
+      } else {
+        dispatch(editPost(editedPostId, formData));
+      }
+      closePopup();
     } else {
-      dispatch(editPost(editedPostId, formData));
+      dispatch(showNotification('warning', 'Podaj treśc postu'));
     }
-    closePopup();
   };
 
   const selectFiles = (event) => {
@@ -113,8 +119,13 @@ const PostForm = (props) => {
 
   const deleteImage = (deletedImg) => {
     const index = displayedImages.indexOf(deletedImg);
-    setDisplayedImages(displayedImages.splice(index, 1));
-    setUploadedImages(Array.from(uploadedImages).splice(index, 1));
+    if (displayedImages.length > 1) {
+      setDisplayedImages(displayedImages.splice(index, 1));
+      setUploadedImages(Array.from(uploadedImages).splice(index, 1));
+    } else {
+      setDisplayedImages([]);
+      setUploadedImages([]);
+    }
   };
 
   return (
@@ -150,8 +161,8 @@ const PostForm = (props) => {
             <ImageListItem key={index} className={classes.uploadImageItem}>
               <img
                 key={index}
-                src={edition ? img.url : img}
-                srcSet={edition ? img.url : img}
+                src={img}
+                srcSet={img}
                 alt="Dodane zdjęcie"
                 loading="lazy"
               />

@@ -100,7 +100,9 @@ const ActivityBoard = (props) => {
                   userStatus={item.activityAuthor.activityStatus}
                   postId={item.activity.postId}
                   likes={item.activity.likes}
+                  isEdited={item.activity.isEdited}
                   isPublic={item.activity.isPublic}
+                  editionDate={item.activity.editedAt}
                 />
               );
             }

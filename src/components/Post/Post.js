@@ -38,6 +38,7 @@ import UsersListPopup from '../UsersListPopup/UsersListPopup';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import Popup from '../Popup/Popup';
 import PostForm from '../Forms/PostForm';
 
@@ -128,6 +129,8 @@ const Post = (props) => {
     likes,
     comments,
     isPublic,
+    isEdited,
+    editionDate,
   } = props;
 
   const activeStatus = {
@@ -205,10 +208,20 @@ const Post = (props) => {
 
   const handleDeletePost = () => {
     dispatch(deletePost(postId));
+    handleClosePostOption();
+  };
+
+  const handleEditPost = () => {
+    setOpenEditionPost(true);
+    handleClosePostOption();
   };
 
   const handleCloseEditionPost = () => {
     setOpenEditionPost(false);
+  };
+
+  const handleFavouritePost = () => {
+    console.log('add to favourite');
   };
 
   return (
@@ -239,8 +252,13 @@ const Post = (props) => {
             <Typography variant="subtitle1" fontWeight="bold">
               {authorName}
               <span className={classes.actionName}> dodał(a) nowy wpis</span>
+              {isEdited && (
+                <Typography component="span" variant="body2" fontWeight="bold">
+                  {' - edytowano ' + editionDate}
+                </Typography>
+              )}
             </Typography>
-            <Typography variant="body2" component="div">
+            <Typography variant="body2">
               {formatPostTime(createdDate)}
             </Typography>
           </div>
@@ -250,6 +268,7 @@ const Post = (props) => {
             <MoreVertIcon />
           </IconButton>
           <Menu
+            className={classes.optionMenu}
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleClosePostOption}
@@ -262,7 +281,20 @@ const Post = (props) => {
               horizontal: 'right',
             }}
           >
-            <MenuItem onClick={() => setOpenEditionPost(true)}>
+            <MenuItem onClick={handleFavouritePost}>
+              <ListItemIcon>
+                <FavoriteIcon fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2">
+                    Dodaj do ulubionych
+                  </Typography>
+                }
+              />
+            </MenuItem>
+            <MenuItem onClick={handleEditPost}>
               <ListItemIcon>
                 <EditIcon fontSize="medium" />
               </ListItemIcon>
@@ -463,6 +495,7 @@ Post.propTypes = {
   postId: PropTypes.number.isRequired,
   likes: PropTypes.array.isRequired,
   isPublic: PropTypes.bool.isRequired,
+  isEdited: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styles)(Post);

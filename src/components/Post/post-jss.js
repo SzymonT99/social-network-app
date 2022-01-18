@@ -128,6 +128,11 @@ const styles = (theme) => ({
       cursor: 'pointer',
     },
   },
+  optionMenu: {
+    '& .MuiList-root': {
+      padding: '6px',
+    },
+  },
 });
 
 export default styles;
