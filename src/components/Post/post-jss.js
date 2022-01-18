@@ -3,24 +3,29 @@ const styles = (theme) => ({
     padding: '15px',
     marginBottom: '15px',
   },
+  headingBox: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: '15px',
+  },
   authorContainer: {
     display: 'flex',
     alignItems: 'center',
-    width: '100%',
-    marginBottom: '15px',
   },
   userPhoto: {
-    width: '60px',
-    height: '60px',
-    borderRadius: '60px',
-    cursor: 'pointer',
+    '&.MuiAvatar-root': {
+      width: '60px',
+      height: '60px',
+      cursor: 'pointer',
+    },
   },
   userPhotoSmall: {
-    width: '50px',
-    height: '50px',
-    borderRadius: '60px',
-    cursor: 'pointer',
-    marginRight: '20px',
+    '&.MuiAvatar-root': {
+      width: '50px',
+      height: '50px',
+      marginRight: '20px',
+    },
   },
   actionName: {
     fontSize: 16,
@@ -99,6 +104,33 @@ const styles = (theme) => ({
       '&:hover': {
         textDecoration: 'underline',
       },
+    },
+  },
+  likedUsersContainer: {
+    '&.MuiAvatarGroup-root': {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+    },
+  },
+  likedUserAvatar: {
+    '&.MuiAvatar-root': {
+      width: '34px',
+      height: '34px',
+    },
+  },
+  likesContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '10px',
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  },
+  optionMenu: {
+    '& .MuiList-root': {
+      padding: '6px',
     },
   },
 });

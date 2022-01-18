@@ -45,6 +45,66 @@ export const createPost = (postFormData) => (dispatch, getState) => {
     });
 };
 
+export const editPost = (postId, postFormData) => (dispatch) => {
+  console.log('postId');
+  console.log(postId);
+  console.log(postFormData);
+  return postService
+    .editPost(postId, postFormData)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(showNotification('success', 'Edytowano post'));
+        return response.json().then((data) => {
+          dispatch({
+            type: postTypes.EDIT_POST,
+            payload: {
+              postId: data.postId,
+              updatedPost: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        window.location.href = '/auth/login';
+        dispatch(logoutUser());
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Błędny format danych'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const deletePost = (postId) => (dispatch) => {
+  return postService
+    .deletePost(postId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(showNotification('success', 'Usunięto post'));
+        dispatch({
+          type: postTypes.DELETE_POST,
+          payload: {
+            postId: postId,
+          },
+        });
+      } else if (response.status === 401) {
+        window.location.href = '/auth/login';
+        dispatch(logoutUser());
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Błędny format danych'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const likePost = (postId) => (dispatch, getState) => {
   return postService
     .likePost(postId)

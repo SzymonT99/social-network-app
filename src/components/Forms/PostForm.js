@@ -4,6 +4,7 @@ import styles from './form-jss';
 import { PropTypes } from 'prop-types';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import {
+  Avatar,
   Button,
   Divider,
   FormControl,
@@ -16,18 +17,48 @@ import {
 import Typography from '@mui/material/Typography';
 import PhotoIcon from '@mui/icons-material/Photo';
 import CloseIcon from '@mui/icons-material/Close';
-import { useDispatch } from 'react-redux';
-import { createPost } from '../../redux/actions/postActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { createPost, editPost } from '../../redux/actions/postActions';
+import { showNotification } from '../../redux/actions/notificationActions';
 
 const PostForm = (props) => {
-  const { classes, closePopup } = props;
+  const {
+    classes,
+    closePopup,
+    edition,
+    postText,
+    postImages,
+    postIsPublic,
+    editedPostId,
+  } = props;
 
   const dispatch = useDispatch();
 
-  const [isPublic, setIsPublic] = useState(false);
-  const [postContent, setPostContent] = useState('');
+  const userProfile = useSelector((state) => state.profile.userProfile);
+
+  const [isPublic, setIsPublic] = useState(postIsPublic);
+  const [postContent, setPostContent] = useState(postText);
   const [uploadedImages, setUploadedImages] = useState([]);
-  const [displayedImages, setDisplayedImages] = useState([]);
+  const [displayedImages, setDisplayedImages] = useState(postImages);
+
+  const convertUrlToFile = (filename, url, type) => {
+    fetch(url).then(async (response) => {
+      const blob = await response.blob();
+      const file = new File([blob], filename, {
+        type: type,
+      });
+      uploadedImages.push(file);
+    });
+  };
+
+  useEffect(() => {
+    if (edition) {
+      postImages.forEach((image) =>
+        convertUrlToFile(image.filename, image.url, image.type)
+      );
+      setDisplayedImages(postImages.map((itemImage) => itemImage.url));
+    }
+  }, []);
 
   const imagesInputRef = useRef(null);
 
@@ -63,8 +94,16 @@ const PostForm = (props) => {
       })
     );
 
-    dispatch(createPost(formData));
-    closePopup();
+    if (postContent !== '') {
+      if (!edition) {
+        dispatch(createPost(formData));
+      } else {
+        dispatch(editPost(editedPostId, formData));
+      }
+      closePopup();
+    } else {
+      dispatch(showNotification('warning', 'Podaj treśc postu'));
+    }
   };
 
   const selectFiles = (event) => {
@@ -79,16 +118,26 @@ const PostForm = (props) => {
   };
 
   const deleteImage = (deletedImg) => {
-    let currentImages = displayedImages.filter((img) => img !== deletedImg);
-    setDisplayedImages(currentImages);
+    const index = displayedImages.indexOf(deletedImg);
+    if (displayedImages.length > 1) {
+      setDisplayedImages(displayedImages.splice(index, 1));
+      setUploadedImages(Array.from(uploadedImages).splice(index, 1));
+    } else {
+      setDisplayedImages([]);
+      setUploadedImages([]);
+    }
   };
 
   return (
     <div className={classes.postFormContainer}>
       <div className={classes.postFormContent}>
-        <img
-          src={defaultUserPhoto}
-          alt="Zdjęcie użytkownika"
+        <Avatar
+          src={userProfile ? userProfile.profilePhoto.url : defaultUserPhoto}
+          alt={
+            userProfile
+              ? userProfile.firstName + ' ' + userProfile.lastName
+              : 'Zalogowany użytkownik'
+          }
           className={classes.userPhoto}
         />
         <TextField
@@ -171,7 +220,7 @@ const PostForm = (props) => {
         className={classes.publishPostBtn}
         onClick={publishPost}
       >
-        Opublikuj post
+        {edition ? 'Zapisz zmiany' : 'Opublikuj post'}
       </Button>
     </div>
   );
@@ -180,6 +229,13 @@ const PostForm = (props) => {
 PostForm.propTypes = {
   classes: PropTypes.object.isRequired,
   closePopup: PropTypes.func.isRequired,
+};
+
+PostForm.defaultProps = {
+  edition: false,
+  postText: '',
+  postImages: [],
+  postIsPublic: false,
 };
 
 export default withStyles(styles)(PostForm);

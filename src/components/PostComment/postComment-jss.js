@@ -4,10 +4,11 @@ const styles = (theme) => ({
     marginTop: '20px',
   },
   userPhotoSmall: {
-    width: '50px',
-    height: '50px',
-    borderRadius: '60px',
-    cursor: 'pointer',
+    '&.MuiAvatar-root': {
+      width: '50px',
+      height: '50px',
+      cursor: 'pointer',
+    },
   },
   commentContent: {
     width: '100%',
@@ -114,6 +115,11 @@ const styles = (theme) => ({
     '&:hover': {
       cursor: 'pointer',
     },
+  },
+  commentTextHeading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });
 
