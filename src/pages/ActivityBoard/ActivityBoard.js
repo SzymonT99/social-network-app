@@ -84,7 +84,7 @@ const ActivityBoard = (props) => {
             if (item.activityType === 'CREATE_POST') {
               return (
                 <Post
-                  key={item.activity.postId}
+                  key={id}
                   authorId={item.activityAuthor.userId}
                   authorName={
                     item.activityAuthor.firstName +
@@ -111,7 +111,7 @@ const ActivityBoard = (props) => {
             } else if (item.activityType === 'SHARE_POST') {
               return (
                 <SharedPost
-                  key={item.activity.sharedPostId}
+                  key={id}
                   sharedPostId={item.activity.sharedPostId}
                   sharedPost={item.activity.sharedPost}
                   sharingId={item.activity.sharingId}
@@ -122,7 +122,7 @@ const ActivityBoard = (props) => {
                     item.activityAuthor.lastName
                   }
                   profilePhoto={item.activityAuthor.profilePhoto}
-                  userStatus={item.activityAuthor.userStatus}
+                  userStatus={item.activityAuthor.activityStatus}
                   text={item.activity.sharingText}
                   date={new Date(item.activity.sharingDate)}
                   isPublic={item.activity.isPublic}

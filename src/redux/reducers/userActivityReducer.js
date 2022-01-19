@@ -221,6 +221,14 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: [action.payload.boardItem, ...state.board],
       };
+    case postTypes.DELETE_SHARED_POST:
+      return {
+        ...state,
+        board: state.board.filter(
+          (boardItem) =>
+            boardItem.activity.sharedPostId !== action.payload.sharedPostId
+        ),
+      };
     case postTypes.UPDATE_SHARED_POST:
       return {
         ...state,
@@ -235,6 +243,25 @@ const userActivityReducer = (state = initialState, action) => {
                     action.payload.sharingInfo,
                     ...boardItem.activity.sharing,
                   ],
+                },
+              }
+            : boardItem
+        ),
+      };
+    case postTypes.UPDATE_DELETED_SHARED_POST:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'CREATE_POST' &&
+          boardItem.activity.postId === action.payload.basePostId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  sharing: boardItem.activity.sharing.filter(
+                    (share) =>
+                      share.sharedPostId !== action.payload.sharedPostId
+                  ),
                 },
               }
             : boardItem

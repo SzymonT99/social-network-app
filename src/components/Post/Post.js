@@ -283,7 +283,7 @@ const Post = (props) => {
                       disableTypography
                       primary={
                         <Typography variant="subtitle2">
-                          Edytuj dostępność
+                          Zmień dostępność
                         </Typography>
                       }
                     />
@@ -335,7 +335,7 @@ const Post = (props) => {
       </ActivityHeading>
       <Divider />
       <div className={classes.postContent}>
-        <Typography variant="body1">{content + ' ' + authorId}</Typography>
+        <Typography variant="body1">{content}</Typography>
       </div>
       {images.length !== 0 && (
         <ImageList cols={1} rowHeight={300} className={classes.postImageList}>

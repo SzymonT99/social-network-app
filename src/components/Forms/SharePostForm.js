@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './form-jss';
 import { PropTypes } from 'prop-types';
@@ -14,11 +14,7 @@ import {
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  createPost,
-  editPost,
-  sharePost,
-} from '../../redux/actions/postActions';
+import { sharePost } from '../../redux/actions/postActions';
 import { showNotification } from '../../redux/actions/notificationActions';
 
 const SharePostForm = (props) => {
@@ -28,10 +24,10 @@ const SharePostForm = (props) => {
 
   const userProfile = useSelector((state) => state.profile.userProfile);
 
-  const [sharedText, setSharedText] = React.useState('');
-  const [sharedPostIsPublic, setSharedPostIsPublic] = React.useState(false);
+  const [sharedText, setSharedText] = useState('');
+  const [sharedPostIsPublic, setSharedPostIsPublic] = useState(false);
   const [sharedPostCommentsIsBlocked, setSharedPostCommentsIsBlocked] =
-    React.useState(false);
+    useState(false);
 
   const handleSharedTextChange = (event) => {
     setSharedText(event.target.value);
@@ -51,6 +47,7 @@ const SharePostForm = (props) => {
       isPublic: sharedPostIsPublic,
       isCommentingBlocked: sharedPostCommentsIsBlocked,
     };
+    console.log(outerPost);
     if (sharedText !== '') {
       dispatch(sharePost(basePostId, outerPost));
       closePopup();

@@ -30,6 +30,7 @@ import PostComment from '../PostComment/PostComment';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import {
   commentPost,
+  deleteSharedPost,
   dislikePost,
   likePost,
   manageAccess,
@@ -78,7 +79,8 @@ const SharedPost = (props) => {
   };
 
   const handleDeleteSharing = () => {
-    console.log('Delete sharing');
+    dispatch(deleteSharedPost(sharedPostId, sharedPost.postId));
+    handleClosePostOption();
   };
 
   const sharedPostIsLiked = (likes, userId) => {
@@ -180,79 +182,85 @@ const SharedPost = (props) => {
         activityTitle=" udostępnił(a) post"
         userStatus={userStatus}
       >
-        <div>
-          <IconButton onClick={handleClickPostOption}>
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            className={classes.optionMenu}
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClosePostOption}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <MenuItem
-              className={classes.postMenuItem}
-              onClick={handleManageSharedPostAccess}
+        {sharingAuthorId === userId ? (
+          <div>
+            <IconButton onClick={handleClickPostOption}>
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              className={classes.optionMenu}
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClosePostOption}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
             >
-              <ListItemIcon>
-                <PeopleAltIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Edytuj dostępność</Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.postMenuItem}
-              sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-              onClick={handleManageSharedPostCommentsAccess}
-            >
-              <ListItemIcon>
-                {isCommentingBlocked ? (
-                  <CommentIcon fontSize="medium" />
-                ) : (
-                  <CommentsDisabledIcon fontSize="medium" />
-                )}
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">
-                    {!isCommentingBlocked
-                      ? 'Zablokuj komentowanie'
-                      : 'Odblokuj komentowanie'}
-                  </Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem
-              onClick={handleDeleteSharing}
-              className={classes.postMenuItem}
-            >
-              <ListItemIcon>
-                <DeleteIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">
-                    Usuń udostępnienie
-                  </Typography>
-                }
-              />
-            </MenuItem>
-          </Menu>
-        </div>
+              <MenuItem
+                className={classes.postMenuItem}
+                onClick={handleManageSharedPostAccess}
+              >
+                <ListItemIcon>
+                  <PeopleAltIcon fontSize="medium" />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography variant="subtitle2">
+                      Zmień dostępność
+                    </Typography>
+                  }
+                />
+              </MenuItem>
+              <MenuItem
+                className={classes.postMenuItem}
+                sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+                onClick={handleManageSharedPostCommentsAccess}
+              >
+                <ListItemIcon>
+                  {isCommentingBlocked ? (
+                    <CommentIcon fontSize="medium" />
+                  ) : (
+                    <CommentsDisabledIcon fontSize="medium" />
+                  )}
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography variant="subtitle2">
+                      {!isCommentingBlocked
+                        ? 'Zablokuj komentowanie'
+                        : 'Odblokuj komentowanie'}
+                    </Typography>
+                  }
+                />
+              </MenuItem>
+              <MenuItem
+                onClick={handleDeleteSharing}
+                className={classes.postMenuItem}
+              >
+                <ListItemIcon>
+                  <DeleteIcon fontSize="medium" />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography variant="subtitle2">
+                      Usuń udostępnienie
+                    </Typography>
+                  }
+                />
+              </MenuItem>
+            </Menu>
+          </div>
+        ) : (
+          <div />
+        )}
       </ActivityHeading>
       <Divider />
       <div className={classes.sharedPostContent}>
