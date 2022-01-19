@@ -13,6 +13,7 @@ import Post from '../../components/Post/Post';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import { getActivityBoard } from '../../redux/actions/userActivityActions';
+import SharedPost from '../../components/SharedPost/SharedPost';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
@@ -107,6 +108,27 @@ const ActivityBoard = (props) => {
                 />
               );
             } else if (item.activityType === 'SHARE_POST') {
+              return (
+                <SharedPost
+                  key={item.activity.sharedPostId}
+                  sharedPostId={item.activity.sharedPostId}
+                  sharedPost={item.activity.sharedPost}
+                  sharingId={item.activity.sharingId}
+                  authorName={
+                    item.activityAuthor.firstName +
+                    ' ' +
+                    item.activityAuthor.lastName
+                  }
+                  profilePhoto={item.activityAuthor.profilePhoto}
+                  userStatus={item.activityAuthor.userStatus}
+                  text={item.activity.sharingText}
+                  date={new Date(item.activity.sharingDate)}
+                  isPublic={item.activity.isPublic}
+                  isCommentingBlocked={item.activity.isCommentingBlocked}
+                  likes={item.activity.sharingLikes}
+                  comments={item.activity.sharingComments}
+                />
+              );
             }
           })}
         </div>

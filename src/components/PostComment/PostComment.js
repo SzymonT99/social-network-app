@@ -79,6 +79,7 @@ const PostComment = (props) => {
     likes,
     isEdited,
     authorProfilePhoto,
+    sharing,
   } = props;
 
   const userId = useSelector((state) => state.auth.user.userId);
@@ -101,7 +102,7 @@ const PostComment = (props) => {
         showNotification('warning', 'Nie można pozostawić pustej treści')
       );
     } else {
-      dispatch(editPostComment(postId, commentId, commentText));
+      dispatch(editPostComment(postId, commentId, commentText, sharing));
       setIsDisabled(true);
     }
   };
@@ -119,7 +120,7 @@ const PostComment = (props) => {
   };
 
   const deleteCommentClick = () => {
-    dispatch(deletePostComment(postId, commentId));
+    dispatch(deletePostComment(postId, commentId, sharing));
     setOpenDeletePopup(false);
   };
 
@@ -138,9 +139,9 @@ const PostComment = (props) => {
 
   const commentReaction = () => {
     if (!commentIsLiked(likes, userId)) {
-      dispatch(likePostComment(postId, commentId));
+      dispatch(likePostComment(postId, commentId, sharing));
     } else {
-      dispatch(dislikePostComment(postId, commentId));
+      dispatch(dislikePostComment(postId, commentId, sharing));
     }
   };
 
@@ -315,6 +316,7 @@ PostComment.propTypes = {
 
 PostComment.defaultProps = {
   likes: [],
+  sharing: false,
 };
 
 export default withStyles(styles)(PostComment);
