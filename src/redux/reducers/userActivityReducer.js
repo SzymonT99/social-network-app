@@ -393,6 +393,38 @@ const userActivityReducer = (state = initialState, action) => {
             : boardItem
         ),
       };
+    case postTypes.SHARED_POST_ACCESS:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'SHARE_POST' &&
+          boardItem.activity.sharingId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  isPublic: action.payload.isPublic,
+                },
+              }
+            : boardItem
+        ),
+      };
+    case postTypes.SHARED_POST_COMMENTS_ACCESS:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          boardItem.activityType === 'SHARE_POST' &&
+          boardItem.activity.sharingId === action.payload.postId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  isCommentingBlocked: action.payload.isCommentingBlocked,
+                },
+              }
+            : boardItem
+        ),
+      };
     case activityTypes.CLEAR_ALL:
       return initialState;
     default:

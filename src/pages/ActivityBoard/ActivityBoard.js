@@ -85,6 +85,7 @@ const ActivityBoard = (props) => {
               return (
                 <Post
                   key={item.activity.postId}
+                  authorId={item.activityAuthor.userId}
                   authorName={
                     item.activityAuthor.firstName +
                     ' ' +
@@ -114,6 +115,7 @@ const ActivityBoard = (props) => {
                   sharedPostId={item.activity.sharedPostId}
                   sharedPost={item.activity.sharedPost}
                   sharingId={item.activity.sharingId}
+                  sharingAuthorId={item.activityAuthor.userId}
                   authorName={
                     item.activityAuthor.firstName +
                     ' ' +

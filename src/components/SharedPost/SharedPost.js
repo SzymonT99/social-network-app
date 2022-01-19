@@ -32,8 +32,13 @@ import {
   commentPost,
   dislikePost,
   likePost,
+  manageAccess,
+  managePostCommentsAccess,
 } from '../../redux/actions/postActions';
 import { showNotification } from '../../redux/actions/notificationActions';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import CommentIcon from '@mui/icons-material/Comment';
+import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 
 const SharedPost = (props) => {
   const dispatch = useDispatch();
@@ -51,6 +56,7 @@ const SharedPost = (props) => {
     classes,
     sharedPostId,
     sharedPost,
+    sharingAuthorId,
     sharingId,
     date,
     authorName,
@@ -141,6 +147,16 @@ const SharedPost = (props) => {
     setComment(event.target.value);
   };
 
+  const handleManageSharedPostAccess = () => {
+    dispatch(manageAccess(sharingId, !isPublic, true));
+    handleClosePostOption();
+  };
+
+  const handleManageSharedPostCommentsAccess = () => {
+    dispatch(managePostCommentsAccess(sharingId, !isCommentingBlocked, true));
+    handleClosePostOption();
+  };
+
   const addComment = () => {
     if (comment === '') {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
@@ -182,6 +198,43 @@ const SharedPost = (props) => {
               horizontal: 'right',
             }}
           >
+            <MenuItem
+              className={classes.postMenuItem}
+              onClick={handleManageSharedPostAccess}
+            >
+              <ListItemIcon>
+                <PeopleAltIcon fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2">Edytuj dostępność</Typography>
+                }
+              />
+            </MenuItem>
+            <MenuItem
+              className={classes.postMenuItem}
+              sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+              onClick={handleManageSharedPostCommentsAccess}
+            >
+              <ListItemIcon>
+                {isCommentingBlocked ? (
+                  <CommentIcon fontSize="medium" />
+                ) : (
+                  <CommentsDisabledIcon fontSize="medium" />
+                )}
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2">
+                    {!isCommentingBlocked
+                      ? 'Zablokuj komentowanie'
+                      : 'Odblokuj komentowanie'}
+                  </Typography>
+                }
+              />
+            </MenuItem>
             <MenuItem
               onClick={handleDeleteSharing}
               className={classes.postMenuItem}

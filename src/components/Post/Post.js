@@ -82,6 +82,7 @@ const Post = (props) => {
 
   const {
     classes,
+    authorId,
     authorName,
     profilePhoto,
     createdDate,
@@ -255,73 +256,77 @@ const Post = (props) => {
                   }
                 />
               </MenuItem>
-              <MenuItem
-                className={classes.postMenuItem}
-                onClick={handleEditPost}
-              >
-                <ListItemIcon>
-                  <EditIcon fontSize="medium" />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography variant="subtitle2">Edytuj post</Typography>
-                  }
-                />
-              </MenuItem>
-              <MenuItem
-                className={classes.postMenuItem}
-                onClick={handleManagePostAccess}
-              >
-                <ListItemIcon>
-                  <PeopleAltIcon fontSize="medium" />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography variant="subtitle2">
-                      Edytuj dostępność
-                    </Typography>
-                  }
-                />
-              </MenuItem>
-              <MenuItem
-                className={classes.postMenuItem}
-                sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-                onClick={handleManagePostCommentsAccess}
-              >
-                <ListItemIcon>
-                  {isCommentingBlocked ? (
-                    <CommentIcon fontSize="medium" />
-                  ) : (
-                    <CommentsDisabledIcon fontSize="medium" />
-                  )}
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography variant="subtitle2">
-                      {!isCommentingBlocked
-                        ? 'Zablokuj komentowanie'
-                        : 'Odblokuj komentowanie'}
-                    </Typography>
-                  }
-                />
-              </MenuItem>
-              <MenuItem
-                className={classes.postMenuItem}
-                onClick={handleDeletePost}
-              >
-                <ListItemIcon>
-                  <DeleteIcon fontSize="medium" />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography variant="subtitle2">Usuń post</Typography>
-                  }
-                />
-              </MenuItem>
+              {authorId && authorId === userId && (
+                <div>
+                  <MenuItem
+                    className={classes.postMenuItem}
+                    onClick={handleEditPost}
+                  >
+                    <ListItemIcon>
+                      <EditIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">Edytuj post</Typography>
+                      }
+                    />
+                  </MenuItem>
+                  <MenuItem
+                    className={classes.postMenuItem}
+                    onClick={handleManagePostAccess}
+                  >
+                    <ListItemIcon>
+                      <PeopleAltIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">
+                          Edytuj dostępność
+                        </Typography>
+                      }
+                    />
+                  </MenuItem>
+                  <MenuItem
+                    className={classes.postMenuItem}
+                    sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+                    onClick={handleManagePostCommentsAccess}
+                  >
+                    <ListItemIcon>
+                      {isCommentingBlocked ? (
+                        <CommentIcon fontSize="medium" />
+                      ) : (
+                        <CommentsDisabledIcon fontSize="medium" />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">
+                          {!isCommentingBlocked
+                            ? 'Zablokuj komentowanie'
+                            : 'Odblokuj komentowanie'}
+                        </Typography>
+                      }
+                    />
+                  </MenuItem>
+                  <MenuItem
+                    className={classes.postMenuItem}
+                    onClick={handleDeletePost}
+                  >
+                    <ListItemIcon>
+                      <DeleteIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">Usuń post</Typography>
+                      }
+                    />
+                  </MenuItem>
+                </div>
+              )}
             </Menu>
           </div>
         ) : (
@@ -330,7 +335,7 @@ const Post = (props) => {
       </ActivityHeading>
       <Divider />
       <div className={classes.postContent}>
-        <Typography variant="body1">{content}</Typography>
+        <Typography variant="body1">{content + ' ' + authorId}</Typography>
       </div>
       {images.length !== 0 && (
         <ImageList cols={1} rowHeight={300} className={classes.postImageList}>
