@@ -125,6 +125,30 @@ const managePostAccess = (postId, isPublic) => {
   });
 };
 
+const sharePost = (basePostId, outerPost) => {
+  return fetch(endpoints.sharePost.replace('{basePostId}', basePostId), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify(outerPost),
+  });
+};
+
+const deleteSharedPost = (sharedPostId) => {
+  return fetch(
+    endpoints.deleteSharedPost.replace('{sharedPostId}', sharedPostId),
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 export default {
   createPost,
   editPost,
@@ -138,4 +162,6 @@ export default {
   dislikePostComment,
   managePostCommentsAccess,
   managePostAccess,
+  sharePost,
+  deleteSharedPost,
 };

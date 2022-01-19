@@ -15,4 +15,6 @@ export const endpoints = {
   managePost: baseUrl + '/api/posts/{postId}',
   postCommentsAccess: baseUrl + '/api/posts/{postId}/comments?blocked=',
   postAccess: baseUrl + '/api/posts/{postId}/access?isPublic=',
+  sharePost: baseUrl + '/api/posts/{basePostId}/share',
+  deleteSharedPost: baseUrl + '/api/posts/shared/{sharedPostId}',
 };

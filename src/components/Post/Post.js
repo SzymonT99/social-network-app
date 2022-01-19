@@ -5,7 +5,6 @@ import styles from './post-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
 import {
-  Badge,
   Button,
   Divider,
   IconButton,
@@ -46,48 +45,8 @@ import CommentIcon from '@mui/icons-material/Comment';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import Popup from '../Popup/Popup';
 import PostForm from '../Forms/PostForm';
-
-const formatPostTime = (createdDate) => {
-  let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
-  let minutes = Math.floor(diffInMs / 60);
-
-  if (minutes < 30) {
-    return 'kilka minut temu';
-  } else if (minutes < 90) {
-    return '1 godz. temu';
-  } else if (minutes >= 90 && minutes < 150) {
-    return '2 godz. temu';
-  } else if (minutes >= 150 && minutes < 210) {
-    return '3 godz. temu';
-  } else if (minutes >= 210 && minutes < 270) {
-    return '4 godz. temu';
-  } else if (minutes >= 270 && minutes < 1440) {
-    return 'kilka godz. temu';
-  } else if (minutes >= 1440 && minutes < 1560) {
-    return '1 dzień temu';
-  } else if (minutes >= 1560 && minutes < 3000) {
-    return '2 dni temu';
-  } else if (minutes >= 3000 && minutes < 3100) {
-    return '3 dni temu';
-  } else {
-    let day = createdDate.getDate();
-    let month = createdDate.getMonth() + 1;
-    let year = createdDate.getFullYear();
-    let hour = createdDate.getHours();
-    let minutes = createdDate.getMinutes();
-    return (
-      (day <= 9 ? '0' + day : day) +
-      '.' +
-      (month <= 9 ? '0' + month : month) +
-      '.' +
-      year +
-      ' r. ' +
-      (hour <= 9 ? '0' + hour : hour) +
-      ':' +
-      (minutes <= 9 ? '0' + minutes : minutes)
-    );
-  }
-};
+import SharePostForm from '../Forms/SharePostForm';
+import ActivityHeading from '../ActivityHeading/ActivityHeading';
 
 const Post = (props) => {
   const dispatch = useDispatch();
@@ -99,8 +58,9 @@ const Post = (props) => {
   const [commentsDisplayed, setCommentsDisplayed] = useState(false);
   const [allCommentsShown, setAllCommentsShown] = useState(false);
   const [openLikesPopup, setOpenLikesPopup] = useState(false);
-  const [openEditionPost, setOpenEditionPost] = useState(false);
+  const [openEditionPostPopup, setOpenEditionPostPopup] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openSharePostPopup, setOpenSharePostPopup] = React.useState(false);
 
   const handleClickPostOption = (event) => {
     setAnchorEl(event.currentTarget);
@@ -122,6 +82,7 @@ const Post = (props) => {
 
   const {
     classes,
+    authorId,
     authorName,
     profilePhoto,
     createdDate,
@@ -138,14 +99,8 @@ const Post = (props) => {
     isEdited,
     isCommentingBlocked,
     editionDate,
+    asSharing,
   } = props;
-
-  const activeStatus = {
-    ONLINE: '#1CCD16',
-    BE_RIGHT_BACK: 'orange',
-    BUSY: 'purple',
-    OFFLINE: '#FF1C00',
-  };
 
   const postReaction = () => {
     if (!postIsLiked(likes, userId)) {
@@ -219,12 +174,12 @@ const Post = (props) => {
   };
 
   const handleEditPost = () => {
-    setOpenEditionPost(true);
+    setOpenEditionPostPopup(true);
     handleClosePostOption();
   };
 
-  const handleCloseEditionPost = () => {
-    setOpenEditionPost(false);
+  const handleCloseEditionPostPopup = () => {
+    setOpenEditionPostPopup(false);
   };
 
   const handleManagePostAccess = () => {
@@ -242,144 +197,142 @@ const Post = (props) => {
     handleClosePostOption();
   };
 
+  const handleCloseSharePostPopup = () => {
+    setOpenSharePostPopup(false);
+  };
+
+  const handleSharePost = () => {
+    setOpenSharePostPopup(true);
+  };
+
   return (
     <Paper
       elevation={7}
       sx={{ borderRadius: '10px' }}
       className={classes.postContainer}
     >
-      <div className={classes.headingBox}>
-        <div className={classes.authorContainer}>
-          <Badge
-            variant="dot"
-            overlap="circular"
-            sx={{
-              marginRight: '20px',
-              '& .MuiBadge-badge': {
-                backgroundColor: activeStatus[userStatus],
-              },
-            }}
-          >
-            <Avatar
-              src={profilePhoto ? profilePhoto.url : defaultUserPhoto}
-              alt={authorName}
-              className={classes.userPhoto}
-            />
-          </Badge>
+      <ActivityHeading
+        authorName={authorName}
+        profilePhoto={profilePhoto}
+        createdDate={createdDate}
+        activityTitle=" dodał(a) nowy post"
+        editionDate={editionDate}
+        userStatus={userStatus}
+        isEdited={isEdited}
+      >
+        {!asSharing ? (
           <div>
-            <Typography variant="subtitle1" fontWeight="bold">
-              {authorName}
-              <span className={classes.actionName}> dodał(a) nowy wpis</span>
-              {isEdited && (
-                <Typography component="span" variant="body2" fontWeight="bold">
-                  {' - edytowano ' +
-                    editionDate.substring(0, editionDate.length - 3)}
-                </Typography>
+            <IconButton onClick={handleClickPostOption}>
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              className={classes.optionMenu}
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClosePostOption}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <MenuItem
+                onClick={handleFavouritePost}
+                className={classes.postMenuItem}
+                sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+              >
+                <ListItemIcon>
+                  <FavoriteIcon fontSize="medium" />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography variant="subtitle2">
+                      Dodaj do ulubionych
+                    </Typography>
+                  }
+                />
+              </MenuItem>
+              {authorId && authorId === userId && (
+                <div>
+                  <MenuItem
+                    className={classes.postMenuItem}
+                    onClick={handleEditPost}
+                  >
+                    <ListItemIcon>
+                      <EditIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">Edytuj post</Typography>
+                      }
+                    />
+                  </MenuItem>
+                  <MenuItem
+                    className={classes.postMenuItem}
+                    onClick={handleManagePostAccess}
+                  >
+                    <ListItemIcon>
+                      <PeopleAltIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">
+                          Zmień dostępność
+                        </Typography>
+                      }
+                    />
+                  </MenuItem>
+                  <MenuItem
+                    className={classes.postMenuItem}
+                    sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+                    onClick={handleManagePostCommentsAccess}
+                  >
+                    <ListItemIcon>
+                      {isCommentingBlocked ? (
+                        <CommentIcon fontSize="medium" />
+                      ) : (
+                        <CommentsDisabledIcon fontSize="medium" />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">
+                          {!isCommentingBlocked
+                            ? 'Zablokuj komentowanie'
+                            : 'Odblokuj komentowanie'}
+                        </Typography>
+                      }
+                    />
+                  </MenuItem>
+                  <MenuItem
+                    className={classes.postMenuItem}
+                    onClick={handleDeletePost}
+                  >
+                    <ListItemIcon>
+                      <DeleteIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">Usuń post</Typography>
+                      }
+                    />
+                  </MenuItem>
+                </div>
               )}
-            </Typography>
-            <Typography variant="body2">
-              {formatPostTime(createdDate)}
-            </Typography>
+            </Menu>
           </div>
-        </div>
-        <div>
-          <IconButton onClick={handleClickPostOption}>
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            className={classes.optionMenu}
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClosePostOption}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <MenuItem
-              onClick={handleFavouritePost}
-              className={classes.postMenuItem}
-              sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-            >
-              <ListItemIcon>
-                <FavoriteIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">
-                    Dodaj do ulubionych
-                  </Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem className={classes.postMenuItem} onClick={handleEditPost}>
-              <ListItemIcon>
-                <EditIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Edytuj post</Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.postMenuItem}
-              onClick={handleManagePostAccess}
-            >
-              <ListItemIcon>
-                <PeopleAltIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Edytuj dostępność</Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.postMenuItem}
-              sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-              onClick={handleManagePostCommentsAccess}
-            >
-              <ListItemIcon>
-                {isCommentingBlocked ? (
-                  <CommentIcon fontSize="medium" />
-                ) : (
-                  <CommentsDisabledIcon fontSize="medium" />
-                )}
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">
-                    {!isCommentingBlocked
-                      ? 'Zablokuj komentowanie'
-                      : 'Odblokuj komentowanie'}
-                  </Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.postMenuItem}
-              onClick={handleDeletePost}
-            >
-              <ListItemIcon>
-                <DeleteIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={<Typography variant="subtitle2">Usuń post</Typography>}
-              />
-            </MenuItem>
-          </Menu>
-        </div>
-      </div>
+        ) : (
+          <div />
+        )}
+      </ActivityHeading>
       <Divider />
       <div className={classes.postContent}>
         <Typography variant="body1">{content}</Typography>
@@ -398,157 +351,189 @@ const Post = (props) => {
           ))}
         </ImageList>
       )}
-      <div
-        className={classes.likesContainer}
-        onClick={() => setOpenLikesPopup(true)}
-      >
-        <AvatarGroup max={4} className={classes.likedUsersContainer}>
-          {likes.map((like) => (
-            <Avatar
-              key={like.likedUser.userId}
-              className={classes.likedUserAvatar}
-              alt={like.likedUser.firstName + ' ' + like.likedUser.lastName}
-              src={like.likedUser.profilePhoto.url}
-            />
-          ))}
-        </AvatarGroup>
-        <Typography variant="body2" marginLeft="6px">
-          {generateLikesAuthorNames()}
-        </Typography>
-      </div>
-      <UsersListPopup
-        title="Polubienia użytkowników"
-        open={openLikesPopup}
-        users={likes.map((like) => like.likedUser)}
-        onClose={handleCloseLikesPopup}
-      />
-      <Divider />
-      <div className={classes.postReactionContainer}>
-        <Button
-          onClick={postReaction}
-          className={
-            postIsLiked(likes, userId)
-              ? classes.likedBtnClicked
-              : classes.postBtn
-          }
-        >
-          <Typography variant="subtitle2" className={classes.postReactionItem}>
-            {postIsLiked(likes, userId) ? (
-              <ThumbUpIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
-            ) : (
-              <ThumbUpAltOutlinedIcon
-                sx={{ fontSize: '35px', marginRight: '6px' }}
-              />
-            )}
-            {'Lubię to | ' + likesNumber}
-          </Typography>
-        </Button>
-        {!isCommentingBlocked && (
-          <Button
-            className={classes.postBtn}
-            onClick={specifyCommentsVisibility}
+      {!asSharing && (
+        <>
+          <div
+            className={classes.likesContainer}
+            onClick={() => setOpenLikesPopup(true)}
           >
-            <Typography
-              variant="subtitle2"
-              className={classes.postReactionItem}
-            >
-              <ChatBubbleOutlineOutlinedIcon
-                sx={{ fontSize: '35px', marginRight: '6px' }}
-              />
-              {'Komentarze | ' + commentsNumber}
+            <AvatarGroup max={4} className={classes.likedUsersContainer}>
+              {likes.map((like) => (
+                <Avatar
+                  key={like.likedUser.userId}
+                  className={classes.likedUserAvatar}
+                  alt={like.likedUser.firstName + ' ' + like.likedUser.lastName}
+                  src={like.likedUser.profilePhoto.url}
+                />
+              ))}
+            </AvatarGroup>
+            <Typography variant="body2" marginLeft="6px">
+              {generateLikesAuthorNames()}
             </Typography>
-          </Button>
-        )}
-        <Typography variant="subtitle2" className={classes.postReactionItem}>
-          <ShareOutlinedIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
-          {'Udostępnij | ' + sharesNumber}
-        </Typography>
-      </div>
-      <Divider />
-      {commentsDisplayed &&
-        !isCommentingBlocked &&
-        comments.map((comment, index) => {
-          let numberShowedItems = allCommentsShown ? comments.length + 1 : 2;
-          if (index < numberShowedItems) {
-            return (
-              <PostComment
-                key={comment.commentId}
-                commentId={comment.commentId}
-                postId={postId}
-                createdDate={new Date(comment.createdAt)}
-                authorName={
-                  comment.commentAuthor.firstName +
-                  ' ' +
-                  comment.commentAuthor.lastName
-                }
-                userStatus={comment.commentAuthor.activityStatus}
-                content={comment.text}
-                authorId={comment.commentAuthor.userId}
-                likes={comment.userLikes}
-                isEdited={comment.isEdited}
-                authorProfilePhoto={comment.commentAuthor.profilePhoto}
-              />
-            );
-          }
-        })}
-      {allCommentsShown === false &&
-        commentsDisplayed === true &&
-        comments.length > 2 && (
-          <div className={classes.moreCommentsContainer}>
-            <Link
-              component="button"
-              variant="body1"
-              onClick={() => setAllCommentsShown(true)}
-              className={classes.moreCommentsLink}
-            >
-              Zobacz więcej komentarzy
-            </Link>
           </div>
-        )}
-      {comments.length !== 0 && commentsDisplayed && (
-        <Divider className={classes.divider} style={{ marginTop: '15px' }} />
-      )}
-      {!isCommentingBlocked && (
-        <div className={classes.addCommentContainer}>
-          <Avatar
-            src={userProfile ? userProfile.profilePhoto.url : defaultUserPhoto}
-            alt={
-              userProfile
-                ? userProfile.firstName + ' ' + userProfile.lastName
-                : 'Zalogowany użytkownik'
-            }
-            className={classes.userPhotoSmall}
+          <UsersListPopup
+            title="Polubienia użytkowników"
+            open={openLikesPopup}
+            users={likes.map((like) => like.likedUser)}
+            onClose={handleCloseLikesPopup}
           />
-          <TextField
-            fullWidth
-            placeholder="Napisz komentarz"
-            multiline
-            maxRows={3}
-            className={classes.commentInput}
-            value={comment}
-            onChange={handleCommentChange}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                addComment();
-                e.preventDefault();
+          <Divider />
+          <div className={classes.postReactionContainer}>
+            <Button
+              onClick={postReaction}
+              className={
+                postIsLiked(likes, userId)
+                  ? classes.likedBtnClicked
+                  : classes.postBtn
               }
-            }}
-          />
-        </div>
+            >
+              <Typography
+                variant="subtitle2"
+                className={classes.postReactionItem}
+              >
+                {postIsLiked(likes, userId) ? (
+                  <ThumbUpIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
+                ) : (
+                  <ThumbUpAltOutlinedIcon
+                    sx={{ fontSize: '35px', marginRight: '6px' }}
+                  />
+                )}
+                {'Lubię to | ' + likesNumber}
+              </Typography>
+            </Button>
+            {!isCommentingBlocked && (
+              <Button
+                className={classes.postBtn}
+                onClick={specifyCommentsVisibility}
+              >
+                <Typography
+                  variant="subtitle2"
+                  className={classes.postReactionItem}
+                >
+                  <ChatBubbleOutlineOutlinedIcon
+                    sx={{ fontSize: '35px', marginRight: '6px' }}
+                  />
+                  {'Komentarze | ' + commentsNumber}
+                </Typography>
+              </Button>
+            )}
+            <Button className={classes.postBtn} onClick={handleSharePost}>
+              <Typography
+                variant="subtitle2"
+                className={classes.postReactionItem}
+              >
+                <ShareOutlinedIcon
+                  sx={{ fontSize: '35px', marginRight: '6px' }}
+                />
+                {'Udostępnij | ' + sharesNumber}
+              </Typography>
+            </Button>
+          </div>
+          <Divider />
+          {commentsDisplayed &&
+            !isCommentingBlocked &&
+            comments.map((comment, index) => {
+              let numberShowedItems = allCommentsShown
+                ? comments.length + 1
+                : 2;
+              if (index < numberShowedItems) {
+                return (
+                  <PostComment
+                    key={comment.commentId}
+                    commentId={comment.commentId}
+                    postId={postId}
+                    createdDate={new Date(comment.createdAt)}
+                    authorName={
+                      comment.commentAuthor.firstName +
+                      ' ' +
+                      comment.commentAuthor.lastName
+                    }
+                    userStatus={comment.commentAuthor.activityStatus}
+                    content={comment.text}
+                    authorId={comment.commentAuthor.userId}
+                    likes={comment.userLikes}
+                    isEdited={comment.isEdited}
+                    authorProfilePhoto={comment.commentAuthor.profilePhoto}
+                  />
+                );
+              }
+            })}
+          {allCommentsShown === false &&
+            commentsDisplayed === true &&
+            comments.length > 2 && (
+              <div className={classes.moreCommentsContainer}>
+                <Link
+                  component="button"
+                  variant="body1"
+                  onClick={() => setAllCommentsShown(true)}
+                  className={classes.moreCommentsLink}
+                >
+                  Zobacz więcej komentarzy
+                </Link>
+              </div>
+            )}
+          {comments.length !== 0 && commentsDisplayed && (
+            <Divider
+              className={classes.divider}
+              style={{ marginTop: '15px' }}
+            />
+          )}
+          {!isCommentingBlocked && (
+            <div className={classes.addCommentContainer}>
+              <Avatar
+                src={
+                  userProfile ? userProfile.profilePhoto.url : defaultUserPhoto
+                }
+                alt={
+                  userProfile
+                    ? userProfile.firstName + ' ' + userProfile.lastName
+                    : 'Zalogowany użytkownik'
+                }
+                className={classes.userPhotoSmall}
+              />
+              <TextField
+                fullWidth
+                placeholder="Napisz komentarz"
+                multiline
+                maxRows={3}
+                className={classes.commentInput}
+                value={comment}
+                onChange={handleCommentChange}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    addComment();
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </div>
+          )}
+        </>
       )}
       <Popup
-        open={openEditionPost}
-        type="createPost"
+        open={openEditionPostPopup}
+        type="post"
         title="Edytuj post"
-        onClose={handleCloseEditionPost}
+        onClose={handleCloseEditionPostPopup}
       >
         <PostForm
           edition
-          closePopup={handleCloseEditionPost}
+          closePopup={handleCloseEditionPostPopup}
           postText={content}
           postImages={images}
           postIsPublic={isPublic}
           editedPostId={postId}
+        />
+      </Popup>
+      <Popup
+        open={openSharePostPopup}
+        type="post"
+        title="Udostępnij post"
+        onClose={handleCloseSharePostPopup}
+      >
+        <SharePostForm
+          closePopup={handleCloseSharePostPopup}
+          basePostId={postId}
         />
       </Popup>
     </Paper>
@@ -571,6 +556,10 @@ Post.propTypes = {
   isPublic: PropTypes.bool.isRequired,
   isEdited: PropTypes.bool.isRequired,
   isCommentingBlocked: PropTypes.bool.isRequired,
+};
+
+Post.defaultProps = {
+  asSharing: false,
 };
 
 export default withStyles(styles)(Post);

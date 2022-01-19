@@ -13,6 +13,7 @@ import Post from '../../components/Post/Post';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import { getActivityBoard } from '../../redux/actions/userActivityActions';
+import SharedPost from '../../components/SharedPost/SharedPost';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
@@ -73,7 +74,7 @@ const ActivityBoard = (props) => {
           </Paper>
           <Popup
             open={openPostCreation}
-            type="createPost"
+            type="post"
             title="Utwórz post"
             onClose={handleClosePostCreation}
           >
@@ -83,7 +84,8 @@ const ActivityBoard = (props) => {
             if (item.activityType === 'CREATE_POST') {
               return (
                 <Post
-                  key={item.activity.postId}
+                  key={id}
+                  authorId={item.activityAuthor.userId}
                   authorName={
                     item.activityAuthor.firstName +
                     ' ' +
@@ -104,6 +106,29 @@ const ActivityBoard = (props) => {
                   isPublic={item.activity.isPublic}
                   isCommentingBlocked={item.activity.isCommentingBlocked}
                   editionDate={item.activity.editedAt}
+                />
+              );
+            } else if (item.activityType === 'SHARE_POST') {
+              return (
+                <SharedPost
+                  key={id}
+                  sharedPostId={item.activity.sharedPostId}
+                  sharedPost={item.activity.sharedPost}
+                  sharingId={item.activity.sharingId}
+                  sharingAuthorId={item.activityAuthor.userId}
+                  authorName={
+                    item.activityAuthor.firstName +
+                    ' ' +
+                    item.activityAuthor.lastName
+                  }
+                  profilePhoto={item.activityAuthor.profilePhoto}
+                  userStatus={item.activityAuthor.activityStatus}
+                  text={item.activity.sharingText}
+                  date={new Date(item.activity.sharingDate)}
+                  isPublic={item.activity.isPublic}
+                  isCommentingBlocked={item.activity.isCommentingBlocked}
+                  likes={item.activity.sharingLikes}
+                  comments={item.activity.sharingComments}
                 />
               );
             }
