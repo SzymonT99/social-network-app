@@ -171,7 +171,7 @@ const SharedPost = (props) => {
 
   return (
     <Paper
-      elevation={7}
+      elevation={4}
       sx={{ borderRadius: '10px' }}
       className={classes.sharedPostContainer}
     >

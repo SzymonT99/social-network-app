@@ -37,11 +37,14 @@ const ActivityBoard = (props) => {
       <div className={classes.activityContent}>
         <div className={classes.activityWrapper}>
           <Paper
-            elevation={7}
+            elevation={4}
             sx={{ borderRadius: '10px' }}
             className={classes.postCreateBox}
           >
-            <Typography variant="h6"> Utwórz post</Typography>
+            <Typography fontWeight="bold" variant="h6">
+              {' '}
+              Utwórz post
+            </Typography>
             <Divider className={classes.divider} />
             <div className={classes.postCreateContent}>
               <Avatar
@@ -138,11 +141,13 @@ const ActivityBoard = (props) => {
       <div className={classes.infoContent}>
         <div className={classes.infoWrapper}>
           <Paper
-            elevation={7}
+            elevation={4}
             sx={{ borderRadius: '10px' }}
             style={{ padding: '15px' }}
           >
-            <Typography variant="h6">Zaproszenia do znajomych</Typography>
+            <Typography fontWeight="bold" variant="h6">
+              Zaproszenia do znajomych
+            </Typography>
             <FriendInvitation name="Roman Romanowicz" />
             <FriendInvitation name="Ewa Ewakowska" />
             <FriendInvitation name="Tomasz Tomkowski" />

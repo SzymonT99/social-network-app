@@ -112,7 +112,7 @@ const RegisterPage = (props) => {
     <>
       <Paper
         className={classes.wrapper}
-        elevation={7}
+        elevation={4}
         sx={{ borderRadius: '20px' }}
       >
         <Typography variant="h3" align="center" marginBottom="40px">

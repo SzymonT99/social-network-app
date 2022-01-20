@@ -21,14 +21,12 @@ const theme = createTheme({
       fontSize: '70px',
       fontWeight: 'bold',
     },
-    h3: {
-      fontWeight: 'bold',
-    },
     h4: {
       fontSize: '28px',
       fontWeight: 400,
     },
     h6: {
+      fontWeight: 400,
       fontSize: '20px',
     },
     subtitle1: {

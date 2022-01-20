@@ -95,7 +95,7 @@ const LoginPage = (props) => {
         <div className={classes.loginColumn}>
           <Paper
             className={classes.loginForm}
-            elevation={7}
+            elevation={4}
             sx={{ borderRadius: '20px' }}
           >
             <Typography variant="h3" align="center" marginBottom="50px">

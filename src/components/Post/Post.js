@@ -207,8 +207,11 @@ const Post = (props) => {
 
   return (
     <Paper
-      elevation={7}
-      sx={{ borderRadius: '10px' }}
+      elevation={!asSharing ? 4 : 0}
+      sx={{
+        borderRadius: '10px',
+        border: asSharing && '1px solid rgba(0, 0, 0, 0.87)',
+      }}
       className={classes.postContainer}
     >
       <ActivityHeading
