@@ -17,4 +17,5 @@ export const endpoints = {
   postAccess: baseUrl + '/api/posts/{postId}/access?isPublic=',
   sharePost: baseUrl + '/api/posts/{basePostId}/share',
   deleteSharedPost: baseUrl + '/api/posts/shared/{sharedPostId}',
+  userActivity: baseUrl + '/api/profile/{userId}/activity',
 };

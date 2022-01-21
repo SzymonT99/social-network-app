@@ -11,6 +11,17 @@ const getUserProfile = (userId) => {
   });
 };
 
+const getUserActivity = (userId) => {
+  return fetch(endpoints.userActivity.replace('{userId}', userId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   getUserProfile,
+  getUserActivity,
 };

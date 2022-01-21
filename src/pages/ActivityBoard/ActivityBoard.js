@@ -5,7 +5,13 @@ import { withStyles } from '@mui/styles';
 import styles from './activityBoard-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import { Avatar, Divider, InputAdornment, TextField } from '@mui/material';
+import {
+  Avatar,
+  Divider,
+  InputAdornment,
+  Link,
+  TextField,
+} from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import PhotoIcon from '@mui/icons-material/Photo';
 import FriendInvitation from '../../components/FriendInvitation/FriendInvitation';
@@ -28,6 +34,7 @@ const ActivityBoard = (props) => {
   const userProfile = useSelector((state) => state.profile.userProfile);
 
   const [openPostCreation, setOpenPostCreation] = useState(false);
+  const [numberItemShown, setNumberItemShown] = useState(5);
 
   const handleClosePostCreation = () => {
     setOpenPostCreation(false);
@@ -93,58 +100,72 @@ const ActivityBoard = (props) => {
                 <PostForm closePopup={handleClosePostCreation} />
               </Popup>
               {activityBoard.map((item, id) => {
-                if (item.activityType === 'CREATE_POST') {
-                  return (
-                    <Post
-                      key={id}
-                      authorId={item.activityAuthor.userId}
-                      authorName={
-                        item.activityAuthor.firstName +
-                        ' ' +
-                        item.activityAuthor.lastName
-                      }
-                      profilePhoto={item.activityAuthor.profilePhoto}
-                      createdDate={new Date(item.activityDate)}
-                      images={item.activity.images}
-                      likesNumber={item.activity.likes.length}
-                      sharesNumber={item.activity.sharing.length}
-                      commentsNumber={item.activity.comments.length}
-                      comments={item.activity.comments}
-                      content={item.activity.text}
-                      userStatus={item.activityAuthor.activityStatus}
-                      postId={item.activity.postId}
-                      likes={item.activity.likes}
-                      isEdited={item.activity.isEdited}
-                      isPublic={item.activity.isPublic}
-                      isCommentingBlocked={item.activity.isCommentingBlocked}
-                      editionDate={item.activity.editedAt}
-                    />
-                  );
-                } else if (item.activityType === 'SHARE_POST') {
-                  return (
-                    <SharedPost
-                      key={id}
-                      sharedPostId={item.activity.sharedPostId}
-                      sharedPost={item.activity.sharedPost}
-                      sharingId={item.activity.sharingId}
-                      sharingAuthorId={item.activityAuthor.userId}
-                      authorName={
-                        item.activityAuthor.firstName +
-                        ' ' +
-                        item.activityAuthor.lastName
-                      }
-                      profilePhoto={item.activityAuthor.profilePhoto}
-                      userStatus={item.activityAuthor.activityStatus}
-                      text={item.activity.sharingText}
-                      date={new Date(item.activity.sharingDate)}
-                      isPublic={item.activity.isPublic}
-                      isCommentingBlocked={item.activity.isCommentingBlocked}
-                      likes={item.activity.sharingLikes}
-                      comments={item.activity.sharingComments}
-                    />
-                  );
+                if (id < numberItemShown) {
+                  if (item.activityType === 'CREATE_POST') {
+                    return (
+                      <Post
+                        key={id}
+                        authorId={item.activityAuthor.userId}
+                        authorName={
+                          item.activityAuthor.firstName +
+                          ' ' +
+                          item.activityAuthor.lastName
+                        }
+                        profilePhoto={item.activityAuthor.profilePhoto}
+                        createdDate={new Date(item.activityDate)}
+                        images={item.activity.images}
+                        likesNumber={item.activity.likes.length}
+                        sharesNumber={item.activity.sharing.length}
+                        commentsNumber={item.activity.comments.length}
+                        comments={item.activity.comments}
+                        content={item.activity.text}
+                        userStatus={item.activityAuthor.activityStatus}
+                        postId={item.activity.postId}
+                        likes={item.activity.likes}
+                        isEdited={item.activity.isEdited}
+                        isPublic={item.activity.isPublic}
+                        isCommentingBlocked={item.activity.isCommentingBlocked}
+                        editionDate={item.activity.editedAt}
+                      />
+                    );
+                  } else if (item.activityType === 'SHARE_POST') {
+                    return (
+                      <SharedPost
+                        key={id}
+                        sharedPostId={item.activity.sharedPostId}
+                        sharedPost={item.activity.sharedPost}
+                        sharingId={item.activity.sharingId}
+                        sharingAuthorId={item.activityAuthor.userId}
+                        authorName={
+                          item.activityAuthor.firstName +
+                          ' ' +
+                          item.activityAuthor.lastName
+                        }
+                        profilePhoto={item.activityAuthor.profilePhoto}
+                        userStatus={item.activityAuthor.activityStatus}
+                        text={item.activity.sharingText}
+                        date={new Date(item.activity.sharingDate)}
+                        isPublic={item.activity.isPublic}
+                        isCommentingBlocked={item.activity.isCommentingBlocked}
+                        likes={item.activity.sharingLikes}
+                        comments={item.activity.sharingComments}
+                      />
+                    );
+                  }
                 }
               })}
+              {numberItemShown < activityBoard.length && (
+                <div className={classes.moreItemsContainer}>
+                  <Link
+                    component="button"
+                    variant="body1"
+                    onClick={() => setNumberItemShown(numberItemShown + 5)}
+                    className={classes.moreCommentsLink}
+                  >
+                    Zobacz więcej
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
           <div className={classes.infoContent}>

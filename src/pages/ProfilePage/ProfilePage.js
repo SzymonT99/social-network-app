@@ -30,6 +30,10 @@ import TabPanelMUI from '@mui/lab/TabPanel';
 import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
+import { getUserActivity } from '../../redux/actions/userProfileActions';
+import Post from '../../components/Post/Post';
+import CircularProgress from '@mui/material/CircularProgress';
+import SharedPost from '../../components/SharedPost/SharedPost';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -90,12 +94,16 @@ const ProfilePage = (props) => {
 
   const dispatch = useDispatch();
   const userProfile = useSelector((state) => state.profile.userProfile);
+  const userActivity = useSelector((state) => state.profile.userActivity);
+  const userId = useSelector((state) => state.auth.user.userId);
 
   const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
   const [openPostCreation, setOpenPostCreation] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    dispatch(getUserActivity(userId));
+  }, []);
 
   const handleChangeProfileNav = (event, newValue) => {
     setProfileNav(newValue);
@@ -186,16 +194,28 @@ const ProfilePage = (props) => {
               style={{ borderLeft: '1px solid black' }}
             >
               <ListItem className={classes.profileInfoListItem}>
-                <Typography variant="subtitle2">{'Znajomi: 123'}</Typography>
+                <Typography variant="subtitle2">
+                  {'Znajomi: ' +
+                    (userActivity ? userActivity.friends.length : 0)}
+                </Typography>
               </ListItem>
               <ListItem className={classes.profileInfoListItem}>
-                <Typography variant="subtitle2">{'Posty: 123'}</Typography>
+                <Typography variant="subtitle2">
+                  {'Posty: ' +
+                    (userActivity ? userActivity.createdPosts.length : 0)}
+                </Typography>
               </ListItem>
               <ListItem className={classes.profileInfoListItem}>
-                <Typography variant="subtitle2">{'Komentarze: 123'}</Typography>
+                <Typography variant="subtitle2">
+                  {'Komentarze: ' +
+                    (userActivity ? userActivity.comments.length : 0)}
+                </Typography>
               </ListItem>
               <ListItem className={classes.profileInfoListItem}>
-                <Typography variant="subtitle2">{'Polubienia: 123'}</Typography>
+                <Typography variant="subtitle2">
+                  {'Polubienia: ' +
+                    (userActivity ? userActivity.likes.length : 0)}
+                </Typography>
               </ListItem>
             </List>
           </div>
@@ -338,7 +358,10 @@ const ProfilePage = (props) => {
                 />
               </TabList>
             </Paper>
-            <TabPanelMUI value="a1" sx={{ padding: '15px 0px 0px' }}>
+            <TabPanelMUI
+              value="a1"
+              className={classes.tabPanelActivityContainer}
+            >
               <Paper
                 elevation={4}
                 sx={{ borderRadius: '10px' }}
@@ -387,10 +410,105 @@ const ProfilePage = (props) => {
               >
                 <PostForm closePopup={handleClosePostCreation} />
               </Popup>
+              {userActivity ? (
+                userActivity.createdPosts.map((post) => (
+                  <Post
+                    key={post.postId}
+                    postId={post.postId}
+                    authorId={post.postAuthor.userId}
+                    authorName={
+                      post.postAuthor.firstName + ' ' + post.postAuthor.lastName
+                    }
+                    profilePhoto={post.postAuthor.profilePhoto}
+                    createdDate={new Date(post.createdAt)}
+                    images={post.images}
+                    likesNumber={post.likes.length}
+                    sharesNumber={post.sharing.length}
+                    commentsNumber={post.comments.length}
+                    comments={post.comments}
+                    content={post.text}
+                    userStatus={post.postAuthor.activityStatus}
+                    likes={post.likes}
+                    isEdited={post.isEdited}
+                    isPublic={post.isPublic}
+                    isCommentingBlocked={post.isCommentingBlocked}
+                    editionDate={post.editedAt}
+                  />
+                ))
+              ) : (
+                <CircularProgress color="secondary" />
+              )}
             </TabPanelMUI>
-            <TabPanelMUI value="a2">Polubienia</TabPanelMUI>
-            <TabPanelMUI value="a3">Udostępnienia</TabPanelMUI>
-            <TabPanelMUI value="a4">Komentarze</TabPanelMUI>
+            <TabPanelMUI
+              value="a2"
+              className={classes.tabPanelActivityContainer}
+            >
+              {userActivity ? (
+                userActivity.likes.map((post) => (
+                  <Post
+                    key={post.postId}
+                    postId={post.postId}
+                    authorId={post.postAuthor.userId}
+                    authorName={
+                      post.postAuthor.firstName + ' ' + post.postAuthor.lastName
+                    }
+                    profilePhoto={post.postAuthor.profilePhoto}
+                    createdDate={new Date(post.createdAt)}
+                    images={post.images}
+                    likesNumber={post.likes.length}
+                    sharesNumber={post.sharing.length}
+                    commentsNumber={post.comments.length}
+                    comments={post.comments}
+                    content={post.text}
+                    userStatus={post.postAuthor.activityStatus}
+                    likes={post.likes}
+                    isEdited={post.isEdited}
+                    isPublic={post.isPublic}
+                    isCommentingBlocked={post.isCommentingBlocked}
+                    editionDate={post.editedAt}
+                  />
+                ))
+              ) : (
+                <CircularProgress color="secondary" />
+              )}
+            </TabPanelMUI>
+            <TabPanelMUI
+              value="a3"
+              className={classes.tabPanelActivityContainer}
+            >
+              {userActivity ? (
+                userActivity.sharedPosts.map((item) => (
+                  <SharedPost
+                    key={item.sharedPostId}
+                    sharedPostId={item.sharedPostId}
+                    sharedPost={item.sharedPost}
+                    sharingId={item.sharingId}
+                    sharingAuthorId={item.authorOfSharing.userId}
+                    authorName={
+                      item.authorOfSharing.firstName +
+                      ' ' +
+                      item.authorOfSharing.lastName
+                    }
+                    profilePhoto={item.authorOfSharing.profilePhoto}
+                    userStatus={item.authorOfSharing.activityStatus}
+                    text={item.sharingText}
+                    date={new Date(item.sharingDate)}
+                    isPublic={item.isPublic}
+                    isCommentingBlocked={item.isCommentingBlocked}
+                    likes={item.sharingLikes}
+                    comments={item.sharingComments}
+                  />
+                ))
+              ) : (
+                <CircularProgress color="secondary" />
+              )}
+            </TabPanelMUI>
+            <TabPanelMUI
+              value="a4"
+              className={classes.tabPanelActivityContainer}
+            >
+              Komentarze
+            </TabPanelMUI>
           </TabContext>
         </div>
       </TabPanel>

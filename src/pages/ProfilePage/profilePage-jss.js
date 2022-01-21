@@ -164,6 +164,11 @@ const styles = (theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
+  tabPanelActivityContainer: {
+    '&.MuiTabPanel-root': {
+      padding: '15px 0px 0px',
+    },
+  },
 });
 
 export default styles;

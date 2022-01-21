@@ -2,13 +2,13 @@ import postTypes from '../types/postTypes';
 import postService from '../../services/postService';
 import { showNotification } from './notificationActions';
 import { logoutUser } from './authActions';
+import { getUserActivity } from './userProfileActions';
 
 export const createPost = (postFormData) => (dispatch, getState) => {
   return postService
     .createPost(postFormData)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(showNotification('success', 'Dodano post'));
         return response.json().then((data) => {
           const addedPost = {
             activityDate: new Date(),
@@ -29,6 +29,8 @@ export const createPost = (postFormData) => (dispatch, getState) => {
               boardItem: addedPost,
             },
           });
+          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(showNotification('success', 'Dodano post'));
         });
       } else if (response.status === 401) {
         window.location.href = '/auth/login';
@@ -45,15 +47,11 @@ export const createPost = (postFormData) => (dispatch, getState) => {
     });
 };
 
-export const editPost = (postId, postFormData) => (dispatch) => {
-  console.log('postId');
-  console.log(postId);
-  console.log(postFormData);
+export const editPost = (postId, postFormData) => (dispatch, getState) => {
   return postService
     .editPost(postId, postFormData)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(showNotification('success', 'Edytowano post'));
         return response.json().then((data) => {
           dispatch({
             type: postTypes.EDIT_POST,
@@ -62,6 +60,8 @@ export const editPost = (postId, postFormData) => (dispatch) => {
               updatedPost: data,
             },
           });
+          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(showNotification('success', 'Edytowano post'));
         });
       } else if (response.status === 401) {
         window.location.href = '/auth/login';
@@ -80,18 +80,19 @@ export const editPost = (postId, postFormData) => (dispatch) => {
     });
 };
 
-export const deletePost = (postId) => (dispatch) => {
+export const deletePost = (postId) => (dispatch, getState) => {
   return postService
     .deletePost(postId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(showNotification('success', 'Usunięto post'));
         dispatch({
           type: postTypes.DELETE_POST,
           payload: {
             postId: postId,
           },
         });
+        dispatch(getUserActivity(getState().auth.user.userId));
+        dispatch(showNotification('success', 'Usunięto post'));
       } else if (response.status === 401) {
         window.location.href = '/auth/login';
         dispatch(logoutUser());
@@ -136,6 +137,7 @@ export const likePost =
               payload: { postId: postId, liked: liked },
             });
           }
+          dispatch(getUserActivity(getState().auth.user.userId));
           dispatch(showNotification('success', 'Polubiono post'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -178,6 +180,7 @@ export const dislikePost =
               },
             });
           }
+          dispatch(getUserActivity(getState().auth.user.userId));
           dispatch(showNotification('success', 'Usunięto polubienie postu'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -198,12 +201,11 @@ export const dislikePost =
 
 export const commentPost =
   (postId, comment, isSharing = false) =>
-  (dispatch) => {
+  (dispatch, getState) => {
     return postService
       .commentPost(postId, comment)
       .then((response) => {
         if (response.status === 201) {
-          dispatch(showNotification('success', 'Dodano komentarz'));
           return response.json().then((data) => {
             if (!isSharing) {
               dispatch({
@@ -216,6 +218,8 @@ export const commentPost =
                 payload: { postId: postId, comment: data },
               });
             }
+            dispatch(getUserActivity(getState().auth.user.userId));
+            dispatch(showNotification('success', 'Dodano komentarz'));
           });
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -234,12 +238,11 @@ export const commentPost =
 
 export const editPostComment =
   (postId, commentId, comment, isSharing = false) =>
-  (dispatch) => {
+  (dispatch, getState) => {
     return postService
       .editPostComment(commentId, comment)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(showNotification('success', 'Komentarz został zmieniony'));
           if (!isSharing) {
             dispatch({
               type: postTypes.EDIT_POST_COMMENT,
@@ -259,6 +262,8 @@ export const editPostComment =
               },
             });
           }
+          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(showNotification('success', 'Komentarz został zmieniony'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
           window.location.href = '/auth/login';
@@ -278,12 +283,11 @@ export const editPostComment =
 
 export const deletePostComment =
   (postId, commentId, isSharing = false) =>
-  (dispatch) => {
+  (dispatch, getState) => {
     return postService
       .deletePostComment(commentId)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(showNotification('success', 'Komentarz został usunięty'));
           if (!isSharing) {
             dispatch({
               type: postTypes.DELETE_POST_COMMENT,
@@ -295,6 +299,8 @@ export const deletePostComment =
               payload: { postId: postId, commentId: commentId },
             });
           }
+          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(showNotification('success', 'Komentarz został usunięty'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
           window.location.href = '/auth/login';
@@ -344,6 +350,7 @@ export const likePostComment =
               },
             });
           }
+          dispatch(getUserActivity(getState().auth.user.userId));
           dispatch(showNotification('success', 'Polubiono komentarz'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -369,9 +376,6 @@ export const dislikePostComment =
       .dislikePostComment(commentId)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(
-            showNotification('success', 'Usunięto polubienie komentarza')
-          );
           if (!isSharing) {
             dispatch({
               type: postTypes.DISLIKE_POST_COMMENT,
@@ -391,6 +395,10 @@ export const dislikePostComment =
               },
             });
           }
+          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(
+            showNotification('success', 'Usunięto polubienie komentarza')
+          );
         } else if (response.status === 401) {
           dispatch(logoutUser());
           window.location.href = '/auth/login';
@@ -410,7 +418,7 @@ export const dislikePostComment =
 
 export const manageAccess =
   (postId, isPublic, isSharing = false) =>
-  (dispatch) => {
+  (dispatch, getState) => {
     return postService
       .managePostAccess(postId, isPublic)
       .then((response) => {
@@ -441,6 +449,7 @@ export const manageAccess =
               },
             });
           }
+          dispatch(getUserActivity(getState().auth.user.userId));
         } else if (response.status === 401) {
           dispatch(logoutUser());
           window.location.href = '/auth/login';
@@ -456,7 +465,7 @@ export const manageAccess =
 
 export const managePostCommentsAccess =
   (postId, isBlocked, isSharing = false) =>
-  (dispatch) => {
+  (dispatch, getState) => {
     return postService
       .managePostCommentsAccess(postId, isBlocked)
       .then((response) => {
@@ -487,6 +496,7 @@ export const managePostCommentsAccess =
               },
             });
           }
+          dispatch(getUserActivity(getState().auth.user.userId));
         } else if (response.status === 401) {
           dispatch(logoutUser());
           window.location.href = '/auth/login';
@@ -508,7 +518,6 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
       console.log(basePostId);
       console.log(outerPost);
       if (response.status === 201) {
-        dispatch(showNotification('success', 'Udostępniono post'));
         return response.json().then((data) => {
           const sharedPost = {
             activityDate: new Date(),
@@ -543,6 +552,8 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
               sharingInfo: sharingInfo,
             },
           });
+          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(showNotification('success', 'Udostępniono post'));
         });
       } else if (response.status === 401) {
         dispatch(logoutUser());
@@ -559,36 +570,38 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
     });
 };
 
-export const deleteSharedPost = (sharedPostId, basePostId) => (dispatch) => {
-  return postService
-    .deleteSharedPost(sharedPostId)
-    .then((response) => {
-      if (response.status === 200) {
-        dispatch(showNotification('success', 'Usunięto udostępnienie'));
-        dispatch({
-          type: postTypes.DELETE_SHARED_POST,
-          payload: {
-            sharedPostId: sharedPostId,
-          },
-        });
-        dispatch({
-          type: postTypes.UPDATE_DELETED_SHARED_POST,
-          payload: {
-            basePostId: basePostId,
-            sharedPostId: sharedPostId,
-          },
-        });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
-      } else if (response.status === 403) {
-        dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+export const deleteSharedPost =
+  (sharedPostId, basePostId) => (dispatch, getState) => {
+    return postService
+      .deleteSharedPost(sharedPostId)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch({
+            type: postTypes.DELETE_SHARED_POST,
+            payload: {
+              sharedPostId: sharedPostId,
+            },
+          });
+          dispatch({
+            type: postTypes.UPDATE_DELETED_SHARED_POST,
+            payload: {
+              basePostId: basePostId,
+              sharedPostId: sharedPostId,
+            },
+          });
+          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(showNotification('success', 'Usunięto udostępnienie'));
+        } else if (response.status === 401) {
+          dispatch(logoutUser());
+          window.location.href = '/auth/login';
+          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };

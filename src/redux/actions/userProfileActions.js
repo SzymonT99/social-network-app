@@ -11,7 +11,35 @@ export const getUserProfile = (userId) => (dispatch) => {
         return response.json().then((data) => {
           dispatch({
             type: userProfileTypes.FETCH_USER_PROFILE,
-            payload: data,
+            payload: {
+              userProfile: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getUserActivity = (userId) => (dispatch) => {
+  return userProfileService
+    .getUserActivity(userId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: userProfileTypes.FETCH_USER_ACTIVITY,
+            payload: {
+              userActivity: data,
+            },
           });
         });
       } else if (response.status === 401) {

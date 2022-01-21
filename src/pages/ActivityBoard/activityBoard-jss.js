@@ -64,6 +64,21 @@ const styles = (theme) => ({
     alignItems: 'center',
     height: '100%',
   },
+  moreItemsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '15px',
+  },
+  moreCommentsLink: {
+    '&.MuiLink-root': {
+      textDecoration: 'none',
+      alignSelf: 'center',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
+  },
 });
 
 export default styles;
