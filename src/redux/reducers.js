@@ -3,12 +3,14 @@ import authReducer from '../redux/reducers/authReducer';
 import notificationReducer from '../redux/reducers/notificationReducer';
 import userActivityReducer from './reducers/userActivityReducer';
 import userProfileReducer from './reducers/userProfileReducer';
+import navReducer from './reducers/navReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   notification: notificationReducer,
   activity: userActivityReducer,
   profile: userProfileReducer,
+  navigation: navReducer,
 });
 
 export default rootReducer;

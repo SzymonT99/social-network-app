@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { setCurrentPath } from '../../redux/actions/navActions';
 
 const ListItem = withStyles((theme) => ({
   root: {
@@ -60,9 +61,10 @@ const ListItem = withStyles((theme) => ({
 
 const Sidebar = (props) => {
   const { classes } = props;
-  const [selectedItem, setSelectedItem] = useState(0);
-
   const userProfile = useSelector((state) => state.profile.userProfile);
+  const pathIndex = useSelector((state) => state.navigation.pathIndex);
+
+  const [selectedItem, setSelectedItem] = useState(pathIndex);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -71,34 +73,54 @@ const Sidebar = (props) => {
     setSelectedItem(index);
   };
 
+  useEffect(() => {
+    switch (selectedItem) {
+      case 0:
+        dispatch(setCurrentPath('/app', 0));
+        history.push('/app');
+        break;
+      case 1:
+        if (userProfile) {
+          dispatch(
+            setCurrentPath('/app/profile/' + userProfile.userProfileId, 1)
+          );
+          history.push('/app/profile/' + userProfile.userProfileId);
+        }
+        break;
+      default:
+        dispatch(setCurrentPath('/app', 0));
+        history.push('/app');
+    }
+  }, [selectedItem]);
+
   return (
     <div className={classes.sidebarContainer}>
       <div className={classes.sidebarWrapper}>
-        <Link
-          className={classes.userProfile}
-          to={'/app/profile/' + userProfile.userProfileId}
-        >
-          <img
-            src={
-              userProfile && userProfile.profilePhoto !== null
-                ? userProfile.profilePhoto.url
-                : defaultUserPhoto
-            }
-            alt="Zdjęcie użytkownika"
-            className={classes.userPhoto}
-          />
-          <Typography
-            variant="h4"
-            textAlign="center"
-            className={classes.nameAndSurname}
+        {userProfile ? (
+          <Link
+            className={classes.userProfile}
+            to={'/app/profile/' + userProfile.userProfileId}
           >
-            {userProfile ? (
-              userProfile.firstName + ' ' + userProfile.lastName
-            ) : (
-              <CircularProgress color="secondary" />
-            )}
-          </Typography>
-        </Link>
+            <img
+              src={
+                userProfile.profilePhoto !== null
+                  ? userProfile.profilePhoto.url
+                  : defaultUserPhoto
+              }
+              alt="Zdjęcie użytkownika"
+              className={classes.userPhoto}
+            />
+            <Typography
+              variant="h4"
+              textAlign="center"
+              className={classes.nameAndSurname}
+            >
+              {userProfile.firstName + ' ' + userProfile.lastName}
+            </Typography>
+          </Link>
+        ) : (
+          <CircularProgress color="secondary" />
+        )}
         <Divider color="white" className={classes.divider} />
         <nav>
           <List>
@@ -106,12 +128,11 @@ const Sidebar = (props) => {
               disablePadding
               style={{ margin: '10px 0' }}
               selected={selectedItem === 0}
-              onClick={() => handleListItemClick(0)}
+              onClick={() => {
+                handleListItemClick(0);
+              }}
             >
-              <ListItemButton
-                selected={selectedItem === 0}
-                onClick={() => history.push('/app')}
-              >
+              <ListItemButton selected={selectedItem === 0}>
                 <ListItemIcon>
                   <HomeIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -131,12 +152,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 1}
               onClick={() => handleListItemClick(1)}
             >
-              <ListItemButton
-                selected={selectedItem === 1}
-                onClick={() =>
-                  history.push('/app/profile/' + userProfile.userProfileId)
-                }
-              >
+              <ListItemButton selected={selectedItem === 1}>
                 <ListItemIcon>
                   <AccountCircleIcon
                     fontSize="large"
@@ -276,7 +292,7 @@ const Sidebar = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem disablePadding style={{ marginTop: '140px' }}>
+            <ListItem disablePadding style={{ marginTop: '80px' }}>
               <ListItemButton
                 onClick={() => {
                   dispatch(logoutUser());

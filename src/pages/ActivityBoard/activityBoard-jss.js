@@ -58,6 +58,12 @@ const styles = (theme) => ({
     marginTop: '30px',
     cursor: 'pointer',
   },
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+  },
 });
 
 export default styles;

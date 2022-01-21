@@ -3,7 +3,7 @@ const styles = (theme) => ({
     flex: 2,
     position: 'sticky',
     backgroundColor: theme.palette.primary.main,
-    height: 'calc(100vh - 80px)',
+    height: 'calc(100vh - 79px)',
     top: '80px',
     color: theme.palette.primary.contrastText,
   },
