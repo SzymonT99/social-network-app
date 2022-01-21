@@ -10,8 +10,12 @@ import {
   Box,
   Divider,
   IconButton,
+  ImageList,
+  ImageListItem,
+  ImageListItemBar,
   Input,
   InputAdornment,
+  Link,
   List,
   ListItem,
   Tab,
@@ -49,6 +53,37 @@ const a11yProps = (index) => {
     'aria-controls': `simple-tabpanel-${index}`,
   };
 };
+
+const testedData = [
+  {
+    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
+    title: 'Breakfast',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
+    title: 'Burger',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
+    title: 'Camera',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
+    title: 'Coffee',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
+    title: 'Hats',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
+    title: 'Honey',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
+    title: 'Basketball',
+  },
+];
 
 const ProfilePage = (props) => {
   const { classes } = props;
@@ -195,7 +230,83 @@ const ProfilePage = (props) => {
       <TabPanel classes={classes} value={profileNav} index={0}>
         <div className={classes.leftActivityContent}>
           <Paper elevation={4} sx={{ borderRadius: '10px' }}>
-            Test left
+            <div className={classes.profileInfoBoxHeading}>
+              <Typography variant="h6">Znajomi użytkownika</Typography>
+              <Link
+                component="button"
+                variant="subtitle1"
+                onClick={() => {
+                  console.info("I'm a button.");
+                }}
+              >
+                Zobacz więcej
+              </Link>
+            </div>
+            <div className={classes.profileInfoBoxContent}>
+              <ImageList cols={3} rowHeight={155} sx={{ margin: 0 }}>
+                {testedData.map((item, index) => {
+                  if (index < 9) {
+                    return (
+                      <ImageListItem
+                        key={item.img}
+                        className={classes.imageListItemBox}
+                      >
+                        <img
+                          src={`${item.img}?w=248&fit=crop&auto=format`}
+                          alt={item.title}
+                          loading="lazy"
+                        />
+                        <ImageListItemBar
+                          title={
+                            <Typography
+                              variant="body1"
+                              className={classes.imageListItemTitle}
+                            >
+                              Tester <br /> Testerowski
+                            </Typography>
+                          }
+                          position="below"
+                        />
+                      </ImageListItem>
+                    );
+                  }
+                })}
+              </ImageList>
+            </div>
+          </Paper>
+          <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+            <div className={classes.profileInfoBoxHeading}>
+              <Typography variant="h6">Dodane zdjęcia</Typography>
+              <Link
+                component="button"
+                variant="subtitle1"
+                onClick={() => {
+                  console.info("I'm a button.");
+                }}
+              >
+                Zobacz więcej
+              </Link>
+            </div>
+            <div className={classes.profileInfoBoxContent}>
+              <ImageList cols={3} rowHeight={120} sx={{ margin: 0 }}>
+                {testedData.map((item, index) => {
+                  if (index < 9) {
+                    return (
+                      <ImageListItem
+                        key={item.img}
+                        className={classes.imageListItemBox}
+                      >
+                        <img
+                          src={`${item.img}?w=248&fit=crop&auto=format`}
+                          alt={item.title}
+                          loading="lazy"
+                        />
+                      </ImageListItem>
+                    );
+                  }
+                })}
+              </ImageList>
+            </div>
           </Paper>
         </div>
         <div className={classes.rightActivityContent}>
@@ -240,7 +351,7 @@ const ProfilePage = (props) => {
                 <div className={classes.postCreateContent}>
                   <Avatar
                     src={
-                      userProfile
+                      userProfile && userProfile.profilePhoto !== null
                         ? userProfile.profilePhoto.url
                         : defaultUserPhoto
                     }

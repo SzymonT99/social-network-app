@@ -59,10 +59,6 @@ const styles = (theme) => ({
       borderRight: '1px solid black',
     },
   },
-  profileContent: {
-    width: '100%',
-    display: 'flex',
-  },
   tabsContainer: {
     '&.MuiTabs-root': {
       width: '100%',
@@ -90,11 +86,11 @@ const styles = (theme) => ({
     display: 'flex',
   },
   leftActivityContent: {
-    flex: 2.5,
+    flex: 2.8,
     marginRight: '10px',
   },
   rightActivityContent: {
-    flex: 4.5,
+    flex: 4.2,
     marginLeft: '10px',
   },
   activityTabsContainer: {
@@ -140,6 +136,33 @@ const styles = (theme) => ({
       height: '50px',
       marginRight: '15px',
     },
+  },
+  profileInfoBoxHeading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '15px',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+  },
+  profileInfoBoxContent: {
+    padding: '15px',
+    marginBottom: '15px',
+  },
+  imageListItemBox: {
+    '&.MuiImageListItem-root': {
+      padding: '2px',
+      '& .MuiImageListItemBar-root': {
+        '& .MuiImageListItemBar-titleWrap': {
+          padding: 0,
+        },
+      },
+    },
+  },
+  imageListItemTitle: {
+    textAlign: 'center',
+    width: '120px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 });
 
