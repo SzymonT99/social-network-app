@@ -13,6 +13,8 @@ const navReducer = (state = initialState, action) => {
         currentPath: action.payload.path,
         pathIndex: action.payload.index,
       };
+    case types.CLEAR_ALL:
+      return initialState;
     default:
       return state;
   }

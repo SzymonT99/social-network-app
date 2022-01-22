@@ -1,7 +1,8 @@
 const styles = (theme) => ({
   commentContainer: {
     display: 'flex',
-    marginTop: '20px',
+    marginTop: '10px',
+    paddingTop: '10px',
   },
   userPhotoSmall: {
     '&.MuiAvatar-root': {
@@ -16,6 +17,12 @@ const styles = (theme) => ({
   commentText: {
     width: '100%',
     backgroundColor: '#ECEEF1',
+    borderRadius: '15px',
+    padding: '10px 15px',
+  },
+  commentTextHighlight: {
+    width: '100%',
+    backgroundColor: '#07DCC0',
     borderRadius: '15px',
     padding: '10px 15px',
   },

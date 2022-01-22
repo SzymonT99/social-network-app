@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import { withStyles } from '@mui/styles';
 import styles from './post-jss';
@@ -49,37 +49,6 @@ import SharePostForm from '../Forms/SharePostForm';
 import ActivityHeading from '../ActivityHeading/ActivityHeading';
 
 const Post = (props) => {
-  const dispatch = useDispatch();
-
-  const userId = useSelector((state) => state.auth.user.userId);
-  const userProfile = useSelector((state) => state.profile.userProfile);
-
-  const [comment, setComment] = useState('');
-  const [commentsDisplayed, setCommentsDisplayed] = useState(false);
-  const [allCommentsShown, setAllCommentsShown] = useState(false);
-  const [openLikesPopup, setOpenLikesPopup] = useState(false);
-  const [openEditionPostPopup, setOpenEditionPostPopup] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [openSharePostPopup, setOpenSharePostPopup] = React.useState(false);
-
-  const handleClickPostOption = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClosePostOption = () => {
-    setAnchorEl(null);
-  };
-
-  const postIsLiked = (likes, userId) => {
-    let state = false;
-    likes.forEach((like) => {
-      if (like.likedUser.userId === userId) {
-        state = true;
-      }
-    });
-    return state;
-  };
-
   const {
     classes,
     authorId,
@@ -100,7 +69,51 @@ const Post = (props) => {
     isCommentingBlocked,
     editionDate,
     asSharing,
+    highlightCommentById,
   } = props;
+
+  const dispatch = useDispatch();
+
+  const userId = useSelector((state) => state.auth.user.userId);
+  const userProfile = useSelector((state) => state.profile.userProfile);
+
+  const [postComments, setPostComments] = useState(comments);
+  const [commentText, setCommentText] = useState('');
+  const [commentsDisplayed, setCommentsDisplayed] = useState(false);
+  const [allCommentsShown, setAllCommentsShown] = useState(false);
+  const [openLikesPopup, setOpenLikesPopup] = useState(false);
+  const [openEditionPostPopup, setOpenEditionPostPopup] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openSharePostPopup, setOpenSharePostPopup] = useState(false);
+  const [highlightComment, setHighlightComment] = useState(null);
+
+  const handleClickPostOption = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePostOption = () => {
+    setAnchorEl(null);
+  };
+
+  const postIsLiked = (likes, userId) => {
+    let state = false;
+    likes.forEach((like) => {
+      if (like.likedUser.userId === userId) {
+        state = true;
+      }
+    });
+    return state;
+  };
+
+  useEffect(() => {
+    if (highlightCommentById !== null) {
+      const comment = comments.find(
+        ({ commentId }) => commentId === highlightCommentById
+      );
+      setHighlightComment(comment);
+      setPostComments(comments.filter((item) => item !== comment));
+    }
+  }, [comments]);
 
   const postReaction = () => {
     if (!postIsLiked(likes, userId)) {
@@ -111,16 +124,16 @@ const Post = (props) => {
   };
 
   const handleCommentChange = (event) => {
-    setComment(event.target.value);
+    setCommentText(event.target.value);
   };
 
   const addComment = () => {
-    if (comment === '') {
+    if (commentText === '') {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
-      dispatch(commentPost(postId, comment));
+      dispatch(commentPost(postId, commentText));
       setCommentsDisplayed(true);
-      setComment('');
+      setCommentText('');
     }
   };
 
@@ -433,11 +446,30 @@ const Post = (props) => {
             </Button>
           </div>
           <Divider />
+          {highlightComment !== null && (
+            <PostComment
+              highlightComment
+              commentId={highlightComment.commentId}
+              postId={postId}
+              createdDate={new Date(highlightComment.createdAt)}
+              authorName={
+                highlightComment.commentAuthor.firstName +
+                ' ' +
+                highlightComment.commentAuthor.lastName
+              }
+              userStatus={highlightComment.commentAuthor.activityStatus}
+              content={highlightComment.text}
+              authorId={highlightComment.commentAuthor.userId}
+              likes={highlightComment.userLikes}
+              isEdited={highlightComment.isEdited}
+              authorProfilePhoto={highlightComment.commentAuthor.profilePhoto}
+            />
+          )}
           {commentsDisplayed &&
             !isCommentingBlocked &&
-            comments.map((comment, index) => {
+            postComments.map((comment, index) => {
               let numberShowedItems = allCommentsShown
-                ? comments.length + 1
+                ? postComments.length + 1
                 : 2;
               if (index < numberShowedItems) {
                 return (
@@ -463,7 +495,7 @@ const Post = (props) => {
             })}
           {allCommentsShown === false &&
             commentsDisplayed === true &&
-            comments.length > 2 && (
+            postComments.length > 2 && (
               <div className={classes.moreCommentsContainer}>
                 <Link
                   component="button"
@@ -475,7 +507,7 @@ const Post = (props) => {
                 </Link>
               </div>
             )}
-          {comments.length !== 0 && commentsDisplayed && (
+          {postComments.length !== 0 && commentsDisplayed && (
             <Divider
               className={classes.divider}
               style={{ marginTop: '15px' }}
@@ -500,7 +532,7 @@ const Post = (props) => {
                 multiline
                 maxRows={3}
                 className={classes.commentInput}
-                value={comment}
+                value={commentText}
                 onChange={handleCommentChange}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
@@ -563,6 +595,7 @@ Post.propTypes = {
 
 Post.defaultProps = {
   asSharing: false,
+  highlightCommentById: null,
 };
 
 export default withStyles(styles)(Post);

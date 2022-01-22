@@ -150,7 +150,7 @@ const styles = (theme) => ({
   },
   imageListItemBox: {
     '&.MuiImageListItem-root': {
-      padding: '2px',
+      border: '1px solid rgba(0, 0, 0, 0.47)',
       '& .MuiImageListItemBar-root': {
         '& .MuiImageListItemBar-titleWrap': {
           padding: 0,
@@ -167,6 +167,33 @@ const styles = (theme) => ({
   tabPanelActivityContainer: {
     '&.MuiTabPanel-root': {
       padding: '15px 0px 0px',
+    },
+  },
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+  },
+  moreItemsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '15px',
+    backgroundColor: theme.palette.primary.main,
+    padding: '5px',
+    borderRadius: '10px',
+    fontWeight: 'bold',
+  },
+  moreContentLink: {
+    '&.MuiLink-root': {
+      textDecoration: 'none',
+      alignSelf: 'center',
+      color: 'white',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
     },
   },
 });

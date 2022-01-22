@@ -34,7 +34,7 @@ const ActivityBoard = (props) => {
   const userProfile = useSelector((state) => state.profile.userProfile);
 
   const [openPostCreation, setOpenPostCreation] = useState(false);
-  const [numberItemShown, setNumberItemShown] = useState(5);
+  const [numberItemsShown, setNumberItemsShown] = useState(5);
 
   const handleClosePostCreation = () => {
     setOpenPostCreation(false);
@@ -100,7 +100,7 @@ const ActivityBoard = (props) => {
                 <PostForm closePopup={handleClosePostCreation} />
               </Popup>
               {activityBoard.map((item, id) => {
-                if (id < numberItemShown) {
+                if (id < numberItemsShown) {
                   if (item.activityType === 'CREATE_POST') {
                     return (
                       <Post
@@ -154,12 +154,12 @@ const ActivityBoard = (props) => {
                   }
                 }
               })}
-              {numberItemShown < activityBoard.length && (
+              {numberItemsShown < activityBoard.length && (
                 <div className={classes.moreItemsContainer}>
                   <Link
                     component="button"
-                    variant="body1"
-                    onClick={() => setNumberItemShown(numberItemShown + 5)}
+                    variant="subtitle2"
+                    onClick={() => setNumberItemsShown(numberItemsShown + 5)}
                     className={classes.moreCommentsLink}
                   >
                     Zobacz więcej
@@ -191,7 +191,7 @@ const ActivityBoard = (props) => {
         <div className={classes.loadingContainer}>
           <CircularProgress
             color="secondary"
-            sx={{ width: '200px', height: '200px' }}
+            sx={{ width: '300px', height: '300px' }}
           />
         </div>
       )}

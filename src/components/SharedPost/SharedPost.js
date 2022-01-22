@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { withStyles } from '@mui/styles';
 import styles from './sharedPost-jss';
@@ -42,17 +42,6 @@ import CommentIcon from '@mui/icons-material/Comment';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 
 const SharedPost = (props) => {
-  const dispatch = useDispatch();
-
-  const userId = useSelector((state) => state.auth.user.userId);
-  const userProfile = useSelector((state) => state.profile.userProfile);
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [openLikesPopup, setOpenLikesPopup] = useState(false);
-  const [commentsDisplayed, setCommentsDisplayed] = useState(false);
-  const [allCommentsShown, setAllCommentsShown] = useState(false);
-  const [comment, setComment] = useState('');
-
   const {
     classes,
     sharedPostId,
@@ -68,7 +57,31 @@ const SharedPost = (props) => {
     isCommentingBlocked,
     likes,
     comments,
+    highlightCommentById,
   } = props;
+
+  const dispatch = useDispatch();
+
+  const userId = useSelector((state) => state.auth.user.userId);
+  const userProfile = useSelector((state) => state.profile.userProfile);
+
+  const [postComments, setPostComments] = useState(comments);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openLikesPopup, setOpenLikesPopup] = useState(false);
+  const [commentsDisplayed, setCommentsDisplayed] = useState(false);
+  const [allCommentsShown, setAllCommentsShown] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [highlightComment, setHighlightComment] = useState(null);
+
+  useEffect(() => {
+    if (highlightCommentById !== null) {
+      const comment = comments.find(
+        ({ commentId }) => commentId === highlightCommentById
+      );
+      setHighlightComment(comment);
+      setPostComments(comments.filter((item) => item !== comment));
+    }
+  }, [comments]);
 
   const handleClickPostOption = (event) => {
     setAnchorEl(event.currentTarget);
@@ -146,7 +159,7 @@ const SharedPost = (props) => {
   };
 
   const handleCommentChange = (event) => {
-    setComment(event.target.value);
+    setCommentText(event.target.value);
   };
 
   const handleManageSharedPostAccess = () => {
@@ -160,12 +173,12 @@ const SharedPost = (props) => {
   };
 
   const addComment = () => {
-    if (comment === '') {
+    if (commentText === '') {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
-      dispatch(commentPost(sharingId, comment, true));
+      dispatch(commentPost(sharingId, commentText, true));
       setCommentsDisplayed(true);
-      setComment('');
+      setCommentText('');
     }
   };
 
@@ -350,10 +363,31 @@ const SharedPost = (props) => {
         )}
       </div>
       <Divider />
+      {highlightComment !== null && (
+        <PostComment
+          highlightComment
+          commentId={highlightComment.commentId}
+          postId={sharingId}
+          createdDate={new Date(highlightComment.createdAt)}
+          authorName={
+            highlightComment.commentAuthor.firstName +
+            ' ' +
+            highlightComment.commentAuthor.lastName
+          }
+          userStatus={highlightComment.commentAuthor.activityStatus}
+          content={highlightComment.text}
+          authorId={highlightComment.commentAuthor.userId}
+          likes={highlightComment.userLikes}
+          isEdited={highlightComment.isEdited}
+          authorProfilePhoto={highlightComment.commentAuthor.profilePhoto}
+        />
+      )}
       {commentsDisplayed &&
         !isCommentingBlocked &&
-        comments.map((comment, index) => {
-          let numberShowedItems = allCommentsShown ? comments.length + 1 : 2;
+        postComments.map((comment, index) => {
+          let numberShowedItems = allCommentsShown
+            ? postComments.length + 1
+            : 2;
           if (index < numberShowedItems) {
             return (
               <PostComment
@@ -379,7 +413,7 @@ const SharedPost = (props) => {
         })}
       {allCommentsShown === false &&
         commentsDisplayed === true &&
-        comments.length > 2 && (
+        postComments.length > 2 && (
           <div className={classes.moreCommentsContainer}>
             <Link
               component="button"
@@ -391,7 +425,7 @@ const SharedPost = (props) => {
             </Link>
           </div>
         )}
-      {comments.length !== 0 && commentsDisplayed && (
+      {postComments.length !== 0 && commentsDisplayed && (
         <Divider className={classes.divider} style={{ marginTop: '15px' }} />
       )}
       {!isCommentingBlocked && (
@@ -411,7 +445,7 @@ const SharedPost = (props) => {
             multiline
             maxRows={3}
             className={classes.commentInput}
-            value={comment}
+            value={commentText}
             onChange={handleCommentChange}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
@@ -441,4 +475,9 @@ SharedPost.propTypes = {
   likes: PropTypes.array.isRequired,
   comments: PropTypes.array.isRequired,
 };
+
+SharedPost.defaultProps = {
+  highlightCommentById: null,
+};
+
 export default withStyles(styles)(SharedPost);

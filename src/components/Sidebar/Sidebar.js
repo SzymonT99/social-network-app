@@ -292,7 +292,7 @@ const Sidebar = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem disablePadding style={{ marginTop: '80px' }}>
+            <ListItem disablePadding style={{ marginTop: '75px' }}>
               <ListItemButton
                 onClick={() => {
                   dispatch(logoutUser());

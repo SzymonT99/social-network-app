@@ -45,15 +45,6 @@ const styles = (theme) => ({
       },
     },
   },
-  root: {
-    background: 'linear-gradient(45deg, green 30%, orange 90%)',
-    border: 0,
-    borderRadius: 100,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: 'white',
-    height: 98,
-    padding: '0 30px',
-  },
   photoIcon: {
     marginTop: '30px',
     cursor: 'pointer',
@@ -69,11 +60,16 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: '15px',
+    backgroundColor: theme.palette.primary.main,
+    padding: '5px',
+    borderRadius: '10px',
+    fontWeight: 'bold',
   },
   moreCommentsLink: {
     '&.MuiLink-root': {
       textDecoration: 'none',
       alignSelf: 'center',
+      color: 'white',
       '&:hover': {
         textDecoration: 'underline',
       },

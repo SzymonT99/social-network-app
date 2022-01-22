@@ -80,6 +80,7 @@ const PostComment = (props) => {
     isEdited,
     authorProfilePhoto,
     sharing,
+    highlightComment,
   } = props;
 
   const userId = useSelector((state) => state.auth.user.userId);
@@ -173,7 +174,13 @@ const PostComment = (props) => {
         </Badge>
       </div>
       <div className={classes.commentContent}>
-        <div className={classes.commentText}>
+        <div
+          className={
+            !highlightComment
+              ? classes.commentText
+              : classes.commentTextHighlight
+          }
+        >
           <div className={classes.commentTextHeading}>
             <Typography variant="subtitle2" fontWeight="bold">
               <span className={classes.authorName}>{authorName}</span>
@@ -317,6 +324,7 @@ PostComment.propTypes = {
 PostComment.defaultProps = {
   likes: [],
   sharing: false,
+  highlightComment: false,
 };
 
 export default withStyles(styles)(PostComment);

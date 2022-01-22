@@ -100,6 +100,12 @@ const ProfilePage = (props) => {
   const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
   const [openPostCreation, setOpenPostCreation] = useState(false);
+  const [numberItemsShown, setNumberItemsShown] = useState({
+    posts: 5,
+    sharedPosts: 5,
+    likePosts: 5,
+    comments: 5,
+  });
 
   useEffect(() => {
     dispatch(getUserActivity(userId));
@@ -115,6 +121,13 @@ const ProfilePage = (props) => {
 
   const handleClosePostCreation = () => {
     setOpenPostCreation(false);
+  };
+
+  const updateShownItems = (type) => {
+    setNumberItemsShown((prevState) => ({
+      ...prevState,
+      [type]: numberItemsShown[type] + 5,
+    }));
   };
 
   return (
@@ -330,186 +343,331 @@ const ProfilePage = (props) => {
           </Paper>
         </div>
         <div className={classes.rightActivityContent}>
-          <TabContext value={activityValue}>
-            <Paper
-              elevation={4}
-              sx={{ borderRadius: '10px', padding: '0px 15px' }}
-            >
-              <TabList onChange={handleChangeActivityValue}>
-                <Tab
-                  className={classes.activityTabItem}
-                  label="Posty"
-                  value="a1"
-                />
-                <Tab
-                  className={classes.activityTabItem}
-                  label="Polubione posty"
-                  value="a2"
-                />
-                <Tab
-                  className={classes.activityTabItem}
-                  label="Udostępnione posty"
-                  value="a3"
-                />
-                <Tab
-                  className={classes.activityTabItem}
-                  label="Komentarze"
-                  value="a4"
-                />
-              </TabList>
-            </Paper>
-            <TabPanelMUI
-              value="a1"
-              className={classes.tabPanelActivityContainer}
-            >
+          {userActivity ? (
+            <TabContext value={activityValue}>
               <Paper
                 elevation={4}
-                sx={{ borderRadius: '10px' }}
-                className={classes.postCreateBox}
+                sx={{ borderRadius: '10px', padding: '0px 15px' }}
               >
-                <Typography fontWeight="bold" variant="h6">
-                  Utwórz post
-                </Typography>
-                <Divider className={classes.divider} />
-                <div className={classes.postCreateContent}>
-                  <Avatar
-                    src={
-                      userProfile && userProfile.profilePhoto !== null
-                        ? userProfile.profilePhoto.url
-                        : defaultUserPhoto
-                    }
-                    alt={
-                      userProfile
-                        ? userProfile.firstName + ' ' + userProfile.lastName
-                        : 'Zalogowany użytkownik'
-                    }
-                    className={classes.postCreationUserPhoto}
+                <TabList onChange={handleChangeActivityValue}>
+                  <Tab
+                    className={classes.activityTabItem}
+                    label="Posty"
+                    value="a1"
                   />
-                  <TextField
-                    fullWidth
-                    placeholder="Napisz coś tutaj..."
-                    multiline
-                    rows={2}
-                    className={classes.postInput}
-                    onClick={() => setOpenPostCreation(true)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <PhotoIcon className={classes.photoIcon} />
-                        </InputAdornment>
-                      ),
-                    }}
+                  <Tab
+                    className={classes.activityTabItem}
+                    label="Polubione posty"
+                    value="a2"
                   />
-                </div>
+                  <Tab
+                    className={classes.activityTabItem}
+                    label="Udostępnione posty"
+                    value="a3"
+                  />
+                  <Tab
+                    className={classes.activityTabItem}
+                    label="Komentarze"
+                    value="a4"
+                  />
+                </TabList>
               </Paper>
-              <Popup
-                open={openPostCreation}
-                type="post"
-                title="Utwórz post"
-                onClose={handleClosePostCreation}
+              <TabPanelMUI
+                value="a1"
+                className={classes.tabPanelActivityContainer}
               >
-                <PostForm closePopup={handleClosePostCreation} />
-              </Popup>
-              {userActivity ? (
-                userActivity.createdPosts.map((post) => (
-                  <Post
-                    key={post.postId}
-                    postId={post.postId}
-                    authorId={post.postAuthor.userId}
-                    authorName={
-                      post.postAuthor.firstName + ' ' + post.postAuthor.lastName
+                <Paper
+                  elevation={4}
+                  sx={{ borderRadius: '10px' }}
+                  className={classes.postCreateBox}
+                >
+                  <Typography fontWeight="bold" variant="h6">
+                    Utwórz post
+                  </Typography>
+                  <Divider className={classes.divider} />
+                  <div className={classes.postCreateContent}>
+                    <Avatar
+                      src={
+                        userProfile && userProfile.profilePhoto !== null
+                          ? userProfile.profilePhoto.url
+                          : defaultUserPhoto
+                      }
+                      alt={
+                        userProfile
+                          ? userProfile.firstName + ' ' + userProfile.lastName
+                          : 'Zalogowany użytkownik'
+                      }
+                      className={classes.postCreationUserPhoto}
+                    />
+                    <TextField
+                      fullWidth
+                      placeholder="Napisz coś tutaj..."
+                      multiline
+                      rows={2}
+                      className={classes.postInput}
+                      onClick={() => setOpenPostCreation(true)}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <PhotoIcon className={classes.photoIcon} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
+                </Paper>
+                <Popup
+                  open={openPostCreation}
+                  type="post"
+                  title="Utwórz post"
+                  onClose={handleClosePostCreation}
+                >
+                  <PostForm closePopup={handleClosePostCreation} />
+                </Popup>
+                {userActivity.createdPosts.map((post, index) => {
+                  if (index < numberItemsShown.posts) {
+                    return (
+                      <Post
+                        key={post.postId}
+                        postId={post.postId}
+                        authorId={post.postAuthor.userId}
+                        authorName={
+                          post.postAuthor.firstName +
+                          ' ' +
+                          post.postAuthor.lastName
+                        }
+                        profilePhoto={post.postAuthor.profilePhoto}
+                        createdDate={new Date(post.createdAt)}
+                        images={post.images}
+                        likesNumber={post.likes.length}
+                        sharesNumber={post.sharing.length}
+                        commentsNumber={post.comments.length}
+                        comments={post.comments}
+                        content={post.text}
+                        userStatus={post.postAuthor.activityStatus}
+                        likes={post.likes}
+                        isEdited={post.isEdited}
+                        isPublic={post.isPublic}
+                        isCommentingBlocked={post.isCommentingBlocked}
+                        editionDate={post.editedAt}
+                      />
+                    );
+                  }
+                })}
+                {numberItemsShown.posts < userActivity.createdPosts.length && (
+                  <div className={classes.moreItemsContainer}>
+                    <Link
+                      component="button"
+                      variant="subtitle2"
+                      onClick={() => updateShownItems('posts')}
+                      className={classes.moreContentLink}
+                    >
+                      Zobacz więcej
+                    </Link>
+                  </div>
+                )}
+              </TabPanelMUI>
+              <TabPanelMUI
+                value="a2"
+                className={classes.tabPanelActivityContainer}
+              >
+                {userActivity.likes.map((post, index) => {
+                  if (index < numberItemsShown.likePosts) {
+                    return (
+                      <Post
+                        key={post.postId}
+                        postId={post.postId}
+                        authorId={post.postAuthor.userId}
+                        authorName={
+                          post.postAuthor.firstName +
+                          ' ' +
+                          post.postAuthor.lastName
+                        }
+                        profilePhoto={post.postAuthor.profilePhoto}
+                        createdDate={new Date(post.createdAt)}
+                        images={post.images}
+                        likesNumber={post.likes.length}
+                        sharesNumber={post.sharing.length}
+                        commentsNumber={post.comments.length}
+                        comments={post.comments}
+                        content={post.text}
+                        userStatus={post.postAuthor.activityStatus}
+                        likes={post.likes}
+                        isEdited={post.isEdited}
+                        isPublic={post.isPublic}
+                        isCommentingBlocked={post.isCommentingBlocked}
+                        editionDate={post.editedAt}
+                      />
+                    );
+                  }
+                })}
+                {numberItemsShown.likePosts < userActivity.likes.length && (
+                  <div className={classes.moreItemsContainer}>
+                    <Link
+                      component="button"
+                      variant="subtitle2"
+                      onClick={() => updateShownItems('likePosts')}
+                      className={classes.moreContentLink}
+                    >
+                      Zobacz więcej
+                    </Link>
+                  </div>
+                )}
+              </TabPanelMUI>
+              <TabPanelMUI
+                value="a3"
+                className={classes.tabPanelActivityContainer}
+              >
+                {userActivity.sharedPosts.map((item, index) => {
+                  if (index < numberItemsShown.sharedPosts) {
+                    return (
+                      <SharedPost
+                        key={item.sharedPostId}
+                        sharedPostId={item.sharedPostId}
+                        sharedPost={item.sharedPost}
+                        sharingId={item.sharingId}
+                        sharingAuthorId={item.authorOfSharing.userId}
+                        authorName={
+                          item.authorOfSharing.firstName +
+                          ' ' +
+                          item.authorOfSharing.lastName
+                        }
+                        profilePhoto={item.authorOfSharing.profilePhoto}
+                        userStatus={item.authorOfSharing.activityStatus}
+                        text={item.sharingText}
+                        date={new Date(item.sharingDate)}
+                        isPublic={item.isPublic}
+                        isCommentingBlocked={item.isCommentingBlocked}
+                        likes={item.sharingLikes}
+                        comments={item.sharingComments}
+                      />
+                    );
+                  }
+                })}
+                {numberItemsShown.sharedPosts <
+                  userActivity.sharedPosts.length && (
+                  <div className={classes.moreItemsContainer}>
+                    <Link
+                      component="button"
+                      variant="subtitle2"
+                      onClick={() => updateShownItems('sharedPosts')}
+                      className={classes.moreContentLink}
+                    >
+                      Zobacz więcej
+                    </Link>
+                  </div>
+                )}
+              </TabPanelMUI>
+              <TabPanelMUI
+                value="a4"
+                className={classes.tabPanelActivityContainer}
+              >
+                {userActivity.comments.map((comment, index) => {
+                  if (index < numberItemsShown.comments) {
+                    if (
+                      comment.commentedPost !== null &&
+                      comment.commentedSharedPost === null
+                    ) {
+                      return (
+                        <Post
+                          highlightCommentById={comment.commentId}
+                          key={comment.commentId}
+                          postId={comment.commentedPost.postId}
+                          authorId={comment.commentedPost.postAuthor.userId}
+                          authorName={
+                            comment.commentedPost.postAuthor.firstName +
+                            ' ' +
+                            comment.commentedPost.postAuthor.lastName
+                          }
+                          profilePhoto={
+                            comment.commentedPost.postAuthor.profilePhoto
+                          }
+                          createdDate={
+                            new Date(comment.commentedPost.createdAt)
+                          }
+                          images={comment.commentedPost.images}
+                          likesNumber={comment.commentedPost.likes.length}
+                          sharesNumber={comment.commentedPost.sharing.length}
+                          commentsNumber={comment.commentedPost.comments.length}
+                          comments={comment.commentedPost.comments}
+                          content={comment.commentedPost.text}
+                          userStatus={
+                            comment.commentedPost.postAuthor.activityStatus
+                          }
+                          likes={comment.commentedPost.likes}
+                          isEdited={comment.commentedPost.isEdited}
+                          isPublic={comment.commentedPost.isPublic}
+                          isCommentingBlocked={
+                            comment.commentedPost.isCommentingBlocked
+                          }
+                          editionDate={comment.commentedPost.editedAt}
+                        />
+                      );
+                    } else {
+                      return (
+                        <SharedPost
+                          highlightCommentById={comment.commentId}
+                          key={comment.commentId}
+                          sharedPostId={
+                            comment.commentedSharedPost.sharedPostId
+                          }
+                          sharedPost={comment.commentedSharedPost.sharedPost}
+                          sharingId={comment.commentedSharedPost.sharingId}
+                          sharingAuthorId={
+                            comment.commentedSharedPost.authorOfSharing.userId
+                          }
+                          authorName={
+                            comment.commentedSharedPost.authorOfSharing
+                              .firstName +
+                            ' ' +
+                            comment.commentedSharedPost.authorOfSharing.lastName
+                          }
+                          profilePhoto={
+                            comment.commentedSharedPost.authorOfSharing
+                              .profilePhoto
+                          }
+                          userStatus={
+                            comment.commentedSharedPost.authorOfSharing
+                              .activityStatus
+                          }
+                          text={comment.commentedSharedPost.sharingText}
+                          date={
+                            new Date(comment.commentedSharedPost.sharingDate)
+                          }
+                          isPublic={comment.commentedSharedPost.isPublic}
+                          isCommentingBlocked={
+                            comment.commentedSharedPost.isCommentingBlocked
+                          }
+                          likes={comment.commentedSharedPost.sharingLikes}
+                          comments={comment.commentedSharedPost.sharingComments}
+                        />
+                      );
                     }
-                    profilePhoto={post.postAuthor.profilePhoto}
-                    createdDate={new Date(post.createdAt)}
-                    images={post.images}
-                    likesNumber={post.likes.length}
-                    sharesNumber={post.sharing.length}
-                    commentsNumber={post.comments.length}
-                    comments={post.comments}
-                    content={post.text}
-                    userStatus={post.postAuthor.activityStatus}
-                    likes={post.likes}
-                    isEdited={post.isEdited}
-                    isPublic={post.isPublic}
-                    isCommentingBlocked={post.isCommentingBlocked}
-                    editionDate={post.editedAt}
-                  />
-                ))
-              ) : (
-                <CircularProgress color="secondary" />
-              )}
-            </TabPanelMUI>
-            <TabPanelMUI
-              value="a2"
-              className={classes.tabPanelActivityContainer}
-            >
-              {userActivity ? (
-                userActivity.likes.map((post) => (
-                  <Post
-                    key={post.postId}
-                    postId={post.postId}
-                    authorId={post.postAuthor.userId}
-                    authorName={
-                      post.postAuthor.firstName + ' ' + post.postAuthor.lastName
-                    }
-                    profilePhoto={post.postAuthor.profilePhoto}
-                    createdDate={new Date(post.createdAt)}
-                    images={post.images}
-                    likesNumber={post.likes.length}
-                    sharesNumber={post.sharing.length}
-                    commentsNumber={post.comments.length}
-                    comments={post.comments}
-                    content={post.text}
-                    userStatus={post.postAuthor.activityStatus}
-                    likes={post.likes}
-                    isEdited={post.isEdited}
-                    isPublic={post.isPublic}
-                    isCommentingBlocked={post.isCommentingBlocked}
-                    editionDate={post.editedAt}
-                  />
-                ))
-              ) : (
-                <CircularProgress color="secondary" />
-              )}
-            </TabPanelMUI>
-            <TabPanelMUI
-              value="a3"
-              className={classes.tabPanelActivityContainer}
-            >
-              {userActivity ? (
-                userActivity.sharedPosts.map((item) => (
-                  <SharedPost
-                    key={item.sharedPostId}
-                    sharedPostId={item.sharedPostId}
-                    sharedPost={item.sharedPost}
-                    sharingId={item.sharingId}
-                    sharingAuthorId={item.authorOfSharing.userId}
-                    authorName={
-                      item.authorOfSharing.firstName +
-                      ' ' +
-                      item.authorOfSharing.lastName
-                    }
-                    profilePhoto={item.authorOfSharing.profilePhoto}
-                    userStatus={item.authorOfSharing.activityStatus}
-                    text={item.sharingText}
-                    date={new Date(item.sharingDate)}
-                    isPublic={item.isPublic}
-                    isCommentingBlocked={item.isCommentingBlocked}
-                    likes={item.sharingLikes}
-                    comments={item.sharingComments}
-                  />
-                ))
-              ) : (
-                <CircularProgress color="secondary" />
-              )}
-            </TabPanelMUI>
-            <TabPanelMUI
-              value="a4"
-              className={classes.tabPanelActivityContainer}
-            >
-              Komentarze
-            </TabPanelMUI>
-          </TabContext>
+                  }
+                })}
+                {numberItemsShown.sharedPosts <
+                  userActivity.sharedPosts.length && (
+                  <div className={classes.moreItemsContainer}>
+                    <Link
+                      component="button"
+                      variant="subtitle2"
+                      onClick={() => updateShownItems('comments')}
+                      className={classes.moreContentLink}
+                    >
+                      Zobacz więcej
+                    </Link>
+                  </div>
+                )}
+              </TabPanelMUI>
+            </TabContext>
+          ) : (
+            <div className={classes.loadingContainer}>
+              <CircularProgress
+                color="secondary"
+                sx={{ width: '300px', height: '300px' }}
+              />
+            </div>
+          )}
         </div>
       </TabPanel>
       <TabPanel classes={classes} value={profileNav} index={1}>
