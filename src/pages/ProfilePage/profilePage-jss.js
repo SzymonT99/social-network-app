@@ -196,6 +196,59 @@ const styles = (theme) => ({
       },
     },
   },
+  profileInformationContainer: {
+    '&.MuiPaper-root': {
+      width: '100%',
+      borderRadius: '10px',
+      padding: '0px 15px',
+      display: 'flex',
+    },
+  },
+  profileInformationTabs: {
+    width: '30%',
+  },
+  profileInformationTabList: {
+    '&.MuiTabs-root': {
+      padding: '15px 0',
+      height: '100%',
+      '& .MuiTabs-flexContainer': {
+        borderRight: `1px solid ${theme.palette.primary.main}`,
+        display: 'flex',
+        height: '100%',
+        flexDirection: 'column',
+        '& .MuiButtonBase-root': {
+          fontWeight: 400,
+          textTransform: 'none',
+          alignItems: 'flex-start',
+          paddingLeft: '55px',
+          marginRight: '15px',
+          fontSize: '16px',
+          color: theme.palette.primary.dark,
+          '&.Mui-selected': {
+            fontWeight: 'bold',
+            backgroundColor: 'rgba(90, 107, 133, 0.3)',
+          },
+        },
+      },
+    },
+  },
+  profileInformationContent: {
+    width: '70%',
+    padding: '15px',
+    marginLeft: '15px',
+  },
+  profileInformationTabItem: {
+    '&.MuiTabPanel-root': {
+      padding: '10px 0',
+    },
+  },
+  profileInformationHeading: {
+    '&.MuiTypography-root': {
+      paddingBottom: '20px',
+      borderBottom: '1px solid rgba(0, 0, 0, 0.4)',
+      marginBottom: '15px',
+    },
+  },
 });
 
 export default styles;

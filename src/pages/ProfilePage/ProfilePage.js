@@ -34,6 +34,8 @@ import { getUserActivity } from '../../redux/actions/userProfileActions';
 import Post from '../../components/Post/Post';
 import CircularProgress from '@mui/material/CircularProgress';
 import SharedPost from '../../components/SharedPost/SharedPost';
+import ProfileInformationItem from '../../components/Profile/ProfileInformationItem';
+import SchoolInfoItem from '../../components/Profile/SchoolInfoItem';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -89,6 +91,13 @@ const testedData = [
   },
 ];
 
+const relationshipStatusTypes = {
+  SINGLE: 'Bez związku',
+  IN_RELATIONSHIP: 'W związku',
+  ENGAGED: 'Zaręczony(a)',
+  MARRIED: 'W związku małżeńskim',
+};
+
 const ProfilePage = (props) => {
   const { classes } = props;
 
@@ -99,6 +108,7 @@ const ProfilePage = (props) => {
 
   const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
+  const [profileInfoNav, setProfileInfoNav] = useState('i1');
   const [openPostCreation, setOpenPostCreation] = useState(false);
   const [numberItemsShown, setNumberItemsShown] = useState({
     posts: 5,
@@ -117,6 +127,10 @@ const ProfilePage = (props) => {
 
   const handleChangeActivityValue = (event, newValue) => {
     setActivityValue(newValue);
+  };
+
+  const handleChangeProfileInfoNav = (event, newValue) => {
+    setProfileInfoNav(newValue);
   };
 
   const handleClosePostCreation = () => {
@@ -671,7 +685,189 @@ const ProfilePage = (props) => {
         </div>
       </TabPanel>
       <TabPanel classes={classes} value={profileNav} index={1}>
-        Zdjęcia
+        <Paper elevation={4} className={classes.profileInformationContainer}>
+          <TabContext value={profileInfoNav}>
+            <div className={classes.profileInformationTabs}>
+              <TabList
+                onChange={handleChangeProfileInfoNav}
+                className={classes.profileInformationTabList}
+                TabIndicatorProps={{
+                  style: {
+                    display: 'none',
+                  },
+                }}
+              >
+                <Tab label="Podstawowe informacje" value="i1" />
+                <Tab label="Dane kontaktowe" value="i2" />
+                <Tab label="Praca i wykształcenie" value="i3" />
+                <Tab label="Zainteresowania" value="i4" />
+                <Tab label="Ulubione" value="i5" />
+              </TabList>
+            </div>
+            <div className={classes.profileInformationContent}>
+              <TabPanelMUI
+                value="i1"
+                className={classes.profileInformationTabItem}
+              >
+                <Typography
+                  variant="h5"
+                  className={classes.profileInformationHeading}
+                >
+                  Podstawowe informacje
+                </Typography>
+                <ProfileInformationItem
+                  title="Imię i nazwisko"
+                  content={userProfile.firstName + ' ' + userProfile.lastName}
+                />
+                <ProfileInformationItem
+                  title="Dzień urodzenia"
+                  content={
+                    new Date(userProfile.dateOfBirth).getDate() +
+                    ' ' +
+                    new Date(userProfile.dateOfBirth).toLocaleString(
+                      'default',
+                      { month: 'long' }
+                    )
+                  }
+                />
+                <ProfileInformationItem
+                  title="Rok urodzenia"
+                  content={new Date(userProfile.dateOfBirth)
+                    .getFullYear()
+                    .toString()}
+                />
+                <ProfileInformationItem
+                  title="Wiek"
+                  content={userProfile.age.toString()}
+                />
+                <ProfileInformationItem
+                  title="Płeć"
+                  content={
+                    userProfile.gender === 'MALE'
+                      ? 'Mężczyzna'
+                      : userProfile.gender === 'FEMALE'
+                      ? 'Kobieta'
+                      : 'Nieokreślona'
+                  }
+                />
+                <ProfileInformationItem
+                  title="Zawód"
+                  content={userProfile.job !== null ? userProfile.job : '-'}
+                />
+                <ProfileInformationItem
+                  title="Związek"
+                  content={
+                    userProfile.relationshipStatus !== null
+                      ? relationshipStatusTypes[userProfile.relationshipStatus]
+                      : '-'
+                  }
+                />
+                <Typography
+                  variant="h5"
+                  sx={{ marginTop: '15px' }}
+                  className={classes.profileInformationHeading}
+                >
+                  O mnie
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  className={classes.profileInformationItemTitle}
+                >
+                  {userProfile.aboutUser !== null
+                    ? userProfile.aboutUser
+                    : 'Brak opisu'}
+                </Typography>
+              </TabPanelMUI>
+              <TabPanelMUI
+                value="i2"
+                className={classes.profileInformationTabItem}
+              >
+                <Typography
+                  variant="h5"
+                  className={classes.profileInformationHeading}
+                >
+                  Dane kontaktowe
+                </Typography>
+                <ProfileInformationItem
+                  title="Adres email"
+                  content={userProfile.email}
+                />
+                <ProfileInformationItem
+                  title="Numer telefonu"
+                  content={userProfile.phoneNumber}
+                />
+                <Typography
+                  variant="h5"
+                  sx={{ marginTop: '15px' }}
+                  className={classes.profileInformationHeading}
+                >
+                  Adres zamieszkania
+                </Typography>
+                <ProfileInformationItem
+                  title="Państwo"
+                  content={
+                    userProfile.address !== null
+                      ? userProfile.address.country
+                      : '-'
+                  }
+                />
+                <ProfileInformationItem
+                  title="Miasto"
+                  content={
+                    userProfile.address !== null
+                      ? userProfile.address.city
+                      : '-'
+                  }
+                />
+                <ProfileInformationItem
+                  title="Ulica"
+                  content={
+                    userProfile.address !== null
+                      ? userProfile.address.street
+                      : '-'
+                  }
+                />
+                <ProfileInformationItem
+                  title="Kod pocztowy"
+                  content={
+                    userProfile.address !== null
+                      ? userProfile.address.zipCode
+                      : '-'
+                  }
+                />
+              </TabPanelMUI>
+              <TabPanelMUI
+                value="i3"
+                className={classes.profileInformationTabItem}
+              >
+                <Typography
+                  variant="h5"
+                  className={classes.profileInformationHeading}
+                >
+                  Wykształcenie
+                </Typography>
+                <SchoolInfoItem
+                  type="UNIVERSITY"
+                  name="PWSZ w Tarnowie"
+                  startDate="12.10.2018"
+                  graduationDate="12.10.2018"
+                />
+              </TabPanelMUI>
+              <TabPanelMUI
+                value="i4"
+                className={classes.profileInformationTabItem}
+              >
+                Zainteresowania
+              </TabPanelMUI>
+              <TabPanelMUI
+                value="i5"
+                className={classes.profileInformationTabItem}
+              >
+                Ulubione
+              </TabPanelMUI>
+            </div>
+          </TabContext>
+        </Paper>
       </TabPanel>
       <TabPanel classes={classes} value={profileNav} index={2}>
         Znajomi

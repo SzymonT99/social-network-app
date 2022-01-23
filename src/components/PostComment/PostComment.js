@@ -16,6 +16,7 @@ import {
 import Popup from '../Popup/Popup';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import UsersListPopup from '../UsersListPopup/UsersListPopup';
+import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 
 const formatTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -272,31 +273,11 @@ const PostComment = (props) => {
         title="Usuwanie komentarza"
         onClose={handleCloseDeletePopup}
       >
-        <>
-          <Typography variant="h6" style={{ marginBottom: '15px' }}>
-            Czy napewno chcesz usunąć wskazany komentarz?
-          </Typography>
-          <Divider />
-          <div className={classes.dialogActionContainer}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.dialogActionBtn}
-              style={{ marginRight: '20px' }}
-              onClick={deleteCommentClick}
-            >
-              Potwierdź
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.dialogActionBtn}
-              onClick={handleCloseDeletePopup}
-            >
-              Anuluj
-            </Button>
-          </div>
-        </>
+        <ActionConfirmation
+          title="Czy napewno chcesz usunąć wskazany komentarz?"
+          confirmationAction={deleteCommentClick}
+          rejectionAction={handleCloseDeletePopup}
+        />
       </Popup>
       <UsersListPopup
         title="Polubienia użytkowników"

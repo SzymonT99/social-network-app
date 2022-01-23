@@ -47,6 +47,7 @@ import Popup from '../Popup/Popup';
 import PostForm from '../Forms/PostForm';
 import SharePostForm from '../Forms/SharePostForm';
 import ActivityHeading from '../ActivityHeading/ActivityHeading';
+import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 
 const Post = (props) => {
   const {
@@ -86,6 +87,7 @@ const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openSharePostPopup, setOpenSharePostPopup] = useState(false);
   const [highlightComment, setHighlightComment] = useState(null);
+  const [openDeletePostPopup, setOpenDeletePostPopup] = useState(false);
 
   const handleClickPostOption = (event) => {
     setAnchorEl(event.currentTarget);
@@ -175,6 +177,10 @@ const Post = (props) => {
     }
 
     return names;
+  };
+
+  const handleClosePostDeletePopup = () => {
+    setOpenDeletePostPopup(false);
   };
 
   const handleCloseLikesPopup = () => {
@@ -329,7 +335,7 @@ const Post = (props) => {
                   </MenuItem>
                   <MenuItem
                     className={classes.postMenuItem}
-                    onClick={handleDeletePost}
+                    onClick={() => setOpenDeletePostPopup(true)}
                   >
                     <ListItemIcon>
                       <DeleteIcon fontSize="medium" />
@@ -349,6 +355,18 @@ const Post = (props) => {
           <div />
         )}
       </ActivityHeading>
+      <Popup
+        open={openDeletePostPopup}
+        type="confirmation"
+        title="Usuwanie postu"
+        onClose={handleClosePostDeletePopup}
+      >
+        <ActionConfirmation
+          title="Czy napewno chcesz usunąć wskazany post?"
+          confirmationAction={handleDeletePost}
+          rejectionAction={handleClosePostDeletePopup}
+        />
+      </Popup>
       <Divider />
       <div className={classes.postContent}>
         <Typography variant="body1">{content}</Typography>
