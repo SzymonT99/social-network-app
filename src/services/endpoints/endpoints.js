@@ -18,4 +18,8 @@ export const endpoints = {
   sharePost: baseUrl + '/api/posts/{basePostId}/share',
   deleteSharedPost: baseUrl + '/api/posts/shared/{sharedPostId}',
   userActivity: baseUrl + '/api/profile/{userId}/activity',
+  addSchoolInformation: baseUrl + '/api/profile/schools',
+  manageSchoolInformation: baseUrl + '/api/profile/schools/{schoolId}',
+  addWorkPlaceInformation: baseUrl + '/api/profile/work',
+  manageWorkPlaceInformation: baseUrl + '/api/profile/work/{workId}',
 };

@@ -249,6 +249,15 @@ const styles = (theme) => ({
       marginBottom: '15px',
     },
   },
+  addSchoolBtn: {
+    '&.MuiButton-root': {
+      marginTop: '5px',
+      textTransform: 'none',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
+  },
 });
 
 export default styles;

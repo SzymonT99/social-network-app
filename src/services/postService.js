@@ -22,7 +22,7 @@ const editPost = (postId, formData) => {
 };
 
 const deletePost = (postId) => {
-  return fetch(endpoints.managePost.replace('{postId}', postId), {
+  return fetch(endpoints.managePost.replace('{postId}', postId) + '/archive', {
     method: 'DELETE',
     headers: {
       Authorization: authorization(),

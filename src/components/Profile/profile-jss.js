@@ -18,10 +18,12 @@ const styles = (theme) => ({
       textOverflow: 'ellipsis',
     },
   },
-  schoolItemContainer: {},
+  schoolItemContainer: {
+    paddingBottom: '15px',
+  },
   schoolItemType: {
     fontWeight: 'bold',
-    paddingBottom: '10px',
+    paddingBottom: '5px',
   },
   schoolItemContent: {
     display: 'flex',

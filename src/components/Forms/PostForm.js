@@ -229,6 +229,10 @@ const PostForm = (props) => {
 PostForm.propTypes = {
   classes: PropTypes.object.isRequired,
   closePopup: PropTypes.func.isRequired,
+  edition: PropTypes.bool,
+  postText: PropTypes.string,
+  postImages: PropTypes.array,
+  postIsPublic: PropTypes.bool,
 };
 
 PostForm.defaultProps = {

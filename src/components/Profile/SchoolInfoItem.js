@@ -14,6 +14,11 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Popup from '../Popup/Popup';
+import AddSchoolForm from '../Forms/AddSchoolForm';
+import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
+import { useDispatch } from 'react-redux';
+import { deleteSchoolInformation } from '../../redux/actions/userProfileActions';
 
 const schoolTypes = {
   PRIMARY_SCHOOL: 'Szkoła Podstawowa',
@@ -22,9 +27,13 @@ const schoolTypes = {
 };
 
 const SchoolInfoItem = (props) => {
-  const { classes, type, name, startDate, graduationDate } = props;
+  const { classes, schoolId, type, name, startDate, graduationDate } = props;
+
+  const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openEditionSchoolPopup, setOpenEditionSchoolPopup] = useState(false);
+  const [openDeleteSchoolPopup, setOpenDeleteSchoolPopup] = useState(false);
 
   const handleClickSchoolSettings = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,6 +41,29 @@ const SchoolInfoItem = (props) => {
 
   const handleCloseSchoolSettings = () => {
     setAnchorEl(null);
+  };
+
+  const handleCloseEditionSchoolPopup = () => {
+    setOpenEditionSchoolPopup(false);
+  };
+
+  const handleOpenEditionSchoolPopupClick = () => {
+    setOpenEditionSchoolPopup(true);
+    handleCloseSchoolSettings();
+  };
+
+  const handleCloseSchoolDeletePopup = () => {
+    setOpenDeleteSchoolPopup(false);
+  };
+
+  const handleDeleteSchoolInformation = () => {
+    dispatch(deleteSchoolInformation(schoolId));
+    handleCloseSchoolSettings();
+  };
+
+  const handleDeleteSchoolClick = () => {
+    setOpenDeleteSchoolPopup(true);
+    handleCloseSchoolSettings();
   };
 
   return (
@@ -46,9 +78,8 @@ const SchoolInfoItem = (props) => {
             {name}
           </Typography>
           <Typography variant="body2" noWrap>
-            {'Uczęszczał(a) od ' +
-              startDate +
-              (graduationDate && ' do ' + graduationDate)}
+            {'Uczęszczał(a) od ' + startDate}
+            <span>{graduationDate !== null && ' do ' + graduationDate}</span>
           </Typography>
         </div>
         <div>
@@ -71,7 +102,7 @@ const SchoolInfoItem = (props) => {
               horizontal: 'right',
             }}
           >
-            <MenuItem>
+            <MenuItem onClick={handleOpenEditionSchoolPopupClick}>
               <ListItemIcon>
                 <EditIcon fontSize="medium" />
               </ListItemIcon>
@@ -82,7 +113,7 @@ const SchoolInfoItem = (props) => {
                 }
               />
             </MenuItem>
-            <MenuItem>
+            <MenuItem onClick={handleDeleteSchoolClick}>
               <ListItemIcon>
                 <DeleteForeverIcon fontSize="medium" />
               </ListItemIcon>
@@ -96,12 +127,41 @@ const SchoolInfoItem = (props) => {
           </Menu>
         </div>
       </div>
+      <Popup
+        open={openEditionSchoolPopup}
+        type="profileInfo"
+        title="Edytuj dodaną szkołę"
+        onClose={handleCloseEditionSchoolPopup}
+      >
+        <AddSchoolForm
+          edition
+          schoolId={schoolId}
+          editedSchoolName={name}
+          editedSchoolType={type}
+          editedStartDate={startDate}
+          editedGraduationDate={graduationDate}
+          closePopup={handleCloseEditionSchoolPopup}
+        />
+      </Popup>
+      <Popup
+        open={openDeleteSchoolPopup}
+        type="confirmation"
+        title="Usuwanie informacji o szkole"
+        onClose={handleCloseSchoolDeletePopup}
+      >
+        <ActionConfirmation
+          title="Czy napewno chcesz usunąć wskazaną szkołę?"
+          confirmationAction={handleDeleteSchoolInformation}
+          rejectionAction={handleCloseSchoolDeletePopup}
+        />
+      </Popup>
     </div>
   );
 };
 
 SchoolInfoItem.propTypes = {
   classes: PropTypes.object.isRequired,
+  schoolId: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   startDate: PropTypes.string.isRequired,

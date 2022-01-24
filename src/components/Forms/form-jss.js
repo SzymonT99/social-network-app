@@ -89,6 +89,36 @@ const styles = (theme) => ({
       backgroundColor: theme.palette.secondary.dark,
     },
   },
+  schoolFormContainer: {
+    width: '100%',
+  },
+  schoolDateContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  graduationSchoolLabel: {
+    '&.MuiFormControlLabel-root': {
+      marginTop: '6px',
+    },
+  },
+  graduationSchoolCheckbox: {
+    '&.MuiCheckbox-root': {
+      paddingLeft: 0,
+    },
+  },
+  schoolActionBtnContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '15px',
+  },
+  schoolActionBtn: {
+    '&.MuiButton-root': {
+      textTransform: 'none',
+      fontSize: '17px',
+      margin: '0px 15px',
+      width: '26%',
+    },
+  },
 });
 
 export default styles;

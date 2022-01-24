@@ -514,9 +514,6 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
   return postService
     .sharePost(basePostId, outerPost)
     .then((response) => {
-      console.log('sharePost');
-      console.log(basePostId);
-      console.log(outerPost);
       if (response.status === 201) {
         return response.json().then((data) => {
           const sharedPost = {

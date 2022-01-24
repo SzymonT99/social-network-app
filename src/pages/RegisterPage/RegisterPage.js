@@ -256,6 +256,9 @@ const RegisterPage = (props) => {
                   formik.touched.dateOfBirth &&
                   Boolean(formik.errors.dateOfBirth)
                 }
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
             </Grid>
           </Grid>
