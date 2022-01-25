@@ -67,13 +67,13 @@ const SchoolInfoItem = (props) => {
   };
 
   return (
-    <div className={classes.schoolItemContainer}>
+    <div className={classes.profileInfoItemContainer}>
       <Typography className={classes.schoolItemType} variant="h6">
         {schoolTypes[type]}
       </Typography>
-      <div className={classes.schoolItemContent}>
+      <div className={classes.profileInfoItemContent}>
         <SchoolIcon fontSize="large" color="primary" />
-        <div className={classes.schoolItemDetails}>
+        <div className={classes.profileInfoItemDetails}>
           <Typography variant="subtitle1" noWrap>
             {name}
           </Typography>
@@ -84,7 +84,7 @@ const SchoolInfoItem = (props) => {
         </div>
         <div>
           <IconButton
-            className={classes.schoolSettingsBtn}
+            className={classes.profileInfoItemSettingsBtn}
             onClick={handleClickSchoolSettings}
           >
             <MoreHorizIcon />

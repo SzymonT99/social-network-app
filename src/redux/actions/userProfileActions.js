@@ -200,3 +200,96 @@ export const deleteWorkPlaceInformation = (workId) => (dispatch, getState) => {
       console.log(error);
     });
 };
+
+export const getUserFavouriteItems = (userId) => (dispatch) => {
+  return userProfileService
+    .getUserFavourites(userId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: userProfileTypes.FETCH_USER_FAVOURITES,
+            payload: {
+              userFavourites: data,
+            },
+          });
+        });
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const addFavouriteItem = (favouriteItem) => (dispatch, getState) => {
+  return userProfileService
+    .addUserFavourite(favouriteItem)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(getUserFavouriteItems(getState().auth.user.userId));
+        dispatch(showNotification('success', 'Dodano element'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const editFavouriteItem =
+  (favouriteId, favouriteItem) => (dispatch, getState) => {
+    return userProfileService
+      .editUserFavourite(favouriteId, favouriteItem)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(getUserFavouriteItems(getState().auth.user.userId));
+          dispatch(showNotification('success', 'Zmieniono element'));
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else if (response.status === 401) {
+          dispatch(logoutUser());
+          window.location.href = '/auth/login';
+          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+export const deleteFavouriteItem = (favouriteId) => (dispatch, getState) => {
+  return userProfileService
+    .deleteUserFavourite(favouriteId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getUserFavouriteItems(getState().auth.user.userId));
+        dispatch(showNotification('success', 'Usunięto element'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

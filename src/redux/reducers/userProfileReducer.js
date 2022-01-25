@@ -3,6 +3,7 @@ import types from '../types/userProfileTypes';
 const initialState = {
   userProfile: null,
   userActivity: null,
+  userFavourites: [],
 };
 
 const userProfileReducer = (state = initialState, action) => {
@@ -16,6 +17,11 @@ const userProfileReducer = (state = initialState, action) => {
       return {
         ...state,
         userActivity: action.payload.userActivity,
+      };
+    case types.FETCH_USER_FAVOURITES:
+      return {
+        ...state,
+        userFavourites: action.payload.userFavourites,
       };
     case types.CLEAR_ALL:
       return initialState;

@@ -76,7 +76,7 @@ const AddSchoolForm = (props) => {
       schoolType,
       name: schoolName,
       startDate,
-      graduationDate,
+      graduationDate: graduationDate === '' ? null : graduationDate,
     };
     if (schoolName !== '' && startDate !== '') {
       dispatch(addSchoolInformation(school));
@@ -93,7 +93,6 @@ const AddSchoolForm = (props) => {
       startDate,
       graduationDate,
     };
-    console.log(school);
     if (schoolName !== '' && startDate !== '') {
       dispatch(editSchoolInformation(schoolId, school));
       closePopup();
@@ -103,7 +102,7 @@ const AddSchoolForm = (props) => {
   };
 
   return (
-    <div className={classes.schoolFormContainer}>
+    <div className={classes.workFormContainer}>
       <Stack component="form" noValidate spacing={3}>
         <FormControl fullWidth>
           <InputLabel id="school-type-select-label">Typ szkoły</InputLabel>
@@ -127,7 +126,7 @@ const AddSchoolForm = (props) => {
           value={schoolName}
           onChange={handleSchoolNameChange}
         />
-        <div className={classes.schoolDateContainer}>
+        <div className={classes.workDateContainer}>
           <TextField
             id="start-date"
             label="Data rozpoczęcia"
@@ -168,11 +167,11 @@ const AddSchoolForm = (props) => {
         />
       </Stack>
       <Divider />
-      <div className={classes.schoolActionBtnContainer}>
+      <div className={classes.workActionBtnContainer}>
         <Button
           variant="contained"
           color="secondary"
-          className={classes.schoolActionBtn}
+          className={classes.workActionBtn}
           onClick={!edition ? handleAddSchool : handleEditSchool}
         >
           {!edition ? 'Dodaj' : 'Edytuj'}
@@ -180,7 +179,7 @@ const AddSchoolForm = (props) => {
         <Button
           variant="contained"
           color="primary"
-          className={classes.schoolActionBtn}
+          className={classes.workActionBtn}
           onClick={closePopup}
         >
           Anuluj

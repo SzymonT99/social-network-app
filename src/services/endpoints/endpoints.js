@@ -22,4 +22,7 @@ export const endpoints = {
   manageSchoolInformation: baseUrl + '/api/profile/schools/{schoolId}',
   addWorkPlaceInformation: baseUrl + '/api/profile/work',
   manageWorkPlaceInformation: baseUrl + '/api/profile/work/{workId}',
+  userFavouriteItems: baseUrl + '/api/profile/{userId}/favourites',
+  addFavouriteItem: baseUrl + '/api/profile/favourites',
+  manageFavouriteItem: baseUrl + '/api/profile/favourites/{favouriteId}',
 };

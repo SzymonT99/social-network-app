@@ -18,28 +18,47 @@ const styles = (theme) => ({
       textOverflow: 'ellipsis',
     },
   },
-  schoolItemContainer: {
+  profileInfoItemContainer: {
     paddingBottom: '15px',
   },
   schoolItemType: {
     fontWeight: 'bold',
     paddingBottom: '5px',
   },
-  schoolItemContent: {
+  profileInfoItemContent: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  schoolItemDetails: {
+  profileInfoItemDetails: {
     marginLeft: '20px',
     flex: 1,
   },
-  schoolSettingsBtn: {
+  profileInfoItemSettingsBtn: {
     '&.MuiButtonBase-root': {
       backgroundColor: 'rgb(212, 212, 212)',
       color: theme.palette.primary.dark,
       '&:hover': {
         backgroundColor: 'rgb(161,161,161)',
+      },
+    },
+  },
+  userFavouriteTypeList: {
+    '&.MuiList-root': {
+      width: '100%',
+      '& .MuiListItem-root': {
+        '& .MuiListItemText-root': {
+          marginLeft: '20px',
+          marginRight: '30px',
+        },
+        '& .MuiListItemSecondaryAction-root': {
+          display: 'none',
+        },
+        '&:hover': {
+          '& .MuiListItemSecondaryAction-root': {
+            display: 'flex',
+          },
+        },
       },
     },
   },

@@ -30,7 +30,10 @@ import TabPanelMUI from '@mui/lab/TabPanel';
 import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
-import { getUserActivity } from '../../redux/actions/userProfileActions';
+import {
+  getUserActivity,
+  getUserFavouriteItems,
+} from '../../redux/actions/userProfileActions';
 import Post from '../../components/Post/Post';
 import CircularProgress from '@mui/material/CircularProgress';
 import SharedPost from '../../components/SharedPost/SharedPost';
@@ -39,6 +42,11 @@ import SchoolInfoItem from '../../components/Profile/SchoolInfoItem';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AddSchoolForm from '../../components/Forms/AddSchoolForm';
 import { useHistory } from 'react-router-dom';
+import WorkPlaceInfoItem from '../../components/Profile/WorkPlaceInfoItem';
+import AddWorkPlaceForm from '../../components/Forms/AddWorkPlaceForm';
+import EditIcon from '@mui/icons-material/Edit';
+import AddUserFavouriteForm from '../../components/Forms/AddUserFavouriteForm';
+import UserFavouriteItemList from '../../components/Profile/UserFavouriteItemList';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -101,12 +109,25 @@ const relationshipStatusTypes = {
   MARRIED: 'W związku małżeńskim',
 };
 
+const favouriteTypes = {
+  BOOK: 'BOOK',
+  FILM: 'FILM',
+  ACTOR: 'ACTOR',
+  MUSIC: 'MUSIC',
+  BAND: 'BAND',
+  QUOTE: 'QUOTE',
+  TV_SHOW: 'TV_SHOW',
+  SPORT: 'SPORT',
+  SPORT_TEAM: 'SPORT_TEAM',
+};
+
 const ProfilePage = (props) => {
   const { classes } = props;
 
   const dispatch = useDispatch();
   const userProfile = useSelector((state) => state.profile.userProfile);
   const userActivity = useSelector((state) => state.profile.userActivity);
+  const userFavourites = useSelector((state) => state.profile.userFavourites);
   const user = useSelector((state) => state.auth.user);
 
   const history = useHistory();
@@ -122,16 +143,23 @@ const ProfilePage = (props) => {
     comments: 5,
   });
   const [openAddSchoolPopup, setOpenAddSchoolPopup] = useState(false);
+  const [openAddWorkPopup, setOpenAddWorkPopup] = useState(false);
+  const [showFavouriteForm, setShowFavouriteForm] = useState(false);
 
   useEffect(() => {
     if (user === null) {
       history.push('/auth/login');
     }
     dispatch(getUserActivity(user.userId));
+    dispatch(getUserFavouriteItems(user.userId));
   }, []);
 
   const handleCloseAddSchoolPopup = () => {
     setOpenAddSchoolPopup(false);
+  };
+
+  const handleCloseAddWorkPopup = () => {
+    setOpenAddWorkPopup(false);
   };
 
   const handleChangeProfileNav = (event, newValue) => {
@@ -725,12 +753,17 @@ const ProfilePage = (props) => {
                   value="i1"
                   className={classes.profileInformationTabItem}
                 >
-                  <Typography
-                    variant="h5"
-                    className={classes.profileInformationHeading}
-                  >
-                    Podstawowe informacje
-                  </Typography>
+                  <div className={classes.profileInformationHeadingWithAction}>
+                    <Typography variant="h5">Podstawowe informacje</Typography>
+                    <Tooltip title="Edytuj informacje" placement="left">
+                      <IconButton
+                        className={classes.editBaseInformationBtn}
+                        onClick={() => history.push('/app/settings/profile')}
+                      >
+                        <EditIcon color="primary" />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
                   <ProfileInformationItem
                     title="Imię i nazwisko"
                     content={userProfile.firstName + ' ' + userProfile.lastName}
@@ -795,17 +828,37 @@ const ProfilePage = (props) => {
                       ? userProfile.aboutUser
                       : 'Brak opisu'}
                   </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{ marginTop: '15px' }}
+                    className={classes.profileInformationHeading}
+                  >
+                    Umiejętności
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.profileInformationItemTitle}
+                  >
+                    {userProfile.skills !== null
+                      ? userProfile.skills
+                      : 'Brak opisu umiejętności'}
+                  </Typography>
                 </TabPanelMUI>
                 <TabPanelMUI
                   value="i2"
                   className={classes.profileInformationTabItem}
                 >
-                  <Typography
-                    variant="h5"
-                    className={classes.profileInformationHeading}
-                  >
-                    Dane kontaktowe
-                  </Typography>
+                  <div className={classes.profileInformationHeadingWithAction}>
+                    <Typography variant="h5">Dane kontaktowe</Typography>
+                    <Tooltip title="Edytuj Adres" placement="left">
+                      <IconButton
+                        className={classes.editBaseInformationBtn}
+                        onClick={() => history.push('/app/settings/address')}
+                      >
+                        <EditIcon color="primary" />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
                   <ProfileInformationItem
                     title="Adres email"
                     content={userProfile.email}
@@ -885,12 +938,39 @@ const ProfilePage = (props) => {
                   <Button
                     color="secondary"
                     variant="text"
-                    className={classes.addSchoolBtn}
+                    className={classes.addProfileInfoItemBtn}
                     onClick={() => setOpenAddSchoolPopup(true)}
                   >
                     <AddCircleOutlineIcon />
                     <Typography variant="subtitle1" marginLeft="10px">
                       Dodaj szkołę
+                    </Typography>
+                  </Button>
+                  <Typography
+                    variant="h5"
+                    className={classes.profileInformationHeading}
+                  >
+                    Praca
+                  </Typography>
+                  {userProfile.workPlaces.map((work) => (
+                    <WorkPlaceInfoItem
+                      key={work.workPlaceId}
+                      workId={work.workPlaceId}
+                      company={work.company}
+                      position={work.position}
+                      startDate={work.startDate}
+                      endDate={work.endDate}
+                    />
+                  ))}
+                  <Button
+                    color="secondary"
+                    variant="text"
+                    className={classes.addProfileInfoItemBtn}
+                    onClick={() => setOpenAddWorkPopup(true)}
+                  >
+                    <AddCircleOutlineIcon />
+                    <Typography variant="subtitle1" marginLeft="10px">
+                      Dodaj miejsce pracy
                     </Typography>
                   </Button>
                   <Popup
@@ -901,18 +981,101 @@ const ProfilePage = (props) => {
                   >
                     <AddSchoolForm closePopup={handleCloseAddSchoolPopup} />
                   </Popup>
+                  <Popup
+                    open={openAddWorkPopup}
+                    type="profileInfo"
+                    title="Dodaj miejsce pracy"
+                    onClose={handleCloseAddWorkPopup}
+                  >
+                    <AddWorkPlaceForm closePopup={handleCloseAddWorkPopup} />
+                  </Popup>
                 </TabPanelMUI>
                 <TabPanelMUI
                   value="i4"
                   className={classes.profileInformationTabItem}
                 >
-                  Zainteresowania
+                  <Typography
+                    variant="h5"
+                    className={classes.profileInformationHeading}
+                  >
+                    Zainteresowania
+                  </Typography>
                 </TabPanelMUI>
                 <TabPanelMUI
                   value="i5"
                   className={classes.profileInformationTabItem}
                 >
-                  Ulubione
+                  <Typography
+                    variant="h5"
+                    className={classes.profileInformationHeading}
+                  >
+                    Ulubione
+                  </Typography>
+                  {userFavourites && (
+                    <>
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite.favouriteType === 'BOOK'
+                        )}
+                      />
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite.favouriteType === 'FILM'
+                        )}
+                      />
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite.favouriteType === 'ACTOR'
+                        )}
+                      />
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite.favouriteType === 'MUSIC'
+                        )}
+                      />
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite.favouriteType === 'BAND'
+                        )}
+                      />
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite.favouriteType === 'QUOTE'
+                        )}
+                      />
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite.favouriteType === 'TV_SHOW'
+                        )}
+                      />
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite.favouriteType === 'SPORT'
+                        )}
+                      />
+                      <UserFavouriteItemList
+                        favourites={userFavourites.filter(
+                          (favourite) => favourite == 'SPORT_TEAM'
+                        )}
+                      />
+                    </>
+                  )}
+                  <Button
+                    color="secondary"
+                    variant="text"
+                    className={classes.addProfileInfoItemBtn}
+                    onClick={() => setShowFavouriteForm(!showFavouriteForm)}
+                  >
+                    <AddCircleOutlineIcon />
+                    <Typography variant="subtitle1" marginLeft="10px">
+                      Dodaj ulubione
+                    </Typography>
+                  </Button>
+                  {showFavouriteForm && (
+                    <AddUserFavouriteForm
+                      onCloseForm={() => setShowFavouriteForm(false)}
+                    />
+                  )}
                 </TabPanelMUI>
               </div>
             ) : (

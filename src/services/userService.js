@@ -66,7 +66,7 @@ const addWorkPlaceInformation = (workPlace) => {
       'Content-Type': 'application/json',
       Authorization: authorization(),
     },
-    body: JSON.stringify({ workPlace }),
+    body: JSON.stringify(workPlace),
   });
 };
 
@@ -97,6 +97,55 @@ const deleteWorkPlaceInformation = (workId) => {
   );
 };
 
+const getUserFavourites = (userId) => {
+  return fetch(endpoints.userFavouriteItems.replace('{userId}', userId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const addUserFavourite = (favouriteItem) => {
+  console.log(favouriteItem);
+  return fetch(endpoints.addFavouriteItem, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify(favouriteItem),
+  });
+};
+
+const editUserFavourite = (favouriteId, updatedFavouriteItem) => {
+  return fetch(
+    endpoints.manageFavouriteItem.replace('{favouriteId}', favouriteId),
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+      body: JSON.stringify(updatedFavouriteItem),
+    }
+  );
+};
+
+const deleteUserFavourite = (favouriteId) => {
+  return fetch(
+    endpoints.manageFavouriteItem.replace('{favouriteId}', favouriteId),
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 export default {
   getUserProfile,
   getUserActivity,
@@ -106,4 +155,8 @@ export default {
   addWorkPlaceInformation,
   editWorkPlaceInformation,
   deleteWorkPlaceInformation,
+  getUserFavourites,
+  addUserFavourite,
+  editUserFavourite,
+  deleteUserFavourite,
 };

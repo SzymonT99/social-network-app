@@ -119,6 +119,40 @@ const styles = (theme) => ({
       width: '26%',
     },
   },
+  workFormContainer: {
+    width: '100%',
+  },
+  workDateContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  workActionBtnContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '15px',
+  },
+  workActionBtn: {
+    '&.MuiButton-root': {
+      textTransform: 'none',
+      fontSize: '17px',
+      margin: '0px 15px',
+      width: '26%',
+    },
+    userFavouriteItemFormContainer: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+  },
+  userFavouriteItemFormAction: {
+    marginTop: '15px',
+  },
+  userFavouriteActionBtn: {
+    '&.MuiButton-root': {
+      textTransform: 'none',
+      width: '20%',
+      fontSize: '17px',
+    },
+  },
 });
 
 export default styles;

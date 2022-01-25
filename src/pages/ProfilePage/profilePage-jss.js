@@ -243,18 +243,36 @@ const styles = (theme) => ({
     },
   },
   profileInformationHeading: {
-    '&.MuiTypography-root': {
-      paddingBottom: '20px',
+    '&.MuiTypography-root ': {
+      paddingBottom: '14px',
       borderBottom: '1px solid rgba(0, 0, 0, 0.4)',
       marginBottom: '15px',
     },
   },
-  addSchoolBtn: {
+  profileInformationHeadingWithAction: {
+    paddingBottom: '14px',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.4)',
+    marginBottom: '15px',
+    display: 'flex',
+    alignItems: ' center',
+    justifyContent: 'space-between',
+  },
+  addProfileInfoItemBtn: {
     '&.MuiButton-root': {
-      marginTop: '5px',
+      margin: '5px 0 15px 0',
+      paddingLeft: 0,
       textTransform: 'none',
       '&:hover': {
         textDecoration: 'underline',
+      },
+    },
+  },
+  editBaseInformationBtn: {
+    '&.MuiButtonBase-root': {
+      backgroundColor: 'rgb(212, 212, 212)',
+      color: theme.palette.primary.dark,
+      '&:hover': {
+        backgroundColor: 'rgb(161,161,161)',
       },
     },
   },
