@@ -18,6 +18,7 @@ import {
   Link,
   List,
   ListItem,
+  ListItemText,
   Tab,
   Tabs,
   TextField,
@@ -31,8 +32,10 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import {
+  deleteUserInterests,
   getUserActivity,
   getUserFavouriteItems,
+  getUserInterests,
 } from '../../redux/actions/userProfileActions';
 import Post from '../../components/Post/Post';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -47,6 +50,10 @@ import AddWorkPlaceForm from '../../components/Forms/AddWorkPlaceForm';
 import EditIcon from '@mui/icons-material/Edit';
 import AddUserFavouriteForm from '../../components/Forms/AddUserFavouriteForm';
 import UserFavouriteItemList from '../../components/Profile/UserFavouriteItemList';
+import AddUserInterestForm from '../../components/Forms/AddUserInterestForm';
+import { useParams } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -129,8 +136,11 @@ const ProfilePage = (props) => {
   const userActivity = useSelector((state) => state.profile.userActivity);
   const userFavourites = useSelector((state) => state.profile.userFavourites);
   const user = useSelector((state) => state.auth.user);
+  const userInterests = useSelector((state) => state.profile.userInterests);
 
   const history = useHistory();
+
+  const { profileUserId } = useParams();
 
   const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
@@ -145,6 +155,7 @@ const ProfilePage = (props) => {
   const [openAddSchoolPopup, setOpenAddSchoolPopup] = useState(false);
   const [openAddWorkPopup, setOpenAddWorkPopup] = useState(false);
   const [showFavouriteForm, setShowFavouriteForm] = useState(false);
+  const [showUserInterestForm, setShowUserInterestForm] = useState(false);
 
   useEffect(() => {
     if (user === null) {
@@ -152,6 +163,7 @@ const ProfilePage = (props) => {
     }
     dispatch(getUserActivity(user.userId));
     dispatch(getUserFavouriteItems(user.userId));
+    dispatch(getUserInterests(user.userId));
   }, []);
 
   const handleCloseAddSchoolPopup = () => {
@@ -183,6 +195,10 @@ const ProfilePage = (props) => {
       ...prevState,
       [type]: numberItemsShown[type] + 5,
     }));
+  };
+
+  const handleClickDeleteUserInterest = (interestId) => {
+    dispatch(deleteUserInterests(interestId));
   };
 
   return (
@@ -1000,6 +1016,57 @@ const ProfilePage = (props) => {
                   >
                     Zainteresowania
                   </Typography>
+                  <List className={classes.userInterestList}>
+                    {userInterests.map((userInterest) => (
+                      <ListItem
+                        key={userInterest.interestId}
+                        disableGutters
+                        secondaryAction={
+                          <IconButton
+                            onClick={() =>
+                              handleClickDeleteUserInterest(
+                                userInterest.interestId
+                              )
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        }
+                      >
+                        <FiberManualRecordIcon
+                          color="secondary"
+                          fontSize="14px"
+                        />
+                        <ListItemText
+                          disableTypography
+                          primary={
+                            <Typography noWrap variant="subtitle2">
+                              {userInterest.name}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                  <Button
+                    color="secondary"
+                    variant="text"
+                    className={classes.addProfileInfoItemBtn}
+                    onClick={() =>
+                      setShowUserInterestForm(!showUserInterestForm)
+                    }
+                  >
+                    <AddCircleOutlineIcon />
+                    <Typography variant="subtitle1" marginLeft="10px">
+                      Dodaj zainteresowanie
+                    </Typography>
+                  </Button>
+                  {showUserInterestForm && (
+                    <AddUserInterestForm
+                      userId={user.userId}
+                      onCloseForm={() => setShowFavouriteForm(false)}
+                    />
+                  )}
                 </TabPanelMUI>
                 <TabPanelMUI
                   value="i5"
@@ -1055,7 +1122,8 @@ const ProfilePage = (props) => {
                       />
                       <UserFavouriteItemList
                         favourites={userFavourites.filter(
-                          (favourite) => favourite == 'SPORT_TEAM'
+                          (favourite) =>
+                            favourite.favouriteType === 'SPORT_TEAM'
                         )}
                       />
                     </>

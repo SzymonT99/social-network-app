@@ -276,6 +276,25 @@ const styles = (theme) => ({
       },
     },
   },
+  userInterestList: {
+    '&.MuiList-root': {
+      width: '100%',
+      '& .MuiListItem-root': {
+        '& .MuiListItemText-root': {
+          marginLeft: '20px',
+          marginRight: '30px',
+        },
+        '& .MuiListItemSecondaryAction-root': {
+          display: 'none',
+        },
+        '&:hover': {
+          '& .MuiListItemSecondaryAction-root': {
+            display: 'flex',
+          },
+        },
+      },
+    },
+  },
 });
 
 export default styles;

@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import {
   addFavouriteItem,
-  addWorkPlaceInformation,
   editFavouriteItem,
 } from '../../redux/actions/userProfileActions';
 import { showNotification } from '../../redux/actions/notificationActions';

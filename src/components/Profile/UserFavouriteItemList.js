@@ -12,15 +12,15 @@ import { deleteFavouriteItem } from '../../redux/actions/userProfileActions';
 import AddUserFavouriteForm from '../Forms/AddUserFavouriteForm';
 
 const favouriteTypes = {
-  BOOK: 'Książka',
-  FILM: 'Film',
-  ACTOR: 'Aktor',
-  MUSIC: 'Utwór muzyczny',
-  BAND: 'Zespół muzyczny',
-  QUOTE: 'Cytat',
-  TV_SHOW: 'Program telewizyjny',
-  SPORT: 'Dyscyplina sportowa',
-  SPORT_TEAM: 'Drużyna sportowa',
+  BOOK: 'Książki',
+  FILM: 'Filmy',
+  ACTOR: 'Aktorzy',
+  MUSIC: 'Utwory muzyczne',
+  BAND: 'Zespoły muzyczne',
+  QUOTE: 'Cytaty',
+  TV_SHOW: 'Programy telewizyjne',
+  SPORT: 'Dyscypliny sportowe',
+  SPORT_TEAM: 'Drużyny sportowe',
 };
 
 const UserFavouriteItemList = (props) => {
@@ -46,7 +46,7 @@ const UserFavouriteItemList = (props) => {
           </Typography>
           <List className={classes.userFavouriteTypeList}>
             {favourites.map((userFavourite) => (
-              <>
+              <div key={userFavourite.favouriteId}>
                 <ListItem
                   key={userFavourite.favouriteId}
                   disableGutters
@@ -65,7 +65,7 @@ const UserFavouriteItemList = (props) => {
                     </>
                   }
                 >
-                  <FiberManualRecordIcon color="secondary" fontSize="10px" />
+                  <FiberManualRecordIcon color="secondary" fontSize="14px" />
                   <ListItemText
                     disableTypography
                     primary={
@@ -84,7 +84,7 @@ const UserFavouriteItemList = (props) => {
                     onCloseForm={() => setShowEditFavouriteForm(false)}
                   />
                 )}
-              </>
+              </div>
             ))}
           </List>
         </div>

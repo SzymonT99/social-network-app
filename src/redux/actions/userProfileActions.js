@@ -240,6 +240,8 @@ export const addFavouriteItem = (favouriteItem) => (dispatch, getState) => {
         dispatch(logoutUser());
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Nie uzupełniono danych'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -279,6 +281,106 @@ export const deleteFavouriteItem = (favouriteId) => (dispatch, getState) => {
       if (response.status === 200) {
         dispatch(getUserFavouriteItems(getState().auth.user.userId));
         dispatch(showNotification('success', 'Usunięto element'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getPossibleInterests = () => (dispatch) => {
+  return userProfileService
+    .getPossibleInterests()
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: userProfileTypes.FETCH_POSSIBLE_INTERESTS,
+            payload: {
+              possibleInterests: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getUserInterests = (userId) => (dispatch) => {
+  return userProfileService
+    .getUserInterests(userId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: userProfileTypes.FETCH_USER_INTERESTS,
+            payload: {
+              userInterests: data,
+            },
+          });
+        });
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const addUserInterests = (interestId) => (dispatch, getState) => {
+  return userProfileService
+    .addUserInterests(interestId)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(getUserInterests(getState().auth.user.userId));
+        dispatch(showNotification('success', 'Dodano zainteresowanie'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Nie uzupełniono danych'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const deleteUserInterests = (interestId) => (dispatch, getState) => {
+  return userProfileService
+    .deleteUserInterests(interestId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getUserInterests(getState().auth.user.userId));
+        dispatch(showNotification('success', 'Usunięto zainteresowanie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else if (response.status === 401) {

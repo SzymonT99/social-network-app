@@ -146,6 +146,52 @@ const deleteUserFavourite = (favouriteId) => {
   );
 };
 
+const getPossibleInterests = () => {
+  return fetch(endpoints.possibleInterest, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const getUserInterests = (userId) => {
+  return fetch(endpoints.userInterests.replace('{userId}', userId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const addUserInterests = (interestId) => {
+  return fetch(
+    endpoints.manageUserInterests.replace('{interestId}', interestId),
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
+const deleteUserInterests = (interestId) => {
+  return fetch(
+    endpoints.manageUserInterests.replace('{interestId}', interestId),
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 export default {
   getUserProfile,
   getUserActivity,
@@ -159,4 +205,8 @@ export default {
   addUserFavourite,
   editUserFavourite,
   deleteUserFavourite,
+  getPossibleInterests,
+  getUserInterests,
+  addUserInterests,
+  deleteUserInterests,
 };
