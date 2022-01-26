@@ -31,7 +31,7 @@ const ActivityBoard = (props) => {
   const dispatch = useDispatch();
   const activityBoard = useSelector((state) => state.activity.board);
   const isLoading = useSelector((state) => state.activity.isLoading);
-  const userProfile = useSelector((state) => state.profile.userProfile);
+  const loggedUserProfile = useSelector((state) => state.auth.userProfile);
 
   const [openPostCreation, setOpenPostCreation] = useState(false);
   const [numberItemsShown, setNumberItemsShown] = useState(5);
@@ -63,13 +63,15 @@ const ActivityBoard = (props) => {
                 <div className={classes.postCreateContent}>
                   <Avatar
                     src={
-                      userProfile
-                        ? userProfile.profilePhoto.url
+                      loggedUserProfile.profilePhoto
+                        ? loggedUserProfile.profilePhoto.url
                         : defaultUserPhoto
                     }
                     alt={
-                      userProfile
-                        ? userProfile.firstName + ' ' + userProfile.lastName
+                      loggedUserProfile
+                        ? loggedUserProfile.firstName +
+                          ' ' +
+                          loggedUserProfile.lastName
                         : 'Zalogowany użytkownik'
                     }
                     className={classes.userPhoto}

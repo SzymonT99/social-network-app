@@ -61,7 +61,7 @@ const ListItem = withStyles((theme) => ({
 
 const Sidebar = (props) => {
   const { classes } = props;
-  const userProfile = useSelector((state) => state.profile.userProfile);
+  const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const pathIndex = useSelector((state) => state.navigation.pathIndex);
 
   const [selectedItem, setSelectedItem] = useState(pathIndex);
@@ -80,11 +80,11 @@ const Sidebar = (props) => {
         history.push('/app');
         break;
       case 1:
-        if (userProfile) {
+        if (loggedUserProfile) {
           dispatch(
-            setCurrentPath('/app/profile/' + userProfile.userProfileId, 1)
+            setCurrentPath('/app/profile/' + loggedUserProfile.userProfileId, 1)
           );
-          history.push('/app/profile/' + userProfile.userProfileId);
+          history.push('/app/profile/' + loggedUserProfile.userProfileId);
         }
         break;
       default:
@@ -96,15 +96,15 @@ const Sidebar = (props) => {
   return (
     <div className={classes.sidebarContainer}>
       <div className={classes.sidebarWrapper}>
-        {userProfile ? (
+        {loggedUserProfile ? (
           <Link
             className={classes.userProfile}
-            to={'/app/profile/' + userProfile.userProfileId}
+            to={'/app/profile/' + loggedUserProfile.userProfileId}
           >
             <img
               src={
-                userProfile.profilePhoto !== null
-                  ? userProfile.profilePhoto.url
+                loggedUserProfile.profilePhoto !== null
+                  ? loggedUserProfile.profilePhoto.url
                   : defaultUserPhoto
               }
               alt="Zdjęcie użytkownika"
@@ -115,7 +115,7 @@ const Sidebar = (props) => {
               textAlign="center"
               className={classes.nameAndSurname}
             >
-              {userProfile.firstName + ' ' + userProfile.lastName}
+              {loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName}
             </Typography>
           </Link>
         ) : (

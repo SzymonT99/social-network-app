@@ -21,8 +21,19 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.primary.main,
     borderRadius: '40px',
     position: 'absolute',
-    right: '20px',
-    bottom: '20px',
+    right: '12px',
+    bottom: '12px',
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+    },
+  },
+  deleteProfileImageBtn: {
+    display: 'none',
+    backgroundColor: theme.palette.primary.main,
+    borderRadius: '40px',
+    position: 'absolute',
+    right: '12px',
+    top: '12px',
     '& .MuiSvgIcon-root': {
       color: 'white',
     },
@@ -30,6 +41,11 @@ const styles = (theme) => ({
   userProfilePhotoBox: {
     top: '-95px',
     position: 'relative',
+    '&:hover': {
+      '& $deleteProfileImageBtn': {
+        display: 'block',
+      },
+    },
   },
   userPhoto: {
     width: '240px',

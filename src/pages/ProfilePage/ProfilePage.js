@@ -32,10 +32,13 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import {
+  changeProfilePhoto,
+  deleteProfilePhoto,
   deleteUserInterests,
   getUserActivity,
   getUserFavouriteItems,
   getUserInterests,
+  getUserProfile,
 } from '../../redux/actions/userProfileActions';
 import Post from '../../components/Post/Post';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -53,6 +56,7 @@ import UserFavouriteItemList from '../../components/Profile/UserFavouriteItemLis
 import AddUserInterestForm from '../../components/Forms/AddUserInterestForm';
 import { useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ClearIcon from '@mui/icons-material/Clear';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 const TabPanel = (props) => {
@@ -132,15 +136,21 @@ const ProfilePage = (props) => {
   const { classes } = props;
 
   const dispatch = useDispatch();
-  const userProfile = useSelector((state) => state.profile.userProfile);
-  const userActivity = useSelector((state) => state.profile.userActivity);
-  const userFavourites = useSelector((state) => state.profile.userFavourites);
-  const user = useSelector((state) => state.auth.user);
-  const userInterests = useSelector((state) => state.profile.userInterests);
+  const loggedUser = useSelector((state) => state.auth.user);
+  const userProfile = useSelector((state) => state.selectedProfile.userProfile);
+  const userActivity = useSelector(
+    (state) => state.selectedProfile.userActivity
+  );
+  const userFavourites = useSelector(
+    (state) => state.selectedProfile.userFavourites
+  );
+  const userInterests = useSelector(
+    (state) => state.selectedProfile.userInterests
+  );
 
   const history = useHistory();
 
-  const { profileUserId } = useParams();
+  let { profileId } = useParams();
 
   const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
@@ -158,12 +168,10 @@ const ProfilePage = (props) => {
   const [showUserInterestForm, setShowUserInterestForm] = useState(false);
 
   useEffect(() => {
-    if (user === null) {
-      history.push('/auth/login');
-    }
-    dispatch(getUserActivity(user.userId));
-    dispatch(getUserFavouriteItems(user.userId));
-    dispatch(getUserInterests(user.userId));
+    dispatch(getUserProfile(profileId));
+    dispatch(getUserActivity(profileId));
+    dispatch(getUserFavouriteItems(profileId));
+    dispatch(getUserInterests(profileId));
   }, []);
 
   const handleCloseAddSchoolPopup = () => {
@@ -201,6 +209,19 @@ const ProfilePage = (props) => {
     dispatch(deleteUserInterests(interestId));
   };
 
+  const handleClickChangeProfilePhoto = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      let file = event.target.files[0];
+      const form = new FormData();
+      form.append('photo', file);
+      dispatch(changeProfilePhoto(loggedUser.userId, form));
+    }
+  };
+
+  const handleClickDeleteProfilePhoto = () => {
+    dispatch(deleteProfilePhoto(loggedUser.userId));
+  };
+
   return (
     <div className={classes.wrapper}>
       <Paper
@@ -212,27 +233,29 @@ const ProfilePage = (props) => {
           {userProfile && userProfile.coverImage && (
             <img alt="Cover image" src={userProfile.coverImage} />
           )}
-          <label
-            htmlFor="icon-button-file"
-            className={classes.uploadCoverImageBtn}
-          >
-            <Input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="icon-button-file"
-              type="file"
-            />
-            <Tooltip title="Edytuj tło" placement="top">
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
-                component="span"
-                size="large"
-              >
-                <PhotoCamera />
-              </IconButton>
-            </Tooltip>
-          </label>
+          {/*{parseInt(profileId) === loggedUser.userId && (*/}
+          {/*  <label*/}
+          {/*    htmlFor="icon-button-file"*/}
+          {/*    className={classes.uploadCoverImageBtn}*/}
+          {/*  >*/}
+          {/*    <Input*/}
+          {/*      accept="image/*"*/}
+          {/*      style={{ display: 'none' }}*/}
+          {/*      id="icon-button-file"*/}
+          {/*      type="file"*/}
+          {/*    />*/}
+          {/*    <Tooltip title="Edytuj tło" placement="top">*/}
+          {/*      <IconButton*/}
+          {/*        color="primary"*/}
+          {/*        aria-label="upload picture"*/}
+          {/*        component="span"*/}
+          {/*        size="large"*/}
+          {/*      >*/}
+          {/*        <PhotoCamera />*/}
+          {/*      </IconButton>*/}
+          {/*    </Tooltip>*/}
+          {/*  </label>*/}
+          {/*)}*/}
         </div>
         <div className={classes.profileInfoBox}>
           <div className={classes.userProfilePhotoBox}>
@@ -245,26 +268,42 @@ const ProfilePage = (props) => {
               alt="Zdjęcie użytkownika"
               className={classes.userPhoto}
             />
-            <label
-              htmlFor="icon-button-file"
-              className={classes.uploadCoverImageBtn}
-            >
-              <Input
-                accept="image/*"
-                style={{ display: 'none' }}
-                id="icon-button-file"
-                type="file"
-              />
-              <Tooltip title="Zmień zdjęcie profilowe" placement="top">
-                <IconButton
-                  aria-label="upload picture"
-                  component="span"
-                  size="large"
-                >
-                  <PhotoCamera />
-                </IconButton>
-              </Tooltip>
-            </label>
+            {parseInt(profileId) === loggedUser.userId && (
+              <label
+                htmlFor="icon-button-file"
+                className={classes.uploadCoverImageBtn}
+              >
+                <Input
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="icon-button-file"
+                  type="file"
+                  onChange={handleClickChangeProfilePhoto}
+                />
+                <Tooltip title="Zmień zdjęcie profilowe" placement="top">
+                  <IconButton
+                    aria-label="upload picture"
+                    component="span"
+                    size="large"
+                  >
+                    <PhotoCamera fontSize="medium" />
+                  </IconButton>
+                </Tooltip>
+              </label>
+            )}
+            {parseInt(profileId) === loggedUser.userId &&
+              userProfile.profilePhoto !== null && (
+                <div className={classes.deleteProfileImageBtn}>
+                  <Tooltip title="Usuń zdjęcie profilowe" placement="left">
+                    <IconButton
+                      size="small"
+                      onClick={handleClickDeleteProfilePhoto}
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+              )}
           </div>
           <div className={classes.profileInfoText}>
             {userProfile && (
@@ -449,46 +488,48 @@ const ProfilePage = (props) => {
                 value="a1"
                 className={classes.tabPanelActivityContainer}
               >
-                <Paper
-                  elevation={4}
-                  sx={{ borderRadius: '10px' }}
-                  className={classes.postCreateBox}
-                >
-                  <Typography fontWeight="bold" variant="h6">
-                    Utwórz post
-                  </Typography>
-                  <Divider className={classes.divider} />
-                  <div className={classes.postCreateContent}>
-                    <Avatar
-                      src={
-                        userProfile && userProfile.profilePhoto !== null
-                          ? userProfile.profilePhoto.url
-                          : defaultUserPhoto
-                      }
-                      alt={
-                        userProfile
-                          ? userProfile.firstName + ' ' + userProfile.lastName
-                          : 'Zalogowany użytkownik'
-                      }
-                      className={classes.postCreationUserPhoto}
-                    />
-                    <TextField
-                      fullWidth
-                      placeholder="Napisz coś tutaj..."
-                      multiline
-                      rows={2}
-                      className={classes.postInput}
-                      onClick={() => setOpenPostCreation(true)}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <PhotoIcon className={classes.photoIcon} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </div>
-                </Paper>
+                {parseInt(profileId) === loggedUser.userId && (
+                  <Paper
+                    elevation={4}
+                    sx={{ borderRadius: '10px' }}
+                    className={classes.postCreateBox}
+                  >
+                    <Typography fontWeight="bold" variant="h6">
+                      Utwórz post
+                    </Typography>
+                    <Divider className={classes.divider} />
+                    <div className={classes.postCreateContent}>
+                      <Avatar
+                        src={
+                          userProfile && userProfile.profilePhoto !== null
+                            ? userProfile.profilePhoto.url
+                            : defaultUserPhoto
+                        }
+                        alt={
+                          userProfile
+                            ? userProfile.firstName + ' ' + userProfile.lastName
+                            : 'Zalogowany użytkownik'
+                        }
+                        className={classes.postCreationUserPhoto}
+                      />
+                      <TextField
+                        fullWidth
+                        placeholder="Napisz coś tutaj..."
+                        multiline
+                        rows={2}
+                        className={classes.postInput}
+                        onClick={() => setOpenPostCreation(true)}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <PhotoIcon className={classes.photoIcon} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
+                  </Paper>
+                )}
                 <Popup
                   open={openPostCreation}
                   type="post"
@@ -771,14 +812,16 @@ const ProfilePage = (props) => {
                 >
                   <div className={classes.profileInformationHeadingWithAction}>
                     <Typography variant="h5">Podstawowe informacje</Typography>
-                    <Tooltip title="Edytuj informacje" placement="left">
-                      <IconButton
-                        className={classes.editBaseInformationBtn}
-                        onClick={() => history.push('/app/settings/profile')}
-                      >
-                        <EditIcon color="primary" />
-                      </IconButton>
-                    </Tooltip>
+                    {parseInt(profileId) === loggedUser.userId && (
+                      <Tooltip title="Edytuj informacje" placement="left">
+                        <IconButton
+                          className={classes.editBaseInformationBtn}
+                          onClick={() => history.push('/app/settings/profile')}
+                        >
+                          <EditIcon color="primary" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </div>
                   <ProfileInformationItem
                     title="Imię i nazwisko"
@@ -866,14 +909,16 @@ const ProfilePage = (props) => {
                 >
                   <div className={classes.profileInformationHeadingWithAction}>
                     <Typography variant="h5">Dane kontaktowe</Typography>
-                    <Tooltip title="Edytuj Adres" placement="left">
-                      <IconButton
-                        className={classes.editBaseInformationBtn}
-                        onClick={() => history.push('/app/settings/address')}
-                      >
-                        <EditIcon color="primary" />
-                      </IconButton>
-                    </Tooltip>
+                    {parseInt(profileId) === loggedUser.userId && (
+                      <Tooltip title="Edytuj Adres" placement="left">
+                        <IconButton
+                          className={classes.editBaseInformationBtn}
+                          onClick={() => history.push('/app/settings/address')}
+                        >
+                          <EditIcon color="primary" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </div>
                   <ProfileInformationItem
                     title="Adres email"
@@ -949,19 +994,22 @@ const ProfilePage = (props) => {
                         name={school.name}
                         startDate={school.startDate}
                         graduationDate={school.graduationDate}
+                        manage={parseInt(profileId) === loggedUser.userId}
                       />
                     ))}
-                  <Button
-                    color="secondary"
-                    variant="text"
-                    className={classes.addProfileInfoItemBtn}
-                    onClick={() => setOpenAddSchoolPopup(true)}
-                  >
-                    <AddCircleOutlineIcon />
-                    <Typography variant="subtitle1" marginLeft="10px">
-                      Dodaj szkołę
-                    </Typography>
-                  </Button>
+                  {parseInt(profileId) === loggedUser.userId && (
+                    <Button
+                      color="secondary"
+                      variant="text"
+                      className={classes.addProfileInfoItemBtn}
+                      onClick={() => setOpenAddSchoolPopup(true)}
+                    >
+                      <AddCircleOutlineIcon />
+                      <Typography variant="subtitle1" marginLeft="10px">
+                        Dodaj szkołę
+                      </Typography>
+                    </Button>
+                  )}
                   <Typography
                     variant="h5"
                     className={classes.profileInformationHeading}
@@ -976,19 +1024,22 @@ const ProfilePage = (props) => {
                       position={work.position}
                       startDate={work.startDate}
                       endDate={work.endDate}
+                      manage={parseInt(profileId) === loggedUser.userId}
                     />
                   ))}
-                  <Button
-                    color="secondary"
-                    variant="text"
-                    className={classes.addProfileInfoItemBtn}
-                    onClick={() => setOpenAddWorkPopup(true)}
-                  >
-                    <AddCircleOutlineIcon />
-                    <Typography variant="subtitle1" marginLeft="10px">
-                      Dodaj miejsce pracy
-                    </Typography>
-                  </Button>
+                  {parseInt(profileId) === loggedUser.userId && (
+                    <Button
+                      color="secondary"
+                      variant="text"
+                      className={classes.addProfileInfoItemBtn}
+                      onClick={() => setOpenAddWorkPopup(true)}
+                    >
+                      <AddCircleOutlineIcon />
+                      <Typography variant="subtitle1" marginLeft="10px">
+                        Dodaj miejsce pracy
+                      </Typography>
+                    </Button>
+                  )}
                   <Popup
                     open={openAddSchoolPopup}
                     type="profileInfo"
@@ -1022,15 +1073,17 @@ const ProfilePage = (props) => {
                         key={userInterest.interestId}
                         disableGutters
                         secondaryAction={
-                          <IconButton
-                            onClick={() =>
-                              handleClickDeleteUserInterest(
-                                userInterest.interestId
-                              )
-                            }
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                          parseInt(profileId) === loggedUser.userId && (
+                            <IconButton
+                              onClick={() =>
+                                handleClickDeleteUserInterest(
+                                  userInterest.interestId
+                                )
+                              }
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          )
                         }
                       >
                         <FiberManualRecordIcon
@@ -1048,22 +1101,24 @@ const ProfilePage = (props) => {
                       </ListItem>
                     ))}
                   </List>
-                  <Button
-                    color="secondary"
-                    variant="text"
-                    className={classes.addProfileInfoItemBtn}
-                    onClick={() =>
-                      setShowUserInterestForm(!showUserInterestForm)
-                    }
-                  >
-                    <AddCircleOutlineIcon />
-                    <Typography variant="subtitle1" marginLeft="10px">
-                      Dodaj zainteresowanie
-                    </Typography>
-                  </Button>
+                  {parseInt(profileId) === loggedUser.userId && (
+                    <Button
+                      color="secondary"
+                      variant="text"
+                      className={classes.addProfileInfoItemBtn}
+                      onClick={() =>
+                        setShowUserInterestForm(!showUserInterestForm)
+                      }
+                    >
+                      <AddCircleOutlineIcon />
+                      <Typography variant="subtitle1" marginLeft="10px">
+                        Dodaj zainteresowanie
+                      </Typography>
+                    </Button>
+                  )}
                   {showUserInterestForm && (
                     <AddUserInterestForm
-                      userId={user.userId}
+                      userId={loggedUser.userId}
                       onCloseForm={() => setShowFavouriteForm(false)}
                     />
                   )}
@@ -1128,17 +1183,19 @@ const ProfilePage = (props) => {
                       />
                     </>
                   )}
-                  <Button
-                    color="secondary"
-                    variant="text"
-                    className={classes.addProfileInfoItemBtn}
-                    onClick={() => setShowFavouriteForm(!showFavouriteForm)}
-                  >
-                    <AddCircleOutlineIcon />
-                    <Typography variant="subtitle1" marginLeft="10px">
-                      Dodaj ulubione
-                    </Typography>
-                  </Button>
+                  {parseInt(profileId) === loggedUser.userId && (
+                    <Button
+                      color="secondary"
+                      variant="text"
+                      className={classes.addProfileInfoItemBtn}
+                      onClick={() => setShowFavouriteForm(!showFavouriteForm)}
+                    >
+                      <AddCircleOutlineIcon />
+                      <Typography variant="subtitle1" marginLeft="10px">
+                        Dodaj ulubione
+                      </Typography>
+                    </Button>
+                  )}
                   {showFavouriteForm && (
                     <AddUserFavouriteForm
                       onCloseForm={() => setShowFavouriteForm(false)}

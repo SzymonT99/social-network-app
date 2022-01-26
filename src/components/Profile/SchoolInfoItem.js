@@ -27,7 +27,8 @@ const schoolTypes = {
 };
 
 const SchoolInfoItem = (props) => {
-  const { classes, schoolId, type, name, startDate, graduationDate } = props;
+  const { classes, schoolId, type, name, startDate, graduationDate, manage } =
+    props;
 
   const dispatch = useDispatch();
 
@@ -82,50 +83,52 @@ const SchoolInfoItem = (props) => {
             <span>{graduationDate !== null && ' do ' + graduationDate}</span>
           </Typography>
         </div>
-        <div>
-          <IconButton
-            className={classes.profileInfoItemSettingsBtn}
-            onClick={handleClickSchoolSettings}
-          >
-            <MoreHorizIcon />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleCloseSchoolSettings}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <MenuItem onClick={handleOpenEditionSchoolPopupClick}>
-              <ListItemIcon>
-                <EditIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Edytuj szkołę</Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem onClick={handleDeleteSchoolClick}>
-              <ListItemIcon>
-                <DeleteForeverIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Usuń szkołę</Typography>
-                }
-              />
-            </MenuItem>
-          </Menu>
-        </div>
+        {manage && (
+          <div>
+            <IconButton
+              className={classes.profileInfoItemSettingsBtn}
+              onClick={handleClickSchoolSettings}
+            >
+              <MoreHorizIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseSchoolSettings}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <MenuItem onClick={handleOpenEditionSchoolPopupClick}>
+                <ListItemIcon>
+                  <EditIcon fontSize="medium" />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography variant="subtitle2">Edytuj szkołę</Typography>
+                  }
+                />
+              </MenuItem>
+              <MenuItem onClick={handleDeleteSchoolClick}>
+                <ListItemIcon>
+                  <DeleteForeverIcon fontSize="medium" />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography variant="subtitle2">Usuń szkołę</Typography>
+                  }
+                />
+              </MenuItem>
+            </Menu>
+          </div>
+        )}
       </div>
       <Popup
         open={openEditionSchoolPopup}
@@ -166,6 +169,7 @@ SchoolInfoItem.propTypes = {
   name: PropTypes.string.isRequired,
   startDate: PropTypes.string.isRequired,
   graduationDate: PropTypes.string,
+  manage: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styles)(SchoolInfoItem);

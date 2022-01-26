@@ -1,7 +1,7 @@
 import types from '../types/navTypes';
 
 const initialState = {
-  currentPath: '',
+  currentPath: '/app',
   pathIndex: 0,
 };
 

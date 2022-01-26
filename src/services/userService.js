@@ -192,6 +192,27 @@ const deleteUserInterests = (interestId) => {
   );
 };
 
+const addProfilePhoto = (photo) => {
+  console.log(photo);
+  return fetch(endpoints.manageProfilePhoto, {
+    method: 'PUT',
+    headers: {
+      Authorization: authorization(),
+    },
+    body: photo,
+  });
+};
+
+const deleteProfilePhoto = () => {
+  return fetch(endpoints.manageProfilePhoto, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   getUserProfile,
   getUserActivity,
@@ -209,4 +230,6 @@ export default {
   getUserInterests,
   addUserInterests,
   deleteUserInterests,
+  addProfilePhoto,
+  deleteProfilePhoto,
 };

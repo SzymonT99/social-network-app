@@ -8,7 +8,7 @@ const MainApplication = () => {
     <AppTemplate>
       <Switch>
         <Route exact path="/app" component={ActivityBoard} />
-        <Route exact path="/app/profile/:id" component={ProfilePage} />
+        <Route exact path="/app/profile/:profileId" component={ProfilePage} />
       </Switch>
     </AppTemplate>
   );

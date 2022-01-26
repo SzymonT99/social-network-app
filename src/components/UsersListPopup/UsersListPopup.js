@@ -1,9 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -11,6 +9,7 @@ import Dialog from '@mui/material/Dialog';
 import { useHistory } from 'react-router-dom';
 import { ListItemButton } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 
 const UsersListPopup = (props) => {
   const { title, open, users, onClose } = props;
@@ -30,7 +29,9 @@ const UsersListPopup = (props) => {
             <ListItemAvatar>
               <Avatar
                 alt={user.firstName + ' ' + user.lastName}
-                src={user.profilePhoto.url}
+                src={
+                  user.profilePhoto ? user.profilePhoto.url : defaultUserPhoto
+                }
                 sx={{ width: 48, height: 48 }}
               />
             </ListItemAvatar>

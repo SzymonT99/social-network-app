@@ -24,7 +24,9 @@ export const endpoints = {
   manageWorkPlaceInformation: baseUrl + '/api/profile/work/{workId}',
   userFavouriteItems: baseUrl + '/api/profile/{userId}/favourites',
   addFavouriteItem: baseUrl + '/api/profile/favourites',
+  manageFavouriteItem: baseUrl + '/api/profile/favourites/{favouriteId}',
   possibleInterest: baseUrl + '/api/interests',
   userInterests: baseUrl + '/api/profile/{userId}/interests',
   manageUserInterests: baseUrl + '/api/profile/interests/{interestId}',
+  manageProfilePhoto: baseUrl + '/api/profile/photo',
 };

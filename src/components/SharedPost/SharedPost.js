@@ -63,7 +63,7 @@ const SharedPost = (props) => {
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.auth.user.userId);
-  const userProfile = useSelector((state) => state.profile.userProfile);
+  const loggedUserProfile = useSelector((state) => state.auth.userProfile);
 
   const [postComments, setPostComments] = useState(comments);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -310,7 +310,11 @@ const SharedPost = (props) => {
               key={like.likedUser.userId}
               className={classes.likedUserAvatar}
               alt={like.likedUser.firstName + ' ' + like.likedUser.lastName}
-              src={like.likedUser.profilePhoto.url}
+              src={
+                like.likedUser.profilePhoto
+                  ? like.likedUser.profilePhoto.url
+                  : defaultUserPhoto
+              }
             />
           ))}
         </AvatarGroup>
@@ -431,10 +435,14 @@ const SharedPost = (props) => {
       {!isCommentingBlocked && (
         <div className={classes.addCommentContainer}>
           <Avatar
-            src={userProfile ? userProfile.profilePhoto.url : defaultUserPhoto}
+            src={
+              loggedUserProfile.profilePhoto
+                ? loggedUserProfile.profilePhoto.url
+                : defaultUserPhoto
+            }
             alt={
-              userProfile
-                ? userProfile.firstName + ' ' + userProfile.lastName
+              loggedUserProfile
+                ? loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName
                 : 'Zalogowany użytkownik'
             }
             className={classes.userPhotoSmall}
@@ -467,7 +475,7 @@ SharedPost.propTypes = {
   sharingId: PropTypes.number.isRequired,
   authorName: PropTypes.string.isRequired,
   userStatus: PropTypes.string.isRequired,
-  profilePhoto: PropTypes.object.isRequired,
+  profilePhoto: PropTypes.object,
   text: PropTypes.string.isRequired,
   date: PropTypes.object.isRequired,
   isPublic: PropTypes.bool.isRequired,

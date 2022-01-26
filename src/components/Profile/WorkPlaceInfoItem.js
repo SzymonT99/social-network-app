@@ -15,14 +15,14 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Popup from '../Popup/Popup';
-import AddSchoolForm from '../Forms/AddSchoolForm';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { useDispatch } from 'react-redux';
 import { deleteWorkPlaceInformation } from '../../redux/actions/userProfileActions';
 import AddWorkPlaceForm from '../Forms/AddWorkPlaceForm';
 
 const WorkPlaceInfoItem = (props) => {
-  const { classes, workId, company, position, startDate, endDate } = props;
+  const { classes, workId, company, position, startDate, endDate, manage } =
+    props;
 
   const dispatch = useDispatch();
 
@@ -77,50 +77,52 @@ const WorkPlaceInfoItem = (props) => {
             <span>{endDate !== null && ' do ' + endDate}</span>
           </Typography>
         </div>
-        <div>
-          <IconButton
-            className={classes.profileInfoItemSettingsBtn}
-            onClick={handleClickWorkSettings}
-          >
-            <MoreHorizIcon />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleCloseWorkSettings}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <MenuItem onClick={handleOpenEditionWorkPopupClick}>
-              <ListItemIcon>
-                <EditIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Edytuj pracę</Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem onClick={handleDeleteWorkClick}>
-              <ListItemIcon>
-                <DeleteForeverIcon fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Usuń pracę</Typography>
-                }
-              />
-            </MenuItem>
-          </Menu>
-        </div>
+        {manage && (
+          <div>
+            <IconButton
+              className={classes.profileInfoItemSettingsBtn}
+              onClick={handleClickWorkSettings}
+            >
+              <MoreHorizIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseWorkSettings}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <MenuItem onClick={handleOpenEditionWorkPopupClick}>
+                <ListItemIcon>
+                  <EditIcon fontSize="medium" />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography variant="subtitle2">Edytuj pracę</Typography>
+                  }
+                />
+              </MenuItem>
+              <MenuItem onClick={handleDeleteWorkClick}>
+                <ListItemIcon>
+                  <DeleteForeverIcon fontSize="medium" />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography variant="subtitle2">Usuń pracę</Typography>
+                  }
+                />
+              </MenuItem>
+            </Menu>
+          </div>
+        )}
       </div>
       <Popup
         open={openEditionWorkPopup}
@@ -161,6 +163,7 @@ WorkPlaceInfoItem.propTypes = {
   position: PropTypes.string.isRequired,
   startDate: PropTypes.string.isRequired,
   endDate: PropTypes.string,
+  manage: PropTypes.bool,
 };
 
 export default withStyles(styles)(WorkPlaceInfoItem);

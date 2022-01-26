@@ -1,33 +1,45 @@
 import userProfileTypes from '../types/userProfileTypes';
+import authTypes from '../types/authTypes';
 import userProfileService from '../../services/userService';
 import { showNotification } from './notificationActions';
 import { logoutUser } from './authActions';
 
-export const getUserProfile = (userId) => (dispatch) => {
-  return userProfileService
-    .getUserProfile(userId)
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json().then((data) => {
-          dispatch({
-            type: userProfileTypes.FETCH_USER_PROFILE,
-            payload: {
-              userProfile: data,
-            },
+export const getUserProfile =
+  (userId, forLoggedIn = false) =>
+  (dispatch) => {
+    return userProfileService
+      .getUserProfile(userId)
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json().then((data) => {
+            if (!forLoggedIn) {
+              dispatch({
+                type: userProfileTypes.FETCH_USER_PROFILE,
+                payload: {
+                  userProfile: data,
+                },
+              });
+            } else {
+              dispatch({
+                type: authTypes.SAVE_LOGGED_USER_PROFILE,
+                payload: {
+                  userProfile: data,
+                },
+              });
+            }
           });
-        });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+        } else if (response.status === 401) {
+          dispatch(logoutUser());
+          window.location.href = '/auth/login';
+          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const getUserActivity = (userId) => (dispatch) => {
   return userProfileService
@@ -381,6 +393,54 @@ export const deleteUserInterests = (interestId) => (dispatch, getState) => {
       if (response.status === 200) {
         dispatch(getUserInterests(getState().auth.user.userId));
         dispatch(showNotification('success', 'Usunięto zainteresowanie'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const changeProfilePhoto = (userId, photo) => (dispatch) => {
+  return userProfileService
+    .addProfilePhoto(photo)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getUserProfile(userId));
+        dispatch(getUserProfile(userId, true));
+        dispatch(getUserActivity(userId));
+        dispatch(showNotification('success', 'Zmieniono zdjęcie profilowe'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const deleteProfilePhoto = (userId) => (dispatch) => {
+  return userProfileService
+    .deleteProfilePhoto()
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getUserProfile(userId));
+        dispatch(getUserProfile(userId, true));
+        dispatch(getUserActivity(userId));
+        dispatch(showNotification('success', 'Usunięto zdjęcie profilowe'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else if (response.status === 401) {

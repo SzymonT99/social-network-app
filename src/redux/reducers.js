@@ -9,7 +9,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   notification: notificationReducer,
   activity: userActivityReducer,
-  profile: userProfileReducer,
+  selectedProfile: userProfileReducer,
   navigation: navReducer,
 });
 

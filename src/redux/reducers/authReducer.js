@@ -4,6 +4,7 @@ const initialState = {
   isLoggedIn: false,
   remember: false,
   user: null,
+  userProfile: null,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -32,6 +33,11 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         remember: action.remember,
+      };
+    case types.SAVE_LOGGED_USER_PROFILE:
+      return {
+        ...state,
+        userProfile: action.payload.userProfile,
       };
     case types.CLEAR_ALL:
       return initialState;

@@ -76,7 +76,7 @@ const Post = (props) => {
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.auth.user.userId);
-  const userProfile = useSelector((state) => state.profile.userProfile);
+  const loggedUserProfile = useSelector((state) => state.auth.userProfile);
 
   const [postComments, setPostComments] = useState(comments);
   const [commentText, setCommentText] = useState('');
@@ -397,7 +397,11 @@ const Post = (props) => {
                   key={like.likedUser.userId}
                   className={classes.likedUserAvatar}
                   alt={like.likedUser.firstName + ' ' + like.likedUser.lastName}
-                  src={like.likedUser.profilePhoto.url}
+                  src={
+                    like.likedUser.profilePhoto
+                      ? like.likedUser.profilePhoto.url
+                      : defaultUserPhoto
+                  }
                 />
               ))}
             </AvatarGroup>
@@ -535,11 +539,15 @@ const Post = (props) => {
             <div className={classes.addCommentContainer}>
               <Avatar
                 src={
-                  userProfile ? userProfile.profilePhoto.url : defaultUserPhoto
+                  loggedUserProfile.profilePhoto
+                    ? loggedUserProfile.profilePhoto.url
+                    : defaultUserPhoto
                 }
                 alt={
-                  userProfile
-                    ? userProfile.firstName + ' ' + userProfile.lastName
+                  loggedUserProfile.profilePhoto
+                    ? loggedUserProfile.firstName +
+                      ' ' +
+                      loggedUserProfile.lastName
                     : 'Zalogowany użytkownik'
                 }
                 className={classes.userPhotoSmall}
@@ -596,7 +604,7 @@ const Post = (props) => {
 Post.propTypes = {
   classes: PropTypes.object.isRequired,
   authorName: PropTypes.string.isRequired,
-  profilePhoto: PropTypes.object.isRequired,
+  profilePhoto: PropTypes.object,
   createdDate: PropTypes.object.isRequired,
   content: PropTypes.string.isRequired,
   likesNumber: PropTypes.number.isRequired,

@@ -112,7 +112,7 @@ ActivityHeading.propTypes = {
   classes: PropTypes.object.isRequired,
   children: PropTypes.element.isRequired,
   authorName: PropTypes.string.isRequired,
-  profilePhoto: PropTypes.object.isRequired,
+  profilePhoto: PropTypes.object,
   userStatus: PropTypes.string.isRequired,
   activityTitle: PropTypes.string.isRequired,
   createdDate: PropTypes.object.isRequired,
