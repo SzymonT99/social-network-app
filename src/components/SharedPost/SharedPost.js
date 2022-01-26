@@ -436,12 +436,12 @@ const SharedPost = (props) => {
         <div className={classes.addCommentContainer}>
           <Avatar
             src={
-              loggedUserProfile.profilePhoto
+              loggedUserProfile && loggedUserProfile.profilePhoto
                 ? loggedUserProfile.profilePhoto.url
                 : defaultUserPhoto
             }
             alt={
-              loggedUserProfile
+              loggedUserProfile && loggedUserProfile
                 ? loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName
                 : 'Zalogowany użytkownik'
             }

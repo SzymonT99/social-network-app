@@ -455,3 +455,52 @@ export const deleteProfilePhoto = (userId) => (dispatch) => {
       console.log(error);
     });
 };
+
+export const getUserImages = (userId) => (dispatch) => {
+  return userProfileService
+    .getUserImages(userId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: userProfileTypes.FETCH_USER_IMAGES,
+            payload: {
+              images: data,
+            },
+          });
+        });
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const editProfileInformation = (updatedProfile) => (dispatch) => {
+  return userProfileService
+    .editProfileInformation(updatedProfile)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(showNotification('warning', 'Zaaktualiowano dane profilowe'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

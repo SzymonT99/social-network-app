@@ -539,12 +539,12 @@ const Post = (props) => {
             <div className={classes.addCommentContainer}>
               <Avatar
                 src={
-                  loggedUserProfile.profilePhoto
+                  loggedUserProfile && loggedUserProfile.profilePhoto
                     ? loggedUserProfile.profilePhoto.url
                     : defaultUserPhoto
                 }
                 alt={
-                  loggedUserProfile.profilePhoto
+                  loggedUserProfile && loggedUserProfile.profilePhoto
                     ? loggedUserProfile.firstName +
                       ' ' +
                       loggedUserProfile.lastName

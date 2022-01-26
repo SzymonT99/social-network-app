@@ -29,4 +29,6 @@ export const endpoints = {
   userInterests: baseUrl + '/api/profile/{userId}/interests',
   manageUserInterests: baseUrl + '/api/profile/interests/{interestId}',
   manageProfilePhoto: baseUrl + '/api/profile/photo',
+  profileImages: baseUrl + '/api/profile/{userId}/images',
+  profileInformation: baseUrl + '/api/profile/information',
 };

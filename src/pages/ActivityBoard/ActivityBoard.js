@@ -63,7 +63,7 @@ const ActivityBoard = (props) => {
                 <div className={classes.postCreateContent}>
                   <Avatar
                     src={
-                      loggedUserProfile.profilePhoto
+                      loggedUserProfile && loggedUserProfile.profilePhoto
                         ? loggedUserProfile.profilePhoto.url
                         : defaultUserPhoto
                     }

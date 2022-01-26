@@ -6,6 +6,7 @@ const initialState = {
   userFavourites: [],
   possibleInterests: [],
   userInterests: [],
+  images: [],
 };
 
 const userProfileReducer = (state = initialState, action) => {
@@ -34,6 +35,11 @@ const userProfileReducer = (state = initialState, action) => {
       return {
         ...state,
         userInterests: action.payload.userInterests,
+      };
+    case types.FETCH_USER_IMAGES:
+      return {
+        ...state,
+        images: action.payload.images,
       };
     case types.CLEAR_ALL:
       return initialState;

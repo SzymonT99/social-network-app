@@ -213,6 +213,26 @@ const deleteProfilePhoto = () => {
   });
 };
 
+const getUserImages = (userId) => {
+  return fetch(endpoints.profileImages.replace('{userId}', userId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const editProfileInformation = (updatedProfile) => {
+  return fetch(endpoints.profileInformation, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   getUserProfile,
   getUserActivity,
@@ -232,4 +252,6 @@ export default {
   deleteUserInterests,
   addProfilePhoto,
   deleteProfilePhoto,
+  getUserImages,
+  editProfileInformation,
 };

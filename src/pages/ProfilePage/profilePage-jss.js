@@ -311,6 +311,14 @@ const styles = (theme) => ({
       },
     },
   },
+  imagesPagination: {
+    '&.MuiPagination-root': {
+      padding: '15px',
+      '& .MuiPagination-ul': {
+        justifyContent: 'center',
+      },
+    },
+  },
 });
 
 export default styles;
