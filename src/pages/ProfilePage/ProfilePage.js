@@ -59,6 +59,9 @@ import { useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import ProfileEditionForm from '../../components/Forms/ProfileEditionForm';
+import AddressForm from '../../components/Forms/AddressForm';
+import AddIcon from '@mui/icons-material/Add';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -126,6 +129,10 @@ const ProfilePage = (props) => {
   const [showFavouriteForm, setShowFavouriteForm] = useState(false);
   const [showUserInterestForm, setShowUserInterestForm] = useState(false);
   const [imagesPageNumber, setImagesPageNumber] = useState(1);
+  const [openProfileEdition, setOpenProfileEdition] = useState(false);
+  const [openAddAddressFormPopup, setOpenAddAddressFormPopup] = useState(false);
+  const [openEditAddressFormPopup, setOpenEditAddressFormPopup] =
+    useState(false);
 
   useEffect(() => {
     dispatch(getUserProfile(profileId));
@@ -187,6 +194,18 @@ const ProfilePage = (props) => {
     setImagesPageNumber(value);
   };
 
+  const handleCloseProfileEditionForm = () => {
+    setOpenProfileEdition(false);
+  };
+
+  const handleCloseAddAddressFormPopup = () => {
+    setOpenAddAddressFormPopup(false);
+  };
+
+  const handleCloseEditAddressFormPopup = () => {
+    setOpenEditAddressFormPopup(false);
+  };
+
   return (
     <>
       {userProfile && (
@@ -200,29 +219,6 @@ const ProfilePage = (props) => {
               {userProfile && userProfile.coverImage && (
                 <img alt="Cover image" src={userProfile.coverImage} />
               )}
-              {/*{parseInt(profileId) === loggedUser.userId && (*/}
-              {/*  <label*/}
-              {/*    htmlFor="icon-button-file"*/}
-              {/*    className={classes.uploadCoverImageBtn}*/}
-              {/*  >*/}
-              {/*    <Input*/}
-              {/*      accept="image/*"*/}
-              {/*      style={{ display: 'none' }}*/}
-              {/*      id="icon-button-file"*/}
-              {/*      type="file"*/}
-              {/*    />*/}
-              {/*    <Tooltip title="Edytuj tło" placement="top">*/}
-              {/*      <IconButton*/}
-              {/*        color="primary"*/}
-              {/*        aria-label="upload picture"*/}
-              {/*        component="span"*/}
-              {/*        size="large"*/}
-              {/*      >*/}
-              {/*        <PhotoCamera />*/}
-              {/*      </IconButton>*/}
-              {/*    </Tooltip>*/}
-              {/*  </label>*/}
-              {/*)}*/}
             </div>
             <div className={classes.profileInfoBox}>
               <div className={classes.userProfilePhotoBox}>
@@ -247,7 +243,7 @@ const ProfilePage = (props) => {
                       type="file"
                       onChange={handleClickChangeProfilePhoto}
                     />
-                    <Tooltip title="Zmień zdjęcie profilowe" placement="top">
+                    <Tooltip title="Zmień zdjęcie profilowe" placement="left">
                       <IconButton
                         aria-label="upload picture"
                         component="span"
@@ -412,15 +408,18 @@ const ProfilePage = (props) => {
                   </Link>
                 </div>
                 <div className={classes.profileInfoBoxContent}>
-                  <ImageList cols={3} rowHeight={120} sx={{ margin: 0 }}>
+                  <ImageList
+                    cols={3}
+                    rowHeight={120}
+                    sx={{ margin: 0 }}
+                    gap={6}
+                    variant="quilted"
+                  >
                     {userImages &&
                       userImages.map((item, index) => {
                         if (index < 9) {
                           return (
-                            <ImageListItem
-                              key={item.url}
-                              className={classes.imageListItemBox}
-                            >
+                            <ImageListItem key={item.url}>
                               <img
                                 src={item.url}
                                 alt={item.filename}
@@ -818,14 +817,31 @@ const ProfilePage = (props) => {
                           <Tooltip title="Edytuj informacje" placement="left">
                             <IconButton
                               className={classes.editBaseInformationBtn}
-                              onClick={() =>
-                                history.push('/app/settings/profile')
-                              }
+                              onClick={() => setOpenProfileEdition(true)}
                             >
                               <EditIcon color="primary" />
                             </IconButton>
                           </Tooltip>
                         )}
+                        <Popup
+                          open={openProfileEdition}
+                          type="profileForm"
+                          title="Zaaktualizuj informacje"
+                          onClose={handleCloseProfileEditionForm}
+                        >
+                          <ProfileEditionForm
+                            closePopup={handleCloseProfileEditionForm}
+                            editedFirstName={userProfile.firstName}
+                            editedLastName={userProfile.lastName}
+                            editedAccess={userProfile.isPublic}
+                            editedGender={userProfile.gender}
+                            editedRelationship={userProfile.relationshipStatus}
+                            editedDateOfBirth={userProfile.dateOfBirth}
+                            editedJob={userProfile.job}
+                            editedSkills={userProfile.skills}
+                            editedAboutUser={userProfile.aboutUser}
+                          />
+                        </Popup>
                       </div>
                       <ProfileInformationItem
                         title="Imię i nazwisko"
@@ -926,12 +942,13 @@ const ProfilePage = (props) => {
                       >
                         <Typography variant="h5">Dane kontaktowe</Typography>
                         {parseInt(profileId) === loggedUser.userId && (
-                          <Tooltip title="Edytuj Adres" placement="left">
+                          <Tooltip
+                            title="Edytuj dane kontaktowe"
+                            placement="left"
+                          >
                             <IconButton
                               className={classes.editBaseInformationBtn}
-                              onClick={() =>
-                                history.push('/app/settings/address')
-                              }
+                              onClick={() => history.push('/app/settings')}
                             >
                               <EditIcon color="primary" />
                             </IconButton>
@@ -946,45 +963,96 @@ const ProfilePage = (props) => {
                         title="Numer telefonu"
                         content={userProfile.phoneNumber}
                       />
-                      <Typography
-                        variant="h5"
-                        sx={{ marginTop: '15px' }}
-                        className={classes.profileInformationHeading}
+                      <div
+                        style={{ marginTop: '15px' }}
+                        className={classes.profileInformationHeadingWithAction}
                       >
-                        Adres zamieszkania
-                      </Typography>
-                      <ProfileInformationItem
-                        title="Państwo"
-                        content={
-                          userProfile.address !== null
-                            ? userProfile.address.country
-                            : '-'
-                        }
-                      />
-                      <ProfileInformationItem
-                        title="Miasto"
-                        content={
-                          userProfile.address !== null
-                            ? userProfile.address.city
-                            : '-'
-                        }
-                      />
-                      <ProfileInformationItem
-                        title="Ulica"
-                        content={
-                          userProfile.address !== null
-                            ? userProfile.address.street
-                            : '-'
-                        }
-                      />
-                      <ProfileInformationItem
-                        title="Kod pocztowy"
-                        content={
-                          userProfile.address !== null
-                            ? userProfile.address.zipCode
-                            : '-'
-                        }
-                      />
+                        <Typography variant="h5">Adres zamieszkania</Typography>
+                        {parseInt(profileId) === loggedUser.userId &&
+                          (userProfile.address !== null ? (
+                            <Tooltip title="Edytuj Adres" placement="left">
+                              <IconButton
+                                className={classes.editBaseInformationBtn}
+                                onClick={() =>
+                                  setOpenEditAddressFormPopup(true)
+                                }
+                              >
+                                <EditIcon color="primary" />
+                              </IconButton>
+                            </Tooltip>
+                          ) : (
+                            <Tooltip title="Dodaj Adres" placement="left">
+                              <IconButton
+                                className={classes.editBaseInformationBtn}
+                                onClick={() => setOpenAddAddressFormPopup(true)}
+                              >
+                                <AddIcon color="primary" fontWeight="bold" />
+                              </IconButton>
+                            </Tooltip>
+                          ))}
+                      </div>
+                      {userProfile.address && (
+                        <>
+                          <ProfileInformationItem
+                            title="Państwo"
+                            content={
+                              userProfile.address.country
+                                ? userProfile.address.country
+                                : '-'
+                            }
+                          />
+                          <ProfileInformationItem
+                            title="Miasto"
+                            content={
+                              userProfile.address.city
+                                ? userProfile.address.city
+                                : '-'
+                            }
+                          />
+                          <ProfileInformationItem
+                            title="Ulica"
+                            content={
+                              userProfile.address.street
+                                ? userProfile.address.street
+                                : '-'
+                            }
+                          />
+                          <ProfileInformationItem
+                            title="Kod pocztowy"
+                            content={
+                              userProfile.address.zipCode
+                                ? userProfile.address.zipCode
+                                : '-'
+                            }
+                          />
+                          <Popup
+                            open={openEditAddressFormPopup}
+                            type="addressForm"
+                            title=" Edytuj adres"
+                            onClose={handleCloseEditAddressFormPopup}
+                          >
+                            <AddressForm
+                              edition
+                              addressId={userProfile.address.addressId}
+                              editedCountry={userProfile.address.country}
+                              editedCity={userProfile.address.city}
+                              editedStreet={userProfile.address.street}
+                              editedZipCode={userProfile.address.zipCode}
+                              closePopup={handleCloseEditAddressFormPopup}
+                            />
+                          </Popup>
+                        </>
+                      )}
+                      <Popup
+                        open={openAddAddressFormPopup}
+                        type="addressForm"
+                        title=" Dodaj adres"
+                        onClose={handleCloseAddAddressFormPopup}
+                      >
+                        <AddressForm
+                          closePopup={handleCloseAddAddressFormPopup}
+                        />
+                      </Popup>
                     </TabPanelMUI>
                     <TabPanelMUI
                       value="i3"
@@ -1272,7 +1340,7 @@ const ProfilePage = (props) => {
           <TabPanel classes={classes} value={profileNav} index={3}>
             Znajomi
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={3}>
+          <TabPanel classes={classes} value={profileNav} index={4}>
             Grupy
           </TabPanel>
         </div>

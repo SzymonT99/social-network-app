@@ -153,6 +153,16 @@ const styles = (theme) => ({
       fontSize: '17px',
     },
   },
+  profileFormConfirmBtn: {
+    height: '55px',
+    alignSelf: 'center',
+    '&.MuiButton-contained': {
+      textTransform: 'none',
+      fontSize: '18px',
+      fontWeight: 'bold',
+      width: '50%',
+    },
+  },
 });
 
 export default styles;

@@ -34,7 +34,7 @@ const PostForm = (props) => {
 
   const dispatch = useDispatch();
 
-  const userProfile = useSelector((state) => state.profile.userProfile);
+  const userProfile = useSelector((state) => state.auth.userProfile);
 
   const [isPublic, setIsPublic] = useState(postIsPublic);
   const [postContent, setPostContent] = useState(postText);

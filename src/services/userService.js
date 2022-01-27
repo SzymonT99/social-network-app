@@ -230,6 +230,29 @@ const editProfileInformation = (updatedProfile) => {
       'Content-Type': 'application/json',
       Authorization: authorization(),
     },
+    body: JSON.stringify(updatedProfile),
+  });
+};
+
+const addUserAddress = (address) => {
+  return fetch(endpoints.addAddress, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify(address),
+  });
+};
+
+const editUserAddress = (addressId, address) => {
+  return fetch(endpoints.updateAddress.replace('{addressId}', addressId), {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify(address),
   });
 };
 
@@ -254,4 +277,6 @@ export default {
   deleteProfilePhoto,
   getUserImages,
   editProfileInformation,
+  addUserAddress,
+  editUserAddress,
 };

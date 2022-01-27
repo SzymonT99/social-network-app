@@ -24,10 +24,12 @@ const AddUserInterestForm = (props) => {
   const dispatch = useDispatch();
 
   const possibleInterests = useSelector(
-    (state) => state.profile.possibleInterests
+    (state) => state.selectedProfile.possibleInterests
   );
 
-  const userInterests = useSelector((state) => state.profile.userInterests);
+  const userInterests = useSelector(
+    (state) => state.selectedProfile.userInterests
+  );
 
   const [interestValue, setInterestValue] = useState(1);
 

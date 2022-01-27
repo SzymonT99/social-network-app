@@ -16,10 +16,10 @@ export const createPost = (postFormData) => (dispatch, getState) => {
             activityAuthor: {
               userId: getState().auth.user.userId,
               activityStatus: 'ONLINE',
-              email: getState().profile.userProfile.email,
-              firstName: getState().profile.userProfile.firstName,
-              lastName: getState().profile.userProfile.lastName,
-              profilePhoto: getState().profile.userProfile.profilePhoto,
+              email: getState().auth.userProfile.email,
+              firstName: getState().auth.userProfile.firstName,
+              lastName: getState().auth.userProfile.lastName,
+              profilePhoto: getState().auth.userProfile.profilePhoto,
             },
             activity: data,
           };
@@ -119,10 +119,10 @@ export const likePost =
             likedUser: {
               userId: getState().auth.user.userId,
               activityStatus: 'ONLINE',
-              email: getState().profile.userProfile.email,
-              firstName: getState().profile.userProfile.firstName,
-              lastName: getState().profile.userProfile.lastName,
-              profilePhoto: getState().profile.userProfile.profilePhoto,
+              email: getState().auth.userProfile.email,
+              firstName: getState().auth.userProfile.firstName,
+              lastName: getState().auth.userProfile.lastName,
+              profilePhoto: getState().auth.userProfile.profilePhoto,
             },
             date: new Date(),
           };
@@ -326,10 +326,10 @@ export const likePostComment =
           const likedUser = {
             userId: getState().auth.user.userId,
             activityStatus: 'ONLINE',
-            email: getState().profile.userProfile.email,
-            firstName: getState().profile.userProfile.firstName,
-            lastName: getState().profile.userProfile.lastName,
-            profilePhoto: getState().profile.userProfile.profilePhoto,
+            email: getState().auth.userProfile.email,
+            firstName: getState().auth.userProfile.firstName,
+            lastName: getState().auth.userProfile.lastName,
+            profilePhoto: getState().auth.userProfile.profilePhoto,
           };
           if (!isSharing) {
             dispatch({
@@ -522,10 +522,10 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
             activityAuthor: {
               userId: getState().auth.user.userId,
               activityStatus: 'ONLINE',
-              email: getState().profile.userProfile.email,
-              firstName: getState().profile.userProfile.firstName,
-              lastName: getState().profile.userProfile.lastName,
-              profilePhoto: getState().profile.userProfile.profilePhoto,
+              email: getState().auth.userProfile.email,
+              firstName: getState().auth.userProfile.firstName,
+              lastName: getState().auth.userProfile.lastName,
+              profilePhoto: getState().auth.userProfile.profilePhoto,
             },
             activity: data,
           };

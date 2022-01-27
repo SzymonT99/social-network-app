@@ -43,5 +43,22 @@ const theme = createTheme({
       fontSize: '13px',
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: '5px',
+          textTransform: 'none',
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: '5px',
+        },
+      },
+    },
+  },
 });
 export default theme;

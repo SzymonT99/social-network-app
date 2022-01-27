@@ -57,6 +57,7 @@ const styles = (theme) => ({
       },
     },
     '&.MuiButton-outlined': {
+      textTransform: 'none',
       fontSize: '16px',
       color: 'white',
       fontWeight: 'bold',
@@ -64,6 +65,7 @@ const styles = (theme) => ({
   },
   publicContentBtn: {
     '&.MuiButton-root': {
+      textTransform: 'none',
       borderRadius: '10px',
       padding: '15px 60px',
       marginRight: '60px',
@@ -79,8 +81,8 @@ const styles = (theme) => ({
     },
   },
   loginBtn: {
-    height: '50px',
     '&.MuiButton-contained': {
+      textTransform: 'none',
       fontSize: '16px',
       fontWeight: 'bold',
     },

@@ -80,7 +80,7 @@ export const addSchoolInformation = (school) => (dispatch, getState) => {
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Nie uzupełniono danych'));
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -107,7 +107,7 @@ export const editSchoolInformation =
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
         } else if (response.status === 400) {
-          dispatch(showNotification('warning', 'Nie uzupełniono danych'));
+          dispatch(showNotification('warning', 'Niepoprawne dane'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -151,7 +151,7 @@ export const addWorkPlaceInformation = (workPlace) => (dispatch, getState) => {
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Nie uzupełniono danych'));
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -181,7 +181,7 @@ export const editWorkPlaceInformation =
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
         } else if (response.status === 400) {
-          dispatch(showNotification('warning', 'Nie uzupełniono danych'));
+          dispatch(showNotification('warning', 'Niepoprawne dane'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -253,7 +253,7 @@ export const addFavouriteItem = (favouriteItem) => (dispatch, getState) => {
         window.location.href = '/auth/login';
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Nie uzupełniono danych'));
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -372,7 +372,7 @@ export const addUserInterests = (interestId) => (dispatch, getState) => {
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Nie uzupełniono danych'));
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else if (response.status === 401) {
         dispatch(logoutUser());
         window.location.href = '/auth/login';
@@ -484,12 +484,66 @@ export const getUserImages = (userId) => (dispatch) => {
     });
 };
 
-export const editProfileInformation = (updatedProfile) => (dispatch) => {
+export const editProfileInformation =
+  (updatedProfile, userId) => (dispatch) => {
+    return userProfileService
+      .editProfileInformation(updatedProfile)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(getUserProfile(userId));
+          dispatch(getUserProfile(userId, true));
+          dispatch(getUserActivity(userId));
+          dispatch(
+            showNotification('success', 'Zaaktualiowano dane profilowe')
+          );
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else if (response.status === 401) {
+          dispatch(logoutUser());
+          window.location.href = '/auth/login';
+          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+export const addUserAddress = (address, userId) => (dispatch) => {
   return userProfileService
-    .editProfileInformation(updatedProfile)
+    .addUserAddress(address)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(getUserProfile(userId));
+        dispatch(showNotification('success', 'Dodano adres'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const editUserAddress = (addressId, address, userId) => (dispatch) => {
+  return userProfileService
+    .editUserAddress(addressId, address)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(showNotification('warning', 'Zaaktualiowano dane profilowe'));
+        dispatch(getUserProfile(userId));
+        dispatch(showNotification('success', 'Zaaktualiowano adres'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else if (response.status === 401) {

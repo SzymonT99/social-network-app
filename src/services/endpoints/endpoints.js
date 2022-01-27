@@ -31,4 +31,6 @@ export const endpoints = {
   manageProfilePhoto: baseUrl + '/api/profile/photo',
   profileImages: baseUrl + '/api/profile/{userId}/images',
   profileInformation: baseUrl + '/api/profile/information',
+  addAddress: baseUrl + '/api/profile/address',
+  updateAddress: baseUrl + '/api/profile/address/{addressId}',
 };
