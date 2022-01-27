@@ -62,6 +62,9 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import ProfileEditionForm from '../../components/Forms/ProfileEditionForm';
 import AddressForm from '../../components/Forms/AddressForm';
 import AddIcon from '@mui/icons-material/Add';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -268,13 +271,30 @@ const ProfilePage = (props) => {
                     </div>
                   )}
               </div>
-              <div className={classes.profileInfoText}>
-                {userProfile && (
-                  <div>
-                    <Typography fontSize="37px" fontWeight={400}>
-                      {userProfile.firstName + ' ' + userProfile.lastName}
-                    </Typography>
-                    <Typography variant="h6">{userProfile.email}</Typography>
+              <div className={classes.profileHeadingInfo}>
+                {userProfile ? (
+                  <div className={classes.profileHeadingInfoContent}>
+                    <div>
+                      <Typography fontSize="37px" fontWeight={400}>
+                        {userProfile.firstName + ' ' + userProfile.lastName}
+                      </Typography>
+                      <Typography variant="h6">{userProfile.email}</Typography>
+                    </div>
+                    <Button
+                      className={classes.friendManageBtn}
+                      variant="contained"
+                      color="secondary"
+                    >
+                      <PersonAddIcon sx={{ marginRight: '7px' }} /> Dodaj do
+                      znajomych
+                    </Button>
+                  </div>
+                ) : (
+                  <div className={classes.loadingContainer}>
+                    <CircularProgress
+                      color="secondary"
+                      sx={{ width: '300px', height: '300px' }}
+                    />
                   </div>
                 )}
                 <List

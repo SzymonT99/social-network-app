@@ -52,11 +52,16 @@ const styles = (theme) => ({
     height: '240px',
     borderRadius: '10px',
   },
-  profileInfoText: {
+  profileHeadingInfo: {
     width: '100%',
     padding: '22px 0px 0px 20px',
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  profileHeadingInfoContent: {
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   profileInfoList: {
@@ -317,6 +322,12 @@ const styles = (theme) => ({
       '& .MuiPagination-ul': {
         justifyContent: 'center',
       },
+    },
+  },
+  friendManageBtn: {
+    '&.MuiButton-root': {
+      fontSize: '15px',
+      marginRight: '80px',
     },
   },
 });

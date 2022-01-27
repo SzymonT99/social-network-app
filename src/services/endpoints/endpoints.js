@@ -33,4 +33,8 @@ export const endpoints = {
   profileInformation: baseUrl + '/api/profile/information',
   addAddress: baseUrl + '/api/profile/address',
   updateAddress: baseUrl + '/api/profile/address/{addressId}',
+  friendInvitations: baseUrl + '/api/friends/invitations',
+  respondInvitation: baseUrl + '/api/friends/{inviterId}/response',
+  userFriends: baseUrl + '/api/friends',
+  deleteFriend: baseUrl + '/api/friends/{friendId}',
 };
