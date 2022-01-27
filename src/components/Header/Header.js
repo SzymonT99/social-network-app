@@ -16,7 +16,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 const Header = (props) => {
   const { classes } = props;
 
-  const userProfile = useSelector((state) => state.profile.userProfile);
+  const loggedUserProfile = useSelector((state) => state.auth.userProfile);
 
   return (
     <div className={classes.headerContainer}>
@@ -113,16 +113,16 @@ const Header = (props) => {
             noWrap
             className={classes.nameAndSurname}
           >
-            {userProfile ? (
-              userProfile.firstName + ' ' + userProfile.lastName
+            {loggedUserProfile ? (
+              loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName
             ) : (
               <CircularProgress color="primary" />
             )}
           </Typography>
           <img
             src={
-              userProfile && userProfile.profilePhoto !== null
-                ? userProfile.profilePhoto.url
+              loggedUserProfile && loggedUserProfile.profilePhoto !== null
+                ? loggedUserProfile.profilePhoto.url
                 : defaultUserPhoto
             }
             alt="Zdjęcie użytkownika"

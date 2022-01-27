@@ -14,7 +14,6 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 import { authenticate } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PropTypes } from 'prop-types';
-import { getUserProfile } from '../../redux/actions/userProfileActions';
 
 const validationSchema = yup.object({
   login: yup
@@ -95,7 +94,7 @@ const LoginPage = (props) => {
         <div className={classes.loginColumn}>
           <Paper
             className={classes.loginForm}
-            elevation={7}
+            elevation={4}
             sx={{ borderRadius: '20px' }}
           >
             <Typography variant="h3" align="center" marginBottom="50px">

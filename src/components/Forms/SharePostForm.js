@@ -22,7 +22,7 @@ const SharePostForm = (props) => {
 
   const dispatch = useDispatch();
 
-  const userProfile = useSelector((state) => state.profile.userProfile);
+  const userProfile = useSelector((state) => state.selectedProfile.userProfile);
 
   const [sharedText, setSharedText] = useState('');
   const [sharedPostIsPublic, setSharedPostIsPublic] = useState(false);

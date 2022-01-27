@@ -6,6 +6,7 @@ const styles = (theme) => ({
     height: 'calc(100vh - 80px)',
     top: '80px',
     color: theme.palette.primary.contrastText,
+    overflow: 'none',
   },
   sidebarWrapper: {
     padding: '15px',

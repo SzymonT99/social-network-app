@@ -16,6 +16,7 @@ import {
 import Popup from '../Popup/Popup';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import UsersListPopup from '../UsersListPopup/UsersListPopup';
+import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 
 const formatTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -80,6 +81,7 @@ const PostComment = (props) => {
     isEdited,
     authorProfilePhoto,
     sharing,
+    highlightComment,
   } = props;
 
   const userId = useSelector((state) => state.auth.user.userId);
@@ -173,7 +175,13 @@ const PostComment = (props) => {
         </Badge>
       </div>
       <div className={classes.commentContent}>
-        <div className={classes.commentText}>
+        <div
+          className={
+            !highlightComment
+              ? classes.commentText
+              : classes.commentTextHighlight
+          }
+        >
           <div className={classes.commentTextHeading}>
             <Typography variant="subtitle2" fontWeight="bold">
               <span className={classes.authorName}>{authorName}</span>
@@ -265,31 +273,11 @@ const PostComment = (props) => {
         title="Usuwanie komentarza"
         onClose={handleCloseDeletePopup}
       >
-        <>
-          <Typography variant="h6" style={{ marginBottom: '15px' }}>
-            Czy napewno chcesz usunąć wskazany komentarz?
-          </Typography>
-          <Divider />
-          <div className={classes.dialogActionContainer}>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.dialogActionBtn}
-              style={{ marginRight: '20px' }}
-              onClick={deleteCommentClick}
-            >
-              Potwierdź
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.dialogActionBtn}
-              onClick={handleCloseDeletePopup}
-            >
-              Anuluj
-            </Button>
-          </div>
-        </>
+        <ActionConfirmation
+          title="Czy napewno chcesz usunąć wskazany komentarz?"
+          confirmationAction={deleteCommentClick}
+          rejectionAction={handleCloseDeletePopup}
+        />
       </Popup>
       <UsersListPopup
         title="Polubienia użytkowników"
@@ -317,6 +305,7 @@ PostComment.propTypes = {
 PostComment.defaultProps = {
   likes: [],
   sharing: false,
+  highlightComment: false,
 };
 
 export default withStyles(styles)(PostComment);

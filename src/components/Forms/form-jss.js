@@ -89,6 +89,80 @@ const styles = (theme) => ({
       backgroundColor: theme.palette.secondary.dark,
     },
   },
+  schoolFormContainer: {
+    width: '100%',
+  },
+  schoolDateContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  graduationSchoolLabel: {
+    '&.MuiFormControlLabel-root': {
+      marginTop: '6px',
+    },
+  },
+  graduationSchoolCheckbox: {
+    '&.MuiCheckbox-root': {
+      paddingLeft: 0,
+    },
+  },
+  schoolActionBtnContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '15px',
+  },
+  schoolActionBtn: {
+    '&.MuiButton-root': {
+      textTransform: 'none',
+      fontSize: '17px',
+      margin: '0px 15px',
+      width: '26%',
+    },
+  },
+  workFormContainer: {
+    width: '100%',
+  },
+  workDateContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  workActionBtnContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '15px',
+  },
+  workActionBtn: {
+    '&.MuiButton-root': {
+      textTransform: 'none',
+      fontSize: '17px',
+      margin: '0px 15px',
+      width: '26%',
+    },
+    userFavouriteItemFormContainer: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+  },
+  userFavouriteItemFormAction: {
+    marginTop: '15px',
+  },
+  userFavouriteActionBtn: {
+    '&.MuiButton-root': {
+      textTransform: 'none',
+      width: '20%',
+      fontSize: '17px',
+    },
+  },
+  profileFormConfirmBtn: {
+    height: '55px',
+    alignSelf: 'center',
+    '&.MuiButton-contained': {
+      textTransform: 'none',
+      fontSize: '18px',
+      fontWeight: 'bold',
+      width: '50%',
+    },
+  },
 });
 
 export default styles;

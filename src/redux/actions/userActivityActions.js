@@ -15,6 +15,7 @@ export const getActivityBoard = () => (dispatch) => {
               board: data,
             },
           });
+          dispatch(setLoading(false));
         });
       } else if (response.status === 401) {
         dispatch(logoutUser());
@@ -30,3 +31,10 @@ export const getActivityBoard = () => (dispatch) => {
       console.log(error);
     });
 };
+
+export const setLoading = (isLoading) => ({
+  type: activityTypes.SET_LOADING,
+  payload: {
+    isLoading: isLoading,
+  },
+});

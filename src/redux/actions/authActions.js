@@ -55,7 +55,7 @@ export const authenticate = (login, password, remember) => (dispatch) => {
             payload: tokenExpirationDate,
           });
           dispatch({ type: authTypes.REMEMBER_USER, payload: remember });
-          dispatch(getUserProfile(data.userId));
+          dispatch(getUserProfile(data.userId, true));
           return data;
         });
       } else if (response.status === 401) {

@@ -34,7 +34,7 @@ const PostForm = (props) => {
 
   const dispatch = useDispatch();
 
-  const userProfile = useSelector((state) => state.profile.userProfile);
+  const userProfile = useSelector((state) => state.auth.userProfile);
 
   const [isPublic, setIsPublic] = useState(postIsPublic);
   const [postContent, setPostContent] = useState(postText);
@@ -229,6 +229,10 @@ const PostForm = (props) => {
 PostForm.propTypes = {
   classes: PropTypes.object.isRequired,
   closePopup: PropTypes.func.isRequired,
+  edition: PropTypes.bool,
+  postText: PropTypes.string,
+  postImages: PropTypes.array,
+  postIsPublic: PropTypes.bool,
 };
 
 PostForm.defaultProps = {

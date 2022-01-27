@@ -1,0 +1,23 @@
+import types from '../types/navTypes';
+
+const initialState = {
+  currentPath: '/app',
+  pathIndex: 0,
+};
+
+const navReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case types.SET_PATH:
+      return {
+        ...state,
+        currentPath: action.payload.path,
+        pathIndex: action.payload.index,
+      };
+    case types.CLEAR_ALL:
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+export default navReducer;

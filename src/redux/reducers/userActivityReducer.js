@@ -2,6 +2,7 @@ import activityTypes from '../types/userActivityTypes';
 import postTypes from '../types/postTypes';
 
 const initialState = {
+  isLoading: false,
   board: [],
 };
 
@@ -11,6 +12,11 @@ const userActivityReducer = (state = initialState, action) => {
       return {
         ...state,
         board: action.payload.board,
+      };
+    case activityTypes.SET_LOADING:
+      return {
+        ...state,
+        isLoading: action.payload.isLoading,
       };
     case postTypes.CREATE_POST:
       return {

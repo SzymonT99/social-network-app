@@ -1,5 +1,6 @@
 import { Route, Switch } from 'react-router-dom';
 import ActivityBoard from '../pages/ActivityBoard/ActivityBoard';
+import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import AppTemplate from '../templates/AppTemplate';
 
 const MainApplication = () => {
@@ -7,6 +8,7 @@ const MainApplication = () => {
     <AppTemplate>
       <Switch>
         <Route exact path="/app" component={ActivityBoard} />
+        <Route exact path="/app/profile/:profileId" component={ProfilePage} />
       </Switch>
     </AppTemplate>
   );
