@@ -64,6 +64,13 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  profileHeadingText: {
+    '&.MuiTypography-root ': {
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      width: '400px',
+    },
+  },
   profileInfoList: {
     '&.MuiList-root': {
       display: 'flex',
@@ -326,8 +333,14 @@ const styles = (theme) => ({
   },
   friendManageBtn: {
     '&.MuiButton-root': {
-      fontSize: '15px',
-      marginRight: '80px',
+      marginRight: '10px',
+    },
+  },
+  friendManageBtnContent: {
+    '&.MuiTypography-root ': {
+      display: ' flex',
+      alignItems: 'center',
+      fontWeight: 'bold',
     },
   },
 });

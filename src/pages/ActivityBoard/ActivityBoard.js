@@ -32,6 +32,7 @@ const ActivityBoard = (props) => {
   const activityBoard = useSelector((state) => state.activity.board);
   const isLoading = useSelector((state) => state.activity.isLoading);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
+  const loggedUser = useSelector((state) => state.auth.user);
 
   const [openPostCreation, setOpenPostCreation] = useState(false);
   const [numberItemsShown, setNumberItemsShown] = useState(5);

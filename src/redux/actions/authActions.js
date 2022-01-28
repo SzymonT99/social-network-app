@@ -2,6 +2,7 @@ import authTypes from '../types/authTypes';
 import authService from '../../services/authService';
 import { showNotification } from './notificationActions';
 import { getUserProfile } from './userProfileActions';
+import { getFriendInvitations, getUserFriends } from './friendAction';
 
 export const register = (accountData) => (dispatch) => {
   return authService
@@ -56,6 +57,8 @@ export const authenticate = (login, password, remember) => (dispatch) => {
           });
           dispatch({ type: authTypes.REMEMBER_USER, payload: remember });
           dispatch(getUserProfile(data.userId, true));
+          dispatch(getUserFriends(data.userId, true));
+          dispatch(getFriendInvitations(data.userId, true));
           return data;
         });
       } else if (response.status === 401) {

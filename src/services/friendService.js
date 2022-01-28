@@ -4,6 +4,7 @@ import authorization from './authorization';
 const inviteToFriend = (inviterUserId) => {
   return fetch(
     endpoints.friendInvitations +
+      '?' +
       new URLSearchParams({
         userId: inviterUserId,
       }),
@@ -17,19 +18,27 @@ const inviteToFriend = (inviterUserId) => {
   );
 };
 
-const getFriendsInvitation = () => {
-  return fetch(endpoints.friendInvitations, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
-  });
+const getFriendsInvitation = (userId) => {
+  return fetch(
+    endpoints.friendInvitations +
+      '?' +
+      new URLSearchParams({
+        userId: userId,
+      }),
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
 };
 
 const respondToFriendInvitation = (inviterId, reaction) => {
   return fetch(
     endpoints.respondInvitation +
+      '?' +
       new URLSearchParams({
         inviterId: inviterId,
         reaction: reaction,
@@ -57,6 +66,7 @@ const deleteFriend = (friendId) => {
 const getUserFriends = (userId) => {
   return fetch(
     endpoints.userFriends +
+      '?' +
       new URLSearchParams({
         userId: userId,
       }),

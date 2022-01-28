@@ -109,7 +109,7 @@ export const deletePost = (postId) => (dispatch, getState) => {
 };
 
 export const likePost =
-  (postId, isSharing = false) =>
+  (postId, postAuthorId, isSharing = false) =>
   (dispatch, getState) => {
     return postService
       .likePost(postId)
@@ -137,7 +137,11 @@ export const likePost =
               payload: { postId: postId, liked: liked },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (postAuthorId === getState().auth.user.userId) {
+            dispatch(getUserActivity(getState().auth.user.userId));
+          } else {
+            dispatch(getUserActivity(postAuthorId));
+          }
           dispatch(showNotification('success', 'Polubiono post'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -157,7 +161,7 @@ export const likePost =
   };
 
 export const dislikePost =
-  (postId, isSharing = false) =>
+  (postId, postAuthorId, isSharing = false) =>
   (dispatch, getState) => {
     return postService
       .dislikePost(postId)
@@ -180,7 +184,11 @@ export const dislikePost =
               },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (postAuthorId === getState().auth.user.userId) {
+            dispatch(getUserActivity(getState().auth.user.userId));
+          } else {
+            dispatch(getUserActivity(postAuthorId));
+          }
           dispatch(showNotification('success', 'Usunięto polubienie postu'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -200,7 +208,7 @@ export const dislikePost =
   };
 
 export const commentPost =
-  (postId, comment, isSharing = false) =>
+  (postId, comment, postAuthorId, isSharing = false) =>
   (dispatch, getState) => {
     return postService
       .commentPost(postId, comment)
@@ -218,7 +226,11 @@ export const commentPost =
                 payload: { postId: postId, comment: data },
               });
             }
-            dispatch(getUserActivity(getState().auth.user.userId));
+            if (postAuthorId === getState().auth.user.userId) {
+              dispatch(getUserActivity(getState().auth.user.userId));
+            } else {
+              dispatch(getUserActivity(postAuthorId));
+            }
             dispatch(showNotification('success', 'Dodano komentarz'));
           });
         } else if (response.status === 401) {
@@ -237,7 +249,7 @@ export const commentPost =
   };
 
 export const editPostComment =
-  (postId, commentId, comment, isSharing = false) =>
+  (postId, commentId, comment, postAuthorId, isSharing = false) =>
   (dispatch, getState) => {
     return postService
       .editPostComment(commentId, comment)
@@ -262,7 +274,11 @@ export const editPostComment =
               },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (postAuthorId === getState().auth.user.userId) {
+            dispatch(getUserActivity(getState().auth.user.userId));
+          } else {
+            dispatch(getUserActivity(postAuthorId));
+          }
           dispatch(showNotification('success', 'Komentarz został zmieniony'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -282,7 +298,7 @@ export const editPostComment =
   };
 
 export const deletePostComment =
-  (postId, commentId, isSharing = false) =>
+  (postId, commentId, postAuthorId, isSharing = false) =>
   (dispatch, getState) => {
     return postService
       .deletePostComment(commentId)
@@ -299,7 +315,11 @@ export const deletePostComment =
               payload: { postId: postId, commentId: commentId },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (postAuthorId === getState().auth.user.userId) {
+            dispatch(getUserActivity(getState().auth.user.userId));
+          } else {
+            dispatch(getUserActivity(postAuthorId));
+          }
           dispatch(showNotification('success', 'Komentarz został usunięty'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -317,7 +337,7 @@ export const deletePostComment =
   };
 
 export const likePostComment =
-  (postId, commentId, isSharing = false) =>
+  (postId, commentId, postAuthorId, isSharing = false) =>
   (dispatch, getState) => {
     return postService
       .likePostComment(commentId)
@@ -350,7 +370,11 @@ export const likePostComment =
               },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (postAuthorId === getState().auth.user.userId) {
+            dispatch(getUserActivity(getState().auth.user.userId));
+          } else {
+            dispatch(getUserActivity(postAuthorId));
+          }
           dispatch(showNotification('success', 'Polubiono komentarz'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -370,7 +394,7 @@ export const likePostComment =
   };
 
 export const dislikePostComment =
-  (postId, commentId, isSharing = false) =>
+  (postId, commentId, postAuthorId, isSharing = false) =>
   (dispatch, getState) => {
     return postService
       .dislikePostComment(commentId)
@@ -395,7 +419,11 @@ export const dislikePostComment =
               },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (postAuthorId === getState().auth.user.userId) {
+            dispatch(getUserActivity(getState().auth.user.userId));
+          } else {
+            dispatch(getUserActivity(postAuthorId));
+          }
           dispatch(
             showNotification('success', 'Usunięto polubienie komentarza')
           );
@@ -510,62 +538,67 @@ export const managePostCommentsAccess =
       });
   };
 
-export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
-  return postService
-    .sharePost(basePostId, outerPost)
-    .then((response) => {
-      if (response.status === 201) {
-        return response.json().then((data) => {
-          const sharedPost = {
-            activityDate: new Date(),
-            activityType: 'SHARE_POST',
-            activityAuthor: {
-              userId: getState().auth.user.userId,
-              activityStatus: 'ONLINE',
-              email: getState().auth.userProfile.email,
-              firstName: getState().auth.userProfile.firstName,
-              lastName: getState().auth.userProfile.lastName,
-              profilePhoto: getState().auth.userProfile.profilePhoto,
-            },
-            activity: data,
-          };
-          const sharingInfo = {
-            sharedPostId: data.sharedPostId,
-            sharingText: outerPost.text,
-            authorOfSharing: sharedPost.activityAuthor,
-            date: sharedPost.activityAuthor,
-            isPublic: outerPost.isPublic,
-          };
-          dispatch({
-            type: postTypes.SHARE_POST,
-            payload: {
-              boardItem: sharedPost,
-            },
+export const sharePost =
+  (basePostId, outerPost, postAuthorId) => (dispatch, getState) => {
+    return postService
+      .sharePost(basePostId, outerPost)
+      .then((response) => {
+        if (response.status === 201) {
+          return response.json().then((data) => {
+            const sharedPost = {
+              activityDate: new Date(),
+              activityType: 'SHARE_POST',
+              activityAuthor: {
+                userId: getState().auth.user.userId,
+                activityStatus: 'ONLINE',
+                email: getState().auth.userProfile.email,
+                firstName: getState().auth.userProfile.firstName,
+                lastName: getState().auth.userProfile.lastName,
+                profilePhoto: getState().auth.userProfile.profilePhoto,
+              },
+              activity: data,
+            };
+            const sharingInfo = {
+              sharedPostId: data.sharedPostId,
+              sharingText: outerPost.text,
+              authorOfSharing: sharedPost.activityAuthor,
+              date: sharedPost.activityAuthor,
+              isPublic: outerPost.isPublic,
+            };
+            dispatch({
+              type: postTypes.SHARE_POST,
+              payload: {
+                boardItem: sharedPost,
+              },
+            });
+            dispatch({
+              type: postTypes.UPDATE_SHARED_POST,
+              payload: {
+                basePostId: basePostId,
+                sharingInfo: sharingInfo,
+              },
+            });
+            if (postAuthorId === getState().auth.user.userId) {
+              dispatch(getUserActivity(getState().auth.user.userId));
+            } else {
+              dispatch(getUserActivity(postAuthorId));
+            }
+            dispatch(showNotification('success', 'Udostępniono post'));
           });
-          dispatch({
-            type: postTypes.UPDATE_SHARED_POST,
-            payload: {
-              basePostId: basePostId,
-              sharingInfo: sharingInfo,
-            },
-          });
-          dispatch(getUserActivity(getState().auth.user.userId));
-          dispatch(showNotification('success', 'Udostępniono post'));
-        });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
-      } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Błędny format danych'));
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+        } else if (response.status === 401) {
+          dispatch(logoutUser());
+          window.location.href = '/auth/login';
+          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+        } else if (response.status === 400) {
+          dispatch(showNotification('warning', 'Błędny format danych'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const deleteSharedPost =
   (sharedPostId, basePostId) => (dispatch, getState) => {

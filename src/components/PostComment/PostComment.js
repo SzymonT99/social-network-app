@@ -76,6 +76,7 @@ const PostComment = (props) => {
     authorName,
     createdDate,
     userStatus,
+    postAuthorId,
     authorId,
     likes,
     isEdited,
@@ -104,7 +105,9 @@ const PostComment = (props) => {
         showNotification('warning', 'Nie można pozostawić pustej treści')
       );
     } else {
-      dispatch(editPostComment(postId, commentId, commentText, sharing));
+      dispatch(
+        editPostComment(postId, commentId, commentText, postAuthorId, sharing)
+      );
       setIsDisabled(true);
     }
   };
@@ -122,7 +125,7 @@ const PostComment = (props) => {
   };
 
   const deleteCommentClick = () => {
-    dispatch(deletePostComment(postId, commentId, sharing));
+    dispatch(deletePostComment(postId, commentId, postAuthorId, sharing));
     setOpenDeletePopup(false);
   };
 
@@ -141,9 +144,9 @@ const PostComment = (props) => {
 
   const commentReaction = () => {
     if (!commentIsLiked(likes, userId)) {
-      dispatch(likePostComment(postId, commentId, sharing));
+      dispatch(likePostComment(postId, commentId, postAuthorId, sharing));
     } else {
-      dispatch(dislikePostComment(postId, commentId, sharing));
+      dispatch(dislikePostComment(postId, commentId, postAuthorId, sharing));
     }
   };
 
@@ -292,6 +295,7 @@ const PostComment = (props) => {
 PostComment.propTypes = {
   classes: PropTypes.object.isRequired,
   commentId: PropTypes.number.isRequired,
+  postAuthorId: PropTypes.number.isRequired,
   postId: PropTypes.number.isRequired,
   content: PropTypes.string.isRequired,
   authorName: PropTypes.string.isRequired,

@@ -4,11 +4,13 @@ import { logoutUser } from './authActions';
 import authTypes from '../types/authTypes';
 import userProfileTypes from '../types/userProfileTypes';
 
-export const inviteToFriend = (inviterUserId) => (dispatch) => {
+export const inviteToFriend = (inviterUserId) => (dispatch, getState) => {
   return friendService
     .inviteToFriend(inviterUserId)
     .then((response) => {
       if (response.status === 201) {
+        dispatch(getFriendInvitations(inviterUserId));
+        dispatch(getUserFriends(getState().auth.user.userId, true));
         dispatch(showNotification('success', 'Wysłano zaproszenie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -27,33 +29,44 @@ export const inviteToFriend = (inviterUserId) => (dispatch) => {
     });
 };
 
-export const getFriendInvitations = () => (dispatch) => {
-  return friendService
-    .getFriendsInvitation()
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json().then((data) => {
-          dispatch({
-            type: authTypes.SAVE_LOGGED_USER_FRIEND_INVITATIONS,
-            payload: {
-              friendInvitations: data,
-            },
+export const getFriendInvitations =
+  (userId, forLoggedIn = false) =>
+  (dispatch) => {
+    return friendService
+      .getFriendsInvitation(userId)
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json().then((data) => {
+            if (!forLoggedIn) {
+              dispatch({
+                type: userProfileTypes.FETCH_USER_FRIENDS_INVITATION,
+                payload: {
+                  friendInvitations: data,
+                },
+              });
+            } else {
+              dispatch({
+                type: authTypes.SAVE_LOGGED_USER_FRIEND_INVITATIONS,
+                payload: {
+                  friendInvitations: data,
+                },
+              });
+            }
           });
-        });
-      } else if (response.status === 403) {
-        dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else if (response.status === 401) {
+          dispatch(logoutUser());
+          window.location.href = '/auth/login';
+          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const getUserFriends =
   (userId, forLoggedIn = false) =>

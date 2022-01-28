@@ -114,14 +114,16 @@ const Post = (props) => {
       );
       setHighlightComment(comment);
       setPostComments(comments.filter((item) => item !== comment));
+    } else {
+      setPostComments(comments);
     }
   }, [comments]);
 
   const postReaction = () => {
     if (!postIsLiked(likes, userId)) {
-      dispatch(likePost(postId));
+      dispatch(likePost(postId, authorId));
     } else {
-      dispatch(dislikePost(postId));
+      dispatch(dislikePost(postId, authorId));
     }
   };
 
@@ -133,7 +135,7 @@ const Post = (props) => {
     if (commentText === '') {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
-      dispatch(commentPost(postId, commentText));
+      dispatch(commentPost(postId, commentText, authorId));
       setCommentsDisplayed(true);
       setCommentText('');
     }
@@ -473,6 +475,7 @@ const Post = (props) => {
               highlightComment
               commentId={highlightComment.commentId}
               postId={postId}
+              postAuthorId={authorId}
               createdDate={new Date(highlightComment.createdAt)}
               authorName={
                 highlightComment.commentAuthor.firstName +
@@ -499,6 +502,7 @@ const Post = (props) => {
                     key={comment.commentId}
                     commentId={comment.commentId}
                     postId={postId}
+                    postAuthorId={authorId}
                     createdDate={new Date(comment.createdAt)}
                     authorName={
                       comment.commentAuthor.firstName +
@@ -580,6 +584,7 @@ const Post = (props) => {
         <PostForm
           edition
           closePopup={handleCloseEditionPostPopup}
+          userId={authorId}
           postText={content}
           postImages={images}
           postIsPublic={isPublic}
@@ -594,6 +599,7 @@ const Post = (props) => {
       >
         <SharePostForm
           closePopup={handleCloseSharePostPopup}
+          postAuthorId={authorId}
           basePostId={postId}
         />
       </Popup>

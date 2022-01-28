@@ -80,6 +80,8 @@ const SharedPost = (props) => {
       );
       setHighlightComment(comment);
       setPostComments(comments.filter((item) => item !== comment));
+    } else {
+      setPostComments(comments);
     }
   }, [comments]);
 
@@ -108,9 +110,9 @@ const SharedPost = (props) => {
 
   const sharedPostReaction = () => {
     if (!sharedPostIsLiked(likes, userId)) {
-      dispatch(likePost(sharingId, true));
+      dispatch(likePost(sharingId, sharingAuthorId, true));
     } else {
-      dispatch(dislikePost(sharingId, true));
+      dispatch(dislikePost(sharingId, sharingAuthorId, true));
     }
   };
 
@@ -176,7 +178,7 @@ const SharedPost = (props) => {
     if (commentText === '') {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
-      dispatch(commentPost(sharingId, commentText, true));
+      dispatch(commentPost(sharingId, commentText, sharingAuthorId, true));
       setCommentsDisplayed(true);
       setCommentText('');
     }
@@ -372,6 +374,7 @@ const SharedPost = (props) => {
           highlightComment
           commentId={highlightComment.commentId}
           postId={sharingId}
+          postAuthorId={sharingId}
           createdDate={new Date(highlightComment.createdAt)}
           authorName={
             highlightComment.commentAuthor.firstName +
@@ -399,6 +402,7 @@ const SharedPost = (props) => {
                 key={comment.commentId}
                 commentId={comment.commentId}
                 postId={sharingId}
+                postAuthorId={sharingAuthorId}
                 createdDate={new Date(comment.createdAt)}
                 authorName={
                   comment.commentAuthor.firstName +

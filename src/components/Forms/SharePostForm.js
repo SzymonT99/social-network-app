@@ -18,11 +18,11 @@ import { sharePost } from '../../redux/actions/postActions';
 import { showNotification } from '../../redux/actions/notificationActions';
 
 const SharePostForm = (props) => {
-  const { classes, basePostId, closePopup } = props;
+  const { classes, basePostId, postAuthorId, closePopup } = props;
 
   const dispatch = useDispatch();
 
-  const userProfile = useSelector((state) => state.selectedProfile.userProfile);
+  const userProfile = useSelector((state) => state.auth.userProfile);
 
   const [sharedText, setSharedText] = useState('');
   const [sharedPostIsPublic, setSharedPostIsPublic] = useState(false);
@@ -47,9 +47,8 @@ const SharePostForm = (props) => {
       isPublic: sharedPostIsPublic,
       isCommentingBlocked: sharedPostCommentsIsBlocked,
     };
-    console.log(outerPost);
     if (sharedText !== '') {
-      dispatch(sharePost(basePostId, outerPost));
+      dispatch(sharePost(basePostId, outerPost, postAuthorId));
       closePopup();
     } else {
       dispatch(showNotification('warning', 'Podaj treść udostępnienia'));
@@ -130,6 +129,7 @@ const SharePostForm = (props) => {
 SharePostForm.propTypes = {
   classes: PropTypes.object.isRequired,
   basePostId: PropTypes.number.isRequired,
+  postAuthorId: PropTypes.number.isRequired,
   closePopup: PropTypes.func.isRequired,
 };
 

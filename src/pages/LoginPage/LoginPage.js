@@ -10,10 +10,16 @@ import Typography from '@mui/material/Typography';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import logoWhite from '../../assets/logo-white.png';
 import { useDispatch, useSelector } from 'react-redux';
-import { Checkbox, FormControlLabel } from '@mui/material';
+import {
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+} from '@mui/material';
 import { authenticate } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PropTypes } from 'prop-types';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const validationSchema = yup.object({
   login: yup
@@ -33,6 +39,7 @@ const LoginPage = (props) => {
   const history = useHistory();
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { isLoggedIn } = useSelector((state) => state.auth);
 
@@ -60,6 +67,14 @@ const LoginPage = (props) => {
   if (isLoggedIn) {
     return <Redirect to="/app" />;
   }
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <>
@@ -121,9 +136,22 @@ const LoginPage = (props) => {
                 id="password"
                 name="password"
                 label="Hasło"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={formik.values.password}
                 onChange={formik.handleChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 error={
                   formik.touched.password && Boolean(formik.errors.password)
                 }

@@ -64,7 +64,15 @@ import AddressForm from '../../components/Forms/AddressForm';
 import AddIcon from '@mui/icons-material/Add';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import PersonIcon from '@mui/icons-material/Person';
 import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
+import { setCurrentPath } from '../../redux/actions/navActions';
+import {
+  deleteFriend,
+  getFriendInvitations,
+  getUserFriends,
+  inviteToFriend,
+} from '../../redux/actions/friendAction';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -101,6 +109,7 @@ const ProfilePage = (props) => {
 
   const dispatch = useDispatch();
   const loggedUser = useSelector((state) => state.auth.user);
+  const loggedUserFriends = useSelector((state) => state.auth.friends);
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
     (state) => state.selectedProfile.userActivity
@@ -112,11 +121,16 @@ const ProfilePage = (props) => {
     (state) => state.selectedProfile.userInterests
   );
   const userImages = useSelector((state) => state.selectedProfile.images);
+  const userFriends = useSelector((state) => state.selectedProfile.friends);
+  const userFriendInvitations = useSelector(
+    (state) => state.selectedProfile.friendInvitations
+  );
 
   const history = useHistory();
 
-  let { profileId } = useParams();
+  let { selectedUserId } = useParams();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
   const [profileInfoNav, setProfileInfoNav] = useState('i1');
@@ -136,14 +150,49 @@ const ProfilePage = (props) => {
   const [openAddAddressFormPopup, setOpenAddAddressFormPopup] = useState(false);
   const [openEditAddressFormPopup, setOpenEditAddressFormPopup] =
     useState(false);
+  const [isUserFriend, setIsUserFriend] = useState(false);
+  const [isInvitedToFriend, setIsInvitedToFriend] = useState(false);
 
   useEffect(() => {
-    dispatch(getUserProfile(profileId));
-    dispatch(getUserActivity(profileId));
-    dispatch(getUserFavouriteItems(profileId));
-    dispatch(getUserInterests(profileId));
-    dispatch(getUserImages(profileId));
-  }, []);
+    if (isLoading) {
+      dispatch(setCurrentPath('/app/profile/' + loggedUser.userId, 1));
+      dispatch(getUserProfile(selectedUserId));
+      dispatch(getUserActivity(selectedUserId));
+      dispatch(getUserFavouriteItems(selectedUserId));
+      dispatch(getUserInterests(selectedUserId));
+      dispatch(getUserImages(selectedUserId));
+      dispatch(getUserFriends(selectedUserId));
+      dispatch(getFriendInvitations(selectedUserId));
+      setIsLoading(false);
+    }
+    if (
+      loggedUser.userId !== parseInt(selectedUserId) &&
+      loggedUserFriends.filter(
+        (friend) =>
+          friend.user.userId === parseInt(selectedUserId) &&
+          friend.isInvitationAccepted === true
+      ).length > 0
+    ) {
+      setIsUserFriend(true);
+    } else if (loggedUser.userId === parseInt(selectedUserId)) {
+      setIsUserFriend(null);
+    } else {
+      setIsUserFriend(false);
+    }
+
+    if (
+      loggedUser.userId !== parseInt(selectedUserId) &&
+      userFriendInvitations.filter(
+        (friend) => friend.invitingUser.userId === loggedUser.userId
+      ).length > 0
+    ) {
+      setIsInvitedToFriend(true);
+    } else if (loggedUser.userId === parseInt(selectedUserId)) {
+      setIsInvitedToFriend(null);
+    } else {
+      setIsInvitedToFriend(false);
+    }
+  }, [selectedUserId, userFriendInvitations]);
 
   const handleCloseAddSchoolPopup = () => {
     setOpenAddSchoolPopup(false);
@@ -209,6 +258,59 @@ const ProfilePage = (props) => {
     setOpenEditAddressFormPopup(false);
   };
 
+  const handleManageFriend = () => {
+    if (!isUserFriend && !isInvitedToFriend) {
+      dispatch(inviteToFriend(selectedUserId));
+      setIsInvitedToFriend(true);
+    } else if (!isUserFriend && isInvitedToFriend) {
+      const invitedFriend = userFriendInvitations.find(
+        (friend) => friend.invitingUser.userId === loggedUser.userId
+      );
+      dispatch(deleteFriend(invitedFriend.friendId, true));
+      setIsInvitedToFriend(false);
+    } else if (isUserFriend && isInvitedToFriend) {
+      const friend = userFriends.find(
+        (friend) => friend.user.userId === loggedUser.userId
+      );
+      dispatch(deleteFriend(friend.friendId));
+      setIsUserFriend(false);
+      setIsInvitedToFriend(false);
+    }
+  };
+
+  const generateFriendBtn = () => {
+    if (!isUserFriend && !isInvitedToFriend) {
+      return (
+        <Typography
+          variant="subtitle1"
+          className={classes.friendManageBtnContent}
+        >
+          <PersonAddIcon sx={{ marginRight: '7px' }} /> Dodaj do znajomych
+        </Typography>
+      );
+    } else if (!isUserFriend && isInvitedToFriend) {
+      return (
+        <Typography
+          variant="subtitle1"
+          className={classes.friendManageBtnContent}
+        >
+          <DoNotDisturbIcon sx={{ marginRight: '7px' }} />
+          Anuluj zaproszenie
+        </Typography>
+      );
+    } else if (isUserFriend && isInvitedToFriend) {
+      return (
+        <Typography
+          variant="subtitle1"
+          className={classes.friendManageBtnContent}
+        >
+          <PersonIcon sx={{ marginRight: '7px' }} />
+          Znajomy
+        </Typography>
+      );
+    }
+  };
+
   return (
     <>
       {userProfile && (
@@ -234,7 +336,7 @@ const ProfilePage = (props) => {
                   alt="Zdjęcie użytkownika"
                   className={classes.userPhoto}
                 />
-                {parseInt(profileId) === loggedUser.userId && (
+                {parseInt(selectedUserId) === loggedUser.userId && (
                   <label
                     htmlFor="icon-button-file"
                     className={classes.uploadCoverImageBtn}
@@ -257,7 +359,7 @@ const ProfilePage = (props) => {
                     </Tooltip>
                   </label>
                 )}
-                {parseInt(profileId) === loggedUser.userId &&
+                {parseInt(selectedUserId) === loggedUser.userId &&
                   userProfile.profilePhoto !== null && (
                     <div className={classes.deleteProfileImageBtn}>
                       <Tooltip title="Usuń zdjęcie profilowe" placement="left">
@@ -275,26 +377,35 @@ const ProfilePage = (props) => {
                 {userProfile ? (
                   <div className={classes.profileHeadingInfoContent}>
                     <div>
-                      <Typography fontSize="37px" fontWeight={400}>
+                      <Typography
+                        fontSize="37px"
+                        className={classes.profileHeadingText}
+                        fontWeight={400}
+                        variant="h2"
+                      >
                         {userProfile.firstName + ' ' + userProfile.lastName}
                       </Typography>
-                      <Typography variant="h6">{userProfile.email}</Typography>
+                      <Typography
+                        className={classes.profileHeadingText}
+                        variant="h6"
+                      >
+                        {userProfile.email}
+                      </Typography>
                     </div>
-                    <Button
-                      className={classes.friendManageBtn}
-                      variant="contained"
-                      color="secondary"
-                    >
-                      <PersonAddIcon sx={{ marginRight: '7px' }} /> Dodaj do
-                      znajomych
-                    </Button>
+                    {parseInt(selectedUserId) !== loggedUser.userId && (
+                      <Button
+                        className={classes.friendManageBtn}
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleManageFriend}
+                      >
+                        {generateFriendBtn()}
+                      </Button>
+                    )}
                   </div>
                 ) : (
                   <div className={classes.loadingContainer}>
-                    <CircularProgress
-                      color="secondary"
-                      sx={{ width: '300px', height: '300px' }}
-                    />
+                    <CircularProgress color="secondary" />
                   </div>
                 )}
                 <List
@@ -487,7 +598,7 @@ const ProfilePage = (props) => {
                     value="a1"
                     className={classes.tabPanelActivityContainer}
                   >
-                    {parseInt(profileId) === loggedUser.userId && (
+                    {parseInt(selectedUserId) === loggedUser.userId && (
                       <Paper
                         elevation={4}
                         sx={{ borderRadius: '10px' }}
@@ -833,7 +944,7 @@ const ProfilePage = (props) => {
                         <Typography variant="h5">
                           Podstawowe informacje
                         </Typography>
-                        {parseInt(profileId) === loggedUser.userId && (
+                        {parseInt(selectedUserId) === loggedUser.userId && (
                           <Tooltip title="Edytuj informacje" placement="left">
                             <IconButton
                               className={classes.editBaseInformationBtn}
@@ -961,7 +1072,7 @@ const ProfilePage = (props) => {
                         className={classes.profileInformationHeadingWithAction}
                       >
                         <Typography variant="h5">Dane kontaktowe</Typography>
-                        {parseInt(profileId) === loggedUser.userId && (
+                        {parseInt(selectedUserId) === loggedUser.userId && (
                           <Tooltip
                             title="Edytuj dane kontaktowe"
                             placement="left"
@@ -988,7 +1099,7 @@ const ProfilePage = (props) => {
                         className={classes.profileInformationHeadingWithAction}
                       >
                         <Typography variant="h5">Adres zamieszkania</Typography>
-                        {parseInt(profileId) === loggedUser.userId &&
+                        {parseInt(selectedUserId) === loggedUser.userId &&
                           (userProfile.address !== null ? (
                             <Tooltip title="Edytuj Adres" placement="left">
                               <IconButton
@@ -1100,10 +1211,12 @@ const ProfilePage = (props) => {
                             name={school.name}
                             startDate={school.startDate}
                             graduationDate={school.graduationDate}
-                            manage={parseInt(profileId) === loggedUser.userId}
+                            manage={
+                              parseInt(selectedUserId) === loggedUser.userId
+                            }
                           />
                         ))}
-                      {parseInt(profileId) === loggedUser.userId && (
+                      {parseInt(selectedUserId) === loggedUser.userId && (
                         <Button
                           color="secondary"
                           variant="text"
@@ -1130,10 +1243,12 @@ const ProfilePage = (props) => {
                           position={work.position}
                           startDate={work.startDate}
                           endDate={work.endDate}
-                          manage={parseInt(profileId) === loggedUser.userId}
+                          manage={
+                            parseInt(selectedUserId) === loggedUser.userId
+                          }
                         />
                       ))}
-                      {parseInt(profileId) === loggedUser.userId && (
+                      {parseInt(selectedUserId) === loggedUser.userId && (
                         <Button
                           color="secondary"
                           variant="text"
@@ -1181,7 +1296,8 @@ const ProfilePage = (props) => {
                             key={userInterest.interestId}
                             disableGutters
                             secondaryAction={
-                              parseInt(profileId) === loggedUser.userId && (
+                              parseInt(selectedUserId) ===
+                                loggedUser.userId && (
                                 <IconButton
                                   onClick={() =>
                                     handleClickDeleteUserInterest(
@@ -1209,7 +1325,7 @@ const ProfilePage = (props) => {
                           </ListItem>
                         ))}
                       </List>
-                      {parseInt(profileId) === loggedUser.userId && (
+                      {parseInt(selectedUserId) === loggedUser.userId && (
                         <Button
                           color="secondary"
                           variant="text"
@@ -1292,7 +1408,7 @@ const ProfilePage = (props) => {
                           />
                         </>
                       )}
-                      {parseInt(profileId) === loggedUser.userId && (
+                      {parseInt(selectedUserId) === loggedUser.userId && (
                         <Button
                           color="secondary"
                           variant="text"
