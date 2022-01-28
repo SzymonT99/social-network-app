@@ -301,7 +301,7 @@ PostComment.propTypes = {
   userStatus: PropTypes.string.isRequired,
   authorId: PropTypes.number.isRequired,
   isEdited: PropTypes.bool.isRequired,
-  authorProfilePhoto: PropTypes.object.isRequired,
+  authorProfilePhoto: PropTypes.object,
 };
 
 PostComment.defaultProps = {

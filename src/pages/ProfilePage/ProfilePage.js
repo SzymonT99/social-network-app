@@ -521,38 +521,47 @@ const ProfilePage = (props) => {
                     gap={3}
                     variant="quilted"
                   >
-                    {userFriends.map((friend, index) => {
-                      if (index < 9) {
-                        return (
-                          <ImageListItem
-                            key={friend.friendId}
-                            className={classes.imageListItemBox}
-                            onClick={() =>
-                              history.push('/app/profile/' + friend.user.userId)
-                            }
-                          >
-                            <img
-                              src={friend.user.profilePhoto.url}
-                              alt={friend.user.firstName + friend.user.lastName}
-                              loading="lazy"
-                            />
-                            <ImageListItemBar
-                              title={
-                                <Typography
-                                  variant="body1"
-                                  className={classes.imageListItemTitle}
-                                >
-                                  {friend.user.firstName}
-                                  <br />
-                                  {friend.user.lastName}
-                                </Typography>
+                    {userFriends &&
+                      userFriends.map((friend, index) => {
+                        if (index < 9) {
+                          return (
+                            <ImageListItem
+                              key={friend.friendId}
+                              className={classes.imageListItemBox}
+                              onClick={() =>
+                                history.push(
+                                  '/app/profile/' + friend.user.userId
+                                )
                               }
-                              position="below"
-                            />
-                          </ImageListItem>
-                        );
-                      }
-                    })}
+                            >
+                              <img
+                                src={
+                                  friend.user.profilePhoto !== null
+                                    ? friend.user.profilePhoto.url
+                                    : defaultUserPhoto
+                                }
+                                alt={
+                                  friend.user.firstName + friend.user.lastName
+                                }
+                                loading="lazy"
+                              />
+                              <ImageListItemBar
+                                title={
+                                  <Typography
+                                    variant="body1"
+                                    className={classes.imageListItemTitle}
+                                  >
+                                    {friend.user.firstName}
+                                    <br />
+                                    {friend.user.lastName}
+                                  </Typography>
+                                }
+                                position="below"
+                              />
+                            </ImageListItem>
+                          );
+                        }
+                      })}
                   </ImageList>
                 </div>
               </Paper>
@@ -1527,40 +1536,45 @@ const ProfilePage = (props) => {
                 gap={5}
                 variant="quilted"
               >
-                {userFriends.map((friend, index) => {
-                  if (index < 9) {
-                    return (
-                      <ImageListItem
-                        key={friend.friendId}
-                        className={classes.imageListItemBox}
-                        onClick={() =>
-                          history.push('/app/profile/' + friend.user.userId)
-                        }
-                      >
-                        <img
-                          src={friend.user.profilePhoto.url}
-                          alt={friend.user.firstName + friend.user.lastName}
-                          loading="lazy"
-                        />
-                        <ImageListItemBar
-                          title={
-                            <Typography
-                              variant="subtitle2"
-                              fontWeight="bold"
-                              className={classes.imageListItemTitle}
-                              noWrap
-                            >
-                              {friend.user.firstName +
-                                ' ' +
-                                friend.user.lastName}
-                            </Typography>
+                {userFriends &&
+                  userFriends.map((friend, index) => {
+                    if (index < 9) {
+                      return (
+                        <ImageListItem
+                          key={friend.friendId}
+                          className={classes.imageListItemBox}
+                          onClick={() =>
+                            history.push('/app/profile/' + friend.user.userId)
                           }
-                          position="below"
-                        />
-                      </ImageListItem>
-                    );
-                  }
-                })}
+                        >
+                          <img
+                            src={
+                              friend.user.profilePhoto !== null
+                                ? friend.user.profilePhoto.url
+                                : defaultUserPhoto
+                            }
+                            alt={friend.user.firstName + friend.user.lastName}
+                            loading="lazy"
+                          />
+                          <ImageListItemBar
+                            title={
+                              <Typography
+                                variant="subtitle2"
+                                fontWeight="bold"
+                                className={classes.imageListItemTitle}
+                                noWrap
+                              >
+                                {friend.user.firstName +
+                                  ' ' +
+                                  friend.user.lastName}
+                              </Typography>
+                            }
+                            position="below"
+                          />
+                        </ImageListItem>
+                      );
+                    }
+                  })}
               </ImageList>
             </Paper>
           </TabPanel>

@@ -416,6 +416,7 @@ export const changeProfilePhoto = (userId, photo) => (dispatch) => {
         dispatch(getUserProfile(userId));
         dispatch(getUserProfile(userId, true));
         dispatch(getUserActivity(userId));
+        dispatch(getUserImages(userId));
         dispatch(showNotification('success', 'Zmieniono zdjęcie profilowe'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));

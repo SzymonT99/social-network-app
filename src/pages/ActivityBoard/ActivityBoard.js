@@ -49,7 +49,7 @@ const ActivityBoard = (props) => {
     dispatch(setLoading(true));
     dispatch(getActivityBoard());
     dispatch(getFriendInvitations(loggedUser.userId, true));
-  }, []);
+  }, [numberItemsShown]);
 
   return (
     <>
