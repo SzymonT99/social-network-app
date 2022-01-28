@@ -137,7 +137,13 @@ export const likePost =
               payload: { postId: postId, liked: liked },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+
+          dispatch(
+            getUserActivity(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
+
           dispatch(showNotification('success', 'Polubiono post'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -180,7 +186,11 @@ export const dislikePost =
               },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(
+            getUserActivity(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
           dispatch(showNotification('success', 'Usunięto polubienie postu'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -218,7 +228,11 @@ export const commentPost =
                 payload: { postId: postId, comment: data },
               });
             }
-            dispatch(getUserActivity(getState().auth.user.userId));
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
             dispatch(showNotification('success', 'Dodano komentarz'));
           });
         } else if (response.status === 401) {
@@ -262,7 +276,11 @@ export const editPostComment =
               },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(
+            getUserActivity(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
           dispatch(showNotification('success', 'Komentarz został zmieniony'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -282,7 +300,7 @@ export const editPostComment =
   };
 
 export const deletePostComment =
-  (postId, commentId, isSharing = false) =>
+  (postId, commentId, postAuthorId, isSharing = false) =>
   (dispatch, getState) => {
     return postService
       .deletePostComment(commentId)
@@ -299,7 +317,11 @@ export const deletePostComment =
               payload: { postId: postId, commentId: commentId },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(
+            getUserActivity(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
           dispatch(showNotification('success', 'Komentarz został usunięty'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -350,7 +372,11 @@ export const likePostComment =
               },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(
+            getUserActivity(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
           dispatch(showNotification('success', 'Polubiono komentarz'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -395,7 +421,11 @@ export const dislikePostComment =
               },
             });
           }
-          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(
+            getUserActivity(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
           dispatch(
             showNotification('success', 'Usunięto polubienie komentarza')
           );
@@ -549,7 +579,11 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
               sharingInfo: sharingInfo,
             },
           });
-          dispatch(getUserActivity(getState().auth.user.userId));
+          dispatch(
+            getUserActivity(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
           dispatch(showNotification('success', 'Udostępniono post'));
         });
       } else if (response.status === 401) {

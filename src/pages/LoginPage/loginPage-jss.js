@@ -81,10 +81,11 @@ const styles = (theme) => ({
     },
   },
   loginBtn: {
-    '&.MuiButton-contained': {
+    '&.MuiButton-root': {
       textTransform: 'none',
-      fontSize: '16px',
+      fontSize: '17px',
       fontWeight: 'bold',
+      height: '50px',
     },
   },
   afterInputContainer: {

@@ -52,12 +52,24 @@ const styles = (theme) => ({
     height: '240px',
     borderRadius: '10px',
   },
-  profileInfoText: {
+  profileHeadingInfo: {
     width: '100%',
     padding: '22px 0px 0px 20px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+  },
+  profileHeadingInfoContent: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  profileHeadingText: {
+    '&.MuiTypography-root ': {
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      width: '400px',
+    },
   },
   profileInfoList: {
     '&.MuiList-root': {
@@ -167,10 +179,20 @@ const styles = (theme) => ({
   imageListItemBox: {
     '&.MuiImageListItem-root': {
       border: '1px solid rgba(0, 0, 0, 0.47)',
+      borderBottom: 'none',
       '& .MuiImageListItemBar-root': {
+        width: '100%',
+        '& .MuiTypography-root': {
+          width: '100%',
+          border: '1px solid rgba(0, 0, 0, 0.47)',
+          borderTop: 'none',
+        },
         '& .MuiImageListItemBar-titleWrap': {
           padding: 0,
         },
+      },
+      '&:hover': {
+        cursor: 'pointer',
       },
     },
   },
@@ -317,6 +339,26 @@ const styles = (theme) => ({
       '& .MuiPagination-ul': {
         justifyContent: 'center',
       },
+    },
+  },
+  friendManageBtn: {
+    '&.MuiButton-root': {
+      marginRight: '10px',
+    },
+  },
+  friendDeleteBtn: {
+    '&.MuiButton-root': {
+      marginRight: '10px',
+      '&:hover': {
+        backgroundColor: '#FF1C00',
+      },
+    },
+  },
+  friendManageBtnContent: {
+    '&.MuiTypography-root ': {
+      display: ' flex',
+      alignItems: 'center',
+      fontWeight: 'bold',
     },
   },
 });

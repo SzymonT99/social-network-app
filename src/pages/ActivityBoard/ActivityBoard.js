@@ -24,6 +24,7 @@ import {
 } from '../../redux/actions/userActivityActions';
 import SharedPost from '../../components/SharedPost/SharedPost';
 import CircularProgress from '@mui/material/CircularProgress';
+import { getFriendInvitations } from '../../redux/actions/friendAction';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
@@ -32,6 +33,10 @@ const ActivityBoard = (props) => {
   const activityBoard = useSelector((state) => state.activity.board);
   const isLoading = useSelector((state) => state.activity.isLoading);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
+  const loggedUser = useSelector((state) => state.auth.user);
+  const loggedUserFriendInvitations = useSelector(
+    (state) => state.auth.friendInvitations
+  );
 
   const [openPostCreation, setOpenPostCreation] = useState(false);
   const [numberItemsShown, setNumberItemsShown] = useState(5);
@@ -43,6 +48,7 @@ const ActivityBoard = (props) => {
   useEffect(() => {
     dispatch(setLoading(true));
     dispatch(getActivityBoard());
+    dispatch(getFriendInvitations(loggedUser.userId, true));
   }, []);
 
   return (
@@ -180,11 +186,23 @@ const ActivityBoard = (props) => {
                 <Typography fontWeight="bold" variant="h6">
                   Zaproszenia do znajomych
                 </Typography>
-                <FriendInvitation name="Roman Romanowicz" />
-                <FriendInvitation name="Ewa Ewakowska" />
-                <FriendInvitation name="Tomasz Tomkowski" />
-                <FriendInvitation name="Florian Flor" />
-                <FriendInvitation name="Bartek Bartkowski" />
+                {loggedUserFriendInvitations.map((friendInvitation) => (
+                  <FriendInvitation
+                    key={friendInvitation.friendId}
+                    inviterId={friendInvitation.invitingUser.userId}
+                    inviterName={
+                      friendInvitation.invitingUser.firstName +
+                      ' ' +
+                      friendInvitation.invitingUser.lastName
+                    }
+                    inviterPhoto={friendInvitation.invitingUser.profilePhoto}
+                  />
+                ))}
+                {loggedUserFriendInvitations.length === 0 && (
+                  <Typography marginTop="10px" variant="subtitle2">
+                    Brak zaproszeń
+                  </Typography>
+                )}
               </Paper>
             </div>
           </div>

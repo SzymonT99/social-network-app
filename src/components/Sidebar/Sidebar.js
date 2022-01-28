@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -66,32 +66,56 @@ const Sidebar = (props) => {
 
   const [selectedItem, setSelectedItem] = useState(pathIndex);
 
+  const location = useLocation();
+
   const dispatch = useDispatch();
   const history = useHistory();
 
   const handleListItemClick = (index) => {
     setSelectedItem(index);
+    if (index === 0) {
+      history.push('/app');
+      dispatch(setCurrentPath('/app', 0));
+    } else if (index === 1) {
+      history.push('/app/profile/' + loggedUserProfile.userProfileId);
+      if (loggedUserProfile) {
+        dispatch(
+          setCurrentPath('/app/profile/' + loggedUserProfile.userProfileId, 1)
+        );
+      }
+    } else if (index === 2) {
+      history.push('/app/friends');
+      dispatch(setCurrentPath('/app/friends', 2));
+    } else if (index === 3) {
+      history.push('/app/groups');
+      dispatch(setCurrentPath('/app/groups', 3));
+    } else if (index === 4) {
+      history.push('/app/chat');
+      dispatch(setCurrentPath('/app/chat', 4));
+    } else if (index === 5) {
+      history.push('/app/events');
+      dispatch(setCurrentPath('/app/events', 5));
+    } else if (index === 6) {
+      history.push('/app/favourite-posts');
+      dispatch(setCurrentPath('/app/favourite-posts', 6));
+    } else if (index === 7) {
+      history.push('/app/settings');
+      dispatch(setCurrentPath('/app/settings', 7));
+    }
   };
 
   useEffect(() => {
-    switch (selectedItem) {
-      case 0:
-        dispatch(setCurrentPath('/app', 0));
-        history.push('/app');
-        break;
-      case 1:
-        if (loggedUserProfile) {
-          dispatch(
-            setCurrentPath('/app/profile/' + loggedUserProfile.userProfileId, 1)
-          );
-          history.push('/app/profile/' + loggedUserProfile.userProfileId);
-        }
-        break;
-      default:
-        dispatch(setCurrentPath('/app', 0));
-        history.push('/app');
+    if (
+      location.pathname.includes('/app/profile/') &&
+      !location.pathname.includes(
+        '/app/profile/' + loggedUserProfile.userProfileId
+      )
+    ) {
+      setSelectedItem(null);
+    } else {
+      setSelectedItem(pathIndex);
     }
-  }, [selectedItem]);
+  }, [pathIndex]);
 
   return (
     <div className={classes.sidebarContainer}>
@@ -132,7 +156,7 @@ const Sidebar = (props) => {
                 handleListItemClick(0);
               }}
             >
-              <ListItemButton selected={selectedItem === 0}>
+              <ListItemButton>
                 <ListItemIcon>
                   <HomeIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -152,7 +176,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 1}
               onClick={() => handleListItemClick(1)}
             >
-              <ListItemButton selected={selectedItem === 1}>
+              <ListItemButton>
                 <ListItemIcon>
                   <AccountCircleIcon
                     fontSize="large"
@@ -175,7 +199,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 2}
               onClick={() => handleListItemClick(2)}
             >
-              <ListItemButton selected={selectedItem === 2}>
+              <ListItemButton>
                 <ListItemIcon>
                   <PeopleIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -195,7 +219,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 3}
               onClick={() => handleListItemClick(3)}
             >
-              <ListItemButton selected={selectedItem === 3}>
+              <ListItemButton>
                 <ListItemIcon>
                   <GroupsIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -215,7 +239,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 4}
               onClick={() => handleListItemClick(4)}
             >
-              <ListItemButton selected={selectedItem === 4}>
+              <ListItemButton>
                 <ListItemIcon>
                   <ChatBubbleIcon
                     fontSize="large"
@@ -238,7 +262,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 5}
               onClick={() => handleListItemClick(5)}
             >
-              <ListItemButton selected={selectedItem === 5}>
+              <ListItemButton>
                 <ListItemIcon>
                   <EventIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -258,7 +282,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 6}
               onClick={() => handleListItemClick(6)}
             >
-              <ListItemButton selected={selectedItem === 6}>
+              <ListItemButton>
                 <ListItemIcon>
                   <BookmarkIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>
@@ -278,7 +302,7 @@ const Sidebar = (props) => {
               selected={selectedItem === 7}
               onClick={() => handleListItemClick(7)}
             >
-              <ListItemButton selected={selectedItem === 7}>
+              <ListItemButton>
                 <ListItemIcon>
                   <SettingsIcon fontSize="large" className={classes.iconItem} />
                 </ListItemIcon>

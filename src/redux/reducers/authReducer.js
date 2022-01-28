@@ -5,6 +5,8 @@ const initialState = {
   remember: false,
   user: null,
   userProfile: null,
+  friends: [],
+  friendInvitations: [],
 };
 
 const authReducer = (state = initialState, action) => {
@@ -38,6 +40,16 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         userProfile: action.payload.userProfile,
+      };
+    case types.SAVE_LOGGED_USER_FRIENDS:
+      return {
+        ...state,
+        friends: action.payload.friends,
+      };
+    case types.SAVE_LOGGED_USER_FRIEND_INVITATIONS:
+      return {
+        ...state,
+        friendInvitations: action.payload.friendInvitations,
       };
     case types.CLEAR_ALL:
       return initialState;

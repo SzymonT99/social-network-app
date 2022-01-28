@@ -11,6 +11,17 @@ const getActivityBoard = () => {
   });
 };
 
+const getAllUsers = () => {
+  return fetch(endpoints.allUsers, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   getActivityBoard,
+  getAllUsers,
 };

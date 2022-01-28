@@ -14,10 +14,10 @@ const styles = (theme) => ({
     },
   },
   registerBtn: {
-    height: '50px',
-    alignSelf: 'center',
-    '&.MuiButton-contained': {
-      fontSize: '16px',
+    '&.MuiButton-root': {
+      height: '50px',
+      alignSelf: 'center',
+      fontSize: '17px',
       fontWeight: 'bold',
       width: '50%',
     },

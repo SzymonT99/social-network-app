@@ -4,20 +4,36 @@ import styles from './rightbar-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
 import FriendListItem from '../FriendsListItem/FriendListItem';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserFriends } from '../../redux/actions/friendAction';
 
 const Rightbar = (props) => {
   const { classes } = props;
 
+  const dispatch = useDispatch();
+
+  const loggedUser = useSelector((state) => state.auth.user);
+  const loggedUserFriends = useSelector((state) => state.auth.friends);
+
+  useEffect(() => {
+    dispatch(getUserFriends(loggedUser.userId, true));
+  }, []);
+
   return (
     <div className={classes.rightbarContainer}>
       <div className={classes.rightbarWrapper}>
-        <Typography variant="h6">Lista znajomych</Typography>
-        <FriendListItem name="Dawid Dawidowski" status="online" />
-        <FriendListItem name="Celina Celinowska" status="offline" />
-        <FriendListItem name="Grzegorz Grzegowicz" status="beRightBack" />
-        <FriendListItem name="Piotr Piotrowski" status="online" />
-        <FriendListItem name="Patryk Patrykowski" status="online" />
-        <FriendListItem name="Rafał Rafałowski" status="busy" />
+        <Typography variant="h6" fontWeight="bold">
+          Lista znajomych
+        </Typography>
+        {loggedUserFriends.map((friend) => (
+          <FriendListItem
+            key={friend.friendId}
+            userFriendId={friend.user.userId}
+            friendName={friend.user.firstName + ' ' + friend.user.lastName}
+            friendPhoto={friend.user.profilePhoto}
+            friendStatus={friend.user.activityStatus}
+          />
+        ))}
       </div>
     </div>
   );

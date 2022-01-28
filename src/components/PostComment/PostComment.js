@@ -76,6 +76,7 @@ const PostComment = (props) => {
     authorName,
     createdDate,
     userStatus,
+    postAuthorId,
     authorId,
     likes,
     isEdited,
@@ -292,6 +293,7 @@ const PostComment = (props) => {
 PostComment.propTypes = {
   classes: PropTypes.object.isRequired,
   commentId: PropTypes.number.isRequired,
+  postAuthorId: PropTypes.number.isRequired,
   postId: PropTypes.number.isRequired,
   content: PropTypes.string.isRequired,
   authorName: PropTypes.string.isRequired,

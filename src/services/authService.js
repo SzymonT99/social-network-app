@@ -1,12 +1,12 @@
 import { endpoints } from './endpoints/endpoints';
 
 const register = (accountData) => {
-  return fetch(endpoints.authenticate, {
+  return fetch(endpoints.register, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ accountData }),
+    body: JSON.stringify(accountData),
   });
 };
 

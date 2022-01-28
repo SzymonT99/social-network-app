@@ -15,6 +15,8 @@ import {
   FormControlLabel,
   FormLabel,
   Grid,
+  IconButton,
+  InputAdornment,
   Radio,
   RadioGroup,
 } from '@mui/material';
@@ -22,15 +24,18 @@ import { PropTypes } from 'prop-types';
 import { showNotification } from '../../redux/actions/notificationActions';
 import { useDispatch } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
+import { register } from '../../redux/actions/authActions';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const RegisterPage = (props) => {
-  const { classes, children } = props;
+  const { classes } = props;
 
   const dispatch = useDispatch();
 
   const [gender, setGender] = useState('');
-  const [registrationError, setRegistrationError] = useState(' ');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRepeatedPassword, setShowRepeatedPassword] = useState(false);
 
   const history = useHistory();
 
@@ -38,48 +43,23 @@ const RegisterPage = (props) => {
     setGender(event.target.value);
   };
 
-  const registerUser = async (body) => {
-    setLoading(true);
-    const response = await fetch(endpoints.register, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    const code = response.status;
-
-    if (code === 201) {
-      setLoading(false);
-      history.push('/auth/login');
-      dispatch(showNotification('success', 'Utworzono konto'));
-    } else if (code === 403) {
-      dispatch(
-        showNotification(
-          'error',
-          'Podany email lub nazwa użytkownika już istnieją'
-        )
-      );
-    } else if (code === 400) {
-      dispatch(showNotification('warning', 'Niepoprawne dane'));
-    } else {
-      // code == 500
-      dispatch(showNotification('error', 'Błąd serwera'));
-    }
-  };
-
   const validationSchema = yup.object({
     firstName: yup.string().required('Imię jest wymagane'),
     lastName: yup.string().required('Nazwisko jest wymagane'),
     email: yup.string().required('Email jest wymagany'),
     username: yup.string().required('Nazwa użytkownika jest wymagana'),
-    phoneNumber: yup.string().required('Numer telefonu jest wymagany'),
+    phoneNumber: yup
+      .string()
+      .required('Numer telefonu jest wymagany')
+      .min(9, 'Błędny numer telefonu')
+      .max(9, 'Błędny numer telefonu'),
     password: yup
       .string()
       .min(10, 'Hasło powinno mieć długość minimum 8 znaków')
       .max(100, 'Hasło powinno mieć długość maksymalnie 100 znaków')
       .required('Hasło jest wymagane'),
     repeatedPassword: yup.string().required('Hasło jest wymagane'),
+    dateOfBirth: yup.string().required('Data urodzenia jest wymagana'),
   });
 
   const formik = useFormik({
@@ -95,18 +75,35 @@ const RegisterPage = (props) => {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      let userAccount = {
+        ...values,
+        gender,
+      };
       if (values.password !== values.repeatedPassword) {
-        setRegistrationError('Podane hasła nie są takie same');
+        dispatch(showNotification('warning', 'Podane hasła nie są takie same'));
       } else {
-        let userAccount = {
-          ...values,
-          gender,
-        };
-        console.log(userAccount);
-        registerUser(userAccount);
+        setLoading(true);
+        dispatch(register(userAccount)).then((response) => {
+          if (response.status === 201) {
+            history.push('/auth/login');
+          }
+          setLoading(false);
+        });
       }
     },
   });
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleClickShowRepeatedPassword = () => {
+    setShowRepeatedPassword(!showRepeatedPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   return (
     <>
@@ -193,8 +190,21 @@ const RegisterPage = (props) => {
                 fullWidth
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 label="Hasło"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 error={
@@ -207,8 +217,25 @@ const RegisterPage = (props) => {
                 fullWidth
                 id="repeatedPassword"
                 name="repeatedPassword"
-                type="password"
+                type={showRepeatedPassword ? 'text' : 'password'}
                 label="Powtórz hasło"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleClickShowRepeatedPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showRepeatedPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 value={formik.values.repeatedPassword}
                 onChange={formik.handleChange}
                 error={
@@ -249,7 +276,6 @@ const RegisterPage = (props) => {
                 id="dateOfBirth"
                 label="Data urodzenia"
                 type="date"
-                defaultValue="2021-01-01"
                 sx={{ width: '100%' }}
                 onChange={formik.handleChange}
                 error={
@@ -272,12 +298,6 @@ const RegisterPage = (props) => {
           >
             {loading ? <CircularProgress color="primary" /> : 'Załóż konto'}
           </Button>
-          <Typography
-            textAlign="center"
-            style={{ color: 'red', marginTop: '10px' }}
-          >
-            {registrationError}
-          </Typography>
           <Link className={classes.link} to="/auth/login">
             Masz już konto? Zaloguj się.
           </Link>
