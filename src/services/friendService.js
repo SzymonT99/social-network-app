@@ -37,10 +37,9 @@ const getFriendsInvitation = (userId) => {
 
 const respondToFriendInvitation = (inviterId, reaction) => {
   return fetch(
-    endpoints.respondInvitation +
+    endpoints.respondInvitation.replace('{inviterId}', inviterId) +
       '?' +
       new URLSearchParams({
-        inviterId: inviterId,
         reaction: reaction,
       }),
     {

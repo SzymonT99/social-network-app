@@ -12,11 +12,40 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/Message';
 import { useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useHistory } from 'react-router-dom';
 
 const Header = (props) => {
   const { classes } = props;
 
+  const history = useHistory();
+
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
+  const users = useSelector((state) => state.activity.users);
+
+  const [options, setOptions] = useState([]);
+  const [showOptions, setShowOptions] = useState(false);
+  const [value, setValue] = useState('');
+  const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    if (users) {
+      let usersArray = [];
+      users.forEach((user) =>
+        usersArray.push({
+          label: user.firstName + ' ' + user.lastName,
+          id: user.userId,
+        })
+      );
+      setOptions(usersArray);
+    }
+  }, [users]);
+
+  const handleChangeSearchedUser = (event, newValue) => {
+    if (newValue !== null) {
+      setValue(newValue);
+      history.push('/app/profile/' + newValue.id);
+    }
+  };
 
   return (
     <div className={classes.headerContainer}>
@@ -34,7 +63,22 @@ const Header = (props) => {
           <Autocomplete
             fullWidth
             freeSolo
-            options={null}
+            open={showOptions}
+            onOpen={() => {
+              if (inputValue) {
+                setShowOptions(true);
+              }
+            }}
+            onClose={() => setShowOptions(false)}
+            value={value}
+            onChange={(event, newValue) =>
+              handleChangeSearchedUser(event, newValue)
+            }
+            inputValue={inputValue}
+            onInputChange={(event, newInputValue) => {
+              setInputValue(newInputValue);
+            }}
+            options={options}
             id="searchbar"
             renderInput={(params) => (
               <TextField

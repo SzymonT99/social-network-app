@@ -12,6 +12,7 @@ import {
   IconButton,
   ImageList,
   ImageListItem,
+  ImageListItemBar,
   Input,
   InputAdornment,
   Link,
@@ -73,6 +74,7 @@ import {
   getUserFriends,
   inviteToFriend,
 } from '../../redux/actions/friendAction';
+import { authenticate } from '../../redux/actions/authActions';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -130,7 +132,6 @@ const ProfilePage = (props) => {
 
   let { selectedUserId } = useParams();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
   const [profileInfoNav, setProfileInfoNav] = useState('i1');
@@ -152,47 +153,48 @@ const ProfilePage = (props) => {
     useState(false);
   const [isUserFriend, setIsUserFriend] = useState(false);
   const [isInvitedToFriend, setIsInvitedToFriend] = useState(false);
+  const [friendBtnHover, setFriendBtnHover] = useState(false);
 
   useEffect(() => {
-    if (isLoading) {
-      dispatch(setCurrentPath('/app/profile/' + loggedUser.userId, 1));
-      dispatch(getUserProfile(selectedUserId));
-      dispatch(getUserActivity(selectedUserId));
-      dispatch(getUserFavouriteItems(selectedUserId));
-      dispatch(getUserInterests(selectedUserId));
-      dispatch(getUserImages(selectedUserId));
-      dispatch(getUserFriends(selectedUserId));
-      dispatch(getFriendInvitations(selectedUserId));
-      setIsLoading(false);
-    }
-    if (
-      loggedUser.userId !== parseInt(selectedUserId) &&
-      loggedUserFriends.filter(
-        (friend) =>
-          friend.user.userId === parseInt(selectedUserId) &&
-          friend.isInvitationAccepted === true
-      ).length > 0
-    ) {
-      setIsUserFriend(true);
-    } else if (loggedUser.userId === parseInt(selectedUserId)) {
-      setIsUserFriend(null);
-    } else {
-      setIsUserFriend(false);
-    }
+    dispatch(setCurrentPath('/app/profile/' + loggedUser.userId, 1));
+    dispatch(getUserProfile(selectedUserId));
+    dispatch(getUserActivity(selectedUserId));
+    dispatch(getUserFavouriteItems(selectedUserId));
+    dispatch(getUserInterests(selectedUserId));
+    dispatch(getUserImages(selectedUserId));
 
-    if (
-      loggedUser.userId !== parseInt(selectedUserId) &&
-      userFriendInvitations.filter(
-        (friend) => friend.invitingUser.userId === loggedUser.userId
-      ).length > 0
-    ) {
-      setIsInvitedToFriend(true);
-    } else if (loggedUser.userId === parseInt(selectedUserId)) {
-      setIsInvitedToFriend(null);
-    } else {
-      setIsInvitedToFriend(false);
-    }
-  }, [selectedUserId, userFriendInvitations]);
+    dispatch(getUserFriends(selectedUserId)).then((friends) => {
+      if (
+        loggedUser.userId !== parseInt(selectedUserId) &&
+        friends.filter(
+          (friend) =>
+            friend.user.userId === loggedUser.userId &&
+            friend.isInvitationAccepted === true
+        ).length > 0
+      ) {
+        setIsUserFriend(true);
+      } else if (loggedUser.userId === parseInt(selectedUserId)) {
+        setIsUserFriend(null);
+      } else {
+        setIsUserFriend(false);
+      }
+    });
+
+    dispatch(getFriendInvitations(selectedUserId)).then((friendInvitations) => {
+      if (
+        loggedUser.userId !== parseInt(selectedUserId) &&
+        friendInvitations.filter(
+          (friend) => friend.invitingUser.userId === loggedUser.userId
+        ).length > 0
+      ) {
+        setIsInvitedToFriend(true);
+      } else if (loggedUser.userId === parseInt(selectedUserId)) {
+        setIsInvitedToFriend(null);
+      } else {
+        setIsInvitedToFriend(false);
+      }
+    });
+  }, [selectedUserId]);
 
   const handleCloseAddSchoolPopup = () => {
     setOpenAddSchoolPopup(false);
@@ -268,7 +270,7 @@ const ProfilePage = (props) => {
       );
       dispatch(deleteFriend(invitedFriend.friendId, true));
       setIsInvitedToFriend(false);
-    } else if (isUserFriend && isInvitedToFriend) {
+    } else if (isUserFriend && !isInvitedToFriend) {
       const friend = userFriends.find(
         (friend) => friend.user.userId === loggedUser.userId
       );
@@ -298,7 +300,7 @@ const ProfilePage = (props) => {
           Anuluj zaproszenie
         </Typography>
       );
-    } else if (isUserFriend && isInvitedToFriend) {
+    } else if (isUserFriend && !isInvitedToFriend) {
       return (
         <Typography
           variant="subtitle1"
@@ -394,12 +396,30 @@ const ProfilePage = (props) => {
                     </div>
                     {parseInt(selectedUserId) !== loggedUser.userId && (
                       <Button
-                        className={classes.friendManageBtn}
+                        onMouseOver={() => setFriendBtnHover(true)}
+                        onMouseOut={() => setFriendBtnHover(false)}
+                        className={
+                          isUserFriend && !isInvitedToFriend
+                            ? classes.friendDeleteBtn
+                            : classes.friendManageBtn
+                        }
                         variant="contained"
                         color="secondary"
                         onClick={handleManageFriend}
                       >
-                        {generateFriendBtn()}
+                        {isUserFriend &&
+                        !isInvitedToFriend &&
+                        friendBtnHover ? (
+                          <Typography
+                            variant="subtitle1"
+                            className={classes.friendManageBtnContent}
+                          >
+                            <PersonRemoveIcon sx={{ marginRight: '7px' }} />
+                            Usuń ze znajomych
+                          </Typography>
+                        ) : (
+                          generateFriendBtn()
+                        )}
                       </Button>
                     )}
                   </div>
@@ -480,51 +500,62 @@ const ProfilePage = (props) => {
           </Paper>
           <TabPanel classes={classes} value={profileNav} index={0}>
             <div className={classes.leftActivityContent}>
-              {/*<Paper elevation={4} sx={{ borderRadius: '10px' }}>*/}
-              {/*  <div className={classes.profileInfoBoxHeading}>*/}
-              {/*    <Typography variant="h6">Znajomi użytkownika</Typography>*/}
-              {/*    <Link*/}
-              {/*      component="button"*/}
-              {/*      variant="subtitle1"*/}
-              {/*      onClick={() => {*/}
-              {/*        setProfileNav(3);*/}
-              {/*      }}*/}
-              {/*    >*/}
-              {/*      Zobacz więcej*/}
-              {/*    </Link>*/}
-              {/*  </div>*/}
-              {/*  <div className={classes.profileInfoBoxContent}>*/}
-              {/*    <ImageList cols={3} rowHeight={155} sx={{ margin: 0 }}>*/}
-              {/*      {testedData.map((item, index) => {*/}
-              {/*        if (index < 9) {*/}
-              {/*          return (*/}
-              {/*            <ImageListItem*/}
-              {/*              key={item.img}*/}
-              {/*              className={classes.imageListItemBox}*/}
-              {/*            >*/}
-              {/*              <img*/}
-              {/*                src={`${item.img}?w=248&fit=crop&auto=format`}*/}
-              {/*                alt={item.title}*/}
-              {/*                loading="lazy"*/}
-              {/*              />*/}
-              {/*              <ImageListItemBar*/}
-              {/*                title={*/}
-              {/*                  <Typography*/}
-              {/*                    variant="body1"*/}
-              {/*                    className={classes.imageListItemTitle}*/}
-              {/*                  >*/}
-              {/*                    Tester <br /> Testerowski*/}
-              {/*                  </Typography>*/}
-              {/*                }*/}
-              {/*                position="below"*/}
-              {/*              />*/}
-              {/*            </ImageListItem>*/}
-              {/*          );*/}
-              {/*        }*/}
-              {/*      })}*/}
-              {/*    </ImageList>*/}
-              {/*  </div>*/}
-              {/*</Paper>*/}
+              <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+                <div className={classes.profileInfoBoxHeading}>
+                  <Typography variant="h6">Znajomi użytkownika</Typography>
+                  <Link
+                    component="button"
+                    variant="subtitle1"
+                    onClick={() => {
+                      setProfileNav(3);
+                    }}
+                  >
+                    Zobacz więcej
+                  </Link>
+                </div>
+                <div className={classes.profileInfoBoxContent}>
+                  <ImageList
+                    cols={3}
+                    rowHeight={120}
+                    sx={{ margin: 0, paddingBottom: '50px' }}
+                    gap={3}
+                    variant="quilted"
+                  >
+                    {userFriends.map((friend, index) => {
+                      if (index < 9) {
+                        return (
+                          <ImageListItem
+                            key={friend.friendId}
+                            className={classes.imageListItemBox}
+                            onClick={() =>
+                              history.push('/app/profile/' + friend.user.userId)
+                            }
+                          >
+                            <img
+                              src={friend.user.profilePhoto.url}
+                              alt={friend.user.firstName + friend.user.lastName}
+                              loading="lazy"
+                            />
+                            <ImageListItemBar
+                              title={
+                                <Typography
+                                  variant="body1"
+                                  className={classes.imageListItemTitle}
+                                >
+                                  {friend.user.firstName}
+                                  <br />
+                                  {friend.user.lastName}
+                                </Typography>
+                              }
+                              position="below"
+                            />
+                          </ImageListItem>
+                        );
+                      }
+                    })}
+                  </ImageList>
+                </div>
+              </Paper>
               <Paper elevation={4} sx={{ borderRadius: '10px' }}>
                 <div className={classes.profileInfoBoxHeading}>
                   <Typography variant="h6">Dodane zdjęcia</Typography>
@@ -1290,41 +1321,43 @@ const ProfilePage = (props) => {
                       >
                         Zainteresowania
                       </Typography>
-                      <List className={classes.userInterestList}>
-                        {userInterests.map((userInterest) => (
-                          <ListItem
-                            key={userInterest.interestId}
-                            disableGutters
-                            secondaryAction={
-                              parseInt(selectedUserId) ===
-                                loggedUser.userId && (
-                                <IconButton
-                                  onClick={() =>
-                                    handleClickDeleteUserInterest(
-                                      userInterest.interestId
-                                    )
-                                  }
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              )
-                            }
-                          >
-                            <FiberManualRecordIcon
-                              color="secondary"
-                              fontSize="14px"
-                            />
-                            <ListItemText
-                              disableTypography
-                              primary={
-                                <Typography noWrap variant="subtitle2">
-                                  {userInterest.name}
-                                </Typography>
+                      {userInterests.length > 0 && (
+                        <List className={classes.userInterestList}>
+                          {userInterests.map((userInterest) => (
+                            <ListItem
+                              key={userInterest.interestId}
+                              disableGutters
+                              secondaryAction={
+                                parseInt(selectedUserId) ===
+                                  loggedUser.userId && (
+                                  <IconButton
+                                    onClick={() =>
+                                      handleClickDeleteUserInterest(
+                                        userInterest.interestId
+                                      )
+                                    }
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                )
                               }
-                            />
-                          </ListItem>
-                        ))}
-                      </List>
+                            >
+                              <FiberManualRecordIcon
+                                color="secondary"
+                                fontSize="14px"
+                              />
+                              <ListItemText
+                                disableTypography
+                                primary={
+                                  <Typography noWrap variant="subtitle2">
+                                    {userInterest.name}
+                                  </Typography>
+                                }
+                              />
+                            </ListItem>
+                          ))}
+                        </List>
+                      )}
                       {parseInt(selectedUserId) === loggedUser.userId && (
                         <Button
                           color="secondary"
@@ -1442,7 +1475,7 @@ const ProfilePage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNav} index={2}>
-            <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+            <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
               <ImageList
                 gap={15}
                 variant="quilted"
@@ -1461,20 +1494,75 @@ const ProfilePage = (props) => {
                       );
                     })}
               </ImageList>
-              <Pagination
-                className={classes.imagesPagination}
-                count={userImages && Math.ceil(userImages.length / 10)}
-                color="secondary"
-                size="large"
-                showFirstButton
-                showLastButton
-                page={imagesPageNumber}
-                onChange={handleChangeImagesPageNumber}
-              />
+              {userImages.length !== 0 && (
+                <Pagination
+                  className={classes.imagesPagination}
+                  count={userImages && Math.ceil(userImages.length / 10)}
+                  color="secondary"
+                  size="large"
+                  showFirstButton
+                  showLastButton
+                  page={imagesPageNumber}
+                  onChange={handleChangeImagesPageNumber}
+                />
+              )}
+              {userImages.length === 0 && (
+                <Typography
+                  fontWeight="bold"
+                  textAlign="center"
+                  variant="h6"
+                  marginBottom="20px"
+                >
+                  Brak dodanych zdjęć
+                </Typography>
+              )}
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNav} index={3}>
-            Znajomi
+            <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
+              <ImageList
+                cols={5}
+                rowHeight={200}
+                sx={{ margin: 0, padding: '15px', paddingBottom: '35px' }}
+                gap={5}
+                variant="quilted"
+              >
+                {userFriends.map((friend, index) => {
+                  if (index < 9) {
+                    return (
+                      <ImageListItem
+                        key={friend.friendId}
+                        className={classes.imageListItemBox}
+                        onClick={() =>
+                          history.push('/app/profile/' + friend.user.userId)
+                        }
+                      >
+                        <img
+                          src={friend.user.profilePhoto.url}
+                          alt={friend.user.firstName + friend.user.lastName}
+                          loading="lazy"
+                        />
+                        <ImageListItemBar
+                          title={
+                            <Typography
+                              variant="subtitle2"
+                              fontWeight="bold"
+                              className={classes.imageListItemTitle}
+                              noWrap
+                            >
+                              {friend.user.firstName +
+                                ' ' +
+                                friend.user.lastName}
+                            </Typography>
+                          }
+                          position="below"
+                        />
+                      </ImageListItem>
+                    );
+                  }
+                })}
+              </ImageList>
+            </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNav} index={4}>
             Grupy

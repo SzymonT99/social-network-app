@@ -179,10 +179,20 @@ const styles = (theme) => ({
   imageListItemBox: {
     '&.MuiImageListItem-root': {
       border: '1px solid rgba(0, 0, 0, 0.47)',
+      borderBottom: 'none',
       '& .MuiImageListItemBar-root': {
+        width: '100%',
+        '& .MuiTypography-root': {
+          width: '100%',
+          border: '1px solid rgba(0, 0, 0, 0.47)',
+          borderTop: 'none',
+        },
         '& .MuiImageListItemBar-titleWrap': {
           padding: 0,
         },
+      },
+      '&:hover': {
+        cursor: 'pointer',
       },
     },
   },
@@ -334,6 +344,14 @@ const styles = (theme) => ({
   friendManageBtn: {
     '&.MuiButton-root': {
       marginRight: '10px',
+    },
+  },
+  friendDeleteBtn: {
+    '&.MuiButton-root': {
+      marginRight: '10px',
+      '&:hover': {
+        backgroundColor: '#FF1C00',
+      },
     },
   },
   friendManageBtnContent: {

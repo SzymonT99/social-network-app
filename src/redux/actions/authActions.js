@@ -3,6 +3,7 @@ import authService from '../../services/authService';
 import { showNotification } from './notificationActions';
 import { getUserProfile } from './userProfileActions';
 import { getFriendInvitations, getUserFriends } from './friendAction';
+import { getAllUsersInformation } from './userActivityActions';
 
 export const register = (accountData) => (dispatch) => {
   return authService
@@ -11,7 +12,6 @@ export const register = (accountData) => (dispatch) => {
       if (response.status === 201) {
         dispatch({ type: authTypes.REGISTER_SUCCESS });
         dispatch(showNotification('success', 'Utworzono konto'));
-        return response;
       } else if (response.status === 403) {
         dispatch({ type: authTypes.REGISTER_FAIL });
         dispatch(
@@ -22,11 +22,12 @@ export const register = (accountData) => (dispatch) => {
         );
       } else if (response.status === 400) {
         dispatch({ type: authTypes.REGISTER_FAIL });
-        dispatch(showNotification('warning', 'Błędny format danych'));
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else {
         dispatch({ type: authTypes.REGISTER_FAIL });
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
+      return response;
     })
     .catch((error) => {
       dispatch({ type: authTypes.REGISTER_FAIL });
@@ -59,6 +60,7 @@ export const authenticate = (login, password, remember) => (dispatch) => {
           dispatch(getUserProfile(data.userId, true));
           dispatch(getUserFriends(data.userId, true));
           dispatch(getFriendInvitations(data.userId, true));
+          dispatch(getAllUsersInformation());
           return data;
         });
       } else if (response.status === 401) {

@@ -121,9 +121,9 @@ const Post = (props) => {
 
   const postReaction = () => {
     if (!postIsLiked(likes, userId)) {
-      dispatch(likePost(postId, authorId));
+      dispatch(likePost(postId));
     } else {
-      dispatch(dislikePost(postId, authorId));
+      dispatch(dislikePost(postId));
     }
   };
 
@@ -135,7 +135,7 @@ const Post = (props) => {
     if (commentText === '') {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
-      dispatch(commentPost(postId, commentText, authorId));
+      dispatch(commentPost(postId, commentText));
       setCommentsDisplayed(true);
       setCommentText('');
     }

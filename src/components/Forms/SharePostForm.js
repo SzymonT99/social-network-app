@@ -48,7 +48,7 @@ const SharePostForm = (props) => {
       isCommentingBlocked: sharedPostCommentsIsBlocked,
     };
     if (sharedText !== '') {
-      dispatch(sharePost(basePostId, outerPost, postAuthorId));
+      dispatch(sharePost(basePostId, outerPost));
       closePopup();
     } else {
       dispatch(showNotification('warning', 'Podaj treść udostępnienia'));

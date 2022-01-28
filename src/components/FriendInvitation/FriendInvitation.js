@@ -4,6 +4,10 @@ import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import React from 'react';
 import { Button } from '@mui/material';
 import { PropTypes } from 'prop-types';
+import Avatar from '@mui/material/Avatar';
+import classNames from 'classnames';
+import { useDispatch } from 'react-redux';
+import { respondToFriendInvitation } from '../../redux/actions/friendAction';
 
 const useStyles = makeStyles((theme) => ({
   friendInvitation: {
@@ -15,49 +19,70 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   userPhoto: {
-    display: 'block',
-    width: '45px',
-    height: '45px',
-    borderRadius: '50px',
-    marginRight: '20px',
+    '&.MuiAvatar-root': {
+      width: '45px',
+      height: '45px',
+      marginRight: '20px',
+    },
   },
   btnContainer: {
     marginTop: '10px',
   },
   button: {
     width: '115px',
-    '&.MuiButton-contained': {
+    '&.MuiButton-root': {
       marginRight: '20px',
-      borderRadius: '20px',
+      borderRadius: '16px',
+    },
+  },
+  rejectBtn: {
+    '&.MuiButton-root': {
+      backgroundColor: '#D4D4D4',
+      color: 'black',
+      '&:hover': {
+        backgroundColor: '#8a8a8a',
+      },
     },
   },
 }));
 
-const FriendInvitation = ({ image, name }) => {
+const FriendInvitation = ({ inviterId, inviterName, inviterPhoto }) => {
   const classes = useStyles();
+
+  const dispatch = useDispatch();
+
+  const handleClickRespondToFriendInvitation = (reaction) => {
+    dispatch(respondToFriendInvitation(inviterId, reaction));
+  };
 
   return (
     <div className={classes.friendInvitation}>
-      <Typography variant="body1" component="div" className={classes.heading}>
-        <img
-          src={defaultUserPhoto}
-          alt="Zdjęcie użytkownika"
+      <Typography
+        variant="body1"
+        component="div"
+        className={classes.heading}
+        noWrap
+      >
+        <Avatar
+          src={inviterPhoto ? inviterPhoto.url : defaultUserPhoto}
+          alt={inviterName}
           className={classes.userPhoto}
         />
-        {name}
+        {inviterName}
       </Typography>
       <div className={classes.btnContainer}>
         <Button
           className={classes.button}
           variant="contained"
           color="secondary"
+          onClick={() => handleClickRespondToFriendInvitation('accept')}
         >
           Zatwierdź
         </Button>
         <Button
-          className={classes.button}
-          style={{ backgroundColor: '#D4D4D4', color: 'black' }}
+          className={classNames(classes.button, classes.rejectBtn)}
           variant="contained"
+          onClick={() => handleClickRespondToFriendInvitation('reject')}
         >
           Odrzuć
         </Button>
@@ -67,8 +92,9 @@ const FriendInvitation = ({ image, name }) => {
 };
 
 FriendInvitation.propTypes = {
-  name: PropTypes.string.isRequired,
-  image: PropTypes.string,
+  inviterId: PropTypes.number.isRequired,
+  inviterName: PropTypes.string.isRequired,
+  inviterPhoto: PropTypes.object,
 };
 
 export default FriendInvitation;

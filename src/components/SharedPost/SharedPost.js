@@ -110,9 +110,9 @@ const SharedPost = (props) => {
 
   const sharedPostReaction = () => {
     if (!sharedPostIsLiked(likes, userId)) {
-      dispatch(likePost(sharingId, sharingAuthorId, true));
+      dispatch(likePost(sharingId, true));
     } else {
-      dispatch(dislikePost(sharingId, sharingAuthorId, true));
+      dispatch(dislikePost(sharingId, true));
     }
   };
 
@@ -178,7 +178,7 @@ const SharedPost = (props) => {
     if (commentText === '') {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
-      dispatch(commentPost(sharingId, commentText, sharingAuthorId, true));
+      dispatch(commentPost(sharingId, commentText, true));
       setCommentsDisplayed(true);
       setCommentText('');
     }

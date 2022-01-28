@@ -11,10 +11,16 @@ const styles = (theme) => ({
     },
   },
   userPhoto: {
-    display: 'block',
-    width: '50px',
-    height: '50px',
-    borderRadius: '50px',
+    '&.MuiAvatar-root': {
+      width: '50px',
+      height: '50px',
+    },
+  },
+  friendNameText: {
+    '&.MuiTypography-root ': {
+      flex: 1,
+      marginLeft: '10px',
+    },
   },
 });
 

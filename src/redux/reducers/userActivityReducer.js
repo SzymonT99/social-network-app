@@ -458,6 +458,11 @@ const userActivityReducer = (state = initialState, action) => {
             : boardItem
         ),
       };
+    case activityTypes.FETCH_ALL_USERS_INFORMATION:
+      return {
+        ...state,
+        users: action.payload.users,
+      };
     case activityTypes.CLEAR_ALL:
       return initialState;
     default:

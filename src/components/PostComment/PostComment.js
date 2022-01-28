@@ -105,9 +105,7 @@ const PostComment = (props) => {
         showNotification('warning', 'Nie można pozostawić pustej treści')
       );
     } else {
-      dispatch(
-        editPostComment(postId, commentId, commentText, postAuthorId, sharing)
-      );
+      dispatch(editPostComment(postId, commentId, commentText, sharing));
       setIsDisabled(true);
     }
   };
@@ -125,7 +123,7 @@ const PostComment = (props) => {
   };
 
   const deleteCommentClick = () => {
-    dispatch(deletePostComment(postId, commentId, postAuthorId, sharing));
+    dispatch(deletePostComment(postId, commentId, sharing));
     setOpenDeletePopup(false);
   };
 
@@ -144,9 +142,9 @@ const PostComment = (props) => {
 
   const commentReaction = () => {
     if (!commentIsLiked(likes, userId)) {
-      dispatch(likePostComment(postId, commentId, postAuthorId, sharing));
+      dispatch(likePostComment(postId, commentId, sharing));
     } else {
-      dispatch(dislikePostComment(postId, commentId, postAuthorId, sharing));
+      dispatch(dislikePostComment(postId, commentId, sharing));
     }
   };
 

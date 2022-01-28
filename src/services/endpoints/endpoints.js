@@ -37,4 +37,5 @@ export const endpoints = {
   respondInvitation: baseUrl + '/api/friends/{inviterId}/response',
   userFriends: baseUrl + '/api/friends',
   deleteFriend: baseUrl + '/api/friends/{friendId}',
+  allUsers: baseUrl + '/api/users',
 };

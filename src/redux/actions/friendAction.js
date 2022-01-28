@@ -52,6 +52,7 @@ export const getFriendInvitations =
                 },
               });
             }
+            return data;
           });
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -91,6 +92,7 @@ export const getUserFriends =
                 },
               });
             }
+            return data;
           });
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -113,8 +115,8 @@ export const respondToFriendInvitation =
       .respondToFriendInvitation(inviterId, reaction)
       .then((response) => {
         if (response.status === 200) {
-          getUserFriends(getState().auth.user.userId, true);
-          getFriendInvitations();
+          dispatch(getUserFriends(getState().auth.user.userId, true));
+          dispatch(getFriendInvitations(getState().auth.user.userId, true));
           if (reaction === 'accept') {
             dispatch(showNotification('success', 'Zaakceptowano zaproszenie'));
           } else {
@@ -151,6 +153,7 @@ export const deleteFriend =
       .then((response) => {
         if (response.status === 200) {
           getUserFriends(getState().auth.user.userId, true);
+          getUserFriends(getState().auth.user.userId);
           if (!deletingInvitation) {
             dispatch(showNotification('success', 'Usunięto ze znajomych'));
           } else {
