@@ -33,6 +33,7 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import {
+  changeProfileNav,
   changeProfilePhoto,
   deleteProfilePhoto,
   deleteUserInterests,
@@ -110,6 +111,10 @@ const ProfilePage = (props) => {
   const { classes } = props;
 
   const dispatch = useDispatch();
+
+  const profileNavIndex = useSelector(
+    (state) => state.selectedProfile.selectedProfileNavIndex
+  );
   const loggedUser = useSelector((state) => state.auth.user);
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
@@ -132,7 +137,6 @@ const ProfilePage = (props) => {
 
   let { selectedUserId } = useParams();
 
-  const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
   const [profileInfoNav, setProfileInfoNav] = useState('i1');
   const [openPostCreation, setOpenPostCreation] = useState(false);
@@ -156,7 +160,6 @@ const ProfilePage = (props) => {
   const [friendBtnHover, setFriendBtnHover] = useState(false);
 
   useEffect(() => {
-    console.log('xd');
     dispatch(setLoading(true));
     dispatch(setCurrentPath('/app/profile/' + loggedUser.userId, 1));
     dispatch(getUserProfile(selectedUserId));
@@ -208,7 +211,7 @@ const ProfilePage = (props) => {
   };
 
   const handleChangeProfileNav = (event, newValue) => {
-    setProfileNav(newValue);
+    dispatch(changeProfileNav(newValue));
   };
 
   const handleChangeActivityValue = (event, newValue) => {
@@ -466,7 +469,7 @@ const ProfilePage = (props) => {
           </Paper>
           <Paper elevation={4} sx={{ borderRadius: '10px' }}>
             <Tabs
-              value={profileNav}
+              value={profileNavIndex}
               onChange={handleChangeProfileNav}
               className={classes.tabsContainer}
               TabIndicatorProps={{
@@ -502,7 +505,7 @@ const ProfilePage = (props) => {
               />
             </Tabs>
           </Paper>
-          <TabPanel classes={classes} value={profileNav} index={0}>
+          <TabPanel classes={classes} value={profileNavIndex} index={0}>
             <div className={classes.leftActivityContent}>
               <Paper elevation={4} sx={{ borderRadius: '10px' }}>
                 <div className={classes.profileInfoBoxHeading}>
@@ -511,7 +514,7 @@ const ProfilePage = (props) => {
                     component="button"
                     variant="subtitle1"
                     onClick={() => {
-                      setProfileNav(3);
+                      dispatch(changeProfileNav(3));
                     }}
                   >
                     Zobacz więcej
@@ -576,7 +579,7 @@ const ProfilePage = (props) => {
                     component="button"
                     variant="subtitle1"
                     onClick={() => {
-                      setProfileNav(2);
+                      dispatch(changeProfileNav(2));
                     }}
                   >
                     Zobacz więcej
@@ -953,7 +956,7 @@ const ProfilePage = (props) => {
               )}
             </div>
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={1}>
+          <TabPanel classes={classes} value={profileNavIndex} index={1}>
             <Paper
               elevation={4}
               className={classes.profileInformationContainer}
@@ -1487,7 +1490,7 @@ const ProfilePage = (props) => {
               </TabContext>
             </Paper>
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={2}>
+          <TabPanel classes={classes} value={profileNavIndex} index={2}>
             <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
               <ImageList
                 gap={15}
@@ -1531,7 +1534,7 @@ const ProfilePage = (props) => {
               )}
             </Paper>
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={3}>
+          <TabPanel classes={classes} value={profileNavIndex} index={3}>
             <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
               <ImageList
                 cols={5}
@@ -1592,7 +1595,7 @@ const ProfilePage = (props) => {
               )}
             </Paper>
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={4}>
+          <TabPanel classes={classes} value={profileNavIndex} index={4}>
             Grupy
           </TabPanel>
         </div>

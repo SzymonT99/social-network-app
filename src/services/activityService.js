@@ -21,7 +21,18 @@ const getAllUsers = () => {
   });
 };
 
+const getActivityNotifications = () => {
+  return fetch(endpoints.userActivityNotifications, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   getActivityBoard,
   getAllUsers,
+  getActivityNotifications,
 };

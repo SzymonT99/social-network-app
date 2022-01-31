@@ -584,3 +584,10 @@ export const changeUserStatus = (status) => (dispatch, getState) => {
       console.log(error);
     });
 };
+
+export const changeProfileNav = (index) => ({
+  type: userProfileTypes.SET_PROFILE_NAV_INDEX,
+  payload: {
+    index,
+  },
+});

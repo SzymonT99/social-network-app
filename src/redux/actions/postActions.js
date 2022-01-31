@@ -636,3 +636,84 @@ export const deleteSharedPost =
         console.log(error);
       });
   };
+
+export const getUserFavouritePosts = (userId) => (dispatch) => {
+  return postService
+    .getFavouritePosts(userId)
+    .then((response) => {
+      if (response.status === 201) {
+        return response.json().then((data) => {
+          console.log(data);
+          dispatch({
+            type: postTypes.FETCH_FAVOURITE_POSTS,
+            payload: {
+              favouritePosts: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const addPostToFavourite = (postId) => (dispatch, getState) => {
+  return postService
+    .addPostToFavourite(postId)
+    .then((response) => {
+      console.log(response.status);
+      if (response.status === 201) {
+        dispatch(getUserFavouritePosts(getState().auth.user.userId));
+        dispatch(showNotification('success', 'Dodano do ulubionych'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 409) {
+        dispatch(
+          showNotification('warning', 'Już dodano ten post do ulubionych')
+        );
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        console.log('response.status');
+        console.log(response.status);
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const deletePostToFavourite = (postId) => (dispatch, getState) => {
+  return postService
+    .deletePostFromFavourite(postId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getUserFavouritePosts(getState().auth.user.userId));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Post nie należy do ulubionych'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

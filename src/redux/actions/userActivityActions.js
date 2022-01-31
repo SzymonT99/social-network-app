@@ -58,6 +58,32 @@ export const getAllUsersInformation = () => (dispatch) => {
     });
 };
 
+export const getActivityNotification = () => (dispatch) => {
+  return activityService
+    .getActivityNotifications()
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: activityTypes.FETCH_ACTIVITY_NOTIFICATIONS,
+            payload: {
+              activityNotifications: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const setLoading = (isLoading) => ({
   type: activityTypes.SET_LOADING,
   payload: {

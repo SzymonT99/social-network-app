@@ -22,6 +22,7 @@ import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import {
+  addPostToFavourite,
   commentPost,
   deletePost,
   dislikePost,
@@ -214,7 +215,7 @@ const Post = (props) => {
   };
 
   const handleFavouritePost = () => {
-    console.log('add to favourite');
+    dispatch(addPostToFavourite(postId));
     handleClosePostOption();
   };
 

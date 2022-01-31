@@ -24,6 +24,7 @@ import { logoutUser } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { setCurrentPath } from '../../redux/actions/navActions';
+import { changeProfileNav } from '../../redux/actions/userProfileActions';
 
 const ListItem = withStyles((theme) => ({
   root: {
@@ -77,6 +78,7 @@ const Sidebar = (props) => {
       history.push('/app');
       dispatch(setCurrentPath('/app', 0));
     } else if (index === 1) {
+      dispatch(changeProfileNav(0));
       history.push('/app/profile/' + loggedUserProfile.userProfileId);
       if (loggedUserProfile) {
         dispatch(
@@ -84,7 +86,8 @@ const Sidebar = (props) => {
         );
       }
     } else if (index === 2) {
-      history.push('/app/friends');
+      dispatch(changeProfileNav(3));
+      history.push('/app/profile/' + loggedUserProfile.userProfileId);
       dispatch(setCurrentPath('/app/friends', 2));
     } else if (index === 3) {
       history.push('/app/groups');
@@ -213,49 +216,49 @@ const Sidebar = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem
-              disablePadding
-              style={{ margin: '10px 0' }}
-              selected={selectedItem === 3}
-              onClick={() => handleListItemClick(3)}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <GroupsIcon fontSize="large" className={classes.iconItem} />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Grupy tematyczne
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
-            <ListItem
-              disablePadding
-              style={{ margin: '10px 0' }}
-              selected={selectedItem === 4}
-              onClick={() => handleListItemClick(4)}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <ChatBubbleIcon
-                    fontSize="large"
-                    className={classes.iconItem}
-                  />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Czat
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
+            {/*<ListItem*/}
+            {/*  disablePadding*/}
+            {/*  style={{ margin: '10px 0' }}*/}
+            {/*  selected={selectedItem === 3}*/}
+            {/*  onClick={() => handleListItemClick(3)}*/}
+            {/*>*/}
+            {/*  <ListItemButton>*/}
+            {/*    <ListItemIcon>*/}
+            {/*      <GroupsIcon fontSize="large" className={classes.iconItem} />*/}
+            {/*    </ListItemIcon>*/}
+            {/*    <ListItemText*/}
+            {/*      disableTypography*/}
+            {/*      primary={*/}
+            {/*        <Typography fontWeight="bold" variant="h6">*/}
+            {/*          Grupy tematyczne*/}
+            {/*        </Typography>*/}
+            {/*      }*/}
+            {/*    />*/}
+            {/*  </ListItemButton>*/}
+            {/*</ListItem>*/}
+            {/*<ListItem*/}
+            {/*  disablePadding*/}
+            {/*  style={{ margin: '10px 0' }}*/}
+            {/*  selected={selectedItem === 4}*/}
+            {/*  onClick={() => handleListItemClick(4)}*/}
+            {/*>*/}
+            {/*  <ListItemButton>*/}
+            {/*    <ListItemIcon>*/}
+            {/*      <ChatBubbleIcon*/}
+            {/*        fontSize="large"*/}
+            {/*        className={classes.iconItem}*/}
+            {/*      />*/}
+            {/*    </ListItemIcon>*/}
+            {/*    <ListItemText*/}
+            {/*      disableTypography*/}
+            {/*      primary={*/}
+            {/*        <Typography fontWeight="bold" variant="h6">*/}
+            {/*          Czat*/}
+            {/*        </Typography>*/}
+            {/*      }*/}
+            {/*    />*/}
+            {/*  </ListItemButton>*/}
+            {/*</ListItem>*/}
             <ListItem
               disablePadding
               style={{ margin: '10px 0' }}
@@ -316,10 +319,11 @@ const Sidebar = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem disablePadding style={{ marginTop: '75px' }}>
+            <ListItem disablePadding style={{ marginTop: '175px' }}>
               <ListItemButton
                 onClick={() => {
                   dispatch(logoutUser());
+                  history.push('/auth/login');
                 }}
               >
                 <ListItemIcon>

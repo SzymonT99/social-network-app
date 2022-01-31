@@ -118,9 +118,11 @@ const styles = (theme) => ({
       borderColor: theme.palette.secondary.main,
     },
   },
-  friendInvitationsMenu: {
+  notificationMenu: {
     '& .MuiPaper-root': {
       width: '18%',
+      borderRadius: '5px',
+      maxHeight: '50%',
     },
   },
   friendMenuBtn: {
@@ -134,6 +136,15 @@ const styles = (theme) => ({
         border: 'none',
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
+      },
+    },
+  },
+  activityAuthorName: {
+    '&.MuiTypography-root': {
+      fontWeight: 'bold',
+      '&:hover': {
+        textDecoration: 'underline',
+        cursor: 'pointer',
       },
     },
   },

@@ -13,6 +13,8 @@ export const endpoints = {
   manageComment: baseUrl + '/api/posts/comments/{commentId}',
   likePostComment: baseUrl + '/api/posts/comments/{commentId}/like',
   dislikePostComment: baseUrl + '/api/posts/comments/{commentId}/liked',
+  manageFavouritePost: baseUrl + '/api/posts/{postId}/favourite',
+  getUserFavouritePosts: baseUrl + '/api/posts/favourite',
   managePost: baseUrl + '/api/posts/{postId}',
   postCommentsAccess: baseUrl + '/api/posts/{postId}/comments?blocked=',
   postAccess: baseUrl + '/api/posts/{postId}/access?isPublic=',
@@ -40,4 +42,5 @@ export const endpoints = {
   deleteFriend: baseUrl + '/api/friends/{friendId}',
   allUsers: baseUrl + '/api/users',
   changeStatus: baseUrl + '/api/users',
+  userActivityNotifications: baseUrl + '/api/activity/notifications',
 };

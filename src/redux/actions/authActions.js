@@ -92,11 +92,11 @@ export const updateToken = (accessToken, refreshToken) => ({
 });
 
 export const logoutUser = () => (dispatch) => {
+  dispatch({ type: authTypes.LOG_OUT_USER });
   return authService
     .logout()
     .then((response) => {
       if (response.status === 200) {
-        window.location.href = '/auth/login';
         dispatch({ type: 'CLEAR_ALL' });
         dispatch(showNotification('success', 'Wylogowano'));
       } else if (response.status === 400) {

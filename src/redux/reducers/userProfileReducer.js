@@ -9,6 +9,7 @@ const initialState = {
   images: [],
   friends: [],
   friendInvitations: [],
+  selectedProfileNavIndex: 0,
 };
 
 const userProfileReducer = (state = initialState, action) => {
@@ -22,6 +23,11 @@ const userProfileReducer = (state = initialState, action) => {
       return {
         ...state,
         userActivity: action.payload.userActivity,
+      };
+    case types.SET_PROFILE_NAV_INDEX:
+      return {
+        ...state,
+        selectedProfileNavIndex: action.payload.index,
       };
     case types.FETCH_USER_FAVOURITES:
       return {

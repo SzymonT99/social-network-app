@@ -38,6 +38,7 @@ import {
   getFriendInvitations,
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
+import { getActivityNotification } from '../../redux/actions/userActivityActions';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -59,6 +60,10 @@ const Header = (props) => {
     (state) => state.auth.friendInvitations
   );
 
+  const activityNotifications = useSelector(
+    (state) => state.activity.notifications
+  );
+
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [value, setValue] = useState('');
@@ -69,6 +74,7 @@ const Header = (props) => {
 
   useEffect(() => {
     dispatch(getFriendInvitations(loggedUser.userId, true));
+    dispatch(getActivityNotification());
     if (users) {
       let usersArray = [];
       users.forEach((user) =>
@@ -114,6 +120,26 @@ const Header = (props) => {
 
   const handleClickRespondToFriendInvitation = (inviterId, reaction) => {
     dispatch(respondToFriendInvitation(inviterId, reaction));
+  };
+
+  const generateActivityName = (type) => {
+    if (type === 'INVITATION_TO_FRIENDS') {
+      return 'Wysłał Ci zaproszenie do znajomych';
+    } else if (type === 'ACCEPTANCE_INVITATION_TO_FRIENDS') {
+      return 'Zaakceptował zaproszenie do znajomych';
+    } else if (type === 'INVITATION_TO_EVENT') {
+      return 'Zaprosił Cię na wydarzenie';
+    } else if (type === 'LIKE_USER_POST') {
+      return 'Polubił Twój post';
+    } else if (type === 'COMMENT_USER_POST') {
+      return 'Skomentował Twój post';
+    } else if (type === 'SHARE_USER_POST') {
+      return 'Udostępnił Twój post';
+    } else if (type === 'INVITATION_TO_GROUP') {
+      return 'Zaprosił Cię do grupy';
+    } else if (type === 'POST_IN_GROUP') {
+      return 'Dodał post na grupie';
+    }
   };
 
   return (
@@ -184,7 +210,7 @@ const Header = (props) => {
               overlap="circular"
               badgeContent={
                 // loggedUserFriendInvitations.filter(
-                //   (invitation) => invitation.invitationDisplayed === 'false'
+                //   (invitation) => invitation.invitationDisplayed === false
                 // ).length
                 1
               }
@@ -202,7 +228,7 @@ const Header = (props) => {
             onClose={handleCloseFriendNotification}
             onClick={handleCloseFriendNotification}
             disableScrollLock={true}
-            className={classes.friendInvitationsMenu}
+            className={classes.notificationMenu}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
@@ -261,13 +287,26 @@ const Header = (props) => {
                     }
                     className={classes.userPhoto}
                     sx={{ marginRight: '20px' }}
+                    onClick={() =>
+                      history.push(
+                        '/app/profile/' + friendInvitation.invitingUser.userId
+                      )
+                    }
                   >
                     <MessageIcon />
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
                   primary={
-                    <Typography fontWeight="bold" variant="subtitle2">
+                    <Typography
+                      className={classes.activityAuthorName}
+                      variant="subtitle2"
+                      onClick={() =>
+                        history.push(
+                          '/app/profile/' + friendInvitation.invitingUser.userId
+                        )
+                      }
+                    >
                       {friendInvitation.invitingUser.firstName +
                         ' ' +
                         friendInvitation.invitingUser.lastName}
@@ -300,7 +339,12 @@ const Header = (props) => {
                 },
               }}
               overlap="circular"
-              badgeContent={4}
+              badgeContent={
+                // activityNotifications.filter(
+                //   (notif) => notif.notificationDisplayed === false
+                // ).length
+                4
+              }
             >
               <NotificationsIcon
                 color="primary"
@@ -308,6 +352,93 @@ const Header = (props) => {
               />
             </Badge>
           </IconButton>
+          <Menu
+            id="activity-notification-menu"
+            anchorEl={anchorElActivityNotif}
+            open={Boolean(anchorElActivityNotif)}
+            onClose={handleCloseActivityNotification}
+            onClick={handleCloseActivityNotification}
+            disableScrollLock={true}
+            className={classes.notificationMenu}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            {activityNotifications
+              .filter((el) => el.activityInitiator.userId !== loggedUser.userId)
+              .map((activityNotification, index) => (
+                <ListItem
+                  key={index}
+                  sx={{
+                    borderBottom:
+                      index + 1 < activityNotifications.length &&
+                      '1px solid rgba(0, 0, 0, 0.4)',
+                  }}
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                      src={
+                        activityNotification.activityInitiator.profilePhoto !==
+                        null
+                          ? activityNotification.activityInitiator.profilePhoto
+                              .url
+                          : defaultUserPhoto
+                      }
+                      alt={
+                        loggedUserProfile
+                          ? activityNotification.activityInitiator.firstName +
+                            ' ' +
+                            activityNotification.activityInitiator.lastName
+                          : 'Nazwa użytkownika'
+                      }
+                      className={classes.userPhoto}
+                      sx={{ marginRight: '20px' }}
+                      onClick={() =>
+                        history.push(
+                          '/app/profile/' +
+                            activityNotification.activityInitiator.userId
+                        )
+                      }
+                    >
+                      <MessageIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        className={classes.activityAuthorName}
+                        variant="subtitle2"
+                        onClick={() =>
+                          history.push(
+                            '/app/profile/' +
+                              activityNotification.activityInitiator.userId
+                          )
+                        }
+                      >
+                        {activityNotification.activityInitiator.firstName +
+                          ' ' +
+                          activityNotification.activityInitiator.lastName}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography variant="body1">
+                        {generateActivityName(
+                          activityNotification.notificationType
+                        )}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              ))}
+            {activityNotifications.length === 0 && (
+              <Typography
+                margin="10px 0px"
+                textAlign="center"
+                variant="subtitle2"
+              >
+                Brak powiadomień
+              </Typography>
+            )}
+          </Menu>
           {/*<Badge*/}
           {/*  sx={{*/}
           {/*    '& .MuiBadge-badge': {*/}
