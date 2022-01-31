@@ -48,8 +48,7 @@ const ActivityBoard = (props) => {
   useEffect(() => {
     dispatch(setLoading(true));
     dispatch(getActivityBoard());
-    dispatch(getFriendInvitations(loggedUser.userId, true));
-  }, [numberItemsShown]);
+  }, []);
 
   return (
     <>
@@ -140,6 +139,7 @@ const ActivityBoard = (props) => {
                     return (
                       <SharedPost
                         key={id}
+                        authorId={item.activityAuthor.userId}
                         sharedPostId={item.activity.sharedPostId}
                         sharedPost={item.activity.sharedPost}
                         sharingId={item.activity.sharingId}
@@ -163,11 +163,13 @@ const ActivityBoard = (props) => {
                 }
               })}
               {numberItemsShown < activityBoard.length && (
-                <div className={classes.moreItemsContainer}>
+                <div
+                  className={classes.moreItemsContainer}
+                  onClick={() => setNumberItemsShown(numberItemsShown + 5)}
+                >
                   <Link
                     component="button"
                     variant="subtitle2"
-                    onClick={() => setNumberItemsShown(numberItemsShown + 5)}
                     className={classes.moreCommentsLink}
                   >
                     Zobacz więcej
@@ -209,10 +211,7 @@ const ActivityBoard = (props) => {
         </div>
       ) : (
         <div className={classes.loadingContainer}>
-          <CircularProgress
-            color="secondary"
-            sx={{ width: '300px', height: '300px' }}
-          />
+          <CircularProgress color="secondary" size="240px" />
         </div>
       )}
     </>

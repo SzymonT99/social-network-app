@@ -7,6 +7,7 @@ import { Badge } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 
 import Avatar from '@mui/material/Avatar';
+import { useHistory } from 'react-router-dom';
 
 const formatPostTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -53,6 +54,7 @@ const formatPostTime = (createdDate) => {
 const ActivityHeading = (props) => {
   const {
     classes,
+    authorId,
     authorName,
     profilePhoto,
     userStatus,
@@ -62,6 +64,8 @@ const ActivityHeading = (props) => {
     editionDate,
     children,
   } = props;
+
+  const history = useHistory();
 
   const activeStatus = {
     ONLINE: '#1CCD16',
@@ -87,11 +91,17 @@ const ActivityHeading = (props) => {
             src={profilePhoto ? profilePhoto.url : defaultUserPhoto}
             alt={authorName}
             className={classes.userPhoto}
+            onClick={() => history.push('/app/profile/' + authorId)}
           />
         </Badge>
         <div>
           <Typography variant="subtitle1" fontWeight="bold">
-            {authorName}
+            <span
+              className={classes.authorName}
+              onClick={() => history.push('/app/profile/' + authorId)}
+            >
+              {authorName}
+            </span>
             <span className={classes.actionName}>{activityTitle}</span>
             {isEdited && (
               <Typography component="span" variant="body2" fontWeight="bold">
@@ -111,6 +121,7 @@ const ActivityHeading = (props) => {
 ActivityHeading.propTypes = {
   classes: PropTypes.object.isRequired,
   children: PropTypes.element.isRequired,
+  authorId: PropTypes.number.isRequired,
   authorName: PropTypes.string.isRequired,
   profilePhoto: PropTypes.object,
   userStatus: PropTypes.string.isRequired,

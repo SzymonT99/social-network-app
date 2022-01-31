@@ -74,7 +74,7 @@ import {
   getUserFriends,
   inviteToFriend,
 } from '../../redux/actions/friendAction';
-import { authenticate } from '../../redux/actions/authActions';
+import { setLoading } from '../../redux/actions/userActivityActions';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -111,7 +111,6 @@ const ProfilePage = (props) => {
 
   const dispatch = useDispatch();
   const loggedUser = useSelector((state) => state.auth.user);
-  const loggedUserFriends = useSelector((state) => state.auth.friends);
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
     (state) => state.selectedProfile.userActivity
@@ -127,6 +126,7 @@ const ProfilePage = (props) => {
   const userFriendInvitations = useSelector(
     (state) => state.selectedProfile.friendInvitations
   );
+  const isLoading = useSelector((state) => state.activity.isLoading);
 
   const history = useHistory();
 
@@ -156,6 +156,8 @@ const ProfilePage = (props) => {
   const [friendBtnHover, setFriendBtnHover] = useState(false);
 
   useEffect(() => {
+    console.log('xd');
+    dispatch(setLoading(true));
     dispatch(setCurrentPath('/app/profile/' + loggedUser.userId, 1));
     dispatch(getUserProfile(selectedUserId));
     dispatch(getUserActivity(selectedUserId));
@@ -181,6 +183,7 @@ const ProfilePage = (props) => {
     });
 
     dispatch(getFriendInvitations(selectedUserId)).then((friendInvitations) => {
+      dispatch(setLoading(false));
       if (
         loggedUser.userId !== parseInt(selectedUserId) &&
         friendInvitations.filter(
@@ -315,7 +318,7 @@ const ProfilePage = (props) => {
 
   return (
     <>
-      {userProfile && (
+      {!isLoading ? (
         <div className={classes.wrapper}>
           <Paper
             elevation={4}
@@ -362,6 +365,7 @@ const ProfilePage = (props) => {
                   </label>
                 )}
                 {parseInt(selectedUserId) === loggedUser.userId &&
+                  userProfile &&
                   userProfile.profilePhoto !== null && (
                     <div className={classes.deleteProfileImageBtn}>
                       <Tooltip title="Usuń zdjęcie profilowe" placement="left">
@@ -1532,7 +1536,7 @@ const ProfilePage = (props) => {
               <ImageList
                 cols={5}
                 rowHeight={200}
-                sx={{ margin: 0, padding: '15px', paddingBottom: '35px' }}
+                sx={{ margin: 0, padding: '15px', paddingBottom: '40px' }}
                 gap={5}
                 variant="quilted"
               >
@@ -1576,11 +1580,25 @@ const ProfilePage = (props) => {
                     }
                   })}
               </ImageList>
+              {userFriends.length === 0 && (
+                <Typography
+                  fontWeight="bold"
+                  textAlign="center"
+                  variant="h6"
+                  marginBottom="20px"
+                >
+                  Brak znajomych
+                </Typography>
+              )}
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNav} index={4}>
             Grupy
           </TabPanel>
+        </div>
+      ) : (
+        <div className={classes.loadingContainer}>
+          <CircularProgress color="secondary" size="240px" />
         </div>
       )}
     </>

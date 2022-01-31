@@ -1,9 +1,10 @@
 const baseUrl = 'http://localhost:8080';
 
 export const endpoints = {
-  authenticate: baseUrl + '/api/auth/login',
-  userProfile: baseUrl + '/api/profile/{userId}/information',
   register: baseUrl + '/api/auth/register',
+  authenticate: baseUrl + '/api/auth/login',
+  logout: baseUrl + '/api/auth/logout',
+  userProfile: baseUrl + '/api/profile/{userId}/information',
   createPost: baseUrl + '/api/posts',
   getActivityBoard: baseUrl + '/api/activity',
   likePost: baseUrl + '/api/posts/{postId}/like',
@@ -38,4 +39,5 @@ export const endpoints = {
   userFriends: baseUrl + '/api/friends',
   deleteFriend: baseUrl + '/api/friends/{friendId}',
   allUsers: baseUrl + '/api/users',
+  changeStatus: baseUrl + '/api/users',
 };

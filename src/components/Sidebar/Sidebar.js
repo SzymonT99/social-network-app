@@ -320,7 +320,6 @@ const Sidebar = (props) => {
               <ListItemButton
                 onClick={() => {
                   dispatch(logoutUser());
-                  history.push('/auth/login');
                 }}
               >
                 <ListItemIcon>

@@ -181,14 +181,15 @@ const styles = (theme) => ({
       border: '1px solid rgba(0, 0, 0, 0.47)',
       borderBottom: 'none',
       '& .MuiImageListItemBar-root': {
+        border: '1px solid rgba(0, 0, 0, 0.47)',
+        borderTop: 'none',
         width: '100%',
         '& .MuiTypography-root': {
           width: '100%',
-          border: '1px solid rgba(0, 0, 0, 0.47)',
-          borderTop: 'none',
         },
         '& .MuiImageListItemBar-titleWrap': {
           padding: 0,
+          margin: 0,
         },
       },
       '&:hover': {

@@ -52,14 +52,21 @@ const respondToFriendInvitation = (inviterId, reaction) => {
   );
 };
 
-const deleteFriend = (friendId) => {
-  return fetch(endpoints.deleteFriend.replace('{friendId}', friendId), {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
-  });
+const deleteFriend = (friendId, isDeletedInvitation) => {
+  return fetch(
+    endpoints.deleteFriend.replace('{friendId}', friendId) +
+      '?' +
+      new URLSearchParams({
+        isDeletedInvitation: isDeletedInvitation,
+      }),
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
 };
 
 const getUserFriends = (userId) => {

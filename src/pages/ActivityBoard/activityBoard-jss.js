@@ -64,15 +64,18 @@ const styles = (theme) => ({
     padding: '5px',
     borderRadius: '10px',
     fontWeight: 'bold',
+    '&:hover': {
+      cursor: 'pointer',
+      '& .MuiLink-root': {
+        textDecoration: 'underline',
+      },
+    },
   },
   moreCommentsLink: {
     '&.MuiLink-root': {
       textDecoration: 'none',
       alignSelf: 'center',
       color: 'white',
-      '&:hover': {
-        textDecoration: 'underline',
-      },
     },
   },
 });

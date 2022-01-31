@@ -17,6 +17,7 @@ import Popup from '../Popup/Popup';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import UsersListPopup from '../UsersListPopup/UsersListPopup';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
+import { useHistory } from 'react-router-dom';
 
 const formatTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -89,6 +90,8 @@ const PostComment = (props) => {
   const commentInputRef = useRef(null);
 
   const dispatch = useDispatch();
+
+  const history = useHistory();
 
   const [commentText, setCommentText] = useState(content);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -172,6 +175,7 @@ const PostComment = (props) => {
             src={authorProfilePhoto ? authorProfilePhoto.url : defaultUserPhoto}
             alt={authorName}
             className={classes.userPhotoSmall}
+            onClick={() => history.push('/app/profile/' + authorId)}
           />
         </Badge>
       </div>
@@ -185,7 +189,12 @@ const PostComment = (props) => {
         >
           <div className={classes.commentTextHeading}>
             <Typography variant="subtitle2" fontWeight="bold">
-              <span className={classes.authorName}>{authorName}</span>
+              <span
+                className={classes.authorName}
+                onClick={() => history.push('/app/profile/' + authorId)}
+              >
+                {authorName}
+              </span>
               <span className={classes.commentTime}>
                 {' ' + formatTime(createdDate)}
               </span>

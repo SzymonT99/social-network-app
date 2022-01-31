@@ -5,29 +5,70 @@ import { PropTypes } from 'prop-types';
 import logoWhite from '../../assets/logo-white.png';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import Typography from '@mui/material/Typography';
-import { Autocomplete, Badge, InputAdornment, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Badge,
+  Divider,
+  IconButton,
+  InputAdornment,
+  ListItem,
+  ListItemAvatar,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  TextField,
+  Tooltip,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/Message';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useHistory } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
+import { Add, Logout, Settings } from '@mui/icons-material';
+import { logoutUser } from '../../redux/actions/authActions';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { changeUserStatus } from '../../redux/actions/userProfileActions';
+import ClearIcon from '@mui/icons-material/Clear';
+import CheckIcon from '@mui/icons-material/Check';
+import {
+  getFriendInvitations,
+  respondToFriendInvitation,
+} from '../../redux/actions/friendAction';
+
+const activeStatus = {
+  ONLINE: '#1CCD16',
+  BE_RIGHT_BACK: '#de681d',
+  BUSY: '#67207c',
+  OFFLINE: '#FF1C00',
+};
 
 const Header = (props) => {
   const { classes } = props;
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
+  const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const users = useSelector((state) => state.activity.users);
+  const loggedUserFriendInvitations = useSelector(
+    (state) => state.auth.friendInvitations
+  );
 
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [value, setValue] = useState('');
   const [inputValue, setInputValue] = useState('');
+  const [anchorElAccountMenu, setAnchorElAccountMenu] = useState(null);
+  const [anchorElFriendsNotif, setAnchorElFriendsNotif] = useState(null);
+  const [anchorElActivityNotif, setAnchorElActivityNotif] = useState(null);
 
   useEffect(() => {
+    dispatch(getFriendInvitations(loggedUser.userId, true));
     if (users) {
       let usersArray = [];
       users.forEach((user) =>
@@ -45,6 +86,34 @@ const Header = (props) => {
       setValue(newValue);
       history.push('/app/profile/' + newValue.id);
     }
+  };
+
+  const handleClickAccountMenu = (event) => {
+    setAnchorElAccountMenu(event.currentTarget);
+  };
+
+  const handleCloseAccountMenu = () => {
+    setAnchorElAccountMenu(null);
+  };
+
+  const handleClickFriendNotification = (event) => {
+    setAnchorElFriendsNotif(event.currentTarget);
+  };
+
+  const handleCloseFriendNotification = () => {
+    setAnchorElFriendsNotif(null);
+  };
+
+  const handleClickActivityNotification = (event) => {
+    setAnchorElActivityNotif(event.currentTarget);
+  };
+
+  const handleCloseActivityNotification = () => {
+    setAnchorElActivityNotif(null);
+  };
+
+  const handleClickRespondToFriendInvitation = (inviterId, reaction) => {
+    dispatch(respondToFriendInvitation(inviterId, reaction));
   };
 
   return (
@@ -104,51 +173,156 @@ const Header = (props) => {
       </div>
       <div className={classes.actionContainer}>
         <div className={classes.actionIcons}>
-          <Badge
-            sx={{
-              '& .MuiBadge-badge': {
-                color: 'white',
-                backgroundColor: '#1CCD16',
-              },
-            }}
-            overlap="circular"
-            badgeContent={1}
+          <IconButton onClick={handleClickFriendNotification}>
+            <Badge
+              sx={{
+                '& .MuiBadge-badge': {
+                  color: 'white',
+                  backgroundColor: '#1CCD16',
+                },
+              }}
+              overlap="circular"
+              badgeContent={
+                // loggedUserFriendInvitations.filter(
+                //   (invitation) => invitation.invitationDisplayed === 'false'
+                // ).length
+                1
+              }
+            >
+              <PersonIcon
+                color="primary"
+                sx={{ fontSize: '45px', cursor: 'pointer' }}
+              />
+            </Badge>
+          </IconButton>
+          <Menu
+            id="friend-notification-menu"
+            anchorEl={anchorElFriendsNotif}
+            open={Boolean(anchorElFriendsNotif)}
+            onClose={handleCloseFriendNotification}
+            onClick={handleCloseFriendNotification}
+            disableScrollLock={true}
+            className={classes.friendInvitationsMenu}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <PersonIcon
-              color="primary"
-              sx={{ fontSize: '45px', cursor: 'pointer' }}
-            />
-          </Badge>
-          <Badge
-            sx={{
-              '& .MuiBadge-badge': {
-                color: 'white',
-                backgroundColor: '#FF1C00',
-              },
-            }}
-            overlap="circular"
-            badgeContent={4}
-          >
-            <NotificationsIcon
-              color="primary"
-              sx={{ fontSize: '45px', cursor: 'pointer' }}
-            />
-          </Badge>
-          <Badge
-            sx={{
-              '& .MuiBadge-badge': {
-                color: 'white',
-                backgroundColor: '#07DCC0',
-              },
-            }}
-            overlap="circular"
-            badgeContent={4}
-          >
-            <MessageIcon
-              color="primary"
-              sx={{ fontSize: '45px', cursor: 'pointer' }}
-            />
-          </Badge>
+            {loggedUserFriendInvitations.map((friendInvitation, index) => (
+              <ListItem
+                key={friendInvitation.friendId}
+                sx={{
+                  borderBottom:
+                    index + 1 < loggedUserFriendInvitations.length &&
+                    '1px solid rgba(0, 0, 0, 0.4)',
+                }}
+                secondaryAction={
+                  <>
+                    <Tooltip title="Akceptuj" placement="top">
+                      <IconButton
+                        className={classes.friendMenuBtn}
+                        onClick={() =>
+                          handleClickRespondToFriendInvitation(
+                            friendInvitation.invitingUser.userId,
+                            'accept'
+                          )
+                        }
+                      >
+                        <CheckIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Odrzuć" placement="top">
+                      <IconButton
+                        className={classes.friendMenuBtn}
+                        onClick={() =>
+                          handleClickRespondToFriendInvitation(
+                            friendInvitation.invitingUser.userId,
+                            'reject'
+                          )
+                        }
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                }
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    src={
+                      friendInvitation.invitingUser.profilePhoto !== null
+                        ? friendInvitation.invitingUser.profilePhoto.url
+                        : defaultUserPhoto
+                    }
+                    alt={
+                      loggedUserProfile
+                        ? friendInvitation.invitingUser.firstName +
+                          ' ' +
+                          friendInvitation.invitingUser.lastName
+                        : 'Nazwa użytkownika'
+                    }
+                    className={classes.userPhoto}
+                    sx={{ marginRight: '20px' }}
+                  >
+                    <MessageIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography fontWeight="bold" variant="subtitle2">
+                      {friendInvitation.invitingUser.firstName +
+                        ' ' +
+                        friendInvitation.invitingUser.lastName}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body2">
+                      {'Liczba znajomych: ' + friendInvitation.friendsNumber}
+                    </Typography>
+                  }
+                />
+              </ListItem>
+            ))}
+            {loggedUserFriendInvitations.length === 0 && (
+              <Typography
+                margin="10px 0px"
+                textAlign="center"
+                variant="subtitle2"
+              >
+                Brak zaproszeń
+              </Typography>
+            )}
+          </Menu>
+          <IconButton onClick={handleClickActivityNotification}>
+            <Badge
+              sx={{
+                '& .MuiBadge-badge': {
+                  color: 'white',
+                  backgroundColor: '#FF1C00',
+                },
+              }}
+              overlap="circular"
+              badgeContent={4}
+            >
+              <NotificationsIcon
+                color="primary"
+                sx={{ fontSize: '45px', cursor: 'pointer' }}
+              />
+            </Badge>
+          </IconButton>
+          {/*<Badge*/}
+          {/*  sx={{*/}
+          {/*    '& .MuiBadge-badge': {*/}
+          {/*      color: 'white',*/}
+          {/*      backgroundColor: '#07DCC0',*/}
+          {/*    },*/}
+          {/*  }}*/}
+          {/*  overlap="circular"*/}
+          {/*  badgeContent={4}*/}
+          {/*>*/}
+          {/*  <MessageIcon*/}
+          {/*    color="primary"*/}
+          {/*    sx={{ fontSize: '45px', cursor: 'pointer' }}*/}
+          {/*  />*/}
+          {/*</Badge>*/}
         </div>
         <div className={classes.userInfoBox}>
           <Typography
@@ -163,15 +337,162 @@ const Header = (props) => {
               <CircularProgress color="primary" />
             )}
           </Typography>
-          <img
-            src={
-              loggedUserProfile && loggedUserProfile.profilePhoto !== null
-                ? loggedUserProfile.profilePhoto.url
-                : defaultUserPhoto
-            }
-            alt="Zdjęcie użytkownika"
-            className={classes.userPhoto}
-          />
+          <IconButton onClick={handleClickAccountMenu}>
+            <Avatar
+              src={
+                loggedUserProfile && loggedUserProfile.profilePhoto !== null
+                  ? loggedUserProfile.profilePhoto.url
+                  : defaultUserPhoto
+              }
+              alt={
+                loggedUserProfile
+                  ? loggedUserProfile.firstName +
+                    ' ' +
+                    loggedUserProfile.lastName
+                  : 'Nazwa użytkownika'
+              }
+              className={classes.userPhoto}
+            />
+          </IconButton>
+          <Menu
+            anchorEl={anchorElAccountMenu}
+            id="account-menu"
+            open={Boolean(anchorElAccountMenu)}
+            onClose={handleCloseAccountMenu}
+            onClick={handleCloseAccountMenu}
+            disableScrollLock={true}
+            PaperProps={{
+              elevation: 2,
+              className: classes.userMenu,
+            }}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem
+              className={classes.userMenuItem}
+              onClick={() =>
+                history.push('/app/profile/' + loggedUserProfile.userProfileId)
+              }
+            >
+              <Avatar
+                src={
+                  loggedUserProfile && loggedUserProfile.profilePhoto !== null
+                    ? loggedUserProfile.profilePhoto.url
+                    : defaultUserPhoto
+                }
+                alt={
+                  loggedUserProfile
+                    ? loggedUserProfile.firstName +
+                      ' ' +
+                      loggedUserProfile.lastName
+                    : defaultUserPhoto
+                }
+              />
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle1" fontWeight={500}>
+                    Mój profil
+                  </Typography>
+                }
+              />
+            </MenuItem>
+            <Divider className={classes.divider} />
+            <MenuItem className={classes.userMenuItem} disabled>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2" fontWeight="bold">
+                    Ustaw status aktywności
+                  </Typography>
+                }
+              />
+            </MenuItem>
+            <MenuItem
+              className={classes.userMenuItem}
+              onClick={() => dispatch(changeUserStatus('ONLINE'))}
+            >
+              <ListItemIcon>
+                <FiberManualRecordIcon
+                  style={{ color: activeStatus['ONLINE'] }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={<Typography variant="body1">Dostępny</Typography>}
+              />
+            </MenuItem>
+            <MenuItem
+              className={classes.userMenuItem}
+              onClick={() => dispatch(changeUserStatus('BUSY'))}
+            >
+              <ListItemIcon>
+                <FiberManualRecordIcon
+                  style={{ color: activeStatus['BUSY'] }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={<Typography variant="body1">Zajęty</Typography>}
+              />
+            </MenuItem>
+            <MenuItem
+              className={classes.userMenuItem}
+              onClick={() => dispatch(changeUserStatus('BE_RIGHT_BACK'))}
+            >
+              <ListItemIcon>
+                <FiberManualRecordIcon
+                  style={{ color: activeStatus['BE_RIGHT_BACK'] }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={<Typography variant="body1">Zaraz wracam</Typography>}
+              />
+            </MenuItem>
+            <MenuItem
+              className={classes.userMenuItem}
+              onClick={() => dispatch(changeUserStatus('OFFLINE'))}
+            >
+              <ListItemIcon>
+                <FiberManualRecordIcon
+                  style={{ color: activeStatus['OFFLINE'] }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={<Typography variant="body1">Niedostępny</Typography>}
+              />
+            </MenuItem>
+            <Divider className={classes.divider} />
+            <MenuItem className={classes.userMenuItem}>
+              <ListItemIcon>
+                <Settings fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2">Ustawienia konta</Typography>
+                }
+              />
+            </MenuItem>
+            <MenuItem
+              className={classes.userMenuItem}
+              onClick={() => {
+                dispatch(logoutUser());
+              }}
+            >
+              <ListItemIcon>
+                <Logout fontSize="medium" />
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography variant="subtitle2">Wyloguj się</Typography>
+                }
+              />
+            </MenuItem>
+          </Menu>
         </div>
       </div>
     </div>

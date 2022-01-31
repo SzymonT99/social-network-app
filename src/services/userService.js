@@ -256,6 +256,23 @@ const editUserAddress = (addressId, address) => {
   });
 };
 
+const changeUserStatus = (status) => {
+  return fetch(
+    endpoints.changeStatus +
+      '?' +
+      new URLSearchParams({
+        activityStatus: status,
+      }),
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 export default {
   getUserProfile,
   getUserActivity,
@@ -279,4 +296,5 @@ export default {
   editProfileInformation,
   addUserAddress,
   editUserAddress,
+  changeUserStatus,
 };

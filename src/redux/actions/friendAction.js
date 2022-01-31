@@ -149,11 +149,13 @@ export const deleteFriend =
   (friendId, deletingInvitation = false) =>
   (dispatch, getState) => {
     return friendService
-      .deleteFriend(friendId)
+      .deleteFriend(friendId, deletingInvitation)
       .then((response) => {
         if (response.status === 200) {
-          getUserFriends(getState().auth.user.userId, true);
-          getUserFriends(getState().auth.user.userId);
+          dispatch(getUserFriends(getState().auth.user.userId, true));
+          dispatch(
+            getUserFriends(getState().selectedProfile.userProfile.userProfileId)
+          );
           if (!deletingInvitation) {
             dispatch(showNotification('success', 'Usunięto ze znajomych'));
           } else {

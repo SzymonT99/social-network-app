@@ -1,4 +1,5 @@
 import { endpoints } from './endpoints/endpoints';
+import authorization from './authorization';
 
 const register = (accountData) => {
   return fetch(endpoints.register, {
@@ -20,7 +21,18 @@ const authenticate = (login, password) => {
   });
 };
 
+const logout = () => {
+  return fetch(endpoints.logout, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   register,
   authenticate,
+  logout,
 };

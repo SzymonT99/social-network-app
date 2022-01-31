@@ -91,6 +91,21 @@ export const updateToken = (accessToken, refreshToken) => ({
   },
 });
 
-export const logoutUser = () => ({
-  type: 'CLEAR_ALL',
-});
+export const logoutUser = () => (dispatch) => {
+  return authService
+    .logout()
+    .then((response) => {
+      if (response.status === 200) {
+        window.location.href = '/auth/login';
+        dispatch({ type: 'CLEAR_ALL' });
+        dispatch(showNotification('success', 'Wylogowano'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

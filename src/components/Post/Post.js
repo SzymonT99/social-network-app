@@ -236,6 +236,7 @@ const Post = (props) => {
       className={classes.postContainer}
     >
       <ActivityHeading
+        authorId={authorId}
         authorName={authorName}
         profilePhoto={profilePhoto}
         createdDate={createdDate}
@@ -253,6 +254,12 @@ const Post = (props) => {
               className={classes.optionMenu}
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
+              PaperProps={{
+                sx: {
+                  borderRadius: '5px',
+                },
+              }}
+              disableScrollLock={true}
               onClose={handleClosePostOption}
               anchorOrigin={{
                 vertical: 'bottom',
@@ -609,6 +616,7 @@ const Post = (props) => {
 
 Post.propTypes = {
   classes: PropTypes.object.isRequired,
+  authorId: PropTypes.number.isRequired,
   authorName: PropTypes.string.isRequired,
   profilePhoto: PropTypes.object,
   createdDate: PropTypes.object.isRequired,
