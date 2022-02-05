@@ -21,7 +21,25 @@ const getAllUsers = () => {
   });
 };
 
+const getActivityNotifications = (isDisplayed) => {
+  return fetch(
+    endpoints.userActivityNotifications +
+      '?' +
+      new URLSearchParams({
+        isDisplayed: isDisplayed,
+      }),
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 export default {
   getActivityBoard,
   getAllUsers,
+  getActivityNotifications,
 };

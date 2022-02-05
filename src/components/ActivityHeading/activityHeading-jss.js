@@ -16,6 +16,12 @@ const styles = (theme) => ({
       cursor: 'pointer',
     },
   },
+  authorName: {
+    '&:hover': {
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    },
+  },
   actionName: {
     fontSize: 16,
     fontWeight: 300,

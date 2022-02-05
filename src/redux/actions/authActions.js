@@ -2,7 +2,7 @@ import authTypes from '../types/authTypes';
 import authService from '../../services/authService';
 import { showNotification } from './notificationActions';
 import { getUserProfile } from './userProfileActions';
-import { getFriendInvitations, getUserFriends } from './friendAction';
+import { getUserFriends } from './friendAction';
 import { getAllUsersInformation } from './userActivityActions';
 
 export const register = (accountData) => (dispatch) => {
@@ -59,7 +59,6 @@ export const authenticate = (login, password, remember) => (dispatch) => {
           dispatch({ type: authTypes.REMEMBER_USER, payload: remember });
           dispatch(getUserProfile(data.userId, true));
           dispatch(getUserFriends(data.userId, true));
-          dispatch(getFriendInvitations(data.userId, true));
           dispatch(getAllUsersInformation());
           return data;
         });
@@ -91,6 +90,21 @@ export const updateToken = (accessToken, refreshToken) => ({
   },
 });
 
-export const logoutUser = () => ({
-  type: 'CLEAR_ALL',
-});
+export const logoutUser = () => (dispatch) => {
+  dispatch({ type: authTypes.LOG_OUT_USER });
+  return authService
+    .logout()
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch({ type: 'CLEAR_ALL' });
+        dispatch(showNotification('success', 'Wylogowano'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

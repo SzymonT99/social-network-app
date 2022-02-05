@@ -149,6 +149,43 @@ const deleteSharedPost = (sharedPostId) => {
   );
 };
 
+const addPostToFavourite = (postId) => {
+  return fetch(endpoints.manageFavouritePost.replace('{postId}', postId), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const deletePostFromFavourite = (postId) => {
+  return fetch(endpoints.manageFavouritePost.replace('{postId}', postId), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const getFavouritePosts = (userId) => {
+  return fetch(
+    endpoints.getUserFavouritePosts +
+      '?' +
+      new URLSearchParams({
+        userId: userId,
+      }),
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 export default {
   createPost,
   editPost,
@@ -164,4 +201,7 @@ export default {
   managePostAccess,
   sharePost,
   deleteSharedPost,
+  addPostToFavourite,
+  deletePostFromFavourite,
+  getFavouritePosts,
 };

@@ -33,6 +33,7 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import {
+  changeProfileNav,
   changeProfilePhoto,
   deleteProfilePhoto,
   deleteUserInterests,
@@ -74,7 +75,7 @@ import {
   getUserFriends,
   inviteToFriend,
 } from '../../redux/actions/friendAction';
-import { authenticate } from '../../redux/actions/authActions';
+import { setLoading } from '../../redux/actions/userActivityActions';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -110,8 +111,11 @@ const ProfilePage = (props) => {
   const { classes } = props;
 
   const dispatch = useDispatch();
+
+  const profileNavIndex = useSelector(
+    (state) => state.selectedProfile.selectedProfileNavIndex
+  );
   const loggedUser = useSelector((state) => state.auth.user);
-  const loggedUserFriends = useSelector((state) => state.auth.friends);
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
     (state) => state.selectedProfile.userActivity
@@ -127,12 +131,12 @@ const ProfilePage = (props) => {
   const userFriendInvitations = useSelector(
     (state) => state.selectedProfile.friendInvitations
   );
+  const isLoading = useSelector((state) => state.activity.isLoading);
 
   const history = useHistory();
 
   let { selectedUserId } = useParams();
 
-  const [profileNav, setProfileNav] = useState(0);
   const [activityValue, setActivityValue] = useState('a1');
   const [profileInfoNav, setProfileInfoNav] = useState('i1');
   const [openPostCreation, setOpenPostCreation] = useState(false);
@@ -156,6 +160,7 @@ const ProfilePage = (props) => {
   const [friendBtnHover, setFriendBtnHover] = useState(false);
 
   useEffect(() => {
+    dispatch(setLoading(true));
     dispatch(setCurrentPath('/app/profile/' + loggedUser.userId, 1));
     dispatch(getUserProfile(selectedUserId));
     dispatch(getUserActivity(selectedUserId));
@@ -181,6 +186,7 @@ const ProfilePage = (props) => {
     });
 
     dispatch(getFriendInvitations(selectedUserId)).then((friendInvitations) => {
+      dispatch(setLoading(false));
       if (
         loggedUser.userId !== parseInt(selectedUserId) &&
         friendInvitations.filter(
@@ -205,7 +211,7 @@ const ProfilePage = (props) => {
   };
 
   const handleChangeProfileNav = (event, newValue) => {
-    setProfileNav(newValue);
+    dispatch(changeProfileNav(newValue));
   };
 
   const handleChangeActivityValue = (event, newValue) => {
@@ -315,7 +321,7 @@ const ProfilePage = (props) => {
 
   return (
     <>
-      {userProfile && (
+      {!isLoading ? (
         <div className={classes.wrapper}>
           <Paper
             elevation={4}
@@ -362,6 +368,7 @@ const ProfilePage = (props) => {
                   </label>
                 )}
                 {parseInt(selectedUserId) === loggedUser.userId &&
+                  userProfile &&
                   userProfile.profilePhoto !== null && (
                     <div className={classes.deleteProfileImageBtn}>
                       <Tooltip title="Usuń zdjęcie profilowe" placement="left">
@@ -462,7 +469,7 @@ const ProfilePage = (props) => {
           </Paper>
           <Paper elevation={4} sx={{ borderRadius: '10px' }}>
             <Tabs
-              value={profileNav}
+              value={profileNavIndex}
               onChange={handleChangeProfileNav}
               className={classes.tabsContainer}
               TabIndicatorProps={{
@@ -498,7 +505,7 @@ const ProfilePage = (props) => {
               />
             </Tabs>
           </Paper>
-          <TabPanel classes={classes} value={profileNav} index={0}>
+          <TabPanel classes={classes} value={profileNavIndex} index={0}>
             <div className={classes.leftActivityContent}>
               <Paper elevation={4} sx={{ borderRadius: '10px' }}>
                 <div className={classes.profileInfoBoxHeading}>
@@ -507,7 +514,7 @@ const ProfilePage = (props) => {
                     component="button"
                     variant="subtitle1"
                     onClick={() => {
-                      setProfileNav(3);
+                      dispatch(changeProfileNav(3));
                     }}
                   >
                     Zobacz więcej
@@ -521,38 +528,47 @@ const ProfilePage = (props) => {
                     gap={3}
                     variant="quilted"
                   >
-                    {userFriends.map((friend, index) => {
-                      if (index < 9) {
-                        return (
-                          <ImageListItem
-                            key={friend.friendId}
-                            className={classes.imageListItemBox}
-                            onClick={() =>
-                              history.push('/app/profile/' + friend.user.userId)
-                            }
-                          >
-                            <img
-                              src={friend.user.profilePhoto.url}
-                              alt={friend.user.firstName + friend.user.lastName}
-                              loading="lazy"
-                            />
-                            <ImageListItemBar
-                              title={
-                                <Typography
-                                  variant="body1"
-                                  className={classes.imageListItemTitle}
-                                >
-                                  {friend.user.firstName}
-                                  <br />
-                                  {friend.user.lastName}
-                                </Typography>
+                    {userFriends &&
+                      userFriends.map((friend, index) => {
+                        if (index < 9) {
+                          return (
+                            <ImageListItem
+                              key={friend.friendId}
+                              className={classes.imageListItemBox}
+                              onClick={() =>
+                                history.push(
+                                  '/app/profile/' + friend.user.userId
+                                )
                               }
-                              position="below"
-                            />
-                          </ImageListItem>
-                        );
-                      }
-                    })}
+                            >
+                              <img
+                                src={
+                                  friend.user.profilePhoto !== null
+                                    ? friend.user.profilePhoto.url
+                                    : defaultUserPhoto
+                                }
+                                alt={
+                                  friend.user.firstName + friend.user.lastName
+                                }
+                                loading="lazy"
+                              />
+                              <ImageListItemBar
+                                title={
+                                  <Typography
+                                    variant="body1"
+                                    className={classes.imageListItemTitle}
+                                  >
+                                    {friend.user.firstName}
+                                    <br />
+                                    {friend.user.lastName}
+                                  </Typography>
+                                }
+                                position="below"
+                              />
+                            </ImageListItem>
+                          );
+                        }
+                      })}
                   </ImageList>
                 </div>
               </Paper>
@@ -563,7 +579,7 @@ const ProfilePage = (props) => {
                     component="button"
                     variant="subtitle1"
                     onClick={() => {
-                      setProfileNav(2);
+                      dispatch(changeProfileNav(2));
                     }}
                   >
                     Zobacz więcej
@@ -940,7 +956,7 @@ const ProfilePage = (props) => {
               )}
             </div>
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={1}>
+          <TabPanel classes={classes} value={profileNavIndex} index={1}>
             <Paper
               elevation={4}
               className={classes.profileInformationContainer}
@@ -1323,39 +1339,45 @@ const ProfilePage = (props) => {
                       </Typography>
                       {userInterests.length > 0 && (
                         <List className={classes.userInterestList}>
-                          {userInterests.map((userInterest) => (
-                            <ListItem
-                              key={userInterest.interestId}
-                              disableGutters
-                              secondaryAction={
-                                parseInt(selectedUserId) ===
-                                  loggedUser.userId && (
-                                  <IconButton
-                                    onClick={() =>
-                                      handleClickDeleteUserInterest(
-                                        userInterest.interestId
-                                      )
-                                    }
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                )
-                              }
-                            >
-                              <FiberManualRecordIcon
-                                color="secondary"
-                                fontSize="14px"
-                              />
-                              <ListItemText
-                                disableTypography
-                                primary={
-                                  <Typography noWrap variant="subtitle2">
-                                    {userInterest.name}
-                                  </Typography>
+                          {userInterests
+                            .sort((x, y) => {
+                              let a = x.name.toUpperCase(),
+                                b = y.name.toUpperCase();
+                              return a === b ? 0 : a > b ? 1 : -1;
+                            })
+                            .map((userInterest) => (
+                              <ListItem
+                                key={userInterest.interestId}
+                                disableGutters
+                                secondaryAction={
+                                  parseInt(selectedUserId) ===
+                                    loggedUser.userId && (
+                                    <IconButton
+                                      onClick={() =>
+                                        handleClickDeleteUserInterest(
+                                          userInterest.interestId
+                                        )
+                                      }
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  )
                                 }
-                              />
-                            </ListItem>
-                          ))}
+                              >
+                                <FiberManualRecordIcon
+                                  color="secondary"
+                                  fontSize="14px"
+                                />
+                                <ListItemText
+                                  disableTypography
+                                  primary={
+                                    <Typography noWrap variant="subtitle2">
+                                      {userInterest.name}
+                                    </Typography>
+                                  }
+                                />
+                              </ListItem>
+                            ))}
                         </List>
                       )}
                       {parseInt(selectedUserId) === loggedUser.userId && (
@@ -1364,7 +1386,7 @@ const ProfilePage = (props) => {
                           variant="text"
                           className={classes.addProfileInfoItemBtn}
                           onClick={() =>
-                            setShowUserInterestForm(!showUserInterestForm)
+                            setShowFavouriteForm(!showFavouriteForm)
                           }
                         >
                           <AddCircleOutlineIcon />
@@ -1373,7 +1395,7 @@ const ProfilePage = (props) => {
                           </Typography>
                         </Button>
                       )}
-                      {showUserInterestForm && (
+                      {showFavouriteForm && (
                         <AddUserInterestForm
                           userId={loggedUser.userId}
                           onCloseForm={() => setShowFavouriteForm(false)}
@@ -1393,47 +1415,56 @@ const ProfilePage = (props) => {
                       {userFavourites && (
                         <>
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'BOOK'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'FILM'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'ACTOR'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'MUSIC'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'BAND'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'QUOTE'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) =>
                                 favourite.favouriteType === 'TV_SHOW'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'SPORT'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) =>
                                 favourite.favouriteType === 'SPORT_TEAM'
@@ -1474,7 +1505,7 @@ const ProfilePage = (props) => {
               </TabContext>
             </Paper>
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={2}>
+          <TabPanel classes={classes} value={profileNavIndex} index={2}>
             <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
               <ImageList
                 gap={15}
@@ -1518,55 +1549,74 @@ const ProfilePage = (props) => {
               )}
             </Paper>
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={3}>
+          <TabPanel classes={classes} value={profileNavIndex} index={3}>
             <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
               <ImageList
                 cols={5}
                 rowHeight={200}
-                sx={{ margin: 0, padding: '15px', paddingBottom: '35px' }}
+                sx={{ margin: 0, padding: '15px', paddingBottom: '40px' }}
                 gap={5}
                 variant="quilted"
               >
-                {userFriends.map((friend, index) => {
-                  if (index < 9) {
-                    return (
-                      <ImageListItem
-                        key={friend.friendId}
-                        className={classes.imageListItemBox}
-                        onClick={() =>
-                          history.push('/app/profile/' + friend.user.userId)
-                        }
-                      >
-                        <img
-                          src={friend.user.profilePhoto.url}
-                          alt={friend.user.firstName + friend.user.lastName}
-                          loading="lazy"
-                        />
-                        <ImageListItemBar
-                          title={
-                            <Typography
-                              variant="subtitle2"
-                              fontWeight="bold"
-                              className={classes.imageListItemTitle}
-                              noWrap
-                            >
-                              {friend.user.firstName +
-                                ' ' +
-                                friend.user.lastName}
-                            </Typography>
+                {userFriends &&
+                  userFriends.map((friend, index) => {
+                    if (index < 9) {
+                      return (
+                        <ImageListItem
+                          key={friend.friendId}
+                          className={classes.imageListItemBox}
+                          onClick={() =>
+                            history.push('/app/profile/' + friend.user.userId)
                           }
-                          position="below"
-                        />
-                      </ImageListItem>
-                    );
-                  }
-                })}
+                        >
+                          <img
+                            src={
+                              friend.user.profilePhoto !== null
+                                ? friend.user.profilePhoto.url
+                                : defaultUserPhoto
+                            }
+                            alt={friend.user.firstName + friend.user.lastName}
+                            loading="lazy"
+                          />
+                          <ImageListItemBar
+                            title={
+                              <Typography
+                                variant="subtitle2"
+                                fontWeight="bold"
+                                className={classes.imageListItemTitle}
+                                noWrap
+                              >
+                                {friend.user.firstName +
+                                  ' ' +
+                                  friend.user.lastName}
+                              </Typography>
+                            }
+                            position="below"
+                          />
+                        </ImageListItem>
+                      );
+                    }
+                  })}
               </ImageList>
+              {userFriends.length === 0 && (
+                <Typography
+                  fontWeight="bold"
+                  textAlign="center"
+                  variant="h6"
+                  marginBottom="20px"
+                >
+                  Brak znajomych
+                </Typography>
+              )}
             </Paper>
           </TabPanel>
-          <TabPanel classes={classes} value={profileNav} index={4}>
+          <TabPanel classes={classes} value={profileNavIndex} index={4}>
             Grupy
           </TabPanel>
+        </div>
+      ) : (
+        <div className={classes.loadingContainer}>
+          <CircularProgress color="secondary" size="240px" />
         </div>
       )}
     </>

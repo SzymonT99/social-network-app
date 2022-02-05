@@ -24,7 +24,6 @@ import {
 } from '../../redux/actions/userActivityActions';
 import SharedPost from '../../components/SharedPost/SharedPost';
 import CircularProgress from '@mui/material/CircularProgress';
-import { getFriendInvitations } from '../../redux/actions/friendAction';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
@@ -48,7 +47,6 @@ const ActivityBoard = (props) => {
   useEffect(() => {
     dispatch(setLoading(true));
     dispatch(getActivityBoard());
-    dispatch(getFriendInvitations(loggedUser.userId, true));
   }, []);
 
   return (
@@ -140,10 +138,13 @@ const ActivityBoard = (props) => {
                     return (
                       <SharedPost
                         key={id}
+                        authorId={item.activityAuthor.userId}
                         sharedPostId={item.activity.sharedPostId}
                         sharedPost={item.activity.sharedPost}
                         sharingId={item.activity.sharingId}
-                        sharingAuthorId={item.activityAuthor.userId}
+                        sharingAuthorId={
+                          item.activity.sharedPost.postAuthor.userId
+                        }
                         authorName={
                           item.activityAuthor.firstName +
                           ' ' +
@@ -163,11 +164,13 @@ const ActivityBoard = (props) => {
                 }
               })}
               {numberItemsShown < activityBoard.length && (
-                <div className={classes.moreItemsContainer}>
+                <div
+                  className={classes.moreItemsContainer}
+                  onClick={() => setNumberItemsShown(numberItemsShown + 5)}
+                >
                   <Link
                     component="button"
                     variant="subtitle2"
-                    onClick={() => setNumberItemsShown(numberItemsShown + 5)}
                     className={classes.moreCommentsLink}
                   >
                     Zobacz więcej
@@ -209,10 +212,7 @@ const ActivityBoard = (props) => {
         </div>
       ) : (
         <div className={classes.loadingContainer}>
-          <CircularProgress
-            color="secondary"
-            sx={{ width: '300px', height: '300px' }}
-          />
+          <CircularProgress color="secondary" size="240px" />
         </div>
       )}
     </>

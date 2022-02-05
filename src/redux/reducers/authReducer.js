@@ -1,4 +1,5 @@
 import types from '../types/authTypes';
+import postTypes from '../types/postTypes';
 
 const initialState = {
   isLoggedIn: false,
@@ -7,6 +8,7 @@ const initialState = {
   userProfile: null,
   friends: [],
   friendInvitations: [],
+  favouritePosts: [],
 };
 
 const authReducer = (state = initialState, action) => {
@@ -51,8 +53,18 @@ const authReducer = (state = initialState, action) => {
         ...state,
         friendInvitations: action.payload.friendInvitations,
       };
+    case postTypes.FETCH_FAVOURITE_POSTS:
+      return {
+        ...state,
+        favouritePosts: action.payload.favouritePosts,
+      };
     case types.CLEAR_ALL:
       return initialState;
+    case types.LOG_OUT_USER:
+      return {
+        ...state,
+        isLoggedIn: false,
+      };
     default:
       return state;
   }

@@ -10,8 +10,8 @@ import { useHistory } from 'react-router-dom';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
-  BE_RIGHT_BACK: 'orange',
-  BUSY: 'purple',
+  BE_RIGHT_BACK: '#de681d',
+  BUSY: '#67207c',
   OFFLINE: '#FF1C00',
 };
 

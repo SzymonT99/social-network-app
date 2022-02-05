@@ -4,6 +4,7 @@ import postTypes from '../types/postTypes';
 const initialState = {
   isLoading: false,
   board: [],
+  notifications: [],
 };
 
 const userActivityReducer = (state = initialState, action) => {
@@ -12,6 +13,11 @@ const userActivityReducer = (state = initialState, action) => {
       return {
         ...state,
         board: action.payload.board,
+      };
+    case activityTypes.FETCH_ACTIVITY_NOTIFICATIONS:
+      return {
+        ...state,
+        notifications: action.payload.activityNotifications,
       };
     case activityTypes.SET_LOADING:
       return {

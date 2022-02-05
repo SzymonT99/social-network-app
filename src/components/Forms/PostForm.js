@@ -132,7 +132,11 @@ const PostForm = (props) => {
     <div className={classes.postFormContainer}>
       <div className={classes.postFormContent}>
         <Avatar
-          src={userProfile ? userProfile.profilePhoto.url : defaultUserPhoto}
+          src={
+            userProfile && userProfile.profilePhoto
+              ? userProfile.profilePhoto.url
+              : defaultUserPhoto
+          }
           alt={
             userProfile
               ? userProfile.firstName + ' ' + userProfile.lastName

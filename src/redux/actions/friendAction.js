@@ -30,10 +30,10 @@ export const inviteToFriend = (inviterUserId) => (dispatch, getState) => {
 };
 
 export const getFriendInvitations =
-  (userId, forLoggedIn = false) =>
+  (userId, forLoggedIn = false, isDisplayed = false) =>
   (dispatch) => {
     return friendService
-      .getFriendsInvitation(userId)
+      .getFriendInvitations(userId, isDisplayed)
       .then((response) => {
         if (response.status === 200) {
           return response.json().then((data) => {
@@ -149,11 +149,13 @@ export const deleteFriend =
   (friendId, deletingInvitation = false) =>
   (dispatch, getState) => {
     return friendService
-      .deleteFriend(friendId)
+      .deleteFriend(friendId, deletingInvitation)
       .then((response) => {
         if (response.status === 200) {
-          getUserFriends(getState().auth.user.userId, true);
-          getUserFriends(getState().auth.user.userId);
+          dispatch(getUserFriends(getState().auth.user.userId, true));
+          dispatch(
+            getUserFriends(getState().selectedProfile.userProfile.userProfileId)
+          );
           if (!deletingInvitation) {
             dispatch(showNotification('success', 'Usunięto ze znajomych'));
           } else {

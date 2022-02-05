@@ -46,6 +46,7 @@ const SharedPost = (props) => {
     classes,
     sharedPostId,
     sharedPost,
+    authorId,
     sharingAuthorId,
     sharingId,
     date,
@@ -191,6 +192,7 @@ const SharedPost = (props) => {
       className={classes.sharedPostContainer}
     >
       <ActivityHeading
+        authorId={authorId}
         authorName={authorName}
         profilePhoto={profilePhoto}
         createdDate={date}
@@ -207,6 +209,12 @@ const SharedPost = (props) => {
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleClosePostOption}
+              disableScrollLock={true}
+              PaperProps={{
+                sx: {
+                  borderRadius: '5px',
+                },
+              }}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'right',
@@ -283,6 +291,7 @@ const SharedPost = (props) => {
       </div>
       <Post
         asSharing
+        authorId={sharingAuthorId}
         authorName={
           sharedPost.postAuthor.firstName + ' ' + sharedPost.postAuthor.lastName
         }
@@ -475,6 +484,7 @@ const SharedPost = (props) => {
 SharedPost.propTypes = {
   classes: PropTypes.object.isRequired,
   sharedPostId: PropTypes.number.isRequired,
+  authorId: PropTypes.number.isRequired,
   sharedPost: PropTypes.object.isRequired,
   sharingId: PropTypes.number.isRequired,
   authorName: PropTypes.string.isRequired,

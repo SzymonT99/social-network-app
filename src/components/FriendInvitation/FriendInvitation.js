@@ -8,6 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 import { respondToFriendInvitation } from '../../redux/actions/friendAction';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   friendInvitation: {
@@ -17,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   heading: {
     display: 'flex',
     alignItems: 'center',
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   userPhoto: {
     '&.MuiAvatar-root': {
@@ -50,6 +54,7 @@ const FriendInvitation = ({ inviterId, inviterName, inviterPhoto }) => {
   const classes = useStyles();
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleClickRespondToFriendInvitation = (reaction) => {
     dispatch(respondToFriendInvitation(inviterId, reaction));
@@ -62,6 +67,7 @@ const FriendInvitation = ({ inviterId, inviterName, inviterPhoto }) => {
         component="div"
         className={classes.heading}
         noWrap
+        onClick={() => history.push('/app/profile/' + inviterId)}
       >
         <Avatar
           src={inviterPhoto ? inviterPhoto.url : defaultUserPhoto}

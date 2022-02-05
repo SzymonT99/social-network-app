@@ -3,6 +3,7 @@ import authTypes from '../types/authTypes';
 import userProfileService from '../../services/userService';
 import { showNotification } from './notificationActions';
 import { logoutUser } from './authActions';
+import { getActivityBoard } from './userActivityActions';
 
 export const getUserProfile =
   (userId, forLoggedIn = false) =>
@@ -416,6 +417,7 @@ export const changeProfilePhoto = (userId, photo) => (dispatch) => {
         dispatch(getUserProfile(userId));
         dispatch(getUserProfile(userId, true));
         dispatch(getUserActivity(userId));
+        dispatch(getUserImages(userId));
         dispatch(showNotification('success', 'Zmieniono zdjęcie profilowe'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -558,3 +560,34 @@ export const editUserAddress = (addressId, address, userId) => (dispatch) => {
       console.log(error);
     });
 };
+
+export const changeUserStatus = (status) => (dispatch, getState) => {
+  return userProfileService
+    .changeUserStatus(status)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getUserProfile(getState().auth.user.userId, true));
+        dispatch(getUserActivity(getState().auth.user.userId));
+        dispatch(getActivityBoard());
+        dispatch(showNotification('success', 'Zmieniono status'));
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Niepoprawne dane'));
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const changeProfileNav = (index) => ({
+  type: userProfileTypes.SET_PROFILE_NAV_INDEX,
+  payload: {
+    index,
+  },
+});
