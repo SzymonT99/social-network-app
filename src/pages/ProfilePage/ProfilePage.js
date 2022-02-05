@@ -1339,39 +1339,45 @@ const ProfilePage = (props) => {
                       </Typography>
                       {userInterests.length > 0 && (
                         <List className={classes.userInterestList}>
-                          {userInterests.map((userInterest) => (
-                            <ListItem
-                              key={userInterest.interestId}
-                              disableGutters
-                              secondaryAction={
-                                parseInt(selectedUserId) ===
-                                  loggedUser.userId && (
-                                  <IconButton
-                                    onClick={() =>
-                                      handleClickDeleteUserInterest(
-                                        userInterest.interestId
-                                      )
-                                    }
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                )
-                              }
-                            >
-                              <FiberManualRecordIcon
-                                color="secondary"
-                                fontSize="14px"
-                              />
-                              <ListItemText
-                                disableTypography
-                                primary={
-                                  <Typography noWrap variant="subtitle2">
-                                    {userInterest.name}
-                                  </Typography>
+                          {userInterests
+                            .sort((x, y) => {
+                              let a = x.name.toUpperCase(),
+                                b = y.name.toUpperCase();
+                              return a === b ? 0 : a > b ? 1 : -1;
+                            })
+                            .map((userInterest) => (
+                              <ListItem
+                                key={userInterest.interestId}
+                                disableGutters
+                                secondaryAction={
+                                  parseInt(selectedUserId) ===
+                                    loggedUser.userId && (
+                                    <IconButton
+                                      onClick={() =>
+                                        handleClickDeleteUserInterest(
+                                          userInterest.interestId
+                                        )
+                                      }
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  )
                                 }
-                              />
-                            </ListItem>
-                          ))}
+                              >
+                                <FiberManualRecordIcon
+                                  color="secondary"
+                                  fontSize="14px"
+                                />
+                                <ListItemText
+                                  disableTypography
+                                  primary={
+                                    <Typography noWrap variant="subtitle2">
+                                      {userInterest.name}
+                                    </Typography>
+                                  }
+                                />
+                              </ListItem>
+                            ))}
                         </List>
                       )}
                       {parseInt(selectedUserId) === loggedUser.userId && (
@@ -1380,7 +1386,7 @@ const ProfilePage = (props) => {
                           variant="text"
                           className={classes.addProfileInfoItemBtn}
                           onClick={() =>
-                            setShowUserInterestForm(!showUserInterestForm)
+                            setShowFavouriteForm(!showFavouriteForm)
                           }
                         >
                           <AddCircleOutlineIcon />
@@ -1389,7 +1395,7 @@ const ProfilePage = (props) => {
                           </Typography>
                         </Button>
                       )}
-                      {showUserInterestForm && (
+                      {showFavouriteForm && (
                         <AddUserInterestForm
                           userId={loggedUser.userId}
                           onCloseForm={() => setShowFavouriteForm(false)}
@@ -1409,47 +1415,56 @@ const ProfilePage = (props) => {
                       {userFavourites && (
                         <>
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'BOOK'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'FILM'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'ACTOR'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'MUSIC'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'BAND'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'QUOTE'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) =>
                                 favourite.favouriteType === 'TV_SHOW'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) => favourite.favouriteType === 'SPORT'
                             )}
                           />
                           <UserFavouriteItemList
+                            selectedUserId={selectedUserId}
                             favourites={userFavourites.filter(
                               (favourite) =>
                                 favourite.favouriteType === 'SPORT_TEAM'

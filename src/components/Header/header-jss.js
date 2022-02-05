@@ -118,9 +118,16 @@ const styles = (theme) => ({
       borderColor: theme.palette.secondary.main,
     },
   },
-  notificationMenu: {
+  friendNotificationMenu: {
     '& .MuiPaper-root': {
       width: '18%',
+      borderRadius: '5px',
+      maxHeight: '50%',
+    },
+  },
+  activityNotificationMenu: {
+    '& .MuiPaper-root': {
+      width: '24%',
       borderRadius: '5px',
       maxHeight: '50%',
     },

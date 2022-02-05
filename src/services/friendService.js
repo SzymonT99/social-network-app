@@ -18,12 +18,13 @@ const inviteToFriend = (inviterUserId) => {
   );
 };
 
-const getFriendsInvitation = (userId) => {
+const getFriendInvitations = (userId, isDisplayed) => {
   return fetch(
     endpoints.friendInvitations +
       '?' +
       new URLSearchParams({
         userId: userId,
+        isDisplayed: isDisplayed,
       }),
     {
       method: 'GET',
@@ -88,7 +89,7 @@ const getUserFriends = (userId) => {
 
 export default {
   inviteToFriend,
-  getFriendsInvitation,
+  getFriendInvitations,
   respondToFriendInvitation,
   deleteFriend,
   getUserFriends,

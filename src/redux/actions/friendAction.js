@@ -30,10 +30,10 @@ export const inviteToFriend = (inviterUserId) => (dispatch, getState) => {
 };
 
 export const getFriendInvitations =
-  (userId, forLoggedIn = false) =>
+  (userId, forLoggedIn = false, isDisplayed = false) =>
   (dispatch) => {
     return friendService
-      .getFriendsInvitation(userId)
+      .getFriendInvitations(userId, isDisplayed)
       .then((response) => {
         if (response.status === 200) {
           return response.json().then((data) => {

@@ -21,14 +21,21 @@ const getAllUsers = () => {
   });
 };
 
-const getActivityNotifications = () => {
-  return fetch(endpoints.userActivityNotifications, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
-  });
+const getActivityNotifications = (isDisplayed) => {
+  return fetch(
+    endpoints.userActivityNotifications +
+      '?' +
+      new URLSearchParams({
+        isDisplayed: isDisplayed,
+      }),
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
 };
 
 export default {

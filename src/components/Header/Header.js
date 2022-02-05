@@ -28,7 +28,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
-import { Add, Logout, Settings } from '@mui/icons-material';
+import { Logout, Settings } from '@mui/icons-material';
 import { logoutUser } from '../../redux/actions/authActions';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { changeUserStatus } from '../../redux/actions/userProfileActions';
@@ -39,6 +39,48 @@ import {
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { getActivityNotification } from '../../redux/actions/userActivityActions';
+
+const formatActivityTime = (createdDate) => {
+  let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
+  let minutes = Math.floor(diffInMs / 60);
+
+  if (minutes < 30) {
+    return 'kilka minut temu';
+  } else if (minutes < 90) {
+    return '1 godz. temu';
+  } else if (minutes >= 90 && minutes < 150) {
+    return '2 godz. temu';
+  } else if (minutes >= 150 && minutes < 210) {
+    return '3 godz. temu';
+  } else if (minutes >= 210 && minutes < 270) {
+    return '4 godz. temu';
+  } else if (minutes >= 270 && minutes < 1440) {
+    return 'kilka godz. temu';
+  } else if (minutes >= 1440 && minutes < 1560) {
+    return '1 dzień temu';
+  } else if (minutes >= 1560 && minutes < 3000) {
+    return '2 dni temu';
+  } else if (minutes >= 3000 && minutes < 3100) {
+    return '3 dni temu';
+  } else {
+    let day = createdDate.getDate();
+    let month = createdDate.getMonth() + 1;
+    let year = createdDate.getFullYear();
+    let hour = createdDate.getHours();
+    let minutes = createdDate.getMinutes();
+    return (
+      (day <= 9 ? '0' + day : day) +
+      '.' +
+      (month <= 9 ? '0' + month : month) +
+      '.' +
+      year +
+      ' r. ' +
+      (hour <= 9 ? '0' + hour : hour) +
+      ':' +
+      (minutes <= 9 ? '0' + minutes : minutes)
+    );
+  }
+};
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -108,6 +150,7 @@ const Header = (props) => {
 
   const handleCloseFriendNotification = () => {
     setAnchorElFriendsNotif(null);
+    dispatch(getFriendInvitations(loggedUser.userId, true, true));
   };
 
   const handleClickActivityNotification = (event) => {
@@ -116,6 +159,7 @@ const Header = (props) => {
 
   const handleCloseActivityNotification = () => {
     setAnchorElActivityNotif(null);
+    dispatch(getActivityNotification(true));
   };
 
   const handleClickRespondToFriendInvitation = (inviterId, reaction) => {
@@ -209,10 +253,9 @@ const Header = (props) => {
               }}
               overlap="circular"
               badgeContent={
-                // loggedUserFriendInvitations.filter(
-                //   (invitation) => invitation.invitationDisplayed === false
-                // ).length
-                1
+                loggedUserFriendInvitations.filter(
+                  (invitation) => invitation.invitationDisplayed === false
+                ).length
               }
             >
               <PersonIcon
@@ -228,7 +271,7 @@ const Header = (props) => {
             onClose={handleCloseFriendNotification}
             onClick={handleCloseFriendNotification}
             disableScrollLock={true}
-            className={classes.notificationMenu}
+            className={classes.friendNotificationMenu}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
@@ -340,10 +383,9 @@ const Header = (props) => {
               }}
               overlap="circular"
               badgeContent={
-                // activityNotifications.filter(
-                //   (notif) => notif.notificationDisplayed === false
-                // ).length
-                4
+                activityNotifications.filter(
+                  (notif) => notif.notificationDisplayed === false
+                ).length
               }
             >
               <NotificationsIcon
@@ -359,19 +401,27 @@ const Header = (props) => {
             onClose={handleCloseActivityNotification}
             onClick={handleCloseActivityNotification}
             disableScrollLock={true}
-            className={classes.notificationMenu}
+            className={classes.activityNotificationMenu}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            {activityNotifications
-              .filter((el) => el.activityInitiator.userId !== loggedUser.userId)
-              .map((activityNotification, index) => (
-                <ListItem
-                  key={index}
-                  sx={{
-                    borderBottom:
-                      index + 1 < activityNotifications.length &&
-                      '1px solid rgba(0, 0, 0, 0.4)',
+            {activityNotifications.map((activityNotification, index) => (
+              <ListItem
+                key={index}
+                sx={{
+                  borderBottom:
+                    index + 1 < activityNotifications.length &&
+                    '1px solid rgba(0, 0, 0, 0.4)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '68%',
                   }}
                 >
                   <ListItemAvatar>
@@ -398,9 +448,7 @@ const Header = (props) => {
                             activityNotification.activityInitiator.userId
                         )
                       }
-                    >
-                      <MessageIcon />
-                    </Avatar>
+                    />
                   </ListItemAvatar>
                   <ListItemText
                     primary={
@@ -427,8 +475,20 @@ const Header = (props) => {
                       </Typography>
                     }
                   />
-                </ListItem>
-              ))}
+                </div>
+                <Typography
+                  component="p"
+                  variant="body2"
+                  fontWeight={300}
+                  width="32%"
+                  marginLeft="10px"
+                >
+                  {formatActivityTime(
+                    new Date(activityNotification.notificationDate)
+                  )}
+                </Typography>
+              </ListItem>
+            ))}
             {activityNotifications.length === 0 && (
               <Typography
                 margin="10px 0px"
@@ -439,21 +499,23 @@ const Header = (props) => {
               </Typography>
             )}
           </Menu>
-          {/*<Badge*/}
-          {/*  sx={{*/}
-          {/*    '& .MuiBadge-badge': {*/}
-          {/*      color: 'white',*/}
-          {/*      backgroundColor: '#07DCC0',*/}
-          {/*    },*/}
-          {/*  }}*/}
-          {/*  overlap="circular"*/}
-          {/*  badgeContent={4}*/}
-          {/*>*/}
-          {/*  <MessageIcon*/}
-          {/*    color="primary"*/}
-          {/*    sx={{ fontSize: '45px', cursor: 'pointer' }}*/}
-          {/*  />*/}
-          {/*</Badge>*/}
+          <IconButton>
+            <Badge
+              sx={{
+                '& .MuiBadge-badge': {
+                  color: 'white',
+                  backgroundColor: '#07DCC0',
+                },
+              }}
+              overlap="circular"
+              badgeContent={4}
+            >
+              <MessageIcon
+                color="primary"
+                sx={{ fontSize: '45px', cursor: 'pointer' }}
+              />
+            </Badge>
+          </IconButton>
         </div>
         <div className={classes.userInfoBox}>
           <Typography
@@ -610,6 +672,7 @@ const Header = (props) => {
             <MenuItem
               className={classes.userMenuItem}
               onClick={() => {
+                history.push('/auth/login');
                 dispatch(logoutUser());
               }}
             >

@@ -216,49 +216,49 @@ const Sidebar = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-            {/*<ListItem*/}
-            {/*  disablePadding*/}
-            {/*  style={{ margin: '10px 0' }}*/}
-            {/*  selected={selectedItem === 3}*/}
-            {/*  onClick={() => handleListItemClick(3)}*/}
-            {/*>*/}
-            {/*  <ListItemButton>*/}
-            {/*    <ListItemIcon>*/}
-            {/*      <GroupsIcon fontSize="large" className={classes.iconItem} />*/}
-            {/*    </ListItemIcon>*/}
-            {/*    <ListItemText*/}
-            {/*      disableTypography*/}
-            {/*      primary={*/}
-            {/*        <Typography fontWeight="bold" variant="h6">*/}
-            {/*          Grupy tematyczne*/}
-            {/*        </Typography>*/}
-            {/*      }*/}
-            {/*    />*/}
-            {/*  </ListItemButton>*/}
-            {/*</ListItem>*/}
-            {/*<ListItem*/}
-            {/*  disablePadding*/}
-            {/*  style={{ margin: '10px 0' }}*/}
-            {/*  selected={selectedItem === 4}*/}
-            {/*  onClick={() => handleListItemClick(4)}*/}
-            {/*>*/}
-            {/*  <ListItemButton>*/}
-            {/*    <ListItemIcon>*/}
-            {/*      <ChatBubbleIcon*/}
-            {/*        fontSize="large"*/}
-            {/*        className={classes.iconItem}*/}
-            {/*      />*/}
-            {/*    </ListItemIcon>*/}
-            {/*    <ListItemText*/}
-            {/*      disableTypography*/}
-            {/*      primary={*/}
-            {/*        <Typography fontWeight="bold" variant="h6">*/}
-            {/*          Czat*/}
-            {/*        </Typography>*/}
-            {/*      }*/}
-            {/*    />*/}
-            {/*  </ListItemButton>*/}
-            {/*</ListItem>*/}
+            <ListItem
+              disablePadding
+              style={{ margin: '10px 0' }}
+              selected={selectedItem === 3}
+              onClick={() => handleListItemClick(3)}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <GroupsIcon fontSize="large" className={classes.iconItem} />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography fontWeight="bold" variant="h6">
+                      Grupy tematyczne
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem
+              disablePadding
+              style={{ margin: '10px 0' }}
+              selected={selectedItem === 4}
+              onClick={() => handleListItemClick(4)}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <ChatBubbleIcon
+                    fontSize="large"
+                    className={classes.iconItem}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  disableTypography
+                  primary={
+                    <Typography fontWeight="bold" variant="h6">
+                      Czat
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
+            </ListItem>
             <ListItem
               disablePadding
               style={{ margin: '10px 0' }}
@@ -319,7 +319,7 @@ const Sidebar = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem disablePadding style={{ marginTop: '175px' }}>
+            <ListItem disablePadding style={{ marginTop: '75px' }}>
               <ListItemButton
                 onClick={() => {
                   dispatch(logoutUser());

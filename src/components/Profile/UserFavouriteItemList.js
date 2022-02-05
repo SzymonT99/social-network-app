@@ -7,7 +7,7 @@ import { IconButton, List, ListItem, ListItemText } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { deleteFavouriteItem } from '../../redux/actions/userProfileActions';
 import AddUserFavouriteForm from '../Forms/AddUserFavouriteForm';
 
@@ -24,14 +24,17 @@ const favouriteTypes = {
 };
 
 const UserFavouriteItemList = (props) => {
-  const { classes, favourites } = props;
+  const { classes, favourites, selectedUserId } = props;
 
   const dispatch = useDispatch();
 
-  const [showEditFavouriteForm, setShowEditFavouriteForm] = useState(false);
+  const loggedUser = useSelector((state) => state.auth.user);
 
-  const handleClickEditFavourite = () => {
-    setShowEditFavouriteForm(true);
+  const [showEditFavouriteFormForId, setShowEditFavouriteFormForId] =
+    useState(null);
+
+  const handleClickEditFavourite = (id) => {
+    setShowEditFavouriteFormForId(id);
   };
   const handleClickDeleteFavourite = (favouriteId) => {
     dispatch(deleteFavouriteItem(favouriteId));
@@ -51,18 +54,26 @@ const UserFavouriteItemList = (props) => {
                   key={userFavourite.favouriteId}
                   disableGutters
                   secondaryAction={
-                    <>
-                      <IconButton onClick={handleClickEditFavourite}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        onClick={() =>
-                          handleClickDeleteFavourite(userFavourite.favouriteId)
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </>
+                    parseInt(selectedUserId) === loggedUser.userId && (
+                      <>
+                        <IconButton
+                          onClick={() =>
+                            handleClickEditFavourite(userFavourite.favouriteId)
+                          }
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          onClick={() =>
+                            handleClickDeleteFavourite(
+                              userFavourite.favouriteId
+                            )
+                          }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )
                   }
                 >
                   <FiberManualRecordIcon color="secondary" fontSize="14px" />
@@ -75,15 +86,16 @@ const UserFavouriteItemList = (props) => {
                     }
                   />
                 </ListItem>
-                {showEditFavouriteForm && (
-                  <AddUserFavouriteForm
-                    edition
-                    favouriteId={userFavourite.favouriteId}
-                    editedFavouriteType={userFavourite.favouriteType}
-                    editedFavouriteName={userFavourite.name}
-                    onCloseForm={() => setShowEditFavouriteForm(false)}
-                  />
-                )}
+                {showEditFavouriteFormForId !== null &&
+                  showEditFavouriteFormForId === userFavourite.favouriteId && (
+                    <AddUserFavouriteForm
+                      edition
+                      favouriteId={userFavourite.favouriteId}
+                      editedFavouriteType={userFavourite.favouriteType}
+                      editedFavouriteName={userFavourite.name}
+                      onCloseForm={() => setShowEditFavouriteFormForId(null)}
+                    />
+                  )}
               </div>
             ))}
           </List>
@@ -96,6 +108,7 @@ const UserFavouriteItemList = (props) => {
 UserFavouriteItemList.propTypes = {
   classes: PropTypes.object.isRequired,
   favourites: PropTypes.array.isRequired,
+  selectedUserId: PropTypes.number.isRequired,
 };
 
 export default withStyles(styles)(UserFavouriteItemList);

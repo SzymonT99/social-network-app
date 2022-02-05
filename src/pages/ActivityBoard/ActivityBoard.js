@@ -24,7 +24,6 @@ import {
 } from '../../redux/actions/userActivityActions';
 import SharedPost from '../../components/SharedPost/SharedPost';
 import CircularProgress from '@mui/material/CircularProgress';
-import { getFriendInvitations } from '../../redux/actions/friendAction';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
@@ -143,7 +142,9 @@ const ActivityBoard = (props) => {
                         sharedPostId={item.activity.sharedPostId}
                         sharedPost={item.activity.sharedPost}
                         sharingId={item.activity.sharingId}
-                        sharingAuthorId={item.activityAuthor.userId}
+                        sharingAuthorId={
+                          item.activity.sharedPost.postAuthor.userId
+                        }
                         authorName={
                           item.activityAuthor.firstName +
                           ' ' +
