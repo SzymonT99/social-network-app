@@ -140,8 +140,9 @@ const SharedPost = (props) => {
           'oraz ' +
           otherUsersNumber +
           ' innych użytkowników';
+      } else {
+        names = names.substring(0, names.length - 2) + ' lubią post';
       }
-      names += ' lubią post';
     } else {
       names = '';
     }

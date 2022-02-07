@@ -116,8 +116,8 @@ const styles = (theme) => ({
   },
   likedUserAvatar: {
     '&.MuiAvatar-root': {
-      width: '34px',
-      height: '34px',
+      width: '30px',
+      height: '30px',
     },
   },
   likesContainer: {

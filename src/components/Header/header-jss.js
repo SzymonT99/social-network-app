@@ -122,14 +122,14 @@ const styles = (theme) => ({
     '& .MuiPaper-root': {
       width: '18%',
       borderRadius: '5px',
-      maxHeight: '50%',
+      maxHeight: '80%',
     },
   },
   activityNotificationMenu: {
     '& .MuiPaper-root': {
       width: '24%',
       borderRadius: '5px',
-      maxHeight: '50%',
+      maxHeight: '80%',
     },
   },
   friendMenuBtn: {

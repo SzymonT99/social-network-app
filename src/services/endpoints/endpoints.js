@@ -43,4 +43,12 @@ export const endpoints = {
   allUsers: baseUrl + '/api/users',
   changeStatus: baseUrl + '/api/users',
   userActivityNotifications: baseUrl + '/api/activity/notifications',
+  events: baseUrl + '/api/events',
+  manageEvent: baseUrl + '/api/events/{eventId}',
+  inviteToEvent: baseUrl + '/api/events/{eventId}/invite',
+  getUserEventInvitations: baseUrl + '/api/events/invitations',
+  eventReaction: baseUrl + '/api/events/{eventId}/response',
+  shareEvent: baseUrl + '/api/events/{eventId}/share',
+  deleteSharedEvent: baseUrl + '/api/events/{eventId}/shared',
+  getSharedEvents: baseUrl + '/api/events/shared',
 };

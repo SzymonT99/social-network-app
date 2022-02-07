@@ -2,6 +2,7 @@ import { Route, Switch } from 'react-router-dom';
 import ActivityBoard from '../pages/ActivityBoard/ActivityBoard';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import AppTemplate from '../templates/AppTemplate';
+import EventsPage from '../pages/EventsPage/EventsPage';
 
 const MainApplication = () => {
   return (
@@ -13,6 +14,7 @@ const MainApplication = () => {
           path="/app/profile/:selectedUserId"
           component={ProfilePage}
         />
+        <Route exact path="/app/events" component={EventsPage} />
       </Switch>
     </AppTemplate>
   );
