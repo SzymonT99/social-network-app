@@ -3,49 +3,155 @@ import { withStyles } from '@mui/styles';
 import styles from './event-jss';
 import { PropTypes } from 'prop-types';
 import defaultEventImg from '../../assets/default-event-photo.png';
-import { Button, Typography } from '@mui/material';
+import { Button, Divider, Typography } from '@mui/material';
 import { LocationOn, AccessTime, Share } from '@mui/icons-material';
 import { useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { respondToEvent, shareEvent } from '../../redux/actions/eventActions';
 
 const Event = (props) => {
-  const { classes, eventId, title, date, members, eventImage } = props;
+  const {
+    classes,
+    eventId,
+    title,
+    date,
+    members,
+    address,
+    eventImage,
+    invitation,
+    invitationDate,
+  } = props;
 
   const history = useHistory();
+
+  const dispatch = useDispatch();
+
+  const loggedUser = useSelector((state) => state.auth.user);
+
+  const handleClickEventReaction = (event, reaction) => {
+    dispatch(respondToEvent(eventId, reaction));
+    event.stopPropagation();
+  };
+
+  const handleClickShareEvent = (event, id) => {
+    dispatch(shareEvent(id));
+    event.stopPropagation();
+  };
 
   return (
     <div
       className={classes.eventContainer}
       onClick={() => history.push('/app/events/' + eventId)}
     >
+      {invitation && (
+        <div className={classes.invitationInfo}>
+          <Typography variant="subtitle2" fontWeight={500} textAlign="center">
+            Zaproszono Cię na wydarzenie
+          </Typography>
+          <Typography variant="body1" textAlign="center">
+            {'Dnia ' +
+              new Date(invitationDate)
+                .toJSON()
+                .slice(0, 10)
+                .split('-')
+                .reverse()
+                .join('.') +
+              ' o godz. ' +
+              new Date(invitationDate).toJSON().slice(10, 16).replace('T', ' ')}
+          </Typography>
+        </div>
+      )}
       <img
-        src={defaultEventImg}
+        src={eventImage ? eventImage.url : defaultEventImg}
         className={classes.eventImage}
         alt="Zdjęcie wydarzenia"
       />
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" fontWeight="bold" noWrap>
         {title}
       </Typography>
       <div className={classes.eventInformationRow}>
         <AccessTime className={classes.timeIcon} />
-        <Typography variant="subtitle2">{date}</Typography>
+        <Typography variant="subtitle2">
+          {new Date(date).toJSON().slice(0, 10).split('-').reverse().join('.') +
+            new Date(date).toJSON().slice(10, 16).replace('T', ' ')}
+        </Typography>
       </div>
       <div className={classes.eventInformationRow}>
         <LocationOn className={classes.timeIcon} />
-        <Typography variant="subtitle2">Adres</Typography>
+        <Typography variant="subtitle2" noWrap>
+          {address.country +
+            ', ' +
+            address.city +
+            ', ' +
+            address.street +
+            ', ' +
+            address.zipCode}
+        </Typography>
       </div>
-      <Typography variant="body1" fontWeight={300}>
-        12 os. zainteresowanych | 12 os. weźmie udział
-      </Typography>
+      {!invitation && (
+        <Typography variant="body1" fontWeight={300}>
+          {`${
+            members.filter(
+              (member) => member.participationStatus === 'INTERESTED'
+            ).length
+          } os. interesuje sie | ${
+            members.filter(
+              (member) => member.participationStatus === 'TAKE_PART'
+            ).length
+          } os. weźmie udział`}
+        </Typography>
+      )}
       <div className={classes.eventBtnContainer}>
-        <Button color="secondary" variant="contained">
+        <Button
+          color="secondary"
+          variant="contained"
+          className={classes.eventReactionBtn}
+          onClick={(event) => handleClickEventReaction(event, 'INTERESTED')}
+          disabled={
+            members.filter(
+              (member) =>
+                member.eventMember.userId === loggedUser.userId &&
+                member.participationStatus === 'INTERESTED'
+            ).length > 0
+          }
+        >
           Interesuje mnie
         </Button>
-        <Button color="secondary" variant="contained">
+        <Button
+          color="secondary"
+          variant="contained"
+          className={classes.eventReactionBtn}
+          onClick={(event) => handleClickEventReaction(event, 'TAKE_PART')}
+          disabled={
+            members.filter(
+              (member) =>
+                member.eventMember.userId === loggedUser.userId &&
+                member.participationStatus === 'TAKE_PART'
+            ).length > 0
+          }
+        >
           Weź udział
         </Button>
-        <Button color="primary" variant="contained">
-          <Share />
-        </Button>
+        {!invitation && (
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.eventReactionBtn}
+            onClick={(event) => handleClickShareEvent(event, eventId)}
+          >
+            <Share />
+          </Button>
+        )}
+        {invitation && (
+          <Button
+            color="secondary"
+            variant="contained"
+            className={classes.eventReactionBtn}
+            onClick={(event) => handleClickEventReaction(event, 'REJECTED')}
+          >
+            Odrzuć
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -59,6 +165,8 @@ Event.propTypes = {
   address: PropTypes.object.isRequired,
   members: PropTypes.array.isRequired,
   eventImage: PropTypes.object,
+  invitation: PropTypes.bool,
+  invitationDate: PropTypes.string,
 };
 
 export default withStyles(styles)(Event);

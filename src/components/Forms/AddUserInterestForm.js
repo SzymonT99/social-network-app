@@ -73,6 +73,7 @@ const AddUserInterestForm = (props) => {
           value={interestValue}
           label="Zainteresowanie"
           onChange={handleChangeInterest}
+          MenuProps={{ disableScrollLock: true }}
         >
           {possibleInterests &&
             possibleInterests.map((item) => (

@@ -17,8 +17,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { createPost, editPost } from '../../redux/actions/postActions';
-import { showNotification } from '../../redux/actions/notificationActions';
 import { createEvent } from '../../redux/actions/eventActions';
 
 const EventForm = (props) => {
@@ -29,7 +27,7 @@ const EventForm = (props) => {
   const [displayedImage, setDisplayedImage] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
 
-  const imagesInputRef = useRef(null);
+  const imageInputRef = useRef(null);
 
   const generateTimeNumbers = () => {
     let quarterHours = ['00', '15', '30', '45'];
@@ -56,11 +54,16 @@ const EventForm = (props) => {
     time: yup.string().required('Czas rozpoczęcia wydarzenia jest wymagany'),
     country: yup
       .string()
-      .required('Kraj, w którym odbywa się wydarzene jest wymagany'),
+      .required('Kraj, w którym odbywa się wydarzene jest wymagany')
+      .max(50, 'Nazwa państwa powinno mieć długość maksymalnie 50 znaków'),
     city: yup
       .string()
-      .required('Misto, w którym odbywa się wydarzene jest wymagane'),
-    zipCode: yup.string().required('Kod pocztowy dla wydarzenia jest wymagany'),
+      .required('Misto, w którym odbywa się wydarzene jest wymagane')
+      .max(30, 'Nazwa ulicy powinna mieć długość maksymalnie 30 znaków'),
+    zipCode: yup
+      .string()
+      .required('Kod pocztowy dla wydarzenia jest wymagany')
+      .max(10, 'Kod pocztowy powinnien mieć długość maksymalnie 10 znaków'),
   });
 
   const formik = useFormik({
@@ -78,10 +81,14 @@ const EventForm = (props) => {
     onSubmit: (values) => {
       const formData = new FormData();
 
-      formData.append('image', uploadedImage);
+      if (uploadedImage !== null) {
+        formData.append('image', uploadedImage[0]);
+      } else {
+        formData.append('image', null);
+      }
 
       const eventAddress = {
-        country: values.cauntry,
+        country: values.country,
         city: values.city,
         street: values.street,
         zipCode: values.zipCode,
@@ -101,6 +108,8 @@ const EventForm = (props) => {
         })
       );
 
+      console.log(event);
+
       dispatch(createEvent(formData));
 
       closePopup();
@@ -109,7 +118,7 @@ const EventForm = (props) => {
 
   const selectImage = (event) => {
     setDisplayedImage(URL.createObjectURL(event.target.files[0]));
-    setUploadedImage(event.target.files[0]);
+    setUploadedImage(event.target.files);
   };
 
   const deleteEventImage = () => {
@@ -134,7 +143,7 @@ const EventForm = (props) => {
               variant="contained"
               color="primary"
               className={classes.eventImageUploadBtn}
-              onClick={() => imagesInputRef.current.click()}
+              onClick={() => imageInputRef.current.click()}
             >
               Ustaw zdjęcie
             </Button>
@@ -142,7 +151,7 @@ const EventForm = (props) => {
               style={{ display: 'none' }}
               type="file"
               id="input-file"
-              ref={imagesInputRef}
+              ref={imageInputRef}
               accept="image/*"
               onChange={selectImage}
             />
@@ -226,6 +235,7 @@ const EventForm = (props) => {
               value={formik.values.time}
               label="Czas rozrpoczęcia wydarzenia"
               onChange={formik.handleChange}
+              MenuProps={{ disableScrollLock: true }}
               error={formik.touched.time && Boolean(formik.errors.time)}
               helperText={
                 formik.touched.time && formik.errors.time

@@ -4,6 +4,7 @@ import { showNotification } from './notificationActions';
 import { logoutUser } from './authActions';
 
 export const createEvent = (eventFormData) => (dispatch) => {
+  console.log(eventFormData);
   return eventService
     .createEvent(eventFormData)
     .then((response) => {
@@ -83,10 +84,95 @@ export const getEvents = () => (dispatch) => {
               allEvents: data,
             },
           });
+          return data;
         });
       } else if (response.status === 401) {
         dispatch(logoutUser());
         window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const respondToEvent = (eventId, reaction) => (dispatch) => {
+  return eventService
+    .respondToEvent(eventId, reaction)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getEvents());
+        if (reaction === 'TAKE_PART') {
+          dispatch(showNotification('success', 'Dołączono do wydarzenia'));
+        } else if (reaction === 'INTERESTED') {
+          dispatch(
+            showNotification('success', 'Określono zainteresowanie wydarzeniem')
+          );
+        } else if (reaction === 'REJECT') {
+          dispatch(
+            showNotification('success', 'Odrzucono zaproszenie na wydarzenie')
+          );
+        }
+      } else if (response.status === 401) {
+        window.location.href = '/auth/login';
+        dispatch(logoutUser());
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else if (response.status === 409) {
+        dispatch(
+          showNotification(
+            'warning',
+            'Zareagowano już w ten sposób na wydarzenie'
+          )
+        );
+      } else if (response.status === 400) {
+        dispatch(showNotification('warning', 'Nieznana reakcja na wydarzenie'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getEventInvitations = () => (dispatch) => {
+  return eventService
+    .getEventInvitations()
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: eventTypes.FETCH_EVENT_INVITATIONS,
+            payload: {
+              eventInvitations: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const shareEvent = (eventId) => (dispatch) => {
+  return eventService
+    .shareEvent(eventId)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(showNotification('success', 'Udostępniono wydarzenie'));
+      } else if (response.status === 401) {
+        window.location.href = '/auth/login';
+        dispatch(logoutUser());
         dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));

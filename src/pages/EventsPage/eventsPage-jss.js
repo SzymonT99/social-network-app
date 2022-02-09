@@ -91,9 +91,14 @@ const styles = (theme) => ({
   eventsListContainer: {
     marginTop: '15px',
     display: 'flex',
-    justifyContent: 'space-between',
     flexWrap: 'wrap',
     gap: '10px',
+  },
+  eventOrderSelect: {
+    '&.MuiOutlinedInput-root': {
+      backgroundColor: 'white',
+      width: '220px',
+    },
   },
 });
 

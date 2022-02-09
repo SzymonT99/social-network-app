@@ -1,6 +1,6 @@
 const styles = (theme) => ({
   eventContainer: {
-    width: '350px',
+    width: '352px',
     padding: '15px',
     backgroundColor: 'white',
     boxShadow:
@@ -33,6 +33,17 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  eventReactionBtn: {
+    '&.MuiButton-root': {
+      borderRadius: '5px',
+    },
+  },
+  invitationInfo: {
+    marginBottom: '10px',
+    padding: '5px 0',
+    border: '1px solid rgba(0, 0, 0, 0.22)',
+    backgroundColor: 'rgb(240,240,240)',
   },
 });
 

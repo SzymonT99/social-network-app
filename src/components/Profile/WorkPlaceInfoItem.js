@@ -89,6 +89,7 @@ const WorkPlaceInfoItem = (props) => {
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleCloseWorkSettings}
+              disableScrollLock={true}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'left',

@@ -90,6 +90,7 @@ const SharePostForm = (props) => {
               onChange={handleChangeSharedAccess}
               displayEmpty
               inputProps={{ 'aria-label': 'Without label' }}
+              MenuProps={{ disableScrollLock: true }}
             >
               <MenuItem value={true}>Wszyscy użytkownicy</MenuItem>
               <MenuItem value={false}>Znajomi użytkownika</MenuItem>
@@ -106,6 +107,7 @@ const SharePostForm = (props) => {
               onChange={handleChangeCommentsAccessInShared}
               displayEmpty
               inputProps={{ 'aria-label': 'Without label' }}
+              MenuProps={{ disableScrollLock: true }}
             >
               <MenuItem value={true}>Wyłączone</MenuItem>
               <MenuItem value={false}>Włączone</MenuItem>

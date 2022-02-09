@@ -93,6 +93,7 @@ const AddUserFavouriteForm = (props) => {
             value={favouriteType}
             label="Rodzaj"
             onChange={handleChangeFavouriteType}
+            MenuProps={{ disableScrollLock: true }}
           >
             <MenuItem value="BOOK">{favouriteTypes.BOOK}</MenuItem>
             <MenuItem value="FILM">{favouriteTypes.FILM}</MenuItem>

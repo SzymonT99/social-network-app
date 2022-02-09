@@ -112,6 +112,7 @@ const AddSchoolForm = (props) => {
             value={schoolType}
             label="Typ szkoły"
             onChange={handleSchoolTypeChange}
+            MenuProps={{ disableScrollLock: true }}
           >
             <MenuItem value="PRIMARY_SCHOOL">Szkoła Podstawowa</MenuItem>
             <MenuItem value="SECONDARY_SCHOOL">Szkoła Średnia</MenuItem>

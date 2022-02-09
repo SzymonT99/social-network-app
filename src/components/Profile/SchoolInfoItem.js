@@ -95,6 +95,7 @@ const SchoolInfoItem = (props) => {
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleCloseSchoolSettings}
+              disableScrollLock={true}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'left',
