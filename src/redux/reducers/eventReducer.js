@@ -2,6 +2,7 @@ import eventTypes from '../types/eventTypes';
 
 const initialState = {
   allEvents: [],
+  eventDetails: null,
   eventInvitations: [],
 };
 
@@ -11,6 +12,11 @@ const eventReducer = (state = initialState, action) => {
       return {
         ...state,
         allEvents: action.payload.allEvents,
+      };
+    case eventTypes.FETCH_EVENT_DETAILS:
+      return {
+        ...state,
+        eventDetails: action.payload.eventDetails,
       };
     case eventTypes.FETCH_EVENT_INVITATIONS:
       return {

@@ -25,7 +25,6 @@ import {
 } from '../../redux/actions/eventActions';
 import Popup from '../../components/Popup/Popup';
 import EventForm from '../../components/Forms/EventForm';
-import { getUserFriends } from '../../redux/actions/friendAction';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const EventsPage = (props) => {
@@ -41,14 +40,10 @@ const EventsPage = (props) => {
   const [eventTabType, setEventTabType] = useState('1');
   const [eventsOrder, setEventsOrder] = useState(1);
   const [openEventCreation, setOpenEventCreation] = useState(false);
-  const [orderedEvents, setOrderedEvents] = useState(null);
   const [searchedEvent, setSearchedEvent] = useState('');
 
   useEffect(() => {
-    dispatch(getEvents()).then((data) => {
-      setOrderedEvents(data);
-    });
-
+    dispatch(getEvents());
     dispatch(getEventInvitations());
   }, []);
 
@@ -59,15 +54,13 @@ const EventsPage = (props) => {
   const handleChangeEventsOrder = (event) => {
     let currentEventOrder = event.target.value;
     setEventsOrder(currentEventOrder);
+  };
 
-    let sortedEvents;
-    if (currentEventOrder === 1) {
-      sortedEvents = events.sort(
-        (x, y) => new Date(y.createdAt) - new Date(x.createdAt)
-      );
-      setOrderedEvents(sortedEvents);
-    } else if (currentEventOrder === 2) {
-      sortedEvents = events.sort((x, y) => {
+  const sortEvents = (eventOrderType) => {
+    if (eventOrderType === 1) {
+      events.sort((x, y) => new Date(y.createdAt) - new Date(x.createdAt));
+    } else if (eventOrderType === 2) {
+      events.sort((x, y) => {
         return (
           y.members.filter(
             (member) =>
@@ -81,15 +74,14 @@ const EventsPage = (props) => {
           ).length
         );
       });
-      setOrderedEvents(sortedEvents);
-    } else if (currentEventOrder === 3) {
-      sortedEvents = events.sort((a, b) => {
+    } else if (eventOrderType === 3) {
+      events.sort((a, b) => {
         let x = a.title.toUpperCase(),
           y = b.title.toUpperCase();
         return x === y ? 0 : x > y ? 1 : -1;
       });
-      setOrderedEvents(sortedEvents);
     }
+    return events;
   };
 
   const handleCloseEventCreation = () => {
@@ -100,10 +92,9 @@ const EventsPage = (props) => {
     const typedText = event.target.value;
     setSearchedEvent(typedText);
 
-    const filteredEvents = events.filter((event) =>
+    events.filter((event) =>
       event.title.toUpperCase().includes(typedText.toUpperCase())
     );
-    setOrderedEvents(filteredEvents);
   };
 
   return (
@@ -190,8 +181,8 @@ const EventsPage = (props) => {
         )}
         <TabPanelMUI value="1" sx={{ padding: 0 }}>
           <div className={classes.eventsListContainer}>
-            {orderedEvents ? (
-              orderedEvents.map((event) => (
+            {events ? (
+              sortEvents(eventsOrder).map((event) => (
                 <Event
                   key={event.eventId}
                   eventId={event.eventId}

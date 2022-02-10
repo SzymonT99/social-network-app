@@ -26,12 +26,13 @@ export const createEvent = (eventFormData) => (dispatch) => {
     });
 };
 
-export const editEvent = (eventId, formData) => (dispatch) => {
+export const editEvent = (eventId, formData) => (dispatch, getState) => {
   return eventService
     .editEvent(eventId, formData)
     .then((response) => {
       if (response.status === 200) {
         dispatch(getEvents());
+        dispatch(getEventById(getState().events.eventDetails.eventId));
         dispatch(showNotification('success', 'Edytowano wydarzenie'));
       } else if (response.status === 401) {
         window.location.href = '/auth/login';
@@ -72,19 +73,18 @@ export const deleteEvent = (eventId) => (dispatch) => {
     });
 };
 
-export const getEvents = () => (dispatch) => {
+export const getEventById = (eventId) => (dispatch) => {
   return eventService
-    .getEvents()
+    .getEventById(eventId)
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {
           dispatch({
-            type: eventTypes.FETCH_EVENTS,
+            type: eventTypes.FETCH_EVENT_DETAILS,
             payload: {
-              allEvents: data,
+              eventDetails: data,
             },
           });
-          return data;
         });
       } else if (response.status === 401) {
         dispatch(logoutUser());
@@ -99,12 +99,39 @@ export const getEvents = () => (dispatch) => {
     });
 };
 
-export const respondToEvent = (eventId, reaction) => (dispatch) => {
+export const getEvents = () => (dispatch) => {
+  return eventService
+    .getEvents()
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: eventTypes.FETCH_EVENTS,
+            payload: {
+              allEvents: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const respondToEvent = (eventId, reaction) => (dispatch, getState) => {
   return eventService
     .respondToEvent(eventId, reaction)
     .then((response) => {
       if (response.status === 200) {
         dispatch(getEvents());
+        dispatch(getEventById(getState().events.eventDetails.eventId));
         if (reaction === 'TAKE_PART') {
           dispatch(showNotification('success', 'Dołączono do wydarzenia'));
         } else if (reaction === 'INTERESTED') {
@@ -164,11 +191,12 @@ export const getEventInvitations = () => (dispatch) => {
     });
 };
 
-export const shareEvent = (eventId) => (dispatch) => {
+export const shareEvent = (eventId) => (dispatch, getState) => {
   return eventService
     .shareEvent(eventId)
     .then((response) => {
       if (response.status === 201) {
+        dispatch(getEventById(getState().events.eventDetails.eventId));
         dispatch(showNotification('success', 'Udostępniono wydarzenie'));
       } else if (response.status === 401) {
         window.location.href = '/auth/login';

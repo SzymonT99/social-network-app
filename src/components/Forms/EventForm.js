@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './form-jss';
 import { PropTypes } from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import defaultEventImgLandscape from '../../assets/default-event-photo-landscape.png';
@@ -17,10 +17,24 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { createEvent } from '../../redux/actions/eventActions';
+import { createEvent, editEvent } from '../../redux/actions/eventActions';
 
 const EventForm = (props) => {
-  const { classes, closePopup, edition } = props;
+  const {
+    classes,
+    closePopup,
+    edition,
+    eventId,
+    editedTitle,
+    editedDescription,
+    editedDate,
+    editedTime,
+    eventImage,
+    editedCountry,
+    editedCity,
+    editedStreet,
+    editedZipCode,
+  } = props;
 
   const dispatch = useDispatch();
 
@@ -28,6 +42,23 @@ const EventForm = (props) => {
   const [uploadedImage, setUploadedImage] = useState(null);
 
   const imageInputRef = useRef(null);
+
+  const convertUrlToFile = (filename, url, type) => {
+    fetch(url).then(async (response) => {
+      const blob = await response.blob();
+      const file = new File([blob], filename, {
+        type: type,
+      });
+      setUploadedImage(file);
+    });
+  };
+
+  useEffect(() => {
+    if (edition) {
+      convertUrlToFile(eventImage.filename, eventImage.url, eventImage.type);
+      setDisplayedImage(eventImage.url);
+    }
+  }, []);
 
   const generateTimeNumbers = () => {
     let quarterHours = ['00', '15', '30', '45'];
@@ -68,14 +99,14 @@ const EventForm = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      title: '',
-      description: '',
-      date: '',
-      time: '00:00',
-      country: '',
-      city: '',
-      street: '',
-      zipCode: '',
+      title: !edition ? '' : editedTitle,
+      description: !edition ? '' : editedDescription,
+      date: !edition ? '' : editedDate,
+      time: !edition ? '00:00' : editedTime,
+      country: !edition ? '' : editedCountry,
+      city: !edition ? '' : editedCity,
+      street: !edition ? '' : editedStreet,
+      zipCode: !edition ? '' : editedZipCode,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -108,9 +139,11 @@ const EventForm = (props) => {
         })
       );
 
-      console.log(event);
-
-      dispatch(createEvent(formData));
+      if (!edition) {
+        dispatch(createEvent(formData));
+      } else {
+        dispatch(editEvent(eventId, formData));
+      }
 
       closePopup();
     },
@@ -332,6 +365,16 @@ EventForm.propTypes = {
   classes: PropTypes.object.isRequired,
   closePopup: PropTypes.func.isRequired,
   edition: PropTypes.bool,
+  eventId: PropTypes.number,
+  editedTitle: PropTypes.string,
+  editedDescription: PropTypes.string,
+  editedDate: PropTypes.string,
+  editedTime: PropTypes.string,
+  editedCountry: PropTypes.string,
+  editedCity: PropTypes.string,
+  editedStreet: PropTypes.string,
+  editedZipCode: PropTypes.string,
+  eventImage: PropTypes.object,
 };
 
 export default withStyles(styles)(EventForm);

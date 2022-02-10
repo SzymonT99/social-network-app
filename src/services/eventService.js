@@ -12,7 +12,7 @@ const createEvent = (formData) => {
 };
 
 const editEvent = (eventId, formData) => {
-  return fetch(endpoints.manageEvent.replace('{eventId}', eventId), {
+  return fetch(endpoints.eventDetails.replace('{eventId}', eventId), {
     method: 'PUT',
     headers: {
       Authorization: authorization(),
@@ -23,7 +23,7 @@ const editEvent = (eventId, formData) => {
 
 const deleteEvent = (eventId) => {
   return fetch(
-    endpoints.manageEvent.replace('{eventId}', eventId) + '/archive',
+    endpoints.eventDetails.replace('{eventId}', eventId) + '/archive',
     {
       method: 'DELETE',
       headers: {
@@ -31,6 +31,16 @@ const deleteEvent = (eventId) => {
       },
     }
   );
+};
+
+const getEventById = (eventId) => {
+  return fetch(endpoints.eventDetails.replace('{eventId}', eventId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
 };
 
 const getEvents = () => {
@@ -84,6 +94,7 @@ export default {
   createEvent,
   editEvent,
   deleteEvent,
+  getEventById,
   getEvents,
   respondToEvent,
   getEventInvitations,
