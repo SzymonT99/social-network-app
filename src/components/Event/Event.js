@@ -7,12 +7,17 @@ import { Button, Divider, Typography } from '@mui/material';
 import { LocationOn, AccessTime, Share } from '@mui/icons-material';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { respondToEvent, shareEvent } from '../../redux/actions/eventActions';
+import {
+  getEvents,
+  respondToEvent,
+  shareEvent,
+} from '../../redux/actions/eventActions';
 
 const Event = (props) => {
   const {
     classes,
     eventId,
+    updateEvents,
     title,
     date,
     members,
@@ -29,7 +34,11 @@ const Event = (props) => {
   const loggedUser = useSelector((state) => state.auth.user);
 
   const handleClickEventReaction = (event, reaction) => {
-    dispatch(respondToEvent(eventId, reaction));
+    dispatch(respondToEvent(eventId, reaction)).then(() =>
+      dispatch(getEvents()).then((data) => {
+        updateEvents(data);
+      })
+    );
     event.stopPropagation();
   };
 
@@ -160,6 +169,7 @@ const Event = (props) => {
 Event.propTypes = {
   classes: PropTypes.object.isRequired,
   eventId: PropTypes.number.isRequired,
+  updateEvents: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   address: PropTypes.object.isRequired,

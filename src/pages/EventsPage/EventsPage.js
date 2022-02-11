@@ -10,6 +10,7 @@ import {
   FormControl,
   InputAdornment,
   MenuItem,
+  Pagination,
   Select,
   Tab,
   TextField,
@@ -40,10 +41,14 @@ const EventsPage = (props) => {
   const [eventTabType, setEventTabType] = useState('1');
   const [eventsOrder, setEventsOrder] = useState(1);
   const [openEventCreation, setOpenEventCreation] = useState(false);
-  const [searchedEvent, setSearchedEvent] = useState('');
+  const [searchedEventText, setSearchedEventText] = useState('');
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [eventsPageNumber, setEventsPageNumber] = useState(1);
 
   useEffect(() => {
-    dispatch(getEvents());
+    dispatch(getEvents()).then((data) => {
+      setFilteredEvents(data);
+    });
     dispatch(getEventInvitations());
   }, []);
 
@@ -58,9 +63,11 @@ const EventsPage = (props) => {
 
   const sortEvents = (eventOrderType) => {
     if (eventOrderType === 1) {
-      events.sort((x, y) => new Date(y.createdAt) - new Date(x.createdAt));
+      filteredEvents.sort(
+        (x, y) => new Date(y.createdAt) - new Date(x.createdAt)
+      );
     } else if (eventOrderType === 2) {
-      events.sort((x, y) => {
+      filteredEvents.sort((x, y) => {
         return (
           y.members.filter(
             (member) =>
@@ -75,13 +82,13 @@ const EventsPage = (props) => {
         );
       });
     } else if (eventOrderType === 3) {
-      events.sort((a, b) => {
+      filteredEvents.sort((a, b) => {
         let x = a.title.toUpperCase(),
           y = b.title.toUpperCase();
         return x === y ? 0 : x > y ? 1 : -1;
       });
     }
-    return events;
+    return filteredEvents;
   };
 
   const handleCloseEventCreation = () => {
@@ -90,11 +97,21 @@ const EventsPage = (props) => {
 
   const handleChangeSearchedEvent = (event) => {
     const typedText = event.target.value;
-    setSearchedEvent(typedText);
+    setSearchedEventText(typedText);
 
-    events.filter((event) =>
-      event.title.toUpperCase().includes(typedText.toUpperCase())
+    setFilteredEvents(
+      events.filter((event) =>
+        event.title.toUpperCase().includes(typedText.toUpperCase())
+      )
     );
+  };
+
+  const handleChangeEventsPageNumber = (event, value) => {
+    setEventsPageNumber(value);
+  };
+
+  const updateEvents = (updatedEvents) => {
+    setFilteredEvents(updatedEvents);
   };
 
   return (
@@ -136,7 +153,10 @@ const EventsPage = (props) => {
             title="Utwórz wydarzenie"
             onClose={handleCloseEventCreation}
           >
-            <EventForm closePopup={handleCloseEventCreation} />
+            <EventForm
+              closePopup={handleCloseEventCreation}
+              updateEvents={updateEvents}
+            />
           </Popup>
         </Paper>
         {eventTabType !== '2' && (
@@ -145,7 +165,7 @@ const EventsPage = (props) => {
               id="event-searchbar"
               placeholder="Szukaj wydarzenia"
               className={classes.eventSearchbar}
-              value={searchedEvent}
+              value={searchedEventText}
               onChange={handleChangeSearchedEvent}
               InputProps={{
                 endAdornment: (
@@ -182,21 +202,38 @@ const EventsPage = (props) => {
         <TabPanelMUI value="1" sx={{ padding: 0 }}>
           <div className={classes.eventsListContainer}>
             {events ? (
-              sortEvents(eventsOrder).map((event) => (
-                <Event
-                  key={event.eventId}
-                  eventId={event.eventId}
-                  title={event.title}
-                  date={event.eventDate}
-                  eventImage={event.image}
-                  address={event.eventAddress}
-                  members={event.members}
-                />
-              ))
+              sortEvents(eventsOrder)
+                .slice((eventsPageNumber - 1) * 6, eventsPageNumber * 6)
+                .map((event) => (
+                  <Event
+                    key={event.eventId}
+                    eventId={event.eventId}
+                    updateEvents={updateEvents}
+                    title={event.title}
+                    date={event.eventDate}
+                    eventImage={event.image}
+                    address={event.eventAddress}
+                    members={event.members}
+                  />
+                ))
             ) : (
               <div className={classes.loadingContainer}>
                 <CircularProgress color="secondary" />
               </div>
+            )}
+            {filteredEvents.length > 6 && (
+              <Paper elevation={4} className={classes.paginationContainer}>
+                <Pagination
+                  className={classes.eventsPagination}
+                  count={events && Math.ceil(events.length / 10)}
+                  color="secondary"
+                  size="large"
+                  showFirstButton
+                  showLastButton
+                  page={eventsPageNumber}
+                  onChange={handleChangeEventsPageNumber}
+                />
+              </Paper>
             )}
           </div>
         </TabPanelMUI>
@@ -209,6 +246,7 @@ const EventsPage = (props) => {
                   invitation
                   invitationDate={invitation.invitationDate}
                   eventId={invitation.eventId}
+                  updateEvents={updateEvents}
                   title={invitation.title}
                   date={invitation.eventDate}
                   eventImage={invitation.image}

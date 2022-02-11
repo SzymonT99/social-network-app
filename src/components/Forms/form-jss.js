@@ -172,18 +172,19 @@ const styles = (theme) => ({
     objectFit: 'cover',
     backgroundColor: 'rgb(233,233,233)',
     borderRadius: '10px',
+    marginBottom: '10px',
   },
   eventImageUploadBtn: {
     '&.MuiButton-root': {
       position: 'absolute',
-      bottom: '15px',
+      bottom: '25px',
       right: '10px',
     },
   },
   eventImageDeleteBtn: {
     '&.MuiButton-root': {
       position: 'absolute',
-      bottom: '15px',
+      bottom: '25px',
       right: '140px',
     },
   },

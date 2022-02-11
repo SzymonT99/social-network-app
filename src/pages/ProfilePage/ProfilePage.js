@@ -148,7 +148,6 @@ const ProfilePage = (props) => {
   const [openAddSchoolPopup, setOpenAddSchoolPopup] = useState(false);
   const [openAddWorkPopup, setOpenAddWorkPopup] = useState(false);
   const [showFavouriteForm, setShowFavouriteForm] = useState(false);
-  const [showUserInterestForm, setShowUserInterestForm] = useState(false);
   const [imagesPageNumber, setImagesPageNumber] = useState(1);
   const [openProfileEdition, setOpenProfileEdition] = useState(false);
   const [openAddAddressFormPopup, setOpenAddAddressFormPopup] = useState(false);

@@ -22,15 +22,12 @@ const editEvent = (eventId, formData) => {
 };
 
 const deleteEvent = (eventId) => {
-  return fetch(
-    endpoints.eventDetails.replace('{eventId}', eventId) + '/archive',
-    {
-      method: 'DELETE',
-      headers: {
-        Authorization: authorization(),
-      },
-    }
-  );
+  return fetch(endpoints.eventDetails.replace('{eventId}', eventId), {
+    method: 'DELETE',
+    headers: {
+      Authorization: authorization(),
+    },
+  });
 };
 
 const getEventById = (eventId) => {
@@ -51,6 +48,23 @@ const getEvents = () => {
       Authorization: authorization(),
     },
   });
+};
+
+const inviteToEvent = (eventId, invitedUserId) => {
+  return fetch(
+    endpoints.inviteToEvent.replace('{eventId}', eventId) +
+      '?' +
+      new URLSearchParams({
+        invitedUserId: invitedUserId,
+      }),
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
 };
 
 const respondToEvent = (eventId, reaction) => {
@@ -96,6 +110,7 @@ export default {
   deleteEvent,
   getEventById,
   getEvents,
+  inviteToEvent,
   respondToEvent,
   getEventInvitations,
   shareEvent,

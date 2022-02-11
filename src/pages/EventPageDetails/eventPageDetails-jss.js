@@ -60,7 +60,12 @@ const styles = (theme) => ({
       alignItems: 'center',
     },
   },
-  eventEditionActionBtn: {
+  eventManageBtnContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: '80px',
+  },
+  eventManageActionBtn: {
     '&.MuiButton-root': {
       backgroundColor: theme.palette.secondary.dark,
       '&:hover': {
@@ -70,8 +75,11 @@ const styles = (theme) => ({
       fontSize: '17px',
       display: 'flex',
       alignItems: 'center',
-      marginLeft: '260px',
+      marginLeft: '20px',
     },
+  },
+  eventInvitationsList: {
+    padding: '0px 50px',
   },
 });
 

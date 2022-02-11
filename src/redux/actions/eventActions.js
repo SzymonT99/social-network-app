@@ -4,7 +4,6 @@ import { showNotification } from './notificationActions';
 import { logoutUser } from './authActions';
 
 export const createEvent = (eventFormData) => (dispatch) => {
-  console.log(eventFormData);
   return eventService
     .createEvent(eventFormData)
     .then((response) => {
@@ -57,7 +56,7 @@ export const deleteEvent = (eventId) => (dispatch) => {
     .then((response) => {
       if (response.status === 200) {
         dispatch(getEvents());
-        dispatch(showNotification('success', 'Usunięto powydarzenie'));
+        dispatch(showNotification('success', 'Usunięto wydarzenie'));
       } else if (response.status === 401) {
         window.location.href = '/auth/login';
         dispatch(logoutUser());
@@ -111,6 +110,7 @@ export const getEvents = () => (dispatch) => {
               allEvents: data,
             },
           });
+          return data;
         });
       } else if (response.status === 401) {
         dispatch(logoutUser());
@@ -124,6 +124,32 @@ export const getEvents = () => (dispatch) => {
       console.log(error);
     });
 };
+
+export const inviteToEvent =
+  (eventId, invitedUserId) => (dispatch, getState) => {
+    return eventService
+      .inviteToEvent(eventId, invitedUserId)
+      .then((response) => {
+        if (response.status === 201) {
+          dispatch(showNotification('success', 'Wysłano zaproszenie'));
+          dispatch(getEventInvitations());
+          dispatch(getEventById(getState().events.eventDetails.eventId));
+        } else if (response.status === 409) {
+          dispatch(
+            showNotification('warning', 'Już wysłano zaproszenie do znajomego')
+          );
+        } else if (response.status === 401) {
+          dispatch(logoutUser());
+          window.location.href = '/auth/login';
+          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const respondToEvent = (eventId, reaction) => (dispatch, getState) => {
   return eventService

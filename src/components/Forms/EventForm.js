@@ -17,12 +17,17 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { createEvent, editEvent } from '../../redux/actions/eventActions';
+import {
+  createEvent,
+  editEvent,
+  getEvents,
+} from '../../redux/actions/eventActions';
 
 const EventForm = (props) => {
   const {
     classes,
     closePopup,
+    updateEvents,
     edition,
     eventId,
     editedTitle,
@@ -54,7 +59,7 @@ const EventForm = (props) => {
   };
 
   useEffect(() => {
-    if (edition) {
+    if (edition && eventImage !== null) {
       convertUrlToFile(eventImage.filename, eventImage.url, eventImage.type);
       setDisplayedImage(eventImage.url);
     }
@@ -113,7 +118,7 @@ const EventForm = (props) => {
       const formData = new FormData();
 
       if (uploadedImage !== null) {
-        formData.append('image', uploadedImage[0]);
+        formData.append('image', uploadedImage);
       } else {
         formData.append('image', null);
       }
@@ -140,7 +145,11 @@ const EventForm = (props) => {
       );
 
       if (!edition) {
-        dispatch(createEvent(formData));
+        dispatch(createEvent(formData)).then(() =>
+          dispatch(getEvents()).then((data) => {
+            updateEvents(data);
+          })
+        );
       } else {
         dispatch(editEvent(eventId, formData));
       }
@@ -151,7 +160,7 @@ const EventForm = (props) => {
 
   const selectImage = (event) => {
     setDisplayedImage(URL.createObjectURL(event.target.files[0]));
-    setUploadedImage(event.target.files);
+    setUploadedImage(event.target.files[0]);
   };
 
   const deleteEventImage = () => {
@@ -270,11 +279,6 @@ const EventForm = (props) => {
               onChange={formik.handleChange}
               MenuProps={{ disableScrollLock: true }}
               error={formik.touched.time && Boolean(formik.errors.time)}
-              helperText={
-                formik.touched.time && formik.errors.time
-                  ? formik.errors.time
-                  : ' '
-              }
             >
               {generateTimeNumbers().map((time, index) => (
                 <MenuItem key={index} value={time}>
@@ -364,6 +368,7 @@ const EventForm = (props) => {
 EventForm.propTypes = {
   classes: PropTypes.object.isRequired,
   closePopup: PropTypes.func.isRequired,
+  updateEvents: PropTypes.func,
   edition: PropTypes.bool,
   eventId: PropTypes.number,
   editedTitle: PropTypes.string,

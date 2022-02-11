@@ -100,6 +100,23 @@ const styles = (theme) => ({
       width: '220px',
     },
   },
+  eventsPagination: {
+    '&.MuiPagination-root': {
+      padding: '15px',
+      '& .MuiPagination-ul': {
+        justifyContent: 'center',
+      },
+    },
+  },
+  paginationContainer: {
+    '&.MuiPaper-root': {
+      width: '100%',
+      borderRadius: '10px',
+      display: 'flex',
+      alignItems: ' center',
+      justifyContent: 'center',
+    },
+  },
 });
 
 export default styles;
