@@ -81,6 +81,66 @@ const styles = (theme) => ({
   eventInvitationsList: {
     padding: '0px 50px',
   },
+  eventDetailsContainer: {
+    display: 'flex',
+  },
+  eventDetailsLeftContent: {
+    flex: 3.5,
+    padding: '20px 10px 20px 0px',
+  },
+  eventDetailsRightContent: {
+    flex: 2.5,
+    padding: '20px 0px 20px 10px',
+  },
+  eventDetailsInfo: {
+    '&.MuiPaper-root': {
+      borderRadius: '10px',
+      padding: '20px',
+    },
+  },
+  eventDetailsItem: {
+    display: 'flex',
+    width: '100%',
+    margin: '14px 0',
+  },
+  detailsItemText: {
+    '&.MuiTypography-root ': {
+      marginLeft: '8px',
+    },
+  },
+  detailsItemTextLink: {
+    '&:hover': {
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    },
+  },
+  detailsItemTitle: {
+    fontWeight: 500,
+  },
+  eventMembersStatsBox: {
+    padding: '4px 20px 4px 20px',
+    backgroundColor: '#ECEEF1',
+    borderTop: '1px solid rgba(0, 0, 0, 0.22)',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.22)',
+  },
+  eventMembersStatsBoxItem: {
+    display: 'flex',
+    alignItems: 'center',
+    margin: '14px 0',
+    width: 'auto',
+    '&:hover': {
+      cursor: 'pointer',
+      backgroundColor: '#cecfd3',
+    },
+  },
+  eventSharingStats: {
+    display: 'flex',
+    marginTop: '14px',
+    '&:hover': {
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    },
+  },
 });
 
 export default styles;

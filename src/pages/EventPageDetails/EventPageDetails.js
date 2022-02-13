@@ -12,7 +12,7 @@ import {
 } from '../../redux/actions/eventActions';
 import { useHistory, useParams } from 'react-router-dom';
 import defaultEventImgLandscape from '../../assets/default-event-photo-landscape.png';
-import { Button, Typography } from '@mui/material';
+import { Button, Divider, Tooltip, Typography } from '@mui/material';
 import GradeIcon from '@mui/icons-material/Grade';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
@@ -25,6 +25,17 @@ import EventForm from '../../components/Forms/EventForm';
 import ActionConfirmation from '../../components/ActionConfirmation/ActionConfirmation';
 import EventInvitation from '../../components/EventInvitation/EventInvitation';
 import CircularProgress from '@mui/material/CircularProgress';
+import EventIcon from '@mui/icons-material/Event';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import PersonIcon from '@mui/icons-material/Person';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+import InfoIcon from '@mui/icons-material/Info';
+import LanguageIcon from '@mui/icons-material/Language';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay';
+import MarkAsUnreadIcon from '@mui/icons-material/MarkAsUnread';
+import PeopleIcon from '@mui/icons-material/People';
+import UsersListPopup from '../../components/UsersListPopup/UsersListPopup';
 
 const EventsPageDetails = (props) => {
   const { classes } = props;
@@ -43,6 +54,10 @@ const EventsPageDetails = (props) => {
   const [openDeleteEventPopup, setOpenDeleteEventPopup] = useState(false);
   const [openEventInvitationsPopup, setOpenEventInvitationsPopup] =
     useState(false);
+  const [openUsersInterestedPopup, setOpenUsersInterestedPopup] =
+    useState(false);
+  const [openUsersTakePartPopup, setOpenUsersTakePartPopup] = useState(false);
+  const [openUserSharingPopup, setOpenUserSharingPopup] = useState(false);
 
   useEffect(() => {
     dispatch(getEventById(eventId));
@@ -70,6 +85,31 @@ const EventsPageDetails = (props) => {
 
   const handleCloseEventInvitationsPopup = () => {
     setOpenEventInvitationsPopup(false);
+  };
+
+  const calculateDifferenceBetweenDate = (date1, date2) => {
+    const difference = date1 - date2;
+
+    if (difference < 0) {
+      return 'Wydarzenie już się odbyło!';
+    } else {
+      let days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+      let hours = Math.ceil((difference / (1000 * 60 * 60)) % 24);
+
+      return days + ' dni i ' + hours + ' godz.';
+    }
+  };
+
+  const handleCloseUsersInterestedPopup = () => {
+    setOpenUsersInterestedPopup(false);
+  };
+
+  const handleCloseUsersTakePartPopup = () => {
+    setOpenUsersTakePartPopup(false);
+  };
+
+  const handleCloseUserSharingPopup = () => {
+    setOpenUserSharingPopup(false);
   };
 
   return (
@@ -301,6 +341,226 @@ const EventsPageDetails = (props) => {
               </Button>
             </div>
           </Paper>
+          <div className={classes.eventDetailsContainer}>
+            <div className={classes.eventDetailsLeftContent}>
+              <Paper elevation={4} className={classes.eventDetailsInfo}>
+                <Typography variant="h6" fontWeight="bold">
+                  Szczegóły
+                </Typography>
+                <div className={classes.eventDetailsItem}>
+                  <EventIcon fontSize="medium" />
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.detailsItemText}
+                  >
+                    <span className={classes.detailsItemTitle}>
+                      {'Nazwa: '}
+                    </span>
+                    {event.title}
+                  </Typography>
+                </div>
+                <div className={classes.eventDetailsItem}>
+                  <AccessTimeFilledIcon fontSize="medium" />
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.detailsItemText}
+                  >
+                    <span className={classes.detailsItemTitle}>
+                      {'Rozpoczyna się za: '}
+                    </span>
+                    {calculateDifferenceBetweenDate(
+                      new Date(event.eventDate),
+                      new Date()
+                    )}
+                  </Typography>
+                </div>
+                <div className={classes.eventDetailsItem}>
+                  <AddCircleIcon fontSize="medium" />
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.detailsItemText}
+                  >
+                    <span className={classes.detailsItemTitle}>
+                      {'Data utworzenia: '}
+                    </span>
+                    {new Date(event.createdAt)
+                      .toJSON()
+                      .slice(0, 10)
+                      .split('-')
+                      .reverse()
+                      .join('.') +
+                      new Date(event.createdAt)
+                        .toJSON()
+                        .slice(10, 16)
+                        .replace('T', ' ')}
+                  </Typography>
+                </div>
+                <div className={classes.eventDetailsItem}>
+                  <PersonIcon fontSize="medium" />
+                  <Tooltip title="Zobacz profil" placement="right">
+                    <Typography
+                      variant="subtitle2"
+                      className={classes.detailsItemText}
+                    >
+                      <span className={classes.detailsItemTitle}>
+                        {'Organizator: '}
+                      </span>
+                      <span
+                        className={classes.detailsItemTextLink}
+                        onClick={() =>
+                          history.push(
+                            '/app/profile/' + event.eventAuthor.userId
+                          )
+                        }
+                      >
+                        {event.eventAuthor.firstName +
+                          ' ' +
+                          event.eventAuthor.lastName}
+                      </span>
+                    </Typography>
+                  </Tooltip>
+                </div>
+                <div className={classes.eventDetailsItem}>
+                  <InfoIcon fontSize="medium" />
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.detailsItemText}
+                  >
+                    <span className={classes.detailsItemTitle}>{'Opis: '}</span>
+                    {event.description}
+                  </Typography>
+                </div>
+                <Divider />
+                <div className={classes.eventDetailsItem}>
+                  <LanguageIcon fontSize="medium" />
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.detailsItemText}
+                  >
+                    <span className={classes.detailsItemTitle}>
+                      {'Państwo: '}
+                    </span>
+                    {event.eventAddress.country}
+                  </Typography>
+                </div>
+                <div className={classes.eventDetailsItem}>
+                  <LocationCityIcon fontSize="medium" />
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.detailsItemText}
+                  >
+                    <span className={classes.detailsItemTitle}>
+                      {'Miasto: '}
+                    </span>
+                    {event.eventAddress.city}
+                  </Typography>
+                </div>
+                <div className={classes.eventDetailsItem}>
+                  <CalendarViewDayIcon fontSize="medium" />
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.detailsItemText}
+                  >
+                    <span className={classes.detailsItemTitle}>
+                      {'Ulica: '}
+                    </span>
+                    {event.eventAddress.city ? event.eventAddress.city : '-'}
+                  </Typography>
+                </div>
+                <div style={{ display: 'flex', marginTop: '14px' }}>
+                  <MarkAsUnreadIcon fontSize="medium" />
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.detailsItemText}
+                  >
+                    <span className={classes.detailsItemTitle}>
+                      {'Kod pocztowy: '}
+                    </span>
+                    {event.eventAddress.zipCode}
+                  </Typography>
+                </div>
+              </Paper>
+            </div>
+            <div className={classes.eventDetailsRightContent}>
+              <Paper elevation={4} className={classes.eventDetailsInfo}>
+                <Typography variant="h6" fontWeight="bold">
+                  Uczestnicy
+                </Typography>
+                <div className={classes.eventDetailsItem}>
+                  <PeopleIcon fontSize="large" />
+                  <Typography variant="subtitle1" marginLeft="10px">
+                    {event.members.filter(
+                      (member) =>
+                        member.participationStatus === 'INTERESTED' ||
+                        member.participationStatus === 'TAKE_PART'
+                    ).length + ' - liczba reakcji na wydarzenie'}
+                  </Typography>
+                </div>
+                <div className={classes.eventMembersStatsBox}>
+                  <div
+                    className={classes.eventMembersStatsBoxItem}
+                    onClick={() => setOpenUsersInterestedPopup(true)}
+                  >
+                    <GradeIcon fontSize="medium" />
+                    <Typography variant="subtitle1" marginLeft="10px">
+                      {event.members.filter(
+                        (member) => member.participationStatus === 'INTERESTED'
+                      ).length + ' - liczba os. zainteresowanych'}
+                    </Typography>
+                  </div>
+                  <UsersListPopup
+                    title="Użytkownicy zainteresowani"
+                    open={openUsersInterestedPopup}
+                    users={event.members
+                      .filter(
+                        (member) => member.participationStatus === 'INTERESTED'
+                      )
+                      .map((member) => member.eventMember)}
+                    onClose={handleCloseUsersInterestedPopup}
+                  />
+                  <div
+                    className={classes.eventMembersStatsBoxItem}
+                    onClick={() => setOpenUsersTakePartPopup(true)}
+                  >
+                    <CheckCircleIcon fontSize="medium" />
+                    <Typography variant="subtitle1" marginLeft="10px">
+                      {event.members.filter(
+                        (member) => member.participationStatus === 'TAKE_PART'
+                      ).length + ' - liczba os. biorących udział'}
+                    </Typography>
+                  </div>
+                  <UsersListPopup
+                    title="Użytkownicy biorący udział"
+                    open={openUsersTakePartPopup}
+                    users={event.members
+                      .filter(
+                        (member) => member.participationStatus === 'TAKE_PART'
+                      )
+                      .map((member) => member.eventMember)}
+                    onClose={handleCloseUsersTakePartPopup}
+                  />
+                </div>
+                <Typography variant="h6" fontWeight="bold" marginTop="14px">
+                  Udostępnienia
+                </Typography>
+                <div
+                  className={classes.eventSharingStats}
+                  onClick={() => setOpenUserSharingPopup(true)}
+                >
+                  <ShareIcon fontSize="large" />
+                  <Typography variant="subtitle1" marginLeft="10px">
+                    {event.sharing.length + ' - liczba udostępnień wydarzenia'}
+                  </Typography>
+                </div>
+                <UsersListPopup
+                  title="Udostępnienia użytkowników"
+                  open={openUserSharingPopup}
+                  users={event.sharing.map((el) => el.authorOfSharing)}
+                  onClose={handleCloseUserSharingPopup}
+                />
+              </Paper>
+            </div>
+          </div>
         </div>
       ) : (
         <div className={classes.loadingContainer}>

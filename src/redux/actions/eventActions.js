@@ -224,6 +224,8 @@ export const shareEvent = (eventId) => (dispatch, getState) => {
       if (response.status === 201) {
         dispatch(getEventById(getState().events.eventDetails.eventId));
         dispatch(showNotification('success', 'Udostępniono wydarzenie'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('error', 'Już udostępniłeś to wydarzenie'));
       } else if (response.status === 401) {
         window.location.href = '/auth/login';
         dispatch(logoutUser());
