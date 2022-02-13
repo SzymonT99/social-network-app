@@ -52,11 +52,11 @@ const styles = (theme) => ({
     '&.MuiButton-root': {
       fontSize: '16px',
       fontWeight: 'bold',
-      textTransform: 'none',
       width: '50%',
       height: '55px',
       alignSelf: 'center',
       margin: '15px',
+      borderRadius: '5px',
     },
   },
   postImageList: {
@@ -161,6 +161,42 @@ const styles = (theme) => ({
       fontSize: '18px',
       fontWeight: 'bold',
       width: '50%',
+    },
+  },
+  eventImageContainer: {
+    position: 'relative',
+  },
+  eventImage: {
+    width: '100%',
+    height: '300px',
+    objectFit: 'cover',
+    backgroundColor: 'rgb(233,233,233)',
+    borderRadius: '10px',
+    marginBottom: '10px',
+  },
+  eventImageUploadBtn: {
+    '&.MuiButton-root': {
+      position: 'absolute',
+      bottom: '25px',
+      right: '10px',
+    },
+  },
+  eventImageDeleteBtn: {
+    '&.MuiButton-root': {
+      position: 'absolute',
+      bottom: '25px',
+      right: '140px',
+    },
+  },
+  createEventBtn: {
+    '&.MuiButton-root': {
+      fontSize: '16px',
+      fontWeight: 'bold',
+      width: '50%',
+      height: '55px',
+      alignSelf: 'center',
+      margin: '15px',
+      borderRadius: '5px',
     },
   },
 });

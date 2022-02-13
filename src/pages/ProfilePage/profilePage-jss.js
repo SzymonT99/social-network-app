@@ -98,14 +98,14 @@ const styles = (theme) => ({
       flex: 1,
       borderRadius: '10px',
       padding: '20px 0',
-    },
-    '&.MuiButtonBase-root': {
-      textTransform: 'none',
-      color: 'rgba(0, 0, 0, 0.87)',
-      fontSize: '17px',
-      '&.Mui-selected': {
-        color: theme.palette.primary.contrastText,
-        backgroundColor: theme.palette.primary.main,
+      '&.MuiButtonBase-root': {
+        textTransform: 'none',
+        color: 'rgba(0, 0, 0, 0.87)',
+        fontSize: '17px',
+        '&.Mui-selected': {
+          color: theme.palette.primary.contrastText,
+          backgroundColor: theme.palette.primary.main,
+        },
       },
     },
   },

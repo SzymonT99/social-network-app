@@ -20,6 +20,7 @@ import { authenticate } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PropTypes } from 'prop-types';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { setCurrentPath } from '../../redux/actions/navActions';
 
 const validationSchema = yup.object({
   login: yup
@@ -56,6 +57,7 @@ const LoginPage = (props) => {
         authenticate(values.login, values.password, values.rememberUser)
       ).then((data) => {
         if (data !== undefined) {
+          dispatch(setCurrentPath('/app', 0));
           history.push('/app');
         } else {
           setLoading(false);

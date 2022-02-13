@@ -68,7 +68,6 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import PersonIcon from '@mui/icons-material/Person';
 import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
-import { setCurrentPath } from '../../redux/actions/navActions';
 import {
   deleteFriend,
   getFriendInvitations,
@@ -149,7 +148,6 @@ const ProfilePage = (props) => {
   const [openAddSchoolPopup, setOpenAddSchoolPopup] = useState(false);
   const [openAddWorkPopup, setOpenAddWorkPopup] = useState(false);
   const [showFavouriteForm, setShowFavouriteForm] = useState(false);
-  const [showUserInterestForm, setShowUserInterestForm] = useState(false);
   const [imagesPageNumber, setImagesPageNumber] = useState(1);
   const [openProfileEdition, setOpenProfileEdition] = useState(false);
   const [openAddAddressFormPopup, setOpenAddAddressFormPopup] = useState(false);
@@ -161,7 +159,6 @@ const ProfilePage = (props) => {
 
   useEffect(() => {
     dispatch(setLoading(true));
-    dispatch(setCurrentPath('/app/profile/' + loggedUser.userId, 1));
     dispatch(getUserProfile(selectedUserId));
     dispatch(getUserActivity(selectedUserId));
     dispatch(getUserFavouriteItems(selectedUserId));
