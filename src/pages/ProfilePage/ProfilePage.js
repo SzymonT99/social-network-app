@@ -9,6 +9,7 @@ import {
   Avatar,
   Button,
   Divider,
+  FormControl,
   IconButton,
   ImageList,
   ImageListItem,
@@ -19,14 +20,16 @@ import {
   List,
   ListItem,
   ListItemText,
+  MenuItem,
   Pagination,
+  Select,
   Tab,
   Tabs,
   TextField,
   Tooltip,
 } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-import { PhotoCamera } from '@mui/icons-material';
+import { PhotoCamera, Work } from '@mui/icons-material';
 import { TabContext, TabList } from '@mui/lab';
 import TabPanelMUI from '@mui/lab/TabPanel';
 import PhotoIcon from '@mui/icons-material/Photo';
@@ -73,8 +76,20 @@ import {
   getFriendInvitations,
   getUserFriends,
   inviteToFriend,
+  respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { setLoading } from '../../redux/actions/userActivityActions';
+import FriendInformation from '../../components/Profile/FriendInformation';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import SearchIcon from '@mui/icons-material/Search';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LockIcon from '@mui/icons-material/Lock';
+import PublicIcon from '@mui/icons-material/Public';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CakeIcon from '@mui/icons-material/Cake';
+import WorkIcon from '@mui/icons-material/Work';
+import PeopleIcon from '@mui/icons-material/People';
+import SchoolIcon from '@mui/icons-material/School';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -130,6 +145,9 @@ const ProfilePage = (props) => {
   const userFriendInvitations = useSelector(
     (state) => state.selectedProfile.friendInvitations
   );
+  const loggedUserFriendInvitations = useSelector(
+    (state) => state.auth.friendInvitations
+  );
   const isLoading = useSelector((state) => state.activity.isLoading);
 
   const history = useHistory();
@@ -156,6 +174,10 @@ const ProfilePage = (props) => {
   const [isUserFriend, setIsUserFriend] = useState(false);
   const [isInvitedToFriend, setIsInvitedToFriend] = useState(false);
   const [friendBtnHover, setFriendBtnHover] = useState(false);
+  const [searchedFriend, setSearchedFriend] = useState('');
+  const [friendsOrder, setFriendsOrder] = useState(1);
+  const [filteredFriends, setFilteredFriends] = useState([]);
+  const [friendsPageNumber, setFriendsPageNumber] = useState(1);
 
   useEffect(() => {
     dispatch(setLoading(true));
@@ -166,6 +188,7 @@ const ProfilePage = (props) => {
     dispatch(getUserImages(selectedUserId));
 
     dispatch(getUserFriends(selectedUserId)).then((friends) => {
+      setFilteredFriends(friends);
       if (
         loggedUser.userId !== parseInt(selectedUserId) &&
         friends.filter(
@@ -197,6 +220,10 @@ const ProfilePage = (props) => {
         setIsInvitedToFriend(false);
       }
     });
+
+    return () => {
+      dispatch(changeProfileNav(0));
+    };
   }, [selectedUserId]);
 
   const handleCloseAddSchoolPopup = () => {
@@ -264,7 +291,16 @@ const ProfilePage = (props) => {
   };
 
   const handleManageFriend = () => {
-    if (!isUserFriend && !isInvitedToFriend) {
+    if (
+      loggedUserFriendInvitations.filter(
+        (invitation) =>
+          invitation.invitingUser.userId === parseInt(selectedUserId)
+      ).length > 0
+    ) {
+      dispatch(respondToFriendInvitation(parseInt(selectedUserId), 'accept'));
+      setIsUserFriend(true);
+      setIsInvitedToFriend(false);
+    } else if (!isUserFriend && !isInvitedToFriend) {
       dispatch(inviteToFriend(selectedUserId));
       setIsInvitedToFriend(true);
     } else if (!isUserFriend && isInvitedToFriend) {
@@ -284,7 +320,22 @@ const ProfilePage = (props) => {
   };
 
   const generateFriendBtn = () => {
-    if (!isUserFriend && !isInvitedToFriend) {
+    if (
+      loggedUserFriendInvitations.filter(
+        (invitation) =>
+          invitation.invitingUser.userId === parseInt(selectedUserId)
+      ).length > 0
+    ) {
+      return (
+        <Typography
+          variant="subtitle1"
+          className={classes.friendManageBtnContent}
+        >
+          <CheckCircleOutlineIcon sx={{ marginRight: '7px' }} /> Akceptuj
+          zaproszenie
+        </Typography>
+      );
+    } else if (!isUserFriend && !isInvitedToFriend) {
       return (
         <Typography
           variant="subtitle1"
@@ -314,6 +365,53 @@ const ProfilePage = (props) => {
         </Typography>
       );
     }
+  };
+
+  const handleChangeSearchedFriend = (event) => {
+    let searchedFriendName = event.target.value;
+
+    setSearchedFriend(searchedFriendName);
+
+    setFilteredFriends(
+      userFriends.filter((friend) =>
+        (friend.user.firstName + friend.user.lastName)
+          .toUpperCase()
+          .includes(searchedFriendName.toUpperCase())
+      )
+    );
+  };
+
+  const handleChangeFriendsOrder = (event) => {
+    setFriendsOrder(event.target.value);
+  };
+
+  const handleChangeFriendsPageNumber = (event, value) => {
+    setFriendsPageNumber(value);
+  };
+
+  const sortFriends = (friendOrderType) => {
+    if (friendOrderType === 1) {
+      filteredFriends.sort((a, b) => {
+        let x = a.user.firstName.toUpperCase();
+        let y = b.user.firstName.toUpperCase();
+        return x === y ? 0 : x > y ? 1 : -1;
+      });
+    } else if (friendOrderType === 2) {
+      filteredFriends.sort(
+        (x, y) => new Date(y.friendFromDate) - new Date(x.friendFromDate)
+      );
+    } else if (friendOrderType === 3) {
+      filteredFriends.sort((x, y) => {
+        return y.userFriends.length - x.userFriends.length;
+      });
+    } else if (friendOrderType === 4) {
+      filteredFriends.sort((a, b) => {
+        let x = a.address.city.toUpperCase();
+        let y = b.address.city.toUpperCase();
+        return x === y ? 0 : x > y ? 1 : -1;
+      });
+    }
+    return filteredFriends;
   };
 
   return (
@@ -506,107 +604,186 @@ const ProfilePage = (props) => {
             <div className={classes.leftActivityContent}>
               <Paper elevation={4} sx={{ borderRadius: '10px' }}>
                 <div className={classes.profileInfoBoxHeading}>
-                  <Typography variant="h6">Znajomi użytkownika</Typography>
+                  <Typography variant="h6">Informacje</Typography>
                   <Link
                     component="button"
                     variant="subtitle1"
                     onClick={() => {
-                      dispatch(changeProfileNav(3));
+                      dispatch(changeProfileNav(1));
                     }}
                   >
                     Zobacz więcej
                   </Link>
                 </div>
-                <div className={classes.profileInfoBoxContent}>
-                  <ImageList
-                    cols={3}
-                    rowHeight={120}
-                    sx={{ margin: 0, paddingBottom: '50px' }}
-                    gap={3}
-                    variant="quilted"
-                  >
-                    {userFriends &&
-                      userFriends.map((friend, index) => {
-                        if (index < 9) {
-                          return (
-                            <ImageListItem
-                              key={friend.friendId}
-                              className={classes.imageListItemBox}
-                              onClick={() =>
-                                history.push(
-                                  '/app/profile/' + friend.user.userId
-                                )
-                              }
-                            >
-                              <img
-                                src={
-                                  friend.user.profilePhoto !== null
-                                    ? friend.user.profilePhoto.url
-                                    : defaultUserPhoto
-                                }
-                                alt={
-                                  friend.user.firstName + friend.user.lastName
-                                }
-                                loading="lazy"
-                              />
-                              <ImageListItemBar
-                                title={
-                                  <Typography
-                                    variant="body1"
-                                    className={classes.imageListItemTitle}
-                                  >
-                                    {friend.user.firstName}
-                                    <br />
-                                    {friend.user.lastName}
-                                  </Typography>
-                                }
-                                position="below"
-                              />
-                            </ImageListItem>
-                          );
-                        }
-                      })}
-                  </ImageList>
-                </div>
-              </Paper>
-              <Paper elevation={4} sx={{ borderRadius: '10px' }}>
-                <div className={classes.profileInfoBoxHeading}>
-                  <Typography variant="h6">Dodane zdjęcia</Typography>
-                  <Link
-                    component="button"
+                <div style={{ padding: '10px 15px', marginBottom: '15px' }}>
+                  {userProfile.isPublic ? (
+                    <Typography
+                      variant="subtitle1"
+                      className={classes.profileBasicInfoItem}
+                    >
+                      <PublicIcon /> Profil publiczny
+                    </Typography>
+                  ) : (
+                    <Typography
+                      variant="subtitle1"
+                      className={classes.profileBasicInfoItem}
+                    >
+                      <LockIcon /> Profil prywatny
+                    </Typography>
+                  )}
+                  <Typography
                     variant="subtitle1"
-                    onClick={() => {
-                      dispatch(changeProfileNav(2));
-                    }}
+                    className={classes.profileBasicInfoItem}
                   >
-                    Zobacz więcej
-                  </Link>
-                </div>
-                <div className={classes.profileInfoBoxContent}>
-                  <ImageList
-                    cols={3}
-                    rowHeight={120}
-                    sx={{ margin: 0 }}
-                    gap={6}
-                    variant="quilted"
+                    <LocationOnIcon />
+                    {userProfile.address.country +
+                      ', ' +
+                      userProfile.address.city}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.profileBasicInfoItem}
                   >
-                    {userImages &&
-                      userImages.map((item, index) => {
-                        if (index < 9) {
-                          return (
-                            <ImageListItem key={item.url}>
-                              <img
-                                src={item.url}
-                                alt={item.filename}
-                                loading="lazy"
-                              />
-                            </ImageListItem>
-                          );
-                        }
-                      })}
-                  </ImageList>
+                    <CakeIcon />
+                    {userProfile.dateOfBirth}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.profileBasicInfoItem}
+                  >
+                    <WorkIcon />
+                    {userProfile.job}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.profileBasicInfoItem}
+                  >
+                    <SchoolIcon />{' '}
+                    {'Uczęszczał(a) do ' +
+                      userProfile.schools[userProfile.schools.length - 1].name}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.profileBasicInfoItem}
+                  >
+                    <FavoriteIcon />
+                    {relationshipStatusTypes[userProfile.relationshipStatus]}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.profileBasicInfoItem}
+                  >
+                    <PeopleIcon /> {'Liczba znajomych: ' + userFriends.length}
+                  </Typography>
                 </div>
               </Paper>
+              {userFriends.length > 0 && (
+                <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+                  <div className={classes.profileInfoBoxHeading}>
+                    <Typography variant="h6">Znajomi użytkownika</Typography>
+                    <Link
+                      component="button"
+                      variant="subtitle1"
+                      onClick={() => {
+                        dispatch(changeProfileNav(3));
+                      }}
+                    >
+                      Zobacz więcej
+                    </Link>
+                  </div>
+                  <div className={classes.profileInfoBoxContent}>
+                    <ImageList
+                      cols={3}
+                      rowHeight={120}
+                      sx={{ margin: 0, paddingBottom: '50px' }}
+                      gap={3}
+                      variant="quilted"
+                    >
+                      {userFriends &&
+                        userFriends.map((friend, index) => {
+                          if (index < 9) {
+                            return (
+                              <ImageListItem
+                                key={friend.friendId}
+                                className={classes.imageListItemBox}
+                                onClick={() =>
+                                  history.push(
+                                    '/app/profile/' + friend.user.userId
+                                  )
+                                }
+                              >
+                                <img
+                                  src={
+                                    friend.user.profilePhoto !== null
+                                      ? friend.user.profilePhoto.url
+                                      : defaultUserPhoto
+                                  }
+                                  alt={
+                                    friend.user.firstName + friend.user.lastName
+                                  }
+                                  loading="lazy"
+                                />
+                                <ImageListItemBar
+                                  title={
+                                    <Typography
+                                      variant="body1"
+                                      className={classes.imageListItemTitle}
+                                    >
+                                      {friend.user.firstName}
+                                      <br />
+                                      {friend.user.lastName}
+                                    </Typography>
+                                  }
+                                  position="below"
+                                />
+                              </ImageListItem>
+                            );
+                          }
+                        })}
+                    </ImageList>
+                  </div>
+                </Paper>
+              )}
+              {userImages.length > 0 && (
+                <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+                  <div className={classes.profileInfoBoxHeading}>
+                    <Typography variant="h6">Dodane zdjęcia</Typography>
+                    <Link
+                      component="button"
+                      variant="subtitle1"
+                      onClick={() => {
+                        dispatch(changeProfileNav(2));
+                      }}
+                    >
+                      Zobacz więcej
+                    </Link>
+                  </div>
+                  <div className={classes.profileInfoBoxContent}>
+                    <ImageList
+                      cols={3}
+                      rowHeight={120}
+                      sx={{ margin: 0 }}
+                      gap={6}
+                      variant="quilted"
+                    >
+                      {userImages &&
+                        userImages.map((item, index) => {
+                          if (index < 9) {
+                            return (
+                              <ImageListItem key={item.url}>
+                                <img
+                                  src={item.url}
+                                  alt={item.filename}
+                                  loading="lazy"
+                                />
+                              </ImageListItem>
+                            );
+                          }
+                        })}
+                    </ImageList>
+                  </div>
+                </Paper>
+              )}
             </div>
             <div className={classes.rightActivityContent}>
               {userActivity ? (
@@ -1504,12 +1681,18 @@ const ProfilePage = (props) => {
           </TabPanel>
           <TabPanel classes={classes} value={profileNavIndex} index={2}>
             <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
+              <div className={classes.profileNavHeadingBox}>
+                <Typography variant="h4" fontWeight="bold" marginBottom="10px">
+                  Zdjęcia
+                </Typography>
+                <Divider />
+              </div>
               <ImageList
                 gap={15}
                 variant="quilted"
                 cols={2}
                 rowHeight={420}
-                sx={{ margin: 0, padding: '15px' }}
+                sx={{ margin: 0, padding: '20px' }}
               >
                 {userImages &&
                   userImages
@@ -1548,62 +1731,92 @@ const ProfilePage = (props) => {
           </TabPanel>
           <TabPanel classes={classes} value={profileNavIndex} index={3}>
             <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
-              <ImageList
-                cols={5}
-                rowHeight={200}
-                sx={{ margin: 0, padding: '15px', paddingBottom: '40px' }}
-                gap={5}
-                variant="quilted"
-              >
-                {userFriends &&
-                  userFriends.map((friend, index) => {
-                    if (index < 9) {
-                      return (
-                        <ImageListItem
-                          key={friend.friendId}
-                          className={classes.imageListItemBox}
-                          onClick={() =>
-                            history.push('/app/profile/' + friend.user.userId)
-                          }
-                        >
-                          <img
-                            src={
-                              friend.user.profilePhoto !== null
-                                ? friend.user.profilePhoto.url
-                                : defaultUserPhoto
-                            }
-                            alt={friend.user.firstName + friend.user.lastName}
-                            loading="lazy"
-                          />
-                          <ImageListItemBar
-                            title={
-                              <Typography
-                                variant="subtitle2"
-                                fontWeight="bold"
-                                className={classes.imageListItemTitle}
-                                noWrap
-                              >
-                                {friend.user.firstName +
-                                  ' ' +
-                                  friend.user.lastName}
-                              </Typography>
-                            }
-                            position="below"
-                          />
-                        </ImageListItem>
-                      );
-                    }
-                  })}
-              </ImageList>
-              {userFriends.length === 0 && (
-                <Typography
-                  fontWeight="bold"
-                  textAlign="center"
-                  variant="h6"
-                  marginBottom="20px"
-                >
-                  Brak znajomych
+              <div className={classes.profileNavHeadingBox}>
+                <Typography variant="h4" className={classes.friendTitle}>
+                  Znajomi
+                  <span className={classes.friendNumber}>
+                    {userFriends.length}
+                  </span>
                 </Typography>
+                <Divider />
+                <div className={classes.userFriendsActionContainer}>
+                  <TextField
+                    id="friend-searchbar"
+                    placeholder="Wyszukaj znajomego"
+                    className={classes.friendSearchbar}
+                    value={searchedFriend}
+                    onChange={handleChangeSearchedFriend}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <div className={classes.friendsOrderBox}>
+                    <Typography
+                      component="p"
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      marginRight="10px"
+                    >
+                      Sortuj według:
+                    </Typography>
+                    <FormControl>
+                      <Select
+                        className={classes.friendOrderSelect}
+                        value={friendsOrder}
+                        onChange={handleChangeFriendsOrder}
+                        MenuProps={{ disableScrollLock: true }}
+                      >
+                        <MenuItem value={1}>Kolejności alfabetycznej</MenuItem>
+                        <MenuItem value={2}>Daty dodania</MenuItem>
+                        <MenuItem value={3}>Ilości znajomych</MenuItem>
+                        <MenuItem value={4}>Miejsca zamieszkania</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', margin: '10px' }}>
+                {userFriends &&
+                  sortFriends(friendsOrder)
+                    .slice((friendsPageNumber - 1) * 6, friendsPageNumber * 6)
+                    .map((friend) => (
+                      <FriendInformation
+                        key={friend.friendId}
+                        name={
+                          friend.user.firstName + ' ' + friend.user.lastName
+                        }
+                        city={friend.address.city}
+                        userFriendId={friend.user.userId}
+                        profilePhoto={friend.user.profilePhoto}
+                        friendList={friend.userFriends}
+                      />
+                    ))}
+                {userFriends.length === 0 && (
+                  <Typography
+                    variant="subtitle1"
+                    mrginTop="20px"
+                    marginBottom="20px"
+                    marginLeft="10px"
+                  >
+                    Brak znajomych
+                  </Typography>
+                )}
+              </div>
+              {userFriends.length > 10 && (
+                <Pagination
+                  className={classes.friendsPagination}
+                  count={userFriends && Math.ceil(userFriends.length / 10)}
+                  color="secondary"
+                  size="medium"
+                  showFirstButton
+                  showLastButton
+                  page={friendsPageNumber}
+                  onChange={handleChangeFriendsPageNumber}
+                />
               )}
             </Paper>
           </TabPanel>

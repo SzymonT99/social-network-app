@@ -20,7 +20,6 @@ import { authenticate } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PropTypes } from 'prop-types';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { setCurrentPath } from '../../redux/actions/navActions';
 
 const validationSchema = yup.object({
   login: yup
@@ -57,7 +56,6 @@ const LoginPage = (props) => {
         authenticate(values.login, values.password, values.rememberUser)
       ).then((data) => {
         if (data !== undefined) {
-          dispatch(setCurrentPath('/app', 0));
           history.push('/app');
         } else {
           setLoading(false);
@@ -87,7 +85,7 @@ const LoginPage = (props) => {
             Social Network
           </Typography>
           <Typography variant="h4" className={classes.appDescription}>
-            Serwis społecznościowy wykonywany w ramach pracy inżynierskiej na
+            Serwis społecznościowy wykonany w ramach pracy inżynierskiej na
             Państwowej Wyższej Szkole Zawodowej w Tarnowie na kierunku
             Informatyka.
           </Typography>

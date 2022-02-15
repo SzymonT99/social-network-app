@@ -23,7 +23,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { setCurrentPath } from '../../redux/actions/navActions';
 import { changeProfileNav } from '../../redux/actions/userProfileActions';
 
 const ListItem = withStyles((theme) => ({
@@ -63,9 +62,8 @@ const ListItem = withStyles((theme) => ({
 const Sidebar = (props) => {
   const { classes } = props;
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
-  const pathIndex = useSelector((state) => state.navigation.pathIndex);
 
-  const [selectedItem, setSelectedItem] = useState(pathIndex);
+  const [selectedItem, setSelectedItem] = useState(0);
 
   const location = useLocation();
 
@@ -76,49 +74,53 @@ const Sidebar = (props) => {
     setSelectedItem(index);
     if (index === 0) {
       history.push('/app');
-      dispatch(setCurrentPath('/app', 0));
     } else if (index === 1) {
-      dispatch(changeProfileNav(0));
       history.push('/app/profile/' + loggedUserProfile.userProfileId);
-      if (loggedUserProfile) {
-        dispatch(
-          setCurrentPath('/app/profile/' + loggedUserProfile.userProfileId, 1)
-        );
-      }
     } else if (index === 2) {
       dispatch(changeProfileNav(3));
-      history.push('/app/profile/' + loggedUserProfile.userProfileId);
-      dispatch(setCurrentPath('/app/friends', 2));
+      history.push('/app/friends');
     } else if (index === 3) {
       history.push('/app/groups');
-      dispatch(setCurrentPath('/app/groups', 3));
     } else if (index === 4) {
       history.push('/app/chat');
-      dispatch(setCurrentPath('/app/chat', 4));
     } else if (index === 5) {
       history.push('/app/events');
-      dispatch(setCurrentPath('/app/events', 5));
     } else if (index === 6) {
       history.push('/app/favourite-posts');
-      dispatch(setCurrentPath('/app/favourite-posts', 6));
     } else if (index === 7) {
       history.push('/app/settings');
-      dispatch(setCurrentPath('/app/settings', 7));
+    }
+  };
+
+  const setNavByLocation = (location) => {
+    const pathDetails = location.pathname.substr(4, location.pathname.length);
+
+    if (pathDetails === '') {
+      setSelectedItem(0);
+    } else if (
+      pathDetails.includes('/profile/' + loggedUserProfile.userProfileId)
+    ) {
+      setSelectedItem(1);
+    } else if (pathDetails.includes('/friends')) {
+      setSelectedItem(2);
+    } else if (pathDetails.includes('/groups')) {
+      setSelectedItem(3);
+    } else if (pathDetails.includes('/chat')) {
+      setSelectedItem(4);
+    } else if (pathDetails.includes('/events')) {
+      setSelectedItem(5);
+    } else if (pathDetails.includes('/favourite-posts')) {
+      setSelectedItem(6);
+    } else if (pathDetails.includes('/settings')) {
+      setSelectedItem(7);
+    } else {
+      setSelectedItem(null);
     }
   };
 
   useEffect(() => {
-    if (
-      location.pathname.includes('/app/profile/') &&
-      !location.pathname.includes(
-        '/app/profile/' + loggedUserProfile.userProfileId
-      )
-    ) {
-      setSelectedItem(null);
-    } else {
-      setSelectedItem(pathIndex);
-    }
-  }, [pathIndex]);
+    setNavByLocation(location);
+  }, [location]);
 
   return (
     <div className={classes.sidebarContainer}>

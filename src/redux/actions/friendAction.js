@@ -30,27 +30,34 @@ export const inviteToFriend = (inviterUserId) => (dispatch, getState) => {
 };
 
 export const getFriendInvitations =
-  (userId, forLoggedIn = false, isDisplayed = false) =>
+  (
+    userId,
+    forLoggedIn = false,
+    isDisplayed = false,
+    forFriendListItem = false
+  ) =>
   (dispatch) => {
     return friendService
       .getFriendInvitations(userId, isDisplayed)
       .then((response) => {
         if (response.status === 200) {
           return response.json().then((data) => {
-            if (!forLoggedIn) {
-              dispatch({
-                type: userProfileTypes.FETCH_USER_FRIENDS_INVITATION,
-                payload: {
-                  friendInvitations: data,
-                },
-              });
-            } else {
-              dispatch({
-                type: authTypes.SAVE_LOGGED_USER_FRIEND_INVITATIONS,
-                payload: {
-                  friendInvitations: data,
-                },
-              });
+            if (!forFriendListItem) {
+              if (!forLoggedIn) {
+                dispatch({
+                  type: userProfileTypes.FETCH_USER_FRIENDS_INVITATION,
+                  payload: {
+                    friendInvitations: data,
+                  },
+                });
+              } else {
+                dispatch({
+                  type: authTypes.SAVE_LOGGED_USER_FRIEND_INVITATIONS,
+                  payload: {
+                    friendInvitations: data,
+                  },
+                });
+              }
             }
             return data;
           });
@@ -70,27 +77,29 @@ export const getFriendInvitations =
   };
 
 export const getUserFriends =
-  (userId, forLoggedIn = false) =>
+  (userId, forLoggedIn = false, forFriendListItem = false) =>
   (dispatch) => {
     return friendService
       .getUserFriends(userId)
       .then((response) => {
         if (response.status === 200) {
           return response.json().then((data) => {
-            if (!forLoggedIn) {
-              dispatch({
-                type: userProfileTypes.FETCH_USER_FRIENDS,
-                payload: {
-                  friends: data,
-                },
-              });
-            } else {
-              dispatch({
-                type: authTypes.SAVE_LOGGED_USER_FRIENDS,
-                payload: {
-                  friends: data,
-                },
-              });
+            if (!forFriendListItem) {
+              if (!forLoggedIn) {
+                dispatch({
+                  type: userProfileTypes.FETCH_USER_FRIENDS,
+                  payload: {
+                    friends: data,
+                  },
+                });
+              } else {
+                dispatch({
+                  type: authTypes.SAVE_LOGGED_USER_FRIENDS,
+                  payload: {
+                    friends: data,
+                  },
+                });
+              }
             }
             return data;
           });
@@ -116,6 +125,9 @@ export const respondToFriendInvitation =
       .then((response) => {
         if (response.status === 200) {
           dispatch(getUserFriends(getState().auth.user.userId, true));
+          dispatch(
+            getUserFriends(getState().selectedProfile.userProfile.userProfileId)
+          );
           dispatch(getFriendInvitations(getState().auth.user.userId, true));
           if (reaction === 'accept') {
             dispatch(showNotification('success', 'Zaakceptowano zaproszenie'));

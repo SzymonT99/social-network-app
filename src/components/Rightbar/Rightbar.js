@@ -3,7 +3,7 @@ import { withStyles } from '@mui/styles';
 import styles from './rightbar-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import FriendListItem from '../FriendsListItem/FriendListItem';
+import FriendListItem from '../FriendListItem/FriendListItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserFriends } from '../../redux/actions/friendAction';
 
