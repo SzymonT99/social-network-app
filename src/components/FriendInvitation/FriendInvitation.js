@@ -13,13 +13,14 @@ import { useHistory } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   friendInvitation: {
     width: '100%',
-    margin: '10px 0 30px 0',
+    margin: '10px 0 10px 0',
   },
   heading: {
     display: 'flex',
     alignItems: 'center',
     '&:hover': {
       cursor: 'pointer',
+      textDecoration: 'underline',
     },
   },
   userPhoto: {
@@ -27,6 +28,9 @@ const useStyles = makeStyles((theme) => ({
       width: '45px',
       height: '45px',
       marginRight: '20px',
+      '&:hover': {
+        cursor: 'pointer',
+      },
     },
   },
   btnContainer: {

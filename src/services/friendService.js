@@ -3,7 +3,7 @@ import authorization from './authorization';
 
 const inviteToFriend = (inviterUserId) => {
   return fetch(
-    endpoints.friendInvitations +
+    endpoints.inviteFriend +
       '?' +
       new URLSearchParams({
         userId: inviterUserId,
@@ -18,13 +18,30 @@ const inviteToFriend = (inviterUserId) => {
   );
 };
 
-const getFriendInvitations = (userId, isDisplayed) => {
+const getReceivedFriendInvitations = (userId, isDisplayed) => {
   return fetch(
-    endpoints.friendInvitations +
+    endpoints.receivedFriendInvitations +
       '?' +
       new URLSearchParams({
         userId: userId,
         isDisplayed: isDisplayed,
+      }),
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
+const getSentFriendInvitations = (userId) => {
+  return fetch(
+    endpoints.sentFriendInvitations +
+      '?' +
+      new URLSearchParams({
+        userId: userId,
       }),
     {
       method: 'GET',
@@ -70,6 +87,16 @@ const deleteFriend = (friendId, isDeletedInvitation) => {
   );
 };
 
+const getUserFriendsSuggestions = () => {
+  return fetch(endpoints.userFriendsSuggestions, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 const getUserFriends = (userId) => {
   return fetch(
     endpoints.userFriends +
@@ -89,8 +116,10 @@ const getUserFriends = (userId) => {
 
 export default {
   inviteToFriend,
-  getFriendInvitations,
+  getSentFriendInvitations,
+  getReceivedFriendInvitations,
   respondToFriendInvitation,
   deleteFriend,
+  getUserFriendsSuggestions,
   getUserFriends,
 };

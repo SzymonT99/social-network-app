@@ -34,7 +34,7 @@ const ActivityBoard = (props) => {
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserFriendInvitations = useSelector(
-    (state) => state.auth.friendInvitations
+    (state) => state.friends.receivedFriendInvitations
   );
 
   const [openPostCreation, setOpenPostCreation] = useState(false);

@@ -3,13 +3,15 @@ import { showNotification } from './notificationActions';
 import { logoutUser } from './authActions';
 import authTypes from '../types/authTypes';
 import userProfileTypes from '../types/userProfileTypes';
+import friendTypes from '../types/friendTypes';
 
 export const inviteToFriend = (inviterUserId) => (dispatch, getState) => {
   return friendService
     .inviteToFriend(inviterUserId)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getFriendInvitations(inviterUserId));
+        dispatch(getSentFriendInvitations(getState().auth.user.userId));
+        dispatch(getUserFriendsSuggestions());
         dispatch(getUserFriends(getState().auth.user.userId, true));
         dispatch(showNotification('success', 'Wysłano zaproszenie'));
       } else if (response.status === 403) {
@@ -29,28 +31,35 @@ export const inviteToFriend = (inviterUserId) => (dispatch, getState) => {
     });
 };
 
-export const getFriendInvitations =
-  (userId, forLoggedIn = false, isDisplayed = false) =>
+export const getReceivedFriendInvitations =
+  (
+    userId,
+    forLoggedIn = false,
+    isDisplayed = false,
+    forFriendListItem = false
+  ) =>
   (dispatch) => {
     return friendService
-      .getFriendInvitations(userId, isDisplayed)
+      .getReceivedFriendInvitations(userId, isDisplayed)
       .then((response) => {
         if (response.status === 200) {
           return response.json().then((data) => {
-            if (!forLoggedIn) {
-              dispatch({
-                type: userProfileTypes.FETCH_USER_FRIENDS_INVITATION,
-                payload: {
-                  friendInvitations: data,
-                },
-              });
-            } else {
-              dispatch({
-                type: authTypes.SAVE_LOGGED_USER_FRIEND_INVITATIONS,
-                payload: {
-                  friendInvitations: data,
-                },
-              });
+            if (!forFriendListItem) {
+              if (!forLoggedIn) {
+                dispatch({
+                  type: userProfileTypes.FETCH_USER_FRIENDS_INVITATION,
+                  payload: {
+                    friendInvitations: data,
+                  },
+                });
+              } else {
+                dispatch({
+                  type: friendTypes.FETCH_LOGGED_USER_RECEIVED_FRIEND_INVITATIONS,
+                  payload: {
+                    receivedFriendInvitations: data,
+                  },
+                });
+              }
             }
             return data;
           });
@@ -69,28 +78,82 @@ export const getFriendInvitations =
       });
   };
 
+export const getSentFriendInvitations = (userId) => (dispatch) => {
+  return friendService
+    .getSentFriendInvitations(userId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: friendTypes.FETCH_LOGGED_USER_SENT_FRIEND_INVITATIONS,
+            payload: {
+              sentFriendInvitations: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getUserFriendsSuggestions = () => (dispatch) => {
+  return friendService
+    .getUserFriendsSuggestions()
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: friendTypes.FETCH_USER_FRIENDS_SUGGESTIONS,
+            payload: {
+              friendsSuggestions: data,
+            },
+          });
+        });
+      } else if (response.status === 401) {
+        dispatch(logoutUser());
+        window.location.href = '/auth/login';
+        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const getUserFriends =
-  (userId, forLoggedIn = false) =>
+  (userId, forLoggedIn = false, forFriendListItem = false) =>
   (dispatch) => {
     return friendService
       .getUserFriends(userId)
       .then((response) => {
         if (response.status === 200) {
           return response.json().then((data) => {
-            if (!forLoggedIn) {
-              dispatch({
-                type: userProfileTypes.FETCH_USER_FRIENDS,
-                payload: {
-                  friends: data,
-                },
-              });
-            } else {
-              dispatch({
-                type: authTypes.SAVE_LOGGED_USER_FRIENDS,
-                payload: {
-                  friends: data,
-                },
-              });
+            if (!forFriendListItem) {
+              if (!forLoggedIn) {
+                dispatch({
+                  type: userProfileTypes.FETCH_LOGGED_USER_FRIENDS,
+                  payload: {
+                    friends: data,
+                  },
+                });
+              } else {
+                dispatch({
+                  type: friendTypes.FETCH_LOGGED_USER_FRIENDS,
+                  payload: {
+                    userFriends: data,
+                  },
+                });
+              }
             }
             return data;
           });
@@ -116,7 +179,16 @@ export const respondToFriendInvitation =
       .then((response) => {
         if (response.status === 200) {
           dispatch(getUserFriends(getState().auth.user.userId, true));
-          dispatch(getFriendInvitations(getState().auth.user.userId, true));
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserFriends(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
+          dispatch(
+            getReceivedFriendInvitations(getState().auth.user.userId, true)
+          );
           if (reaction === 'accept') {
             dispatch(showNotification('success', 'Zaakceptowano zaproszenie'));
           } else {
@@ -153,9 +225,14 @@ export const deleteFriend =
       .then((response) => {
         if (response.status === 200) {
           dispatch(getUserFriends(getState().auth.user.userId, true));
-          dispatch(
-            getUserFriends(getState().selectedProfile.userProfile.userProfileId)
-          );
+          dispatch(getSentFriendInvitations(getState().auth.user.userId));
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserFriends(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
           if (!deletingInvitation) {
             dispatch(showNotification('success', 'Usunięto ze znajomych'));
           } else {

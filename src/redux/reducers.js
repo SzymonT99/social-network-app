@@ -3,16 +3,16 @@ import authReducer from '../redux/reducers/authReducer';
 import notificationReducer from '../redux/reducers/notificationReducer';
 import userActivityReducer from './reducers/userActivityReducer';
 import userProfileReducer from './reducers/userProfileReducer';
-import navReducer from './reducers/navReducer';
 import eventReducer from './reducers/eventReducer';
+import friendReducer from './reducers/friendReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   notification: notificationReducer,
   activity: userActivityReducer,
   selectedProfile: userProfileReducer,
-  navigation: navReducer,
   events: eventReducer,
+  friends: friendReducer,
 });
 
 export default rootReducer;

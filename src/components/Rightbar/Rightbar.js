@@ -3,7 +3,7 @@ import { withStyles } from '@mui/styles';
 import styles from './rightbar-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import FriendListItem from '../FriendsListItem/FriendListItem';
+import FriendListItem from '../FriendListItem/FriendListItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserFriends } from '../../redux/actions/friendAction';
 
@@ -13,7 +13,7 @@ const Rightbar = (props) => {
   const dispatch = useDispatch();
 
   const loggedUser = useSelector((state) => state.auth.user);
-  const loggedUserFriends = useSelector((state) => state.auth.friends);
+  const loggedUserFriends = useSelector((state) => state.friends.userFriends);
 
   useEffect(() => {
     dispatch(getUserFriends(loggedUser.userId, true));

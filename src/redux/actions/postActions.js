@@ -138,11 +138,13 @@ export const likePost =
             });
           }
 
-          dispatch(
-            getUserActivity(
-              getState().selectedProfile.userProfile.userProfileId
-            )
-          );
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
 
           dispatch(showNotification('success', 'Polubiono post'));
         } else if (response.status === 401) {
@@ -186,11 +188,14 @@ export const dislikePost =
               },
             });
           }
-          dispatch(
-            getUserActivity(
-              getState().selectedProfile.userProfile.userProfileId
-            )
-          );
+
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
           dispatch(showNotification('success', 'Usunięto polubienie postu'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -228,11 +233,13 @@ export const commentPost =
                 payload: { postId: postId, comment: data },
               });
             }
-            dispatch(
-              getUserActivity(
-                getState().selectedProfile.userProfile.userProfileId
-              )
-            );
+            if (getState().selectedProfile.userProfile) {
+              dispatch(
+                getUserActivity(
+                  getState().selectedProfile.userProfile.userProfileId
+                )
+              );
+            }
             dispatch(showNotification('success', 'Dodano komentarz'));
           });
         } else if (response.status === 401) {
@@ -276,11 +283,13 @@ export const editPostComment =
               },
             });
           }
-          dispatch(
-            getUserActivity(
-              getState().selectedProfile.userProfile.userProfileId
-            )
-          );
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
           dispatch(showNotification('success', 'Komentarz został zmieniony'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -317,11 +326,13 @@ export const deletePostComment =
               payload: { postId: postId, commentId: commentId },
             });
           }
-          dispatch(
-            getUserActivity(
-              getState().selectedProfile.userProfile.userProfileId
-            )
-          );
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
           dispatch(showNotification('success', 'Komentarz został usunięty'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -372,11 +383,13 @@ export const likePostComment =
               },
             });
           }
-          dispatch(
-            getUserActivity(
-              getState().selectedProfile.userProfile.userProfileId
-            )
-          );
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
           dispatch(showNotification('success', 'Polubiono komentarz'));
         } else if (response.status === 401) {
           dispatch(logoutUser());
@@ -421,11 +434,13 @@ export const dislikePostComment =
               },
             });
           }
-          dispatch(
-            getUserActivity(
-              getState().selectedProfile.userProfile.userProfileId
-            )
-          );
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
           dispatch(
             showNotification('success', 'Usunięto polubienie komentarza')
           );
@@ -579,11 +594,13 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
               sharingInfo: sharingInfo,
             },
           });
-          dispatch(
-            getUserActivity(
-              getState().selectedProfile.userProfile.userProfileId
-            )
-          );
+          if (getState().selectedProfile.userProfile) {
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          }
           dispatch(showNotification('success', 'Udostępniono post'));
         });
       } else if (response.status === 401) {

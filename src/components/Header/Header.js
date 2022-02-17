@@ -35,7 +35,7 @@ import { changeUserStatus } from '../../redux/actions/userProfileActions';
 import ClearIcon from '@mui/icons-material/Clear';
 import CheckIcon from '@mui/icons-material/Check';
 import {
-  getFriendInvitations,
+  getReceivedFriendInvitations,
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { getActivityNotification } from '../../redux/actions/userActivityActions';
@@ -99,7 +99,7 @@ const Header = (props) => {
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const users = useSelector((state) => state.activity.users);
   const loggedUserFriendInvitations = useSelector(
-    (state) => state.auth.friendInvitations
+    (state) => state.friends.receivedFriendInvitations
   );
 
   const activityNotifications = useSelector(
@@ -115,7 +115,7 @@ const Header = (props) => {
   const [anchorElActivityNotif, setAnchorElActivityNotif] = useState(null);
 
   useEffect(() => {
-    dispatch(getFriendInvitations(loggedUser.userId, true));
+    dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
     dispatch(getActivityNotification());
     if (users) {
       let usersArray = [];
@@ -150,7 +150,7 @@ const Header = (props) => {
 
   const handleCloseFriendNotification = () => {
     setAnchorElFriendsNotif(null);
-    dispatch(getFriendInvitations(loggedUser.userId, true, true));
+    dispatch(getReceivedFriendInvitations(loggedUser.userId, true, true));
   };
 
   const handleClickActivityNotification = (event) => {
@@ -357,7 +357,8 @@ const Header = (props) => {
                   }
                   secondary={
                     <Typography variant="body2">
-                      {'Liczba znajomych: ' + friendInvitation.friendsNumber}
+                      {'Liczba znajomych: ' +
+                        friendInvitation.invitingUserFriends.length}
                     </Typography>
                   }
                 />

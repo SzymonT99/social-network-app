@@ -362,6 +362,70 @@ const styles = (theme) => ({
       fontWeight: 'bold',
     },
   },
+  profileNavHeadingBox: {
+    margin: '20px 20px 0px 20px',
+  },
+  friendTitle: {
+    '&.MuiTypography-root ': {
+      marginBottom: '10px',
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+    },
+  },
+  friendNumber: {
+    backgroundColor: theme.palette.primary.main,
+    fontSize: '15px',
+    borderRadius: '50px',
+    color: 'white',
+    padding: '5px 10px',
+    marginLeft: '5px',
+  },
+  userFriendsActionContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: '15px 0px',
+  },
+  friendsOrderBox: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  friendSearchbar: {
+    '&.MuiTextField-root': {
+      borderRadius: '5px',
+      width: '60%',
+      marginRight: '15px',
+    },
+  },
+  friendOrderSelect: {
+    '&.MuiOutlinedInput-root': {
+      width: '220px',
+    },
+  },
+  friendsPagination: {
+    '&.MuiPagination-root': {
+      marginBottom: '10px',
+      '& .MuiPagination-ul': {
+        justifyContent: 'center',
+      },
+    },
+  },
+  profileBasicInfoItem: {
+    '&.MuiTypography-root': {
+      margin: '5px 0px',
+      display: 'flex',
+      alignItems: 'center',
+      '& .MuiSvgIcon-root': {
+        marginRight: '7px',
+      },
+    },
+  },
+  friendInformationContainer: {
+    display: 'flex',
+    margin: '10px',
+    flexWrap: 'wrap',
+  },
 });
 
 export default styles;

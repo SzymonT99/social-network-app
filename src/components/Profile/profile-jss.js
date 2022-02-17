@@ -62,6 +62,57 @@ const styles = (theme) => ({
       },
     },
   },
+  friendInfoContainer: {
+    width: '48%',
+    height: '150px',
+    display: 'flex',
+    border: '1px solid rgba(0, 0, 0, 0.22)',
+    margin: '10px 10px',
+  },
+  friendPhoto: {
+    height: '100%',
+    width: '30%',
+    objectFit: 'cover',
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  },
+  friendInfoContent: {
+    width: '70%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '0px 20px',
+  },
+  friendNameLink: {
+    '&.MuiTypography-root': {
+      fontWeight: 'bold',
+      margin: 0,
+      '&:hover': {
+        cursor: 'pointer',
+        textDecoration: 'underline',
+      },
+    },
+  },
+  friendManageBtn: {
+    '&.MuiButton-root': {
+      marginRight: '10px',
+    },
+  },
+  friendDeleteBtn: {
+    '&.MuiButton-root': {
+      '&:hover': {
+        backgroundColor: '#FF1C00',
+      },
+    },
+  },
+  friendManageBtnContent: {
+    '&.MuiTypography-root ': {
+      display: 'flex',
+      alignItems: 'center',
+      fontWeight: 'bold',
+    },
+  },
 });
 
 export default styles;
