@@ -73,7 +73,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 import {
   deleteFriend,
-  getFriendInvitations,
+  getReceivedFriendInvitations,
   getUserFriends,
   inviteToFriend,
   respondToFriendInvitation,
@@ -205,21 +205,23 @@ const ProfilePage = (props) => {
       }
     });
 
-    dispatch(getFriendInvitations(selectedUserId)).then((friendInvitations) => {
-      dispatch(setLoading(false));
-      if (
-        loggedUser.userId !== parseInt(selectedUserId) &&
-        friendInvitations.filter(
-          (friend) => friend.invitingUser.userId === loggedUser.userId
-        ).length > 0
-      ) {
-        setIsInvitedToFriend(true);
-      } else if (loggedUser.userId === parseInt(selectedUserId)) {
-        setIsInvitedToFriend(null);
-      } else {
-        setIsInvitedToFriend(false);
+    dispatch(getReceivedFriendInvitations(selectedUserId)).then(
+      (friendInvitations) => {
+        dispatch(setLoading(false));
+        if (
+          loggedUser.userId !== parseInt(selectedUserId) &&
+          friendInvitations.filter(
+            (friend) => friend.invitingUser.userId === loggedUser.userId
+          ).length > 0
+        ) {
+          setIsInvitedToFriend(true);
+        } else if (loggedUser.userId === parseInt(selectedUserId)) {
+          setIsInvitedToFriend(null);
+        } else {
+          setIsInvitedToFriend(false);
+        }
       }
-    });
+    );
 
     return () => {
       dispatch(changeProfileNav(0));
@@ -412,6 +414,10 @@ const ProfilePage = (props) => {
       });
     }
     return filteredFriends;
+  };
+
+  const updateFriendList = (updatedFriendList) => {
+    setFilteredFriends(updatedFriendList);
   };
 
   return (
@@ -615,67 +621,82 @@ const ProfilePage = (props) => {
                     Zobacz więcej
                   </Link>
                 </div>
-                <div style={{ padding: '10px 15px', marginBottom: '15px' }}>
-                  {userProfile.isPublic ? (
+                {userProfile && userFriends && (
+                  <div style={{ padding: '10px 15px', marginBottom: '15px' }}>
+                    {userProfile.isPublic ? (
+                      <Typography
+                        variant="subtitle1"
+                        className={classes.profileBasicInfoItem}
+                      >
+                        <PublicIcon /> Profil publiczny
+                      </Typography>
+                    ) : (
+                      <Typography
+                        variant="subtitle1"
+                        className={classes.profileBasicInfoItem}
+                      >
+                        <LockIcon /> Profil prywatny
+                      </Typography>
+                    )}
+                    {userProfile.address && (
+                      <Typography
+                        variant="subtitle1"
+                        className={classes.profileBasicInfoItem}
+                      >
+                        <LocationOnIcon />
+                        {userProfile.address.country +
+                          ', ' +
+                          userProfile.address.city}
+                      </Typography>
+                    )}
                     <Typography
                       variant="subtitle1"
                       className={classes.profileBasicInfoItem}
                     >
-                      <PublicIcon /> Profil publiczny
+                      <CakeIcon />
+                      {userProfile.dateOfBirth}
                     </Typography>
-                  ) : (
+                    {userProfile.job !== null && (
+                      <Typography
+                        variant="subtitle1"
+                        className={classes.profileBasicInfoItem}
+                      >
+                        <WorkIcon />
+                        {userProfile.job}
+                      </Typography>
+                    )}
+                    {userProfile.schools.length > 0 && (
+                      <Typography
+                        variant="subtitle1"
+                        className={classes.profileBasicInfoItem}
+                      >
+                        <SchoolIcon />{' '}
+                        {'Uczęszczał(a) do ' +
+                          userProfile.schools[userProfile.schools.length - 1]
+                            .name}
+                      </Typography>
+                    )}
+                    {userProfile.relationshipStatus !== null && (
+                      <Typography
+                        variant="subtitle1"
+                        className={classes.profileBasicInfoItem}
+                      >
+                        <FavoriteIcon />
+                        {
+                          relationshipStatusTypes[
+                            userProfile.relationshipStatus
+                          ]
+                        }
+                      </Typography>
+                    )}
                     <Typography
                       variant="subtitle1"
                       className={classes.profileBasicInfoItem}
                     >
-                      <LockIcon /> Profil prywatny
+                      <PeopleIcon /> {'Liczba znajomych: ' + userFriends.length}
                     </Typography>
-                  )}
-                  <Typography
-                    variant="subtitle1"
-                    className={classes.profileBasicInfoItem}
-                  >
-                    <LocationOnIcon />
-                    {userProfile.address.country +
-                      ', ' +
-                      userProfile.address.city}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    className={classes.profileBasicInfoItem}
-                  >
-                    <CakeIcon />
-                    {userProfile.dateOfBirth}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    className={classes.profileBasicInfoItem}
-                  >
-                    <WorkIcon />
-                    {userProfile.job}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    className={classes.profileBasicInfoItem}
-                  >
-                    <SchoolIcon />{' '}
-                    {'Uczęszczał(a) do ' +
-                      userProfile.schools[userProfile.schools.length - 1].name}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    className={classes.profileBasicInfoItem}
-                  >
-                    <FavoriteIcon />
-                    {relationshipStatusTypes[userProfile.relationshipStatus]}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    className={classes.profileBasicInfoItem}
-                  >
-                    <PeopleIcon /> {'Liczba znajomych: ' + userFriends.length}
-                  </Typography>
-                </div>
+                  </div>
+                )}
               </Paper>
               {userFriends.length > 0 && (
                 <Paper elevation={4} sx={{ borderRadius: '10px' }}>
@@ -1719,9 +1740,9 @@ const ProfilePage = (props) => {
               )}
               {userImages.length === 0 && (
                 <Typography
-                  fontWeight="bold"
                   textAlign="center"
                   variant="h6"
+                  marginTop="-20px"
                   marginBottom="20px"
                 >
                   Brak dodanych zdjęć
@@ -1778,6 +1799,7 @@ const ProfilePage = (props) => {
                     </FormControl>
                   </div>
                 </div>
+                <Divider />
               </div>
               <div style={{ display: 'flex', margin: '10px' }}>
                 {userFriends &&
@@ -1789,18 +1811,20 @@ const ProfilePage = (props) => {
                         name={
                           friend.user.firstName + ' ' + friend.user.lastName
                         }
-                        city={friend.address.city}
+                        city={friend.address && friend.address.city}
                         userFriendId={friend.user.userId}
                         profilePhoto={friend.user.profilePhoto}
                         friendList={friend.userFriends}
+                        updateFriends={updateFriendList}
                       />
                     ))}
                 {userFriends.length === 0 && (
                   <Typography
-                    variant="subtitle1"
-                    mrginTop="20px"
-                    marginBottom="20px"
-                    marginLeft="10px"
+                    variant="h6"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="10px"
+                    textAlign="center"
                   >
                     Brak znajomych
                   </Typography>

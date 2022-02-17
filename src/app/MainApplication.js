@@ -4,6 +4,7 @@ import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import AppTemplate from '../templates/AppTemplate';
 import EventsPage from '../pages/EventsPage/EventsPage';
 import EventsPageDetails from '../pages/EventPageDetails/EventPageDetails';
+import FriendsPage from '../pages/FriendsPage/FriendsPage';
 
 const MainApplication = () => {
   return (
@@ -21,6 +22,7 @@ const MainApplication = () => {
           path="/app/events/:eventId"
           component={EventsPageDetails}
         />
+        <Route exact path="/app/friends" component={FriendsPage} />
       </Switch>
     </AppTemplate>
   );

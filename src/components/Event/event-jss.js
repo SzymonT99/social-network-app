@@ -15,6 +15,7 @@ const styles = (theme) => ({
     borderRadius: '10px',
     width: '100%',
     height: '240px',
+    objectFit: 'cover',
     marginBottom: '5px',
   },
   eventInformationRow: {

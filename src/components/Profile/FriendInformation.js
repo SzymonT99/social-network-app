@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import {
   deleteFriend,
-  getFriendInvitations,
+  getReceivedFriendInvitations,
   getUserFriends,
   inviteToFriend,
   respondToFriendInvitation,
@@ -22,7 +22,15 @@ import PersonIcon from '@mui/icons-material/Person';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const FriendInformation = (props) => {
-  const { classes, name, city, userFriendId, friendList, profilePhoto } = props;
+  const {
+    classes,
+    name,
+    city,
+    userFriendId,
+    friendList,
+    profilePhoto,
+    updateFriends,
+  } = props;
 
   const history = useHistory();
 
@@ -31,6 +39,9 @@ const FriendInformation = (props) => {
   const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserFriendInvitations = useSelector(
     (state) => state.auth.friendInvitations
+  );
+  const selectedProfileId = useSelector(
+    (state) => state.selectedProfile.userProfile.userProfileId
   );
 
   const [friendBtnHover, setFriendBtnHover] = useState(false);
@@ -63,25 +74,25 @@ const FriendInformation = (props) => {
       }
     });
 
-    dispatch(getFriendInvitations(userFriendId, false, false, true)).then(
-      (friendInvitations) => {
-        if (isMounted) {
-          setUserFriendInvitations(friendInvitations);
-          if (
-            loggedUser.userId !== parseInt(userFriendId) &&
-            friendInvitations.filter(
-              (friend) => friend.invitingUser.userId === loggedUser.userId
-            ).length > 0
-          ) {
-            setIsInvitedToFriend(true);
-          } else if (loggedUser.userId === parseInt(userFriendId)) {
-            setIsInvitedToFriend(null);
-          } else {
-            setIsInvitedToFriend(false);
-          }
+    dispatch(
+      getReceivedFriendInvitations(userFriendId, false, false, true)
+    ).then((friendInvitations) => {
+      if (isMounted) {
+        setUserFriendInvitations(friendInvitations);
+        if (
+          loggedUser.userId !== parseInt(userFriendId) &&
+          friendInvitations.filter(
+            (friend) => friend.invitingUser.userId === loggedUser.userId
+          ).length > 0
+        ) {
+          setIsInvitedToFriend(true);
+        } else if (loggedUser.userId === parseInt(userFriendId)) {
+          setIsInvitedToFriend(null);
+        } else {
+          setIsInvitedToFriend(false);
         }
       }
-    );
+    });
 
     return () => {
       isMounted = false;
@@ -111,7 +122,11 @@ const FriendInformation = (props) => {
       const friend = userFriends.find(
         (friend) => friend.user.userId === loggedUser.userId
       );
-      dispatch(deleteFriend(friend.friendId));
+      dispatch(deleteFriend(friend.friendId)).then(() =>
+        dispatch(getUserFriends(selectedProfileId)).then((data) => {
+          updateFriends(data);
+        })
+      );
       setIsUserFriend(false);
       setIsInvitedToFriend(false);
     }
@@ -182,7 +197,7 @@ const FriendInformation = (props) => {
             {name}
           </Typography>
           <Typography variant="subtitle1">{city}</Typography>
-          <Typography variant="subtitle2">
+          <Typography variant="body1">
             {'Liczba znajomych: ' + friendList.length}
           </Typography>
         </div>
@@ -224,9 +239,10 @@ const FriendInformation = (props) => {
 FriendInformation.propTypes = {
   classes: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
-  city: PropTypes.string.isRequired,
+  city: PropTypes.string,
   userFriendId: PropTypes.number.isRequired,
   friendList: PropTypes.array.isRequired,
+  updateFriends: PropTypes.func.isRequired,
   profilePhoto: PropTypes.object,
 };
 

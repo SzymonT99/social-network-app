@@ -385,7 +385,7 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '15px',
+    margin: '15px 0px',
   },
   friendsOrderBox: {
     display: 'flex',

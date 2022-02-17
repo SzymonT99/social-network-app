@@ -72,6 +72,7 @@ const styles = (theme) => ({
   friendPhoto: {
     height: '100%',
     width: '30%',
+    objectFit: 'cover',
     '&:hover': {
       cursor: 'pointer',
     },
