@@ -48,7 +48,7 @@ const EventsPageDetails = (props) => {
 
   const event = useSelector((state) => state.events.eventDetails);
   const loggedUser = useSelector((state) => state.auth.user);
-  const loggedUserFriends = useSelector((state) => state.auth.friends);
+  const loggedUserFriends = useSelector((state) => state.friends.userFriends);
 
   const [openEventEditionPopup, setOpenEventEditionPopup] = useState(false);
   const [openDeleteEventPopup, setOpenDeleteEventPopup] = useState(false);

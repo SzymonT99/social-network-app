@@ -14,7 +14,7 @@ const styles = (theme) => ({
   friendPhoto: {
     width: '100%',
     objectFit: 'cover',
-    height: '180px',
+    height: '200px',
     borderRadius: '10px',
   },
   friendInformationBox: {

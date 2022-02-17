@@ -146,7 +146,7 @@ const ProfilePage = (props) => {
     (state) => state.selectedProfile.friendInvitations
   );
   const loggedUserFriendInvitations = useSelector(
-    (state) => state.auth.friendInvitations
+    (state) => state.friends.receivedFriendInvitations
   );
   const isLoading = useSelector((state) => state.activity.isLoading);
 
@@ -1801,7 +1801,7 @@ const ProfilePage = (props) => {
                 </div>
                 <Divider />
               </div>
-              <div style={{ display: 'flex', margin: '10px' }}>
+              <div className={classes.friendInformationContainer}>
                 {userFriends &&
                   sortFriends(friendsOrder)
                     .slice((friendsPageNumber - 1) * 6, friendsPageNumber * 6)

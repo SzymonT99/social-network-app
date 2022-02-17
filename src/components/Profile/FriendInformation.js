@@ -38,10 +38,10 @@ const FriendInformation = (props) => {
 
   const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserFriendInvitations = useSelector(
-    (state) => state.auth.friendInvitations
+    (state) => state.friends.receivedFriendInvitations
   );
-  const selectedProfileId = useSelector(
-    (state) => state.selectedProfile.userProfile.userProfileId
+  const selectedProfile = useSelector(
+    (state) => state.selectedProfile.userProfile
   );
 
   const [friendBtnHover, setFriendBtnHover] = useState(false);
@@ -123,7 +123,7 @@ const FriendInformation = (props) => {
         (friend) => friend.user.userId === loggedUser.userId
       );
       dispatch(deleteFriend(friend.friendId)).then(() =>
-        dispatch(getUserFriends(selectedProfileId)).then((data) => {
+        dispatch(getUserFriends(selectedProfile.userProfileId)).then((data) => {
           updateFriends(data);
         })
       );

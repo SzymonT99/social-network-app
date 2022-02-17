@@ -49,7 +49,7 @@ const userProfileReducer = (state = initialState, action) => {
         ...state,
         images: action.payload.images,
       };
-    case types.FETCH_USER_FRIENDS:
+    case types.FETCH_LOGGED_USER_FRIENDS:
       return {
         ...state,
         friends: action.payload.friends,

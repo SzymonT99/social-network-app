@@ -99,7 +99,7 @@ const Header = (props) => {
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const users = useSelector((state) => state.activity.users);
   const loggedUserFriendInvitations = useSelector(
-    (state) => state.auth.friendInvitations
+    (state) => state.friends.receivedFriendInvitations
   );
 
   const activityNotifications = useSelector(

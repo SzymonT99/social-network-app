@@ -27,10 +27,10 @@ const FriendsPage = (props) => {
 
   const loggedUser = useSelector((state) => state.auth.user);
   const receivedFriendInvitations = useSelector(
-    (state) => state.auth.friendInvitations
+    (state) => state.friends.receivedFriendInvitations
   );
   const sentFriendInvitations = useSelector(
-    (state) => state.auth.sentFriendInvitations
+    (state) => state.friends.sentFriendInvitations
   );
   const friendsSuggestions = useSelector(
     (state) => state.friends.friendsSuggestions
@@ -115,7 +115,12 @@ const FriendsPage = (props) => {
                 />
               ))}
               {friendsSuggestions.length === 0 && (
-                <Typography variant="subtitle1" width="100%" textAlign="center">
+                <Typography
+                  variant="subtitle1"
+                  width="100%"
+                  textAlign="center"
+                  marginTop="15px"
+                >
                   Brak propozycji znajomych
                 </Typography>
               )}
@@ -139,7 +144,12 @@ const FriendsPage = (props) => {
                 />
               ))}
               {receivedFriendInvitations.length === 0 && (
-                <Typography variant="subtitle1" width="100%" textAlign="center">
+                <Typography
+                  variant="subtitle1"
+                  width="100%"
+                  textAlign="center"
+                  marginTop="15px"
+                >
                   Brak otrzymanych zaproszeń
                 </Typography>
               )}
@@ -151,6 +161,7 @@ const FriendsPage = (props) => {
                 <Friend
                   sentInvitation
                   key={sentInvitation.friendId}
+                  userId={sentInvitation.invitedUser.userId}
                   invitingFriendId={sentInvitation.friendId}
                   name={
                     sentInvitation.invitedUser.firstName +
@@ -163,7 +174,12 @@ const FriendsPage = (props) => {
                 />
               ))}
               {sentFriendInvitations.length === 0 && (
-                <Typography variant="subtitle1" width="100%" textAlign="center">
+                <Typography
+                  variant="subtitle1"
+                  width="100%"
+                  textAlign="center"
+                  marginTop="15px"
+                >
                   Brak wysłanych zaproszeń
                 </Typography>
               )}

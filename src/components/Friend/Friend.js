@@ -86,7 +86,7 @@ const Friend = (props) => {
           <Typography variant="body1">
             {'Znajomi: ' + friendList.length}
             {mutualFriendList && (
-              <span>{' wspólnych: ' + mutualFriendList.length + ')'}</span>
+              <span>{' (wspólnych: ' + mutualFriendList.length + ')'}</span>
             )}
           </Typography>
         </div>

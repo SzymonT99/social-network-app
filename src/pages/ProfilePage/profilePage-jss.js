@@ -421,6 +421,11 @@ const styles = (theme) => ({
       },
     },
   },
+  friendInformationContainer: {
+    display: 'flex',
+    margin: '10px',
+    flexWrap: 'wrap',
+  },
 });
 
 export default styles;

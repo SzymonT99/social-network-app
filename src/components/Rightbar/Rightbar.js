@@ -13,7 +13,7 @@ const Rightbar = (props) => {
   const dispatch = useDispatch();
 
   const loggedUser = useSelector((state) => state.auth.user);
-  const loggedUserFriends = useSelector((state) => state.auth.friends);
+  const loggedUserFriends = useSelector((state) => state.friends.userFriends);
 
   useEffect(() => {
     dispatch(getUserFriends(loggedUser.userId, true));
