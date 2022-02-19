@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
-import styles from './eventPageDetails-jss';
+import styles from './eventDetailsPage-jss';
 import { PropTypes } from 'prop-types';
 import {
   deleteEvent,

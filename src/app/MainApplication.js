@@ -3,8 +3,9 @@ import ActivityBoard from '../pages/ActivityBoard/ActivityBoard';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import AppTemplate from '../templates/AppTemplate';
 import EventsPage from '../pages/EventsPage/EventsPage';
-import EventsPageDetails from '../pages/EventPageDetails/EventPageDetails';
+import EventsPageDetails from '../pages/EventDetailsPage/EventDetailsPage';
 import FriendsPage from '../pages/FriendsPage/FriendsPage';
+import SettingsPage from '../pages/AccountSettingsPage/AccountSettingsPage';
 
 const MainApplication = () => {
   return (
@@ -23,6 +24,7 @@ const MainApplication = () => {
           component={EventsPageDetails}
         />
         <Route exact path="/app/friends" component={FriendsPage} />
+        <Route exact path="/app/settings" component={SettingsPage} />
       </Switch>
     </AppTemplate>
   );
