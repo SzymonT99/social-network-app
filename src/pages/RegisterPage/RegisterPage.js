@@ -47,7 +47,11 @@ const RegisterPage = (props) => {
     firstName: yup.string().required('Imię jest wymagane'),
     lastName: yup.string().required('Nazwisko jest wymagane'),
     email: yup.string().required('Email jest wymagany'),
-    username: yup.string().required('Nazwa użytkownika jest wymagana'),
+    username: yup
+      .string()
+      .min(6, 'Nazwa użytkownika powinna mieć minimum 8 znaków')
+      .max(20, 'Nazwa użytkownika powinna mieć minimum 20 znaków')
+      .required('Nazwa użytkownika jest wymagana'),
     phoneNumber: yup
       .string()
       .required('Numer telefonu jest wymagany')
@@ -55,8 +59,8 @@ const RegisterPage = (props) => {
       .max(9, 'Błędny numer telefonu'),
     password: yup
       .string()
-      .min(10, 'Hasło powinno mieć długość minimum 8 znaków')
-      .max(100, 'Hasło powinno mieć długość maksymalnie 100 znaków')
+      .min(10, 'Hasło powinno mieć minimum 8 znaków')
+      .max(100, 'Hasło powinno mieć maksymalnie 100 znaków')
       .required('Hasło jest wymagane'),
     repeatedPassword: yup.string().required('Hasło jest wymagane'),
     dateOfBirth: yup.string().required('Data urodzenia jest wymagana'),

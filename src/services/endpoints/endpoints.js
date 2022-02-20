@@ -54,4 +54,11 @@ export const endpoints = {
   shareEvent: baseUrl + '/api/events/{eventId}/share',
   deleteSharedEvent: baseUrl + '/api/events/{eventId}/shared',
   getSharedEvents: baseUrl + '/api/events/shared',
+  changeUsername: baseUrl + '/api/users/{userId}/username',
+  changeEmail: baseUrl + '/api/users/{userId}/email',
+  changePhoneNumber: baseUrl + '/api/users/{userId}/phoneNumber',
+  changePassword: baseUrl + '/api/users/{userId}/password',
+  deleteUser: baseUrl + '/api/users?archive=false',
+  activateAccount: baseUrl + '/api/auth/account-activation',
+  resendActivationLink: baseUrl + '/api/auth/resend-activation',
 };

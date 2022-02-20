@@ -199,6 +199,31 @@ const styles = (theme) => ({
       borderRadius: '5px',
     },
   },
+  editAccountForm: {
+    textAlign: 'center',
+    marginTop: '20px',
+    padding: '30px 80px',
+  },
+  resendActivationLinkForm: {
+    textAlign: 'center',
+    marginTop: '20px',
+    padding: '0px 20px 20px 20px',
+  },
+  accountFormBtn: {
+    '&.MuiButton-root': {
+      textTransform: 'none',
+      fontSize: '16px',
+      width: '50%',
+      height: '55px',
+    },
+  },
+  disabledFormBtn: {
+    '& .MuiInputBase-root': {
+      '& .Mui-disabled': {
+        WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)',
+      },
+    },
+  },
 });
 
 export default styles;

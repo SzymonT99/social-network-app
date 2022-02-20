@@ -29,6 +29,7 @@ const authReducer = (state = initialState, action) => {
           ...state.user,
           accessToken: action.payload.accessToken,
           refreshToken: action.payload.refreshToken,
+          accessTokenExpiresIn: action.payload.expirationTime,
         },
       };
     case types.REMEMBER_USER:
