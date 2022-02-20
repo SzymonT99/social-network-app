@@ -91,6 +91,38 @@ const deleteUserAccount = (login, password) => {
   });
 };
 
+const activateAccount = (token) => {
+  return fetch(
+    endpoints.activateAccount +
+      '?' +
+      new URLSearchParams({
+        token: token,
+      }),
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+};
+
+const resendActivationLink = (email) => {
+  return fetch(
+    endpoints.resendActivationLink +
+      '?' +
+      new URLSearchParams({
+        userEmail: email,
+      }),
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+};
+
 export default {
   register,
   authenticate,
@@ -100,4 +132,6 @@ export default {
   editUsername,
   changePassword,
   deleteUserAccount,
+  activateAccount,
+  resendActivationLink,
 };

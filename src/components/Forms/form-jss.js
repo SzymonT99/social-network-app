@@ -204,6 +204,11 @@ const styles = (theme) => ({
     marginTop: '20px',
     padding: '30px 80px',
   },
+  resendActivationLinkForm: {
+    textAlign: 'center',
+    marginTop: '20px',
+    padding: '0px 20px 20px 20px',
+  },
   accountFormBtn: {
     '&.MuiButton-root': {
       textTransform: 'none',

@@ -11,6 +11,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Popup from '../../Popup/Popup';
 import ActionConfirmation from '../../ActionConfirmation/ActionConfirmation';
+import { showNotification } from '../../../redux/actions/notificationActions';
 
 const DeleteAccountForm = (props) => {
   const { classes } = props;
@@ -31,10 +32,8 @@ const DeleteAccountForm = (props) => {
       password: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values, { resetForm }) => {
-      dispatch(deleteUserAccount(values.login, values.password)).then(
-        (status) => status === 200 && resetForm()
-      );
+    onSubmit: (values) => {
+      dispatch(deleteUserAccount(values.login, values.password));
     },
   });
 
@@ -49,6 +48,14 @@ const DeleteAccountForm = (props) => {
   const handleDeleteAccount = () => {
     formik.handleSubmit();
     setOpenDeleteAccountPopup(false);
+  };
+
+  const handleConfirmDeleteAccount = () => {
+    if (formik.values.login !== '' && formik.values.password !== '') {
+      setOpenDeleteAccountPopup(true);
+    } else {
+      dispatch(showNotification('warning', 'Nie uzupełniono formularza'));
+    }
   };
 
   return (
@@ -97,7 +104,7 @@ const DeleteAccountForm = (props) => {
         color="secondary"
         variant="contained"
         fullWidth
-        onClick={() => setOpenDeleteAccountPopup(true)}
+        onClick={handleConfirmDeleteAccount}
       >
         Usuń konto
       </Button>

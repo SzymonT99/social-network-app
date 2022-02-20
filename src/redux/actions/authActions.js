@@ -271,7 +271,7 @@ export const deleteUserAccount = (login, password) => (dispatch) => {
     .then((response) => {
       if (response.status === 200) {
         window.location.href = '/auth/login';
-        dispatch(logoutUser());
+        dispatch({ type: 'CLEAR_ALL' });
         dispatch(showNotification('success', 'Konto zostało usunięte'));
       } else if (response.status === 401) {
         dispatch(showNotification('error', 'Błędne hasło'));
@@ -279,6 +279,40 @@ export const deleteUserAccount = (login, password) => (dispatch) => {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
       return response.status;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const activateAccount = (token) => (dispatch) => {
+  return authService
+    .activateAccount(token)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(showNotification('success', 'Konto zostało aktywowane'));
+      }
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const resendActivationLink = (email) => (dispatch) => {
+  return authService
+    .resendActivationLink(email)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(
+          showNotification(
+            'success',
+            'Wysłano nowy link aktywacyjny na pocztę email'
+          )
+        );
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
     })
     .catch((error) => {
       console.log(error);

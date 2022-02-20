@@ -58,5 +58,7 @@ export const endpoints = {
   changeEmail: baseUrl + '/api/users/{userId}/email',
   changePhoneNumber: baseUrl + '/api/users/{userId}/phoneNumber',
   changePassword: baseUrl + '/api/users/{userId}/password',
-  deleteUser: baseUrl + '/api/users?archive=true',
+  deleteUser: baseUrl + '/api/users?archive=false',
+  activateAccount: baseUrl + '/api/auth/account-activation',
+  resendActivationLink: baseUrl + '/api/auth/resend-activation',
 };
