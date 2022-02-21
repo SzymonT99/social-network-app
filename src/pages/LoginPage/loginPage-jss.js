@@ -94,7 +94,7 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '20px',
+    marginBottom: '30px',
   },
   forgotPasswordLink: {
     textDecoration: 'none',

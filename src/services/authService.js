@@ -141,7 +141,7 @@ const forgetUserPassword = (email) => {
 
 const resetUserPassword = (token, login, newPassword, repeatedNewPassword) => {
   return fetch(
-    endpoints.forgetPassword +
+    endpoints.resetPassword +
       '?' +
       new URLSearchParams({
         token: token,

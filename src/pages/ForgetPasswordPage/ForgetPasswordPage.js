@@ -59,7 +59,7 @@ const ForgetPasswordPage = (props) => {
         <Typography variant="h3" align="center" marginBottom="10px">
           Zapomniane hasło
         </Typography>
-        <Typography variant="subtitle1" align="center" marginBottom="30px">
+        <Typography variant="subtitle1" align="center" marginBottom="50px">
           Wyślij link do resetowania hasła na podany adres e-mail
         </Typography>
         <form onSubmit={formik.handleSubmit}>

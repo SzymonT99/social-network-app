@@ -348,15 +348,30 @@ export const resetUserPassword =
       .then((response) => {
         if (response.status === 200) {
           dispatch(showNotification('success', 'Zmieniono hasło'));
+        } else if (response.status === 404) {
+          dispatch(
+            showNotification(
+              'warning',
+              'Nie istnieje użytkownik o podanym loginie'
+            )
+          );
         } else if (response.status === 400) {
           dispatch(
             showNotification('warning', 'Podane hasła nie są takie same')
           );
         } else if (response.status === 409) {
+          dispatch(
+            showNotification(
+              'warning',
+              'Link resetujący hasło został wcześniej wykorzystany'
+            )
+          );
+        } else if (response.status === 410) {
           dispatch(showNotification('warning', 'Link resetujący hasło wygasł'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
+        return response.status;
       })
       .catch((error) => {
         console.log(error);

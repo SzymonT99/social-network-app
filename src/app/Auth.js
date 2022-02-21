@@ -4,6 +4,7 @@ import RegisterPage from '../pages/RegisterPage/RegisterPage';
 import AuthTemplate from '../templates/AuthTemplate';
 import AccountActivatePage from '../pages/AccountActivatePage/AccountActivatePage';
 import ForgetPasswordPage from '../pages/ForgetPasswordPage/ForgetPasswordPage';
+import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
 
 const Auth = () => {
   return (
@@ -21,6 +22,11 @@ const Auth = () => {
           exact
           path="/auth/forget-password"
           component={ForgetPasswordPage}
+        />
+        <Route
+          exact
+          path="/auth/reset-password/:resetCode"
+          component={ResetPasswordPage}
         />
       </Switch>
     </AuthTemplate>

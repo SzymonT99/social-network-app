@@ -116,7 +116,6 @@ const LoginPage = (props) => {
             </Typography>
             <form onSubmit={formik.handleSubmit}>
               <TextField
-                style={{ marginBottom: '10px' }}
                 fullWidth
                 id="login"
                 name="login"
