@@ -60,7 +60,7 @@ export const authenticate = (login, password, remember) => (dispatch) => {
           dispatch(getUserProfile(data.userId, true));
           dispatch(getUserFriends(data.userId, true));
           dispatch(getAllUsersInformation());
-          return data;
+          return response.status;
         });
       } else if (response.status === 401) {
         dispatch({ type: authTypes.LOGIN_FAIL });
@@ -78,6 +78,7 @@ export const authenticate = (login, password, remember) => (dispatch) => {
         dispatch({ type: authTypes.LOGIN_FAIL });
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
+      return response.status;
     })
     .catch((error) => {
       dispatch({ type: authTypes.LOGIN_FAIL });
@@ -318,3 +319,61 @@ export const resendActivationLink = (email) => (dispatch) => {
       console.log(error);
     });
 };
+
+export const forgetUserPassword = (email) => (dispatch) => {
+  return authService
+    .forgetUserPassword(email)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(
+          showNotification(
+            'success',
+            'Wysłano wiadomość z linkiem resetującym hasło'
+          )
+        );
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+      return response.status;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const resetUserPassword =
+  (token, login, newPassword, repeatedNewPassword) => (dispatch) => {
+    return authService
+      .resetUserPassword(token, login, newPassword, repeatedNewPassword)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(showNotification('success', 'Zmieniono hasło'));
+        } else if (response.status === 404) {
+          dispatch(
+            showNotification(
+              'warning',
+              'Nie istnieje użytkownik o podanym loginie'
+            )
+          );
+        } else if (response.status === 400) {
+          dispatch(
+            showNotification('warning', 'Podane hasła nie są takie same')
+          );
+        } else if (response.status === 409) {
+          dispatch(
+            showNotification(
+              'warning',
+              'Link resetujący hasło został wcześniej wykorzystany'
+            )
+          );
+        } else if (response.status === 410) {
+          dispatch(showNotification('warning', 'Link resetujący hasło wygasł'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+        return response.status;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };

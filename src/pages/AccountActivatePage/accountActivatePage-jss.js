@@ -16,6 +16,9 @@ const styles = (theme) => ({
       alignItems: 'center',
       justifyContent: ' center',
       color: theme.palette.secondary.main,
+      '&:hover': {
+        cursor: 'pointer',
+      },
     },
   },
   appInfoBox: {

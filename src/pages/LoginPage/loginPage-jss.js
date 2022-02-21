@@ -11,11 +11,13 @@ const styles = (theme) => ({
     margin: '0 50px',
   },
   loginForm: {
-    width: '80%',
-    alignSelf: 'flex-end',
-    padding: '60px 70px',
-    display: 'flex',
-    flexDirection: 'column',
+    '&.MuiPaper-root': {
+      width: '80%',
+      alignSelf: 'flex-end',
+      padding: '60px 70px',
+      display: 'flex',
+      flexDirection: 'column',
+    },
   },
   registerLink: {
     marginTop: '20px',
@@ -92,7 +94,7 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '20px',
+    marginBottom: '30px',
   },
   forgotPasswordLink: {
     textDecoration: 'none',
