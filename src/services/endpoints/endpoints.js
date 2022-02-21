@@ -61,4 +61,6 @@ export const endpoints = {
   deleteUser: baseUrl + '/api/users?archive=false',
   activateAccount: baseUrl + '/api/auth/account-activation',
   resendActivationLink: baseUrl + '/api/auth/resend-activation',
+  forgetPassword: baseUrl + '/api/users/reset-password/step1',
+  resetPassword: baseUrl + '/api/users/reset-password/step2',
 };

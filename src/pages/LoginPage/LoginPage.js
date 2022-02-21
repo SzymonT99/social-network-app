@@ -54,12 +54,11 @@ const LoginPage = (props) => {
       setLoading(true);
       dispatch(
         authenticate(values.login, values.password, values.rememberUser)
-      ).then((data) => {
-        if (data !== undefined) {
+      ).then((status) => {
+        if (status === 200) {
           history.push('/app');
-        } else {
-          setLoading(false);
         }
+        setLoading(false);
       });
     },
   });

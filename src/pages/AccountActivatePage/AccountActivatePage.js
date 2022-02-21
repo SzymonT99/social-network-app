@@ -8,13 +8,8 @@ import { useHistory, useParams } from 'react-router-dom';
 import logoWhite from '../../assets/logo-white.png';
 import { useDispatch } from 'react-redux';
 import { PropTypes } from 'prop-types';
-import {
-  activateAccount,
-  resendActivationLink,
-} from '../../redux/actions/authActions';
-import CircularProgress from '@mui/material/CircularProgress';
+import { activateAccount } from '../../redux/actions/authActions';
 import Popup from '../../components/Popup/Popup';
-import EventForm from '../../components/Forms/EventForm';
 import ResendActivationLinkForm from '../../components/Forms/AccountSettings/ResendActivationLinkForm';
 
 const AccountActivatePage = (props) => {
@@ -55,7 +50,12 @@ const AccountActivatePage = (props) => {
   return (
     <div className={classes.activateAccountContainer}>
       <div className={classes.appInfoBox}>
-        <Typography variant="h1" gutterBottom className={classes.appName}>
+        <Typography
+          variant="h1"
+          gutterBottom
+          className={classes.appName}
+          onClick={() => history.push('/auth/login')}
+        >
           <img src={logoWhite} className={classes.logo} alt="Logo" />
           Social Network
         </Typography>

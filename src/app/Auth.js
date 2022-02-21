@@ -3,6 +3,7 @@ import LoginPage from '../pages/LoginPage/LoginPage';
 import RegisterPage from '../pages/RegisterPage/RegisterPage';
 import AuthTemplate from '../templates/AuthTemplate';
 import AccountActivatePage from '../pages/AccountActivatePage/AccountActivatePage';
+import ForgetPasswordPage from '../pages/ForgetPasswordPage/ForgetPasswordPage';
 
 const Auth = () => {
   return (
@@ -15,6 +16,11 @@ const Auth = () => {
           exact
           path="/auth/activate-account/:token"
           component={AccountActivatePage}
+        />
+        <Route
+          exact
+          path="/auth/forget-password"
+          component={ForgetPasswordPage}
         />
       </Switch>
     </AuthTemplate>

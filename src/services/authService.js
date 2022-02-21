@@ -123,6 +123,39 @@ const resendActivationLink = (email) => {
   );
 };
 
+const forgetUserPassword = (email) => {
+  return fetch(
+    endpoints.forgetPassword +
+      '?' +
+      new URLSearchParams({
+        userEmail: email,
+      }),
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+};
+
+const resetUserPassword = (token, login, newPassword, repeatedNewPassword) => {
+  return fetch(
+    endpoints.forgetPassword +
+      '?' +
+      new URLSearchParams({
+        token: token,
+      }),
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ login, newPassword, repeatedNewPassword }),
+    }
+  );
+};
+
 export default {
   register,
   authenticate,
@@ -134,4 +167,6 @@ export default {
   deleteUserAccount,
   activateAccount,
   resendActivationLink,
+  forgetUserPassword,
+  resetUserPassword,
 };
