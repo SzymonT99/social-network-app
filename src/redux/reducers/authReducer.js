@@ -3,6 +3,7 @@ import postTypes from '../types/postTypes';
 
 const initialState = {
   isLoggedIn: false,
+  isTokenRefreshing: false,
   remember: false,
   user: null,
   userProfile: null,
@@ -17,25 +18,25 @@ const authReducer = (state = initialState, action) => {
         isLoggedIn: true,
         user: action.payload,
       };
-    case types.SAVE_EXPIRATION_DATE_TOKEN:
+    case types.SET_TOKEN_REFRESHING:
       return {
         ...state,
-        user: { ...state.user, expirationDate: action.expirationDate },
+        isTokenRefreshing: action.payload.isTokenRefreshing,
       };
-    case types.UPDATE_TOKEN:
+    case types.REFRESH_TOKEN:
       return {
         ...state,
         user: {
           ...state.user,
           accessToken: action.payload.accessToken,
           refreshToken: action.payload.refreshToken,
-          accessTokenExpiresIn: action.payload.expirationTime,
+          accessTokenExpirationDate: action.payload.accessTokenExpirationDate,
         },
       };
     case types.REMEMBER_USER:
       return {
         ...state,
-        remember: action.remember,
+        remember: action.payload.remember,
       };
     case types.SAVE_LOGGED_USER_PROFILE:
       return {

@@ -21,12 +21,11 @@ const authenticate = (login, password) => {
   });
 };
 
-const logout = () => {
-  return fetch(endpoints.logout, {
+const logout = (userId) => {
+  return fetch(endpoints.logout.replace('{userId}', userId), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: authorization(),
     },
   });
 };
@@ -156,6 +155,16 @@ const resetUserPassword = (token, login, newPassword, repeatedNewPassword) => {
   );
 };
 
+const refreshUserToken = (refresh) => {
+  return fetch(endpoints.refreshToken, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ refreshToken: refresh }),
+  });
+};
+
 export default {
   register,
   authenticate,
@@ -169,4 +178,5 @@ export default {
   resendActivationLink,
   forgetUserPassword,
   resetUserPassword,
+  refreshUserToken,
 };

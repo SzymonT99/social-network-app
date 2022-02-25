@@ -57,8 +57,10 @@ const LoginPage = (props) => {
       ).then((status) => {
         if (status === 200) {
           history.push('/app');
+          setLoading(false);
+        } else {
+          setLoading(false);
         }
-        setLoading(false);
       });
     },
   });

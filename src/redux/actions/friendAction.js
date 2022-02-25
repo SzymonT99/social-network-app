@@ -1,7 +1,6 @@
 import friendService from '../../services/friendService';
 import { showNotification } from './notificationActions';
 import { logoutUser } from './authActions';
-import authTypes from '../types/authTypes';
 import userProfileTypes from '../types/userProfileTypes';
 import friendTypes from '../types/friendTypes';
 
@@ -18,10 +17,6 @@ export const inviteToFriend = (inviterUserId) => (dispatch, getState) => {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else if (response.status === 409) {
         dispatch(showNotification('warning', 'Już wysłano zaproszenie'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -65,10 +60,6 @@ export const getReceivedFriendInvitations =
           });
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -91,10 +82,6 @@ export const getSentFriendInvitations = (userId) => (dispatch) => {
             },
           });
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -117,10 +104,6 @@ export const getUserFriendsSuggestions = () => (dispatch) => {
             },
           });
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -159,10 +142,6 @@ export const getUserFriends =
           });
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -204,10 +183,6 @@ export const respondToFriendInvitation =
           dispatch(
             showNotification('warning', 'Nieznana reakcja na zaproszenie')
           );
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -242,10 +217,6 @@ export const deleteFriend =
           }
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }

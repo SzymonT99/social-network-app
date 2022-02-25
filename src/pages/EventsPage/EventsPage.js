@@ -27,6 +27,10 @@ import {
 import Popup from '../../components/Popup/Popup';
 import EventForm from '../../components/Forms/EventForm';
 import CircularProgress from '@mui/material/CircularProgress';
+import {
+  refreshUserToken,
+  setTokenRefreshing,
+} from '../../redux/actions/authActions';
 
 const EventsPage = (props) => {
   const { classes } = props;
@@ -37,6 +41,8 @@ const EventsPage = (props) => {
   const eventInvitations = useSelector(
     (state) => state.events.eventInvitations
   );
+  const loggedUser = useSelector((state) => state.auth.user);
+  const isUserRemember = useSelector((state) => state.auth.remember);
 
   const [eventTabType, setEventTabType] = useState('1');
   const [eventsOrder, setEventsOrder] = useState(1);
@@ -46,10 +52,21 @@ const EventsPage = (props) => {
   const [eventsPageNumber, setEventsPageNumber] = useState(1);
 
   useEffect(() => {
-    dispatch(getEvents()).then((data) => {
-      setFilteredEvents(data);
-    });
-    dispatch(getEventInvitations());
+    (async () => {
+      if (
+        isUserRemember &&
+        new Date() > new Date(loggedUser.accessTokenExpirationDate)
+      ) {
+        dispatch(setTokenRefreshing(true));
+        await dispatch(refreshUserToken(loggedUser.refreshToken)).then(() => {
+          dispatch(setTokenRefreshing(false));
+        });
+      }
+      dispatch(getEvents()).then((data) => {
+        setFilteredEvents(data);
+      });
+      dispatch(getEventInvitations());
+    })();
   }, []);
 
   const handleChangeEventTabType = (event, newValue) => {

@@ -90,6 +90,10 @@ import CakeIcon from '@mui/icons-material/Cake';
 import WorkIcon from '@mui/icons-material/Work';
 import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/School';
+import {
+  refreshUserToken,
+  setTokenRefreshing,
+} from '../../redux/actions/authActions';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -130,6 +134,7 @@ const ProfilePage = (props) => {
     (state) => state.selectedProfile.selectedProfileNavIndex
   );
   const loggedUser = useSelector((state) => state.auth.user);
+  const isLoggedUserRemember = useSelector((state) => state.auth.remember);
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
     (state) => state.selectedProfile.userActivity
@@ -180,48 +185,59 @@ const ProfilePage = (props) => {
   const [friendsPageNumber, setFriendsPageNumber] = useState(1);
 
   useEffect(() => {
-    dispatch(setLoading(true));
-    dispatch(getUserProfile(selectedUserId));
-    dispatch(getUserActivity(selectedUserId));
-    dispatch(getUserFavouriteItems(selectedUserId));
-    dispatch(getUserInterests(selectedUserId));
-    dispatch(getUserImages(selectedUserId));
-
-    dispatch(getUserFriends(selectedUserId)).then((friends) => {
-      setFilteredFriends(friends);
+    (async () => {
       if (
-        loggedUser.userId !== parseInt(selectedUserId) &&
-        friends.filter(
-          (friend) =>
-            friend.user.userId === loggedUser.userId &&
-            friend.isInvitationAccepted === true
-        ).length > 0
+        isLoggedUserRemember &&
+        new Date() > new Date(loggedUser.accessTokenExpirationDate)
       ) {
-        setIsUserFriend(true);
-      } else if (loggedUser.userId === parseInt(selectedUserId)) {
-        setIsUserFriend(null);
-      } else {
-        setIsUserFriend(false);
+        dispatch(setTokenRefreshing(true));
+        await dispatch(refreshUserToken(loggedUser.refreshToken)).then(() => {
+          dispatch(setTokenRefreshing(false));
+        });
       }
-    });
+      dispatch(setLoading(true));
+      dispatch(getUserProfile(selectedUserId));
+      dispatch(getUserActivity(selectedUserId));
+      dispatch(getUserFavouriteItems(selectedUserId));
+      dispatch(getUserInterests(selectedUserId));
+      dispatch(getUserImages(selectedUserId));
 
-    dispatch(getReceivedFriendInvitations(selectedUserId)).then(
-      (friendInvitations) => {
-        dispatch(setLoading(false));
+      dispatch(getUserFriends(selectedUserId)).then((friends) => {
+        setFilteredFriends(friends);
         if (
           loggedUser.userId !== parseInt(selectedUserId) &&
-          friendInvitations.filter(
-            (friend) => friend.invitingUser.userId === loggedUser.userId
+          friends.filter(
+            (friend) =>
+              friend.user.userId === loggedUser.userId &&
+              friend.isInvitationAccepted === true
           ).length > 0
         ) {
-          setIsInvitedToFriend(true);
+          setIsUserFriend(true);
         } else if (loggedUser.userId === parseInt(selectedUserId)) {
-          setIsInvitedToFriend(null);
+          setIsUserFriend(null);
         } else {
-          setIsInvitedToFriend(false);
+          setIsUserFriend(false);
         }
-      }
-    );
+      });
+
+      dispatch(getReceivedFriendInvitations(selectedUserId)).then(
+        (friendInvitations) => {
+          dispatch(setLoading(false));
+          if (
+            loggedUser.userId !== parseInt(selectedUserId) &&
+            friendInvitations.filter(
+              (friend) => friend.invitingUser.userId === loggedUser.userId
+            ).length > 0
+          ) {
+            setIsInvitedToFriend(true);
+          } else if (loggedUser.userId === parseInt(selectedUserId)) {
+            setIsInvitedToFriend(null);
+          } else {
+            setIsInvitedToFriend(false);
+          }
+        }
+      );
+    })();
 
     return () => {
       dispatch(changeProfileNav(0));

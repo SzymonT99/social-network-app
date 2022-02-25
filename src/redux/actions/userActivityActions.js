@@ -17,10 +17,6 @@ export const getActivityBoard = () => (dispatch) => {
           });
           dispatch(setLoading(false));
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch({ type: activityTypes.FETCH_BOARD_FAILURE });
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
@@ -45,10 +41,6 @@ export const getAllUsersInformation = () => (dispatch) => {
             },
           });
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -73,10 +65,6 @@ export const getActivityNotification =
               },
             });
           });
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }

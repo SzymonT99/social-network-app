@@ -6,6 +6,10 @@ import Typography from '@mui/material/Typography';
 import FriendListItem from '../FriendListItem/FriendListItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserFriends } from '../../redux/actions/friendAction';
+import {
+  refreshUserToken,
+  setTokenRefreshing,
+} from '../../redux/actions/authActions';
 
 const Rightbar = (props) => {
   const { classes } = props;
@@ -13,11 +17,19 @@ const Rightbar = (props) => {
   const dispatch = useDispatch();
 
   const loggedUser = useSelector((state) => state.auth.user);
+  const isTokenRefreshing = useSelector(
+    (state) => state.auth.isTokenRefreshing
+  );
   const loggedUserFriends = useSelector((state) => state.friends.userFriends);
 
   useEffect(() => {
-    dispatch(getUserFriends(loggedUser.userId, true));
-  }, []);
+    const isTokenExpired =
+      new Date() > new Date(loggedUser.accessTokenExpirationDate);
+
+    if (!isTokenExpired) {
+      dispatch(getUserFriends(loggedUser.userId, true));
+    }
+  }, [isTokenRefreshing]);
 
   return (
     <div className={classes.rightbarContainer}>

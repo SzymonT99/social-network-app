@@ -29,13 +29,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import { Logout, Settings } from '@mui/icons-material';
-import { logoutUser } from '../../redux/actions/authActions';
+import {
+  logoutUser,
+  refreshUserToken,
+  setTokenRefreshing,
+} from '../../redux/actions/authActions';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { changeUserStatus } from '../../redux/actions/userProfileActions';
 import ClearIcon from '@mui/icons-material/Clear';
 import CheckIcon from '@mui/icons-material/Check';
 import {
   getReceivedFriendInvitations,
+  getUserFriends,
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { getActivityNotification } from '../../redux/actions/userActivityActions';
@@ -96,6 +101,10 @@ const Header = (props) => {
   const dispatch = useDispatch();
 
   const loggedUser = useSelector((state) => state.auth.user);
+  const isTokenRefreshing = useSelector(
+    (state) => state.auth.isTokenRefreshing
+  );
+  const isUserRemember = useSelector((state) => state.auth.remember);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const users = useSelector((state) => state.activity.users);
   const loggedUserFriendInvitations = useSelector(
@@ -115,19 +124,24 @@ const Header = (props) => {
   const [anchorElActivityNotif, setAnchorElActivityNotif] = useState(null);
 
   useEffect(() => {
-    dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
-    dispatch(getActivityNotification());
-    if (users) {
-      let usersArray = [];
-      users.forEach((user) =>
-        usersArray.push({
-          label: user.firstName + ' ' + user.lastName,
-          id: user.userId,
-        })
-      );
-      setOptions(usersArray);
+    const isTokenExpired =
+      new Date() > new Date(loggedUser.accessTokenExpirationDate);
+
+    if (!isTokenExpired) {
+      dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
+      dispatch(getActivityNotification());
+      if (users) {
+        let usersArray = [];
+        users.forEach((user) =>
+          usersArray.push({
+            label: user.firstName + ' ' + user.lastName,
+            id: user.userId,
+          })
+        );
+        setOptions(usersArray);
+      }
     }
-  }, [users]);
+  }, [users, isTokenRefreshing]);
 
   const handleChangeSearchedUser = (event, newValue) => {
     if (newValue !== null) {
@@ -268,7 +282,6 @@ const Header = (props) => {
             id="friend-notification-menu"
             anchorEl={anchorElFriendsNotif}
             open={Boolean(anchorElFriendsNotif)}
-            onClose={handleCloseFriendNotification}
             onClick={handleCloseFriendNotification}
             disableScrollLock={true}
             className={classes.friendNotificationMenu}
@@ -399,7 +412,6 @@ const Header = (props) => {
             id="activity-notification-menu"
             anchorEl={anchorElActivityNotif}
             open={Boolean(anchorElActivityNotif)}
-            onClose={handleCloseActivityNotification}
             onClick={handleCloseActivityNotification}
             disableScrollLock={true}
             className={classes.activityNotificationMenu}
@@ -674,7 +686,7 @@ const Header = (props) => {
               className={classes.userMenuItem}
               onClick={() => {
                 history.push('/auth/login');
-                dispatch(logoutUser());
+                dispatch(logoutUser(loggedUser.userId));
               }}
             >
               <ListItemIcon>

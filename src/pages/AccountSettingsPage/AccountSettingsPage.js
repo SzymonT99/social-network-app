@@ -15,6 +15,10 @@ import ChangeUsernameForm from '../../components/Forms/AccountSettings/ChangeUse
 import ChangePhoneNumberForm from '../../components/Forms/AccountSettings/ChangePhoneNumberForm';
 import ChangePasswordForm from '../../components/Forms/AccountSettings/ChangePasswordForm';
 import DeleteAccountForm from '../../components/Forms/AccountSettings/DeleteAccountForm';
+import {
+  refreshUserToken,
+  setTokenRefreshing,
+} from '../../redux/actions/authActions';
 
 const TabPanel = (props) => {
   const { children, value, index } = props;
@@ -29,12 +33,26 @@ const AccountSettingsPage = (props) => {
   const [settingsNavValue, setSettingsNavValue] = useState(0);
 
   const userProfile = useSelector((state) => state.auth.userProfile);
+  const loggedUser = useSelector((state) => state.auth.user);
+  const isUserRemember = useSelector((state) => state.auth.remember);
 
   const handleChangeSettingsNav = (event, newValue) => {
     setSettingsNavValue(newValue);
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    (async () => {
+      if (
+        isUserRemember &&
+        new Date() > new Date(loggedUser.accessTokenExpirationDate)
+      ) {
+        dispatch(setTokenRefreshing(true));
+        await dispatch(refreshUserToken(loggedUser.refreshToken)).then(() => {
+          dispatch(setTokenRefreshing(false));
+        });
+      }
+    })();
+  }, []);
 
   return (
     <div className={classes.wrapper}>

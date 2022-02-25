@@ -3,7 +3,7 @@ const baseUrl = 'http://localhost:8080';
 export const endpoints = {
   register: baseUrl + '/api/auth/register',
   authenticate: baseUrl + '/api/auth/login',
-  logout: baseUrl + '/api/auth/logout',
+  logout: baseUrl + '/api/auth/logout/{userId}',
   userProfile: baseUrl + '/api/profile/{userId}/information',
   createPost: baseUrl + '/api/posts',
   getActivityBoard: baseUrl + '/api/activity',
@@ -63,4 +63,5 @@ export const endpoints = {
   resendActivationLink: baseUrl + '/api/auth/resend-activation',
   forgetPassword: baseUrl + '/api/users/reset-password/step1',
   resetPassword: baseUrl + '/api/users/reset-password/step2',
+  refreshToken: baseUrl + '/api/auth/refreshtoken',
 };
