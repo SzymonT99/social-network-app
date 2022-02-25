@@ -108,7 +108,6 @@ const getUserFavourites = (userId) => {
 };
 
 const addUserFavourite = (favouriteItem) => {
-  console.log(favouriteItem);
   return fetch(endpoints.addFavouriteItem, {
     method: 'POST',
     headers: {
@@ -193,7 +192,6 @@ const deleteUserInterests = (interestId) => {
 };
 
 const addProfilePhoto = (photo) => {
-  console.log(photo);
   return fetch(endpoints.manageProfilePhoto, {
     method: 'PUT',
     headers: {

@@ -11,7 +11,7 @@ const App = () => {
         <Route path="/app" component={MainApplication} />
         <Route exact component={Auth} />
       </Switch>
-      {/*<Copyright />*/}
+      <Copyright />
       <Notification />
     </BrowserRouter>
   );

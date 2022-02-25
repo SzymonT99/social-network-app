@@ -46,17 +46,12 @@ export const authenticate = (login, password, remember) => (dispatch) => {
             type: authTypes.LOGIN_SUCCESS,
             payload: { ...data },
           });
-          const currentDate = new Date();
-          const tokenExpirationDate = new Date(
-            currentDate.setMilliseconds(
-              currentDate.getMilliseconds() + data.accessTokenExpiresIn
-            )
-          );
           dispatch({
-            type: authTypes.SAVE_EXPIRATION_DATE_TOKEN,
-            payload: tokenExpirationDate,
+            type: authTypes.REMEMBER_USER,
+            payload: {
+              remember: remember,
+            },
           });
-          dispatch({ type: authTypes.REMEMBER_USER, payload: remember });
           dispatch(getUserProfile(data.userId, true));
           dispatch(getUserFriends(data.userId, true));
           dispatch(getAllUsersInformation());
@@ -86,19 +81,30 @@ export const authenticate = (login, password, remember) => (dispatch) => {
     });
 };
 
-export const updateToken = (accessToken, expirationTime, refreshToken) => ({
-  type: authTypes.UPDATE_TOKEN,
+export const updateToken = (
+  accessToken,
+  accessTokenExpirationDate,
+  refreshToken
+) => ({
+  type: authTypes.REFRESH_TOKEN,
   payload: {
     accessToken,
-    expirationTime,
+    accessTokenExpirationDate,
     refreshToken,
   },
 });
 
-export const logoutUser = () => (dispatch) => {
+export const setTokenRefreshing = (isTokenRefreshing) => ({
+  type: authTypes.SET_TOKEN_REFRESHING,
+  payload: {
+    isTokenRefreshing: isTokenRefreshing,
+  },
+});
+
+export const logoutUser = (userId) => (dispatch) => {
   dispatch({ type: authTypes.LOG_OUT_USER });
   return authService
-    .logout()
+    .logout(userId)
     .then((response) => {
       if (response.status === 200) {
         dispatch({ type: 'CLEAR_ALL' });
@@ -124,7 +130,7 @@ export const editUserEmail =
             dispatch(
               updateToken(
                 data.accessToken,
-                data.accessTokenExpiresIn,
+                data.accessTokenExpirationDate,
                 data.refreshToken
               )
             );
@@ -163,7 +169,7 @@ export const editUsername =
             dispatch(
               updateToken(
                 data.accessToken,
-                data.accessTokenExpiresIn,
+                data.accessTokenExpirationDate,
                 data.refreshToken
               )
             );
@@ -240,7 +246,7 @@ export const changePassword =
             dispatch(
               updateToken(
                 data.accessToken,
-                data.accessTokenExpiresIn,
+                data.accessTokenExpirationDate,
                 data.refreshToken
               )
             );
@@ -377,3 +383,32 @@ export const resetUserPassword =
         console.log(error);
       });
   };
+
+export const refreshUserToken = (token) => (dispatch, getState) => {
+  return authService
+    .refreshUserToken(token)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch(
+            updateToken(
+              data.accessToken,
+              data.accessTokenExpirationDate,
+              data.refreshToken
+            )
+          );
+        });
+      } else if (response.status === 410) {
+        window.location.href = '/auth/login';
+        dispatch(logoutUser(getState().auth.user.userId));
+        dispatch(showNotification('error', 'Token odświeżania wygasł'));
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Niepoprawny token odświeżający'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

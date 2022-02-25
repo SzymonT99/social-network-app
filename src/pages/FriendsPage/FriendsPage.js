@@ -15,6 +15,10 @@ import {
 import Friend from '../../components/Friend/Friend';
 import { useHistory } from 'react-router-dom';
 import { changeProfileNav } from '../../redux/actions/userProfileActions';
+import {
+  refreshUserToken,
+  setTokenRefreshing,
+} from '../../redux/actions/authActions';
 
 const FriendsPage = (props) => {
   const { classes } = props;
@@ -26,6 +30,7 @@ const FriendsPage = (props) => {
   const [friendsTabType, setFriendsTabType] = useState('1');
 
   const loggedUser = useSelector((state) => state.auth.user);
+  const isUserRemember = useSelector((state) => state.auth.remember);
   const receivedFriendInvitations = useSelector(
     (state) => state.friends.receivedFriendInvitations
   );
@@ -37,9 +42,20 @@ const FriendsPage = (props) => {
   );
 
   useEffect(() => {
-    dispatch(getUserFriendsSuggestions());
-    dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
-    dispatch(getSentFriendInvitations(loggedUser.userId));
+    (async () => {
+      if (
+        isUserRemember &&
+        new Date() > new Date(loggedUser.accessTokenExpirationDate)
+      ) {
+        dispatch(setTokenRefreshing(true));
+        await dispatch(refreshUserToken(loggedUser.refreshToken)).then(() => {
+          dispatch(setTokenRefreshing(false));
+        });
+      }
+      dispatch(getUserFriendsSuggestions());
+      dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
+      dispatch(getSentFriendInvitations(loggedUser.userId));
+    })();
   }, []);
 
   const handleChangeFriendsTabType = (event, newValue) => {

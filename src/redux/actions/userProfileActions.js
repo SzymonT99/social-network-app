@@ -29,10 +29,6 @@ export const getUserProfile =
               });
             }
           });
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -55,10 +51,6 @@ export const getUserActivity = (userId) => (dispatch) => {
             },
           });
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -76,10 +68,6 @@ export const addSchoolInformation = (school) => (dispatch, getState) => {
       if (response.status === 201) {
         dispatch(getUserProfile(getState().auth.user.userId));
         dispatch(showNotification('success', 'Dodano szkołę'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else {
@@ -101,10 +89,6 @@ export const editSchoolInformation =
           dispatch(
             showNotification('success', 'Zaaktualizowano informacje o szkole')
           );
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
         } else if (response.status === 400) {
@@ -125,10 +109,6 @@ export const deleteSchoolInformation = (schoolId) => (dispatch, getState) => {
       if (response.status === 200) {
         dispatch(getUserProfile(getState().auth.user.userId));
         dispatch(showNotification('success', 'Usunięto szkołę'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else {
@@ -147,10 +127,6 @@ export const addWorkPlaceInformation = (workPlace) => (dispatch, getState) => {
       if (response.status === 201) {
         dispatch(getUserProfile(getState().auth.user.userId));
         dispatch(showNotification('success', 'Dodano informacje o pracy'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else {
@@ -175,10 +151,6 @@ export const editWorkPlaceInformation =
               'Zaaktualizowano informacje o miejscu pracy'
             )
           );
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
         } else if (response.status === 400) {
@@ -201,10 +173,6 @@ export const deleteWorkPlaceInformation = (workId) => (dispatch, getState) => {
         dispatch(showNotification('success', 'Usunięto miejsce pracy'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -229,10 +197,6 @@ export const getUserFavouriteItems = (userId) => (dispatch) => {
         });
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -249,10 +213,6 @@ export const addFavouriteItem = (favouriteItem) => (dispatch, getState) => {
       if (response.status === 201) {
         dispatch(getUserFavouriteItems(getState().auth.user.userId));
         dispatch(showNotification('success', 'Dodano element'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else {
@@ -274,10 +234,6 @@ export const editFavouriteItem =
           dispatch(showNotification('success', 'Zmieniono element'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -296,10 +252,6 @@ export const deleteFavouriteItem = (favouriteId) => (dispatch, getState) => {
         dispatch(showNotification('success', 'Usunięto element'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -322,10 +274,6 @@ export const getPossibleInterests = () => (dispatch) => {
             },
           });
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -350,10 +298,6 @@ export const getUserInterests = (userId) => (dispatch) => {
         });
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -374,10 +318,6 @@ export const addUserInterests = (interestId) => (dispatch, getState) => {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -396,10 +336,6 @@ export const deleteUserInterests = (interestId) => (dispatch, getState) => {
         dispatch(showNotification('success', 'Usunięto zainteresowanie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -421,10 +357,6 @@ export const changeProfilePhoto = (userId, photo) => (dispatch) => {
         dispatch(showNotification('success', 'Zmieniono zdjęcie profilowe'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -445,10 +377,6 @@ export const deleteProfilePhoto = (userId) => (dispatch) => {
         dispatch(showNotification('success', 'Usunięto zdjęcie profilowe'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -473,10 +401,6 @@ export const getUserImages = (userId) => (dispatch) => {
         });
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -500,10 +424,6 @@ export const editProfileInformation =
           );
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -524,10 +444,6 @@ export const addUserAddress = (address, userId) => (dispatch) => {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -548,10 +464,6 @@ export const editUserAddress = (addressId, address, userId) => (dispatch) => {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -572,10 +484,6 @@ export const changeUserStatus = (status) => (dispatch, getState) => {
         dispatch(showNotification('success', 'Zmieniono status'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }

@@ -10,10 +10,6 @@ export const createEvent = (eventFormData) => (dispatch) => {
       if (response.status === 201) {
         dispatch(getEvents());
         dispatch(showNotification('success', 'Utworzono wydarzenie'));
-      } else if (response.status === 401) {
-        window.location.href = '/auth/login';
-        dispatch(logoutUser());
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
       } else {
@@ -33,10 +29,6 @@ export const editEvent = (eventId, formData) => (dispatch, getState) => {
         dispatch(getEvents());
         dispatch(getEventById(getState().events.eventDetails.eventId));
         dispatch(showNotification('success', 'Edytowano wydarzenie'));
-      } else if (response.status === 401) {
-        window.location.href = '/auth/login';
-        dispatch(logoutUser());
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else if (response.status === 400) {
@@ -57,10 +49,6 @@ export const deleteEvent = (eventId) => (dispatch) => {
       if (response.status === 200) {
         dispatch(getEvents());
         dispatch(showNotification('success', 'Usunięto wydarzenie'));
-      } else if (response.status === 401) {
-        window.location.href = '/auth/login';
-        dispatch(logoutUser());
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else {
@@ -85,10 +73,6 @@ export const getEventById = (eventId) => (dispatch) => {
             },
           });
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -112,10 +96,6 @@ export const getEvents = () => (dispatch) => {
           });
           return data;
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -138,10 +118,6 @@ export const inviteToEvent =
           dispatch(
             showNotification('warning', 'Już wysłano zaproszenie do znajomego')
           );
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -169,10 +145,6 @@ export const respondToEvent = (eventId, reaction) => (dispatch, getState) => {
             showNotification('success', 'Odrzucono zaproszenie na wydarzenie')
           );
         }
-      } else if (response.status === 401) {
-        window.location.href = '/auth/login';
-        dispatch(logoutUser());
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 409) {
         dispatch(
           showNotification(
@@ -204,10 +176,6 @@ export const getEventInvitations = () => (dispatch) => {
             },
           });
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -226,10 +194,6 @@ export const shareEvent = (eventId) => (dispatch, getState) => {
         dispatch(showNotification('success', 'Udostępniono wydarzenie'));
       } else if (response.status === 403) {
         dispatch(showNotification('error', 'Już udostępniłeś to wydarzenie'));
-      } else if (response.status === 401) {
-        window.location.href = '/auth/login';
-        dispatch(logoutUser());
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }

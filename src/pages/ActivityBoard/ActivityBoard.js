@@ -24,6 +24,10 @@ import {
 } from '../../redux/actions/userActivityActions';
 import SharedPost from '../../components/SharedPost/SharedPost';
 import CircularProgress from '@mui/material/CircularProgress';
+import {
+  refreshUserToken,
+  setTokenRefreshing,
+} from '../../redux/actions/authActions';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
@@ -33,6 +37,7 @@ const ActivityBoard = (props) => {
   const isLoading = useSelector((state) => state.activity.isLoading);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const loggedUser = useSelector((state) => state.auth.user);
+  const isUserRemember = useSelector((state) => state.auth.remember);
   const loggedUserFriendInvitations = useSelector(
     (state) => state.friends.receivedFriendInvitations
   );
@@ -45,8 +50,19 @@ const ActivityBoard = (props) => {
   };
 
   useEffect(() => {
-    dispatch(setLoading(true));
-    dispatch(getActivityBoard());
+    (async () => {
+      if (
+        isUserRemember &&
+        new Date() > new Date(loggedUser.accessTokenExpirationDate)
+      ) {
+        dispatch(setTokenRefreshing(true));
+        await dispatch(refreshUserToken(loggedUser.refreshToken)).then(() => {
+          dispatch(setTokenRefreshing(false));
+        });
+      }
+      dispatch(setLoading(true));
+      dispatch(getActivityBoard());
+    })();
   }, []);
 
   return (

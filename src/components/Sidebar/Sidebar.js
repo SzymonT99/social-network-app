@@ -62,6 +62,7 @@ const ListItem = withStyles((theme) => ({
 const Sidebar = (props) => {
   const { classes } = props;
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
+  const loggedUser = useSelector((state) => state.auth.user);
 
   const [selectedItem, setSelectedItem] = useState(0);
 
@@ -324,7 +325,7 @@ const Sidebar = (props) => {
             <ListItem disablePadding style={{ marginTop: '75px' }}>
               <ListItemButton
                 onClick={() => {
-                  dispatch(logoutUser());
+                  dispatch(logoutUser(loggedUser.userId));
                   history.push('/auth/login');
                 }}
               >

@@ -36,6 +36,10 @@ import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay';
 import MarkAsUnreadIcon from '@mui/icons-material/MarkAsUnread';
 import PeopleIcon from '@mui/icons-material/People';
 import UsersListPopup from '../../components/UsersListPopup/UsersListPopup';
+import {
+  refreshUserToken,
+  setTokenRefreshing,
+} from '../../redux/actions/authActions';
 
 const EventsPageDetails = (props) => {
   const { classes } = props;
@@ -48,6 +52,7 @@ const EventsPageDetails = (props) => {
 
   const event = useSelector((state) => state.events.eventDetails);
   const loggedUser = useSelector((state) => state.auth.user);
+  const isUserRemember = useSelector((state) => state.auth.remember);
   const loggedUserFriends = useSelector((state) => state.friends.userFriends);
 
   const [openEventEditionPopup, setOpenEventEditionPopup] = useState(false);
@@ -60,7 +65,18 @@ const EventsPageDetails = (props) => {
   const [openUserSharingPopup, setOpenUserSharingPopup] = useState(false);
 
   useEffect(() => {
-    dispatch(getEventById(eventId));
+    (async () => {
+      if (
+        isUserRemember &&
+        new Date() > new Date(loggedUser.accessTokenExpirationDate)
+      ) {
+        dispatch(setTokenRefreshing(true));
+        await dispatch(refreshUserToken(loggedUser.refreshToken)).then(() => {
+          dispatch(setTokenRefreshing(false));
+        });
+      }
+      dispatch(getEventById(eventId));
+    })();
   }, [eventId]);
 
   const handleClickEventReaction = (reaction) => {

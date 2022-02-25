@@ -32,10 +32,6 @@ export const createPost = (postFormData) => (dispatch, getState) => {
           dispatch(getUserActivity(getState().auth.user.userId));
           dispatch(showNotification('success', 'Dodano post'));
         });
-      } else if (response.status === 401) {
-        window.location.href = '/auth/login';
-        dispatch(logoutUser());
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
       } else {
@@ -63,10 +59,6 @@ export const editPost = (postId, postFormData) => (dispatch, getState) => {
           dispatch(getUserActivity(getState().auth.user.userId));
           dispatch(showNotification('success', 'Edytowano post'));
         });
-      } else if (response.status === 401) {
-        window.location.href = '/auth/login';
-        dispatch(logoutUser());
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else if (response.status === 400) {
@@ -93,10 +85,6 @@ export const deletePost = (postId) => (dispatch, getState) => {
         });
         dispatch(getUserActivity(getState().auth.user.userId));
         dispatch(showNotification('success', 'Usunięto post'));
-      } else if (response.status === 401) {
-        window.location.href = '/auth/login';
-        dispatch(logoutUser());
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else {
@@ -147,10 +135,6 @@ export const likePost =
           }
 
           dispatch(showNotification('success', 'Polubiono post'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 409) {
           dispatch(
             showNotification('warning', 'Użytkownik już polubił ten post')
@@ -197,10 +181,6 @@ export const dislikePost =
             );
           }
           dispatch(showNotification('success', 'Usunięto polubienie postu'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('warning', 'Nieautoryzowany dostęp'));
         } else if (response.status === 409) {
           dispatch(
             showNotification('warning', 'Użytkownik nie lubił tego postu')
@@ -242,10 +222,6 @@ export const commentPost =
             }
             dispatch(showNotification('success', 'Dodano komentarz'));
           });
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 400) {
           dispatch(showNotification('warning', 'Błędny format danych'));
         } else {
@@ -291,10 +267,6 @@ export const editPostComment =
             );
           }
           dispatch(showNotification('success', 'Komentarz został zmieniony'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
         } else if (response.status === 400) {
@@ -334,10 +306,6 @@ export const deletePostComment =
             );
           }
           dispatch(showNotification('success', 'Komentarz został usunięty'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
         } else {
@@ -391,10 +359,6 @@ export const likePostComment =
             );
           }
           dispatch(showNotification('success', 'Polubiono komentarz'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 409) {
           dispatch(
             showNotification('warning', 'Użytkownik już polubił ten komentarz')
@@ -444,10 +408,6 @@ export const dislikePostComment =
           dispatch(
             showNotification('success', 'Usunięto polubienie komentarza')
           );
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 409) {
           dispatch(
             showNotification('warning', 'Użytkownik nie lubił tego komentarza')
@@ -495,10 +455,6 @@ export const manageAccess =
             });
           }
           dispatch(getUserActivity(getState().auth.user.userId));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -542,10 +498,6 @@ export const managePostCommentsAccess =
             });
           }
           dispatch(getUserActivity(getState().auth.user.userId));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -603,10 +555,6 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
           }
           dispatch(showNotification('success', 'Udostępniono post'));
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
       } else {
@@ -639,10 +587,6 @@ export const deleteSharedPost =
           });
           dispatch(getUserActivity(getState().auth.user.userId));
           dispatch(showNotification('success', 'Usunięto udostępnienie'));
-        } else if (response.status === 401) {
-          dispatch(logoutUser());
-          window.location.href = '/auth/login';
-          dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
         } else {
@@ -668,10 +612,6 @@ export const getUserFavouritePosts = (userId) => (dispatch) => {
             },
           });
         });
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else {
@@ -691,10 +631,6 @@ export const addPostToFavourite = (postId) => (dispatch, getState) => {
       if (response.status === 201) {
         dispatch(getUserFavouritePosts(getState().auth.user.userId));
         dispatch(showNotification('success', 'Dodano do ulubionych'));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 409) {
         dispatch(
           showNotification('warning', 'Już dodano ten post do ulubionych')
@@ -718,10 +654,6 @@ export const deletePostToFavourite = (postId) => (dispatch, getState) => {
     .then((response) => {
       if (response.status === 200) {
         dispatch(getUserFavouritePosts(getState().auth.user.userId));
-      } else if (response.status === 401) {
-        dispatch(logoutUser());
-        window.location.href = '/auth/login';
-        dispatch(showNotification('error', 'Nieautoryzowany dostęp'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Post nie należy do ulubionych'));
       } else if (response.status === 403) {
