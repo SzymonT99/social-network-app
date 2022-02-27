@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './friendsPage-jss';
 import { PropTypes } from 'prop-types';
-import PeopleIcon from '@mui/icons-material/People';
 import { Button, Divider, Paper, Tab, Typography } from '@mui/material';
 import { TabContext, TabList } from '@mui/lab';
 import TabPanelMUI from '@mui/lab/TabPanel';
@@ -19,6 +18,7 @@ import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
+import PageHeader from '../../components/PageHeader/PageHeader';
 
 const FriendsPage = (props) => {
   const { classes } = props;
@@ -69,12 +69,7 @@ const FriendsPage = (props) => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.headingFriendsBox}>
-        <PeopleIcon className={classes.friendIcon} />
-        <Typography className={classes.friendHeadingText} variant="h3">
-          Znajomi
-        </Typography>
-      </div>
+      <PageHeader heading="Znajomi" type="friends" />
       <Paper elevation={4} className={classes.friendsContainer}>
         <TabContext value={friendsTabType}>
           <div className={classes.friendsNavContainer}>

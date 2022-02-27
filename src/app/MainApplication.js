@@ -6,6 +6,7 @@ import EventsPage from '../pages/EventsPage/EventsPage';
 import EventsPageDetails from '../pages/EventDetailsPage/EventDetailsPage';
 import FriendsPage from '../pages/FriendsPage/FriendsPage';
 import SettingsPage from '../pages/AccountSettingsPage/AccountSettingsPage';
+import FavouritePostsPage from '../pages/FavouritePostsPage/FavouritePostsPage';
 
 const MainApplication = () => {
   return (
@@ -25,6 +26,11 @@ const MainApplication = () => {
         />
         <Route exact path="/app/friends" component={FriendsPage} />
         <Route exact path="/app/settings" component={SettingsPage} />
+        <Route
+          exact
+          path="/app/favourite-posts"
+          component={FavouritePostsPage}
+        />
       </Switch>
     </AppTemplate>
   );
