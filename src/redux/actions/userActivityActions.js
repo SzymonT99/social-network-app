@@ -1,7 +1,6 @@
 import activityTypes from '../types/userActivityTypes';
 import activityService from '../../services/activityService';
 import { showNotification } from './notificationActions';
-import { logoutUser } from './authActions';
 
 export const getActivityBoard = () => (dispatch) => {
   return activityService

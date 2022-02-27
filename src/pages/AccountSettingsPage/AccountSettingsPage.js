@@ -19,6 +19,7 @@ import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
+import PageHeader from '../../components/PageHeader/PageHeader';
 
 const TabPanel = (props) => {
   const { children, value, index } = props;
@@ -56,12 +57,7 @@ const AccountSettingsPage = (props) => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.headingSettingsBox}>
-        <SettingsIcon className={classes.settingsIcon} />
-        <Typography className={classes.settingsHeadingText} variant="h3">
-          Ustawienia konta
-        </Typography>
-      </div>
+      <PageHeader heading="Ustawienia konta" type="settings" />
       <Paper elevation={4} className={classes.settingsContainer}>
         <div className={classes.settingsNav}>
           <Tabs

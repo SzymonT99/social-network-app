@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './eventsPage-jss';
 import { PropTypes } from 'prop-types';
-import EventIcon from '@mui/icons-material/Event';
 import {
   Button,
   FormControl,
@@ -31,6 +30,7 @@ import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
+import PageHeader from '../../components/PageHeader/PageHeader';
 
 const EventsPage = (props) => {
   const { classes } = props;
@@ -133,12 +133,7 @@ const EventsPage = (props) => {
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.headingEventBox}>
-        <EventIcon className={classes.eventIcon} />
-        <Typography className={classes.eventHeadingText} variant="h3">
-          Wydarzenia
-        </Typography>
-      </div>
+      <PageHeader heading="Wydarzenia" type="events" />
       <TabContext value={eventTabType}>
         <Paper elevation={4} className={classes.eventsTopContainer}>
           <TabList
@@ -242,7 +237,7 @@ const EventsPage = (props) => {
               <Paper elevation={4} className={classes.paginationContainer}>
                 <Pagination
                   className={classes.eventsPagination}
-                  count={events && Math.ceil(events.length / 10)}
+                  count={events && Math.ceil(events.length / 6)}
                   color="secondary"
                   size="large"
                   showFirstButton
