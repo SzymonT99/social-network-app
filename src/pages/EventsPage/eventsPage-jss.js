@@ -87,9 +87,15 @@ const styles = (theme) => ({
       width: '100%',
       borderRadius: '10px',
       display: 'flex',
-      alignItems: ' center',
+      alignItems: 'center',
       justifyContent: 'center',
     },
+  },
+  noContent: {
+    marginTop: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

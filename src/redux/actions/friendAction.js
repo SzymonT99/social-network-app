@@ -1,6 +1,5 @@
 import friendService from '../../services/friendService';
 import { showNotification } from './notificationActions';
-import { logoutUser } from './authActions';
 import userProfileTypes from '../types/userProfileTypes';
 import friendTypes from '../types/friendTypes';
 

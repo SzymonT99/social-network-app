@@ -46,7 +46,10 @@ const RegisterPage = (props) => {
   const validationSchema = yup.object({
     firstName: yup.string().required('Imię jest wymagane'),
     lastName: yup.string().required('Nazwisko jest wymagane'),
-    email: yup.string().required('Email jest wymagany'),
+    email: yup
+      .string()
+      .email('Nieprawidłowy email')
+      .required('Email jest wymagany'),
     username: yup
       .string()
       .min(6, 'Nazwa użytkownika powinna mieć minimum 8 znaków')
@@ -120,10 +123,11 @@ const RegisterPage = (props) => {
           Tworzenie konta
         </Typography>
         <form
+          noValidate
           onSubmit={formik.handleSubmit}
           style={{ display: 'flex', flexDirection: 'column' }}
         >
-          <Grid container columnSpacing={{ xs: 2 }} rowSpacing={{ xs: 3 }}>
+          <Grid container columnSpacing={{ xs: 2 }}>
             <Grid item xs={6}>
               <TextField
                 fullWidth
@@ -134,6 +138,11 @@ const RegisterPage = (props) => {
                 onChange={formik.handleChange}
                 error={
                   formik.touched.firstName && Boolean(formik.errors.firstName)
+                }
+                helperText={
+                  formik.touched.firstName && formik.errors.firstName
+                    ? formik.errors.firstName
+                    : ' '
                 }
               />
             </Grid>
@@ -148,6 +157,11 @@ const RegisterPage = (props) => {
                 error={
                   formik.touched.lastName && Boolean(formik.errors.lastName)
                 }
+                helperText={
+                  formik.touched.lastName && formik.errors.lastName
+                    ? formik.errors.lastName
+                    : ' '
+                }
               />
             </Grid>
             <Grid item xs={12}>
@@ -160,6 +174,11 @@ const RegisterPage = (props) => {
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={
+                  formik.touched.email && formik.errors.email
+                    ? formik.errors.email
+                    : ' '
+                }
               />
             </Grid>
             <Grid item xs={6}>
@@ -172,6 +191,11 @@ const RegisterPage = (props) => {
                 onChange={formik.handleChange}
                 error={
                   formik.touched.username && Boolean(formik.errors.username)
+                }
+                helperText={
+                  formik.touched.username && formik.errors.username
+                    ? formik.errors.username
+                    : ' '
                 }
               />
             </Grid>
@@ -186,6 +210,11 @@ const RegisterPage = (props) => {
                 error={
                   formik.touched.phoneNumber &&
                   Boolean(formik.errors.phoneNumber)
+                }
+                helperText={
+                  formik.touched.phoneNumber && formik.errors.phoneNumber
+                    ? formik.errors.phoneNumber
+                    : ' '
                 }
               />
             </Grid>
@@ -213,6 +242,11 @@ const RegisterPage = (props) => {
                 onChange={formik.handleChange}
                 error={
                   formik.touched.password && Boolean(formik.errors.password)
+                }
+                helperText={
+                  formik.touched.password && formik.errors.password
+                    ? formik.errors.password
+                    : ' '
                 }
               />
             </Grid>
@@ -246,10 +280,16 @@ const RegisterPage = (props) => {
                   formik.touched.repeatedPassword &&
                   Boolean(formik.errors.repeatedPassword)
                 }
+                helperText={
+                  formik.touched.repeatedPassword &&
+                  formik.errors.repeatedPassword
+                    ? formik.errors.repeatedPassword
+                    : ' '
+                }
               />
             </Grid>
             <Grid item xs={7}>
-              <FormControl component="fieldset">
+              <FormControl component="fieldset" required>
                 <FormLabel component="legend">Płeć</FormLabel>
                 <RadioGroup
                   value={gender}
@@ -280,11 +320,16 @@ const RegisterPage = (props) => {
                 id="dateOfBirth"
                 label="Data urodzenia"
                 type="date"
-                sx={{ width: '100%' }}
+                fullWidth
                 onChange={formik.handleChange}
                 error={
                   formik.touched.dateOfBirth &&
                   Boolean(formik.errors.dateOfBirth)
+                }
+                helperText={
+                  formik.touched.dateOfBirth && formik.errors.dateOfBirth
+                    ? formik.errors.dateOfBirth
+                    : ' '
                 }
                 InputLabelProps={{
                   shrink: true,

@@ -16,6 +16,7 @@ import {
   Menu,
   MenuItem,
   TextField,
+  Tooltip,
 } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
@@ -25,6 +26,7 @@ import {
   addPostToFavourite,
   commentPost,
   deletePost,
+  deletePostFromFavourite,
   dislikePost,
   likePost,
   manageAccess,
@@ -72,6 +74,7 @@ const Post = (props) => {
     editionDate,
     asSharing,
     highlightCommentById,
+    isFavourite,
   } = props;
 
   const dispatch = useDispatch();
@@ -214,9 +217,13 @@ const Post = (props) => {
     handleClosePostOption();
   };
 
-  const handleFavouritePost = () => {
+  const handleClickAddFavouritePost = () => {
     dispatch(addPostToFavourite(postId));
     handleClosePostOption();
+  };
+
+  const handleClickDeleteFromFavourite = () => {
+    dispatch(deletePostFromFavourite(postId));
   };
 
   const handleCloseSharePostPopup = () => {
@@ -246,124 +253,141 @@ const Post = (props) => {
         userStatus={userStatus}
         isEdited={isEdited}
       >
-        {!asSharing ? (
-          <div>
-            <IconButton onClick={handleClickPostOption}>
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              className={classes.optionMenu}
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              PaperProps={{
-                sx: {
-                  borderRadius: '5px',
-                },
-              }}
-              disableScrollLock={true}
-              onClose={handleClosePostOption}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-            >
-              <MenuItem
-                onClick={handleFavouritePost}
-                className={classes.postMenuItem}
-                sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+        <>
+          {' '}
+          {!asSharing && !isFavourite ? (
+            <div>
+              <IconButton onClick={handleClickPostOption}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                className={classes.optionMenu}
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                PaperProps={{
+                  sx: {
+                    borderRadius: '5px',
+                  },
+                }}
+                disableScrollLock={true}
+                onClose={handleClosePostOption}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
               >
-                <ListItemIcon>
-                  <FavoriteIcon fontSize="medium" />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography variant="subtitle2">
-                      Dodaj do ulubionych
-                    </Typography>
+                <MenuItem
+                  onClick={handleClickAddFavouritePost}
+                  className={classes.postMenuItem}
+                  sx={
+                    authorId &&
+                    authorId === userId && {
+                      borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                    }
                   }
-                />
-              </MenuItem>
-              {authorId && authorId === userId && (
-                <div>
-                  <MenuItem
-                    className={classes.postMenuItem}
-                    onClick={handleEditPost}
-                  >
-                    <ListItemIcon>
-                      <EditIcon fontSize="medium" />
-                    </ListItemIcon>
-                    <ListItemText
-                      disableTypography
-                      primary={
-                        <Typography variant="subtitle2">Edytuj post</Typography>
-                      }
-                    />
-                  </MenuItem>
-                  <MenuItem
-                    className={classes.postMenuItem}
-                    onClick={handleManagePostAccess}
-                  >
-                    <ListItemIcon>
-                      <PeopleAltIcon fontSize="medium" />
-                    </ListItemIcon>
-                    <ListItemText
-                      disableTypography
-                      primary={
-                        <Typography variant="subtitle2">
-                          Zmień dostępność
-                        </Typography>
-                      }
-                    />
-                  </MenuItem>
-                  <MenuItem
-                    className={classes.postMenuItem}
-                    sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-                    onClick={handleManagePostCommentsAccess}
-                  >
-                    <ListItemIcon>
-                      {isCommentingBlocked ? (
-                        <CommentIcon fontSize="medium" />
-                      ) : (
-                        <CommentsDisabledIcon fontSize="medium" />
-                      )}
-                    </ListItemIcon>
-                    <ListItemText
-                      disableTypography
-                      primary={
-                        <Typography variant="subtitle2">
-                          {!isCommentingBlocked
-                            ? 'Zablokuj komentowanie'
-                            : 'Odblokuj komentowanie'}
-                        </Typography>
-                      }
-                    />
-                  </MenuItem>
-                  <MenuItem
-                    className={classes.postMenuItem}
-                    onClick={() => setOpenDeletePostPopup(true)}
-                  >
-                    <ListItemIcon>
-                      <DeleteIcon fontSize="medium" />
-                    </ListItemIcon>
-                    <ListItemText
-                      disableTypography
-                      primary={
-                        <Typography variant="subtitle2">Usuń post</Typography>
-                      }
-                    />
-                  </MenuItem>
-                </div>
-              )}
-            </Menu>
-          </div>
-        ) : (
-          <div />
-        )}
+                >
+                  <ListItemIcon>
+                    <FavoriteIcon fontSize="medium" />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography variant="subtitle2">
+                        Dodaj do ulubionych
+                      </Typography>
+                    }
+                  />
+                </MenuItem>
+                {authorId && authorId === userId && (
+                  <div>
+                    <MenuItem
+                      className={classes.postMenuItem}
+                      onClick={handleEditPost}
+                    >
+                      <ListItemIcon>
+                        <EditIcon fontSize="medium" />
+                      </ListItemIcon>
+                      <ListItemText
+                        disableTypography
+                        primary={
+                          <Typography variant="subtitle2">
+                            Edytuj post
+                          </Typography>
+                        }
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      className={classes.postMenuItem}
+                      onClick={handleManagePostAccess}
+                    >
+                      <ListItemIcon>
+                        <PeopleAltIcon fontSize="medium" />
+                      </ListItemIcon>
+                      <ListItemText
+                        disableTypography
+                        primary={
+                          <Typography variant="subtitle2">
+                            Zmień dostępność
+                          </Typography>
+                        }
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      className={classes.postMenuItem}
+                      sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+                      onClick={handleManagePostCommentsAccess}
+                    >
+                      <ListItemIcon>
+                        {isCommentingBlocked ? (
+                          <CommentIcon fontSize="medium" />
+                        ) : (
+                          <CommentsDisabledIcon fontSize="medium" />
+                        )}
+                      </ListItemIcon>
+                      <ListItemText
+                        disableTypography
+                        primary={
+                          <Typography variant="subtitle2">
+                            {!isCommentingBlocked
+                              ? 'Zablokuj komentowanie'
+                              : 'Odblokuj komentowanie'}
+                          </Typography>
+                        }
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      className={classes.postMenuItem}
+                      onClick={() => setOpenDeletePostPopup(true)}
+                    >
+                      <ListItemIcon>
+                        <DeleteIcon fontSize="medium" />
+                      </ListItemIcon>
+                      <ListItemText
+                        disableTypography
+                        primary={
+                          <Typography variant="subtitle2">Usuń post</Typography>
+                        }
+                      />
+                    </MenuItem>
+                  </div>
+                )}
+              </Menu>
+            </div>
+          ) : (
+            <div />
+          )}
+          {isFavourite && (
+            <Tooltip title="Usuń z ulubionych" placement="left">
+              <IconButton onClick={handleClickDeleteFromFavourite}>
+                <DeleteIcon fontSize="medium" color="secondary" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </>
       </ActivityHeading>
       <Popup
         open={openDeletePostPopup}
@@ -632,11 +656,15 @@ Post.propTypes = {
   isPublic: PropTypes.bool.isRequired,
   isEdited: PropTypes.bool.isRequired,
   isCommentingBlocked: PropTypes.bool.isRequired,
+  asSharing: PropTypes.bool,
+  highlightCommentById: PropTypes.number,
+  isFavourite: PropTypes.bool,
 };
 
 Post.defaultProps = {
   asSharing: false,
   highlightCommentById: null,
+  isFavourite: false,
 };
 
 export default withStyles(styles)(Post);

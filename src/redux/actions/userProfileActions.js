@@ -2,7 +2,6 @@ import userProfileTypes from '../types/userProfileTypes';
 import authTypes from '../types/authTypes';
 import userProfileService from '../../services/userService';
 import { showNotification } from './notificationActions';
-import { logoutUser } from './authActions';
 import { getActivityBoard } from './userActivityActions';
 
 export const getUserProfile =

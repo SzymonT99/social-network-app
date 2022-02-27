@@ -5,11 +5,34 @@ const styles = (theme) => ({
   favouritesContainer: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: ' center',
-    marginTop: '10px',
+    alignItems: 'center',
+    marginTop: '15px',
   },
   favouritesContent: {
-    flex: '5',
+    width: '70%',
+  },
+  paginationContainer: {
+    '&.MuiPaper-root': {
+      width: '100%',
+      borderRadius: '10px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  },
+  postsPagination: {
+    '&.MuiPagination-root': {
+      padding: '15px',
+      '& .MuiPagination-ul': {
+        justifyContent: 'center',
+      },
+    },
+  },
+  noContent: {
+    marginTop: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

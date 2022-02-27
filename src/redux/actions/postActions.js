@@ -1,7 +1,6 @@
 import postTypes from '../types/postTypes';
 import postService from '../../services/postService';
 import { showNotification } from './notificationActions';
-import { logoutUser } from './authActions';
 import { getUserActivity } from './userProfileActions';
 
 export const createPost = (postFormData) => (dispatch, getState) => {
@@ -134,6 +133,13 @@ export const likePost =
             );
           }
 
+          if (
+            getState().auth.favouritePosts.filter(
+              (post) => post.postId === postId
+            ).length > 0
+          ) {
+            dispatch(getUserFavouritePosts(getState().auth.user.userId));
+          }
           dispatch(showNotification('success', 'Polubiono post'));
         } else if (response.status === 409) {
           dispatch(
@@ -180,6 +186,14 @@ export const dislikePost =
               )
             );
           }
+
+          if (
+            getState().auth.favouritePosts.filter(
+              (post) => post.postId === postId
+            ).length > 0
+          ) {
+            dispatch(getUserFavouritePosts(getState().auth.user.userId));
+          }
           dispatch(showNotification('success', 'Usunięto polubienie postu'));
         } else if (response.status === 409) {
           dispatch(
@@ -219,6 +233,14 @@ export const commentPost =
                   getState().selectedProfile.userProfile.userProfileId
                 )
               );
+            }
+
+            if (
+              getState().auth.favouritePosts.filter(
+                (post) => post.postId === postId
+              ).length > 0
+            ) {
+              dispatch(getUserFavouritePosts(getState().auth.user.userId));
             }
             dispatch(showNotification('success', 'Dodano komentarz'));
           });
@@ -266,6 +288,14 @@ export const editPostComment =
               )
             );
           }
+
+          if (
+            getState().auth.favouritePosts.filter(
+              (post) => post.postId === postId
+            ).length > 0
+          ) {
+            dispatch(getUserFavouritePosts(getState().auth.user.userId));
+          }
           dispatch(showNotification('success', 'Komentarz został zmieniony'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -304,6 +334,14 @@ export const deletePostComment =
                 getState().selectedProfile.userProfile.userProfileId
               )
             );
+          }
+
+          if (
+            getState().auth.favouritePosts.filter(
+              (post) => post.postId === postId
+            ).length > 0
+          ) {
+            dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
           dispatch(showNotification('success', 'Komentarz został usunięty'));
         } else if (response.status === 403) {
@@ -358,6 +396,14 @@ export const likePostComment =
               )
             );
           }
+
+          if (
+            getState().auth.favouritePosts.filter(
+              (post) => post.postId === postId
+            ).length > 0
+          ) {
+            dispatch(getUserFavouritePosts(getState().auth.user.userId));
+          }
           dispatch(showNotification('success', 'Polubiono komentarz'));
         } else if (response.status === 409) {
           dispatch(
@@ -404,6 +450,14 @@ export const dislikePostComment =
                 getState().selectedProfile.userProfile.userProfileId
               )
             );
+          }
+
+          if (
+            getState().auth.favouritePosts.filter(
+              (post) => post.postId === postId
+            ).length > 0
+          ) {
+            dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
           dispatch(
             showNotification('success', 'Usunięto polubienie komentarza')
@@ -553,6 +607,14 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
               )
             );
           }
+
+          if (
+            getState().auth.favouritePosts.filter(
+              (post) => post.postId === basePostId
+            ).length > 0
+          ) {
+            dispatch(getUserFavouritePosts(getState().auth.user.userId));
+          }
           dispatch(showNotification('success', 'Udostępniono post'));
         });
       } else if (response.status === 400) {
@@ -602,9 +664,8 @@ export const getUserFavouritePosts = (userId) => (dispatch) => {
   return postService
     .getFavouritePosts(userId)
     .then((response) => {
-      if (response.status === 201) {
+      if (response.status === 200) {
         return response.json().then((data) => {
-          console.log(data);
           dispatch({
             type: postTypes.FETCH_FAVOURITE_POSTS,
             payload: {
@@ -627,7 +688,6 @@ export const addPostToFavourite = (postId) => (dispatch, getState) => {
   return postService
     .addPostToFavourite(postId)
     .then((response) => {
-      console.log(response.status);
       if (response.status === 201) {
         dispatch(getUserFavouritePosts(getState().auth.user.userId));
         dispatch(showNotification('success', 'Dodano do ulubionych'));
@@ -648,12 +708,13 @@ export const addPostToFavourite = (postId) => (dispatch, getState) => {
     });
 };
 
-export const deletePostToFavourite = (postId) => (dispatch, getState) => {
+export const deletePostFromFavourite = (postId) => (dispatch, getState) => {
   return postService
     .deletePostFromFavourite(postId)
     .then((response) => {
       if (response.status === 200) {
         dispatch(getUserFavouritePosts(getState().auth.user.userId));
+        dispatch(showNotification('success', 'Usunięto z ulubionych'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Post nie należy do ulubionych'));
       } else if (response.status === 403) {

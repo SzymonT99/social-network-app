@@ -237,7 +237,7 @@ const EventsPage = (props) => {
               <Paper elevation={4} className={classes.paginationContainer}>
                 <Pagination
                   className={classes.eventsPagination}
-                  count={events && Math.ceil(events.length / 10)}
+                  count={events && Math.ceil(events.length / 6)}
                   color="secondary"
                   size="large"
                   showFirstButton
