@@ -1,4 +1,4 @@
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import ActivityBoard from '../pages/ActivityBoard/ActivityBoard';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import AppTemplate from '../templates/AppTemplate';
@@ -7,6 +7,7 @@ import EventsPageDetails from '../pages/EventDetailsPage/EventDetailsPage';
 import FriendsPage from '../pages/FriendsPage/FriendsPage';
 import SettingsPage from '../pages/AccountSettingsPage/AccountSettingsPage';
 import FavouritePostsPage from '../pages/FavouritePostsPage/FavouritePostsPage';
+import GroupsPage from '../pages/GroupsPage/GroupsPage';
 
 const MainApplication = () => {
   return (
@@ -31,6 +32,7 @@ const MainApplication = () => {
           path="/app/favourite-posts"
           component={FavouritePostsPage}
         />
+        <Route exact path="/app/groups" component={GroupsPage} />
       </Switch>
     </AppTemplate>
   );

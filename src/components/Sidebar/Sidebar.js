@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './sidebar-jss';
 import { PropTypes } from 'prop-types';

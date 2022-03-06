@@ -12,12 +12,9 @@ const styles = (theme) => ({
     justifyContent: 'center',
     backgroundColor: 'rgba(0, 18, 38, 0.76)',
   },
-  appInnerContainer: {
-    display: 'flex',
-    width: '100%',
-  },
   appContainer: {
     display: 'flex',
+    height: '100%',
     width: '100%',
   },
   contentContainer: {

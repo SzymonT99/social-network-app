@@ -22,7 +22,7 @@ const editEvent = (eventId, formData) => {
 };
 
 const deleteEvent = (eventId) => {
-  return fetch(endpoints.eventDetails.replace('{eventId}', eventId), {
+  return fetch(endpoints.deleteEvent.replace('{eventId}', eventId), {
     method: 'DELETE',
     headers: {
       Authorization: authorization(),

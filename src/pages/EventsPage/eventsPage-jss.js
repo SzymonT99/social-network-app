@@ -48,6 +48,9 @@ const styles = (theme) => ({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      '& .MuiFormControl-root': {
+        marginBottom: '0px',
+      },
     },
   },
   eventSearchbar: {
