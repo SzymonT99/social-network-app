@@ -50,6 +50,16 @@ const getGroups = () => {
   });
 };
 
+const getInterestingGroups = () => {
+  return fetch(endpoints.interestingGroups, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 const inviteToGroup = (groupId, invitedUserId) => {
   return fetch(
     endpoints.inviteToGroup.replace('{groupId}', groupId) +
@@ -377,6 +387,7 @@ export default {
   editGroup,
   deleteGroup,
   getGroups,
+  getInterestingGroups,
   getGroupDetails,
   inviteToGroup,
   respondToGroupInvitation,

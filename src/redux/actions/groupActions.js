@@ -110,6 +110,29 @@ export const getGroups = () => (dispatch) => {
     });
 };
 
+export const getUserInterestingGroups = () => (dispatch) => {
+  return groupService
+    .getInterestingGroups()
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: groupTypes.FETCH_USER_INTERESTING_GROUPS,
+            payload: {
+              userInterestingGroups: data,
+            },
+          });
+          return data;
+        });
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const inviteToGroup =
   (groupId, invitedUserId) => (dispatch, getState) => {
     return groupService
@@ -163,9 +186,9 @@ export const respondToGroupInvitation =
       });
   };
 
-export const getGroupInvitations = (groupId) => (dispatch) => {
+export const getGroupInvitations = () => (dispatch) => {
   return groupService
-    .getGroupDetails(groupId)
+    .getGroupInvitations()
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {

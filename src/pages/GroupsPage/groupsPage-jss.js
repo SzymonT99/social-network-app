@@ -39,6 +39,67 @@ const styles = (theme) => ({
       fontSize: '16px',
     },
   },
+  groupSearchbarContainer: {
+    '&.MuiPaper-root': {
+      backgroundColor: theme.palette.primary.light,
+      marginTop: '15px',
+      minHeight: '92px',
+      borderRadius: '10px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '& .MuiFormControl-root': {
+        marginBottom: '0px',
+      },
+    },
+  },
+  groupSearchbar: {
+    '&.MuiTextField-root': {
+      backgroundColor: 'white',
+      borderRadius: '5px',
+      width: '50%',
+      marginRight: '15px',
+    },
+  },
+  groupOrderBox: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  groupOrderSelect: {
+    '&.MuiOutlinedInput-root': {
+      backgroundColor: 'white',
+      width: '220px',
+    },
+  },
+  groupsListContainer: {
+    margin: '15px 0px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridGap: '15px',
+  },
+  groupsPagination: {
+    '&.MuiPagination-root': {
+      padding: '15px',
+      '& .MuiPagination-ul': {
+        justifyContent: 'center',
+      },
+    },
+  },
+  paginationContainer: {
+    '&.MuiPaper-root': {
+      width: '100%',
+      borderRadius: '10px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  },
+  noContent: {
+    marginTop: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default styles;

@@ -233,21 +233,28 @@ const EventsPage = (props) => {
                 <CircularProgress color="secondary" />
               </div>
             )}
-            {filteredEvents.length > 6 && (
-              <Paper elevation={4} className={classes.paginationContainer}>
-                <Pagination
-                  className={classes.eventsPagination}
-                  count={events && Math.ceil(events.length / 6)}
-                  color="secondary"
-                  size="large"
-                  showFirstButton
-                  showLastButton
-                  page={eventsPageNumber}
-                  onChange={handleChangeEventsPageNumber}
-                />
-              </Paper>
-            )}
           </div>
+          {filteredEvents.length > 6 && (
+            <Paper elevation={4} className={classes.paginationContainer}>
+              <Pagination
+                className={classes.eventsPagination}
+                count={events && Math.ceil(events.length / 6)}
+                color="secondary"
+                size="large"
+                showFirstButton
+                showLastButton
+                page={eventsPageNumber}
+                onChange={handleChangeEventsPageNumber}
+              />
+            </Paper>
+          )}
+          {filteredEvents.length === 0 && (
+            <div className={classes.noContent}>
+              <Typography variant="h6" fontWeight="bold">
+                Brak wydarzeń
+              </Typography>
+            </div>
+          )}
         </TabPanelMUI>
         <TabPanelMUI value="2" sx={{ padding: 0 }}>
           <div className={classes.eventsListContainer}>
@@ -272,6 +279,13 @@ const EventsPage = (props) => {
               </div>
             )}
           </div>
+          {eventInvitations.length === 0 && (
+            <div className={classes.noContent}>
+              <Typography variant="h6" fontWeight="bold">
+                Brak zaproszeń
+              </Typography>
+            </div>
+          )}
         </TabPanelMUI>
       </TabContext>
     </div>

@@ -66,10 +66,10 @@ const styles = (theme) => ({
     alignItems: 'center',
   },
   eventsListContainer: {
-    marginTop: '15px',
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '10px',
+    margin: '15px 0px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridGap: '15px',
   },
   eventOrderSelect: {
     '&.MuiOutlinedInput-root': {
