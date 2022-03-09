@@ -8,6 +8,7 @@ const initialState = {
   groupInvitations: [],
   userGroupJoinRequests: [],
   currentGroupPosts: [],
+  possibleInterests: [],
 };
 
 const groupReducer = (state = initialState, action) => {
@@ -46,6 +47,11 @@ const groupReducer = (state = initialState, action) => {
       return {
         ...state,
         currentGroupPosts: action.payload.currentGroupPosts,
+      };
+    case groupTypes.FETCH_POSSIBLE_INTERESTS:
+      return {
+        ...state,
+        possibleInterests: action.payload.possibleInterests,
       };
     default:
       return state;

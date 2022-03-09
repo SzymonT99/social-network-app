@@ -32,6 +32,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Group from '../../components/Group/Group';
 import Popup from '../../components/Popup/Popup';
 import GroupForm from '../../components/Forms/GroupForm';
+import { getPossibleInterests } from '../../redux/actions/userProfileActions';
 
 const GroupsPage = (props) => {
   const { classes } = props;
@@ -74,6 +75,7 @@ const GroupsPage = (props) => {
       });
       dispatch(getUserInterestingGroups());
       dispatch(getGroupInvitations());
+      dispatch(getPossibleInterests());
     })();
   }, []);
 

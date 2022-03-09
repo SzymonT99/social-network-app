@@ -2,27 +2,50 @@ import React, { useEffect, useRef, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './form-jss';
 import { PropTypes } from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import defaultImgLandscape from '../../assets/default-image-landscape.png';
 import {
+  Box,
   Button,
+  Chip,
   Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
   Grid,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
   Radio,
   RadioGroup,
+  Select,
   TextField,
+  useTheme,
 } from '@mui/material';
 import { createGroup, getGroups } from '../../redux/actions/groupActions';
+
+function getStyles(interestId, groupInterest, theme) {
+  return {
+    fontWeight:
+      groupInterest.filter(
+        (groupInterest) => groupInterest.interestId === interestId
+      ).length !== 0
+        ? theme.typography.fontWeightBold
+        : theme.typography.fontWeightRegular,
+  };
+}
 
 const GroupForm = (props) => {
   const { classes, closePopup, updateGroups } = props;
 
   const dispatch = useDispatch();
+  const theme = useTheme();
+
+  const possibleInterests = useSelector(
+    (state) => state.groups.possibleInterests
+  );
 
   const [displayedImage, setDisplayedImage] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -51,6 +74,7 @@ const GroupForm = (props) => {
   const formik = useFormik({
     initialValues: {
       name: '',
+      groupInterests: [],
       description: '',
       access: true,
     },
@@ -68,6 +92,7 @@ const GroupForm = (props) => {
         name: values.name,
         description: values.description,
         isPublic: values.access,
+        interests: values.groupInterests,
       };
 
       formData.append(
@@ -140,6 +165,7 @@ const GroupForm = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            sx={{ marginBottom: '5px' }}
             fullWidth
             id="name"
             name="name"
@@ -155,13 +181,55 @@ const GroupForm = (props) => {
           />
         </Grid>
         <Grid item xs={12}>
+          <FormControl fullWidth sx={{ marginBottom: '26px' }}>
+            <InputLabel id="group-interests-label">Tematyka grupy</InputLabel>
+            <Select
+              labelId="group-interests-label"
+              id="groupInterests"
+              name="groupInterests"
+              multiple
+              value={formik.values.groupInterests}
+              onChange={formik.handleChange}
+              input={
+                <OutlinedInput
+                  id="select-multiple-chip"
+                  label="Tematyka grupy"
+                />
+              }
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((interest) => (
+                    <Chip key={interest.interestId} label={interest.name} />
+                  ))}
+                </Box>
+              )}
+            >
+              {possibleInterests &&
+                possibleInterests.map((interest) => (
+                  <MenuItem
+                    key={interest.interestId}
+                    value={interest}
+                    style={getStyles(
+                      interest.interestId,
+                      formik.values.groupInterests,
+                      theme
+                    )}
+                  >
+                    {interest.name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12}>
           <TextField
+            sx={{ margin: 0 }}
             fullWidth
             id="description"
             name="description"
             label="Opis grupy"
             multiline
-            rows={4}
+            rows={3}
             value={formik.values.description}
             onChange={formik.handleChange}
             error={
