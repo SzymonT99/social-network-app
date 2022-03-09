@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styles from './template-jss';
 import { withStyles } from '@mui/styles';
 import Sidebar from '../components/Sidebar/Sidebar';
@@ -6,6 +6,7 @@ import Rightbar from '../components/Rightbar/Rightbar';
 import Header from '../components/Header/Header';
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import Copyright from '../components/Copyright/Copyright';
 
 const AppTemplate = (props) => {
   const { classes, children } = props;

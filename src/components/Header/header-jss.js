@@ -30,6 +30,9 @@ const styles = (theme) => ({
     width: '94%',
     display: 'flex',
     alignItems: 'center',
+    '& .MuiFormControl-root': {
+      marginBottom: 0,
+    },
   },
   actionContainer: {
     flex: 4,

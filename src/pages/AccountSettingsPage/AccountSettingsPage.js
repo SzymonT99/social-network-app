@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './accountSettingsPage-jss';
 import { PropTypes } from 'prop-types';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { Paper, Tab, Tabs, Typography } from '@mui/material';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';

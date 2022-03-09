@@ -45,7 +45,7 @@ const ChangeEmailForm = (props) => {
     <form onSubmit={formik.handleSubmit} className={classes.editAccountForm}>
       <TextField
         fullWidth
-        sx={{ marginBottom: '20px' }}
+        sx={{ marginBottom: '30px' }}
         className={classes.disabledFormBtn}
         id="oldEmail"
         name="oldEmail"

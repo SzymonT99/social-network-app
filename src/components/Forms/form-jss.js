@@ -163,10 +163,10 @@ const styles = (theme) => ({
       width: '50%',
     },
   },
-  eventImageContainer: {
+  formImageContainer: {
     position: 'relative',
   },
-  eventImage: {
+  formImage: {
     width: '100%',
     height: '300px',
     objectFit: 'cover',
@@ -174,21 +174,21 @@ const styles = (theme) => ({
     borderRadius: '10px',
     marginBottom: '10px',
   },
-  eventImageUploadBtn: {
+  formImageUploadBtn: {
     '&.MuiButton-root': {
       position: 'absolute',
       bottom: '25px',
       right: '10px',
     },
   },
-  eventImageDeleteBtn: {
+  formImageDeleteBtn: {
     '&.MuiButton-root': {
       position: 'absolute',
       bottom: '25px',
       right: '140px',
     },
   },
-  createEventBtn: {
+  formConfirmBtn: {
     '&.MuiButton-root': {
       fontSize: '16px',
       fontWeight: 'bold',

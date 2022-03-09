@@ -5,6 +5,7 @@ import userActivityReducer from './reducers/userActivityReducer';
 import userProfileReducer from './reducers/userProfileReducer';
 import eventReducer from './reducers/eventReducer';
 import friendReducer from './reducers/friendReducer';
+import groupReducer from './reducers/groupReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   selectedProfile: userProfileReducer,
   events: eventReducer,
   friends: friendReducer,
+  groups: groupReducer,
 });
 
 export default rootReducer;

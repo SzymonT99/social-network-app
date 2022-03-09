@@ -2,7 +2,7 @@ const styles = (theme) => ({
   wrapper: {
     margin: '20px 0',
   },
-  eventsTopContainer: {
+  groupsTopContainer: {
     '&.MuiPaper-root': {
       borderRadius: '10px',
       display: 'flex',
@@ -33,13 +33,13 @@ const styles = (theme) => ({
       },
     },
   },
-  addEventBtn: {
+  addGroupBtn: {
     '&.MuiButton-root': {
       borderRadius: '10px',
       fontSize: '16px',
     },
   },
-  eventSearchbarContainer: {
+  groupSearchbarContainer: {
     '&.MuiPaper-root': {
       backgroundColor: theme.palette.primary.light,
       marginTop: '15px',
@@ -53,7 +53,7 @@ const styles = (theme) => ({
       },
     },
   },
-  eventSearchbar: {
+  groupSearchbar: {
     '&.MuiTextField-root': {
       backgroundColor: 'white',
       borderRadius: '5px',
@@ -61,23 +61,23 @@ const styles = (theme) => ({
       marginRight: '15px',
     },
   },
-  eventsOrderBox: {
+  groupOrderBox: {
     display: 'flex',
     alignItems: 'center',
   },
-  eventsListContainer: {
-    margin: '15px 0px',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gridGap: '15px',
-  },
-  eventOrderSelect: {
+  groupOrderSelect: {
     '&.MuiOutlinedInput-root': {
       backgroundColor: 'white',
       width: '220px',
     },
   },
-  eventsPagination: {
+  groupsListContainer: {
+    margin: '15px 0px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridGap: '15px',
+  },
+  groupsPagination: {
     '&.MuiPagination-root': {
       padding: '15px',
       '& .MuiPagination-ul': {

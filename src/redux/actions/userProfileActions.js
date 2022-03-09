@@ -3,6 +3,7 @@ import authTypes from '../types/authTypes';
 import userProfileService from '../../services/userService';
 import { showNotification } from './notificationActions';
 import { getActivityBoard } from './userActivityActions';
+import groupTypes from '../types/groupTypes';
 
 export const getUserProfile =
   (userId, forLoggedIn = false) =>
@@ -268,6 +269,12 @@ export const getPossibleInterests = () => (dispatch) => {
         return response.json().then((data) => {
           dispatch({
             type: userProfileTypes.FETCH_POSSIBLE_INTERESTS,
+            payload: {
+              possibleInterests: data,
+            },
+          });
+          dispatch({
+            type: groupTypes.FETCH_POSSIBLE_INTERESTS,
             payload: {
               possibleInterests: data,
             },
