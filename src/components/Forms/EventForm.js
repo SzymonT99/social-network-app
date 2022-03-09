@@ -173,18 +173,18 @@ const EventForm = (props) => {
       onSubmit={formik.handleSubmit}
       style={{ display: 'flex', flexDirection: 'column' }}
     >
-      <Grid container columnSpacing={{ xs: 2 }} rowSpacing={{ xs: 1 }}>
+      <Grid container columnSpacing={{ xs: 2 }}>
         <Grid item xs={12}>
-          <div className={classes.eventImageContainer}>
+          <div className={classes.formImageContainer}>
             <img
               src={displayedImage ? displayedImage : defaultEventImgLandscape}
               alt="Zdjęcie wydarzenia"
-              className={classes.eventImage}
+              className={classes.formImage}
             />
             <Button
               variant="contained"
               color="primary"
-              className={classes.eventImageUploadBtn}
+              className={classes.formImageUploadBtn}
               onClick={() => imageInputRef.current.click()}
             >
               Ustaw zdjęcie
@@ -201,7 +201,7 @@ const EventForm = (props) => {
               <Button
                 variant="contained"
                 color="secondary"
-                className={classes.eventImageDeleteBtn}
+                className={classes.formImageDeleteBtn}
                 onClick={deleteEventImage}
               >
                 Usuń zdjęcie
@@ -268,7 +268,7 @@ const EventForm = (props) => {
         <Grid item xs={6}>
           <FormControl fullWidth>
             <InputLabel id="event-time-select-label">
-              Czas rozrpoczęcia wydarzenia
+              Czas rozpoczęcia wydarzenia
             </InputLabel>
             <Select
               id="time"
@@ -357,7 +357,7 @@ const EventForm = (props) => {
         variant="contained"
         color="secondary"
         type="submit"
-        className={classes.createEventBtn}
+        className={classes.formConfirmBtn}
       >
         {edition ? 'Zapisz zmiany' : 'Utwórz wydarzenie'}
       </Button>

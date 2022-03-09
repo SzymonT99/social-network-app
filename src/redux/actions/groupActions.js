@@ -110,6 +110,29 @@ export const getGroups = () => (dispatch) => {
     });
 };
 
+export const getUserGroups = (userId) => (dispatch) => {
+  return groupService
+    .getUserGroups(userId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: groupTypes.FETCH_USER_GROUPS,
+            payload: {
+              userGroups: data,
+            },
+          });
+          return data;
+        });
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const getUserInterestingGroups = () => (dispatch) => {
   return groupService
     .getInterestingGroups()

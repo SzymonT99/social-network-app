@@ -2,6 +2,7 @@ import groupTypes from '../types/groupTypes';
 
 const initialState = {
   publicGroups: [],
+  userGroups: [],
   userInterestingGroups: [],
   groupDetails: null,
   groupInvitations: [],
@@ -15,6 +16,11 @@ const groupReducer = (state = initialState, action) => {
       return {
         ...state,
         publicGroups: action.payload.publicGroups,
+      };
+    case groupTypes.FETCH_USER_GROUPS:
+      return {
+        ...state,
+        userGroups: action.payload.userGroups,
       };
     case groupTypes.FETCH_USER_INTERESTING_GROUPS:
       return {

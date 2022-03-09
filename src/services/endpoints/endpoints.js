@@ -66,6 +66,7 @@ export const endpoints = {
   resetPassword: baseUrl + '/api/users/reset-password/step2',
   refreshToken: baseUrl + '/api/auth/refreshtoken',
   groups: baseUrl + '/api/groups',
+  userGroups: baseUrl + '/api/users/{userId}/groups',
   interestingGroups: baseUrl + '/api/interesting-groups',
   groupDetails: baseUrl + '/api/groups/{groupId}',
   deleteGroup: baseUrl + '/api/groups/{groupId}?archive=true',

@@ -20,6 +20,7 @@ const Group = (props) => {
     interests,
     groupCreationDate,
     membersNumber,
+    members,
     postsNumber,
     groupImage,
     invitation,
@@ -29,6 +30,8 @@ const Group = (props) => {
   const history = useHistory();
 
   const dispatch = useDispatch();
+
+  const loggedUser = useSelector((state) => state.auth.user);
 
   const handleClickSendRequestToJoinGroup = () => {
     dispatch(requestToJoinGroup(groupId));
@@ -40,6 +43,11 @@ const Group = (props) => {
       history.push('/app/groups/' + groupId);
     }
   };
+
+  const isUseGroupMember =
+    members.filter(
+      (groupMember) => groupMember.member.userId === loggedUser.userId
+    ).length !== 0;
 
   return (
     <div className={classes.groupContainer}>
@@ -122,8 +130,9 @@ const Group = (props) => {
               variant="contained"
               className={classes.groupBtn}
               onClick={handleClickSendRequestToJoinGroup}
+              disabled={isUseGroupMember}
             >
-              Dołącz do grupy
+              {!isUseGroupMember ? 'Dołącz do grupy' : 'Należysz do grupy'}
             </Button>
           )}
           {invitation && (
@@ -168,6 +177,7 @@ Group.propTypes = {
   name: PropTypes.string.isRequired,
   interests: PropTypes.array.isRequired,
   groupCreationDate: PropTypes.string.isRequired,
+  members: PropTypes.array.isRequired,
   membersNumber: PropTypes.number.isRequired,
   postsNumber: PropTypes.number.isRequired,
   groupImage: PropTypes.object,

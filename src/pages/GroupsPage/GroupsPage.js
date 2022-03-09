@@ -30,6 +30,8 @@ import {
 } from '../../redux/actions/groupActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import Group from '../../components/Group/Group';
+import Popup from '../../components/Popup/Popup';
+import GroupForm from '../../components/Forms/GroupForm';
 
 const GroupsPage = (props) => {
   const { classes } = props;
@@ -166,17 +168,17 @@ const GroupsPage = (props) => {
           >
             Utwórz nową grupę
           </Button>
-          {/*<Popup*/}
-          {/*  open={openGroupCreation}*/}
-          {/*  type="group"*/}
-          {/*  title="Utwórz grupę"*/}
-          {/*  onClose={handleCloseGroupCreation}*/}
-          {/*>*/}
-          {/*  <GroupForm*/}
-          {/*    closePopup={handleCloseGroupCreation}*/}
-          {/*    updateEvents={updateGroups}*/}
-          {/*  />*/}
-          {/*</Popup>*/}
+          <Popup
+            open={openGroupCreation}
+            type="group"
+            title="Utwórz grupę"
+            onClose={handleCloseGroupCreation}
+          >
+            <GroupForm
+              closePopup={handleCloseGroupCreation}
+              updateGroups={updateGroups}
+            />
+          </Popup>
         </Paper>
         {groupTabType === '1' && (
           <Paper elevation={4} className={classes.groupSearchbarContainer}>
@@ -232,6 +234,7 @@ const GroupsPage = (props) => {
                     interests={group.interests}
                     groupCreationDate={group.createdAt}
                     membersNumber={group.membersNumber}
+                    members={group.members}
                     postsNumber={group.postsNumber}
                     groupImage={group.image}
                   />
@@ -280,6 +283,7 @@ const GroupsPage = (props) => {
                     interests={interestingGroup.interests}
                     groupCreationDate={interestingGroup.createdAt}
                     membersNumber={interestingGroup.membersNumber}
+                    members={interestingGroup.members}
                     postsNumber={interestingGroup.postsNumber}
                     groupImage={interestingGroup.image}
                   />
@@ -325,6 +329,7 @@ const GroupsPage = (props) => {
                   interests={groupInvitation.groupInterests}
                   groupCreationDate={groupInvitation.groupCreatedAt}
                   membersNumber={groupInvitation.groupMembersNumber}
+                  members={groupInvitation.groupMembers}
                   postsNumber={groupInvitation.groupPostsNumber}
                   groupImage={groupInvitation.groupImage}
                   invitation
