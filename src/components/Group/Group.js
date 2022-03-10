@@ -46,7 +46,7 @@ const Group = (props) => {
 
   const isUseGroupMember =
     members.filter(
-      (groupMember) => groupMember.member.userId === loggedUser.userId
+      (groupMember) => groupMember.user.userId === loggedUser.userId
     ).length !== 0;
 
   return (

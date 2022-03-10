@@ -53,6 +53,11 @@ const groupReducer = (state = initialState, action) => {
         ...state,
         possibleInterests: action.payload.possibleInterests,
       };
+    case groupTypes.CLEAR_GROUP_DETAILS:
+      return {
+        ...state,
+        groupDetails: [],
+      };
     default:
       return state;
   }

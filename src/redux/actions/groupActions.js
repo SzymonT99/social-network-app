@@ -67,7 +67,7 @@ export const deleteGroup = (groupId) => (dispatch) => {
 
 export const getGroupDetails = (groupId) => (dispatch) => {
   return groupService
-    .getEventById(groupId)
+    .getGroupDetails(groupId)
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {
@@ -432,34 +432,12 @@ export const deleteGroupInterest =
       });
   };
 
-export const getGroupPosts = (groupId) => (dispatch) => {
-  return groupService
-    .getGroupPosts(groupId)
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json().then((data) => {
-          dispatch({
-            type: groupTypes.FETCH_GROUP_POSTS,
-            payload: {
-              currentGroupPosts: data,
-            },
-          });
-        });
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
 export const createGroupPost = (groupId, postFormData) => (dispatch) => {
   return groupService
     .createGroupPost(groupId, postFormData)
     .then((response) => {
-      if (response.status === 200) {
-        dispatch(getGroupPosts(groupId));
+      if (response.status === 201) {
+        dispatch(getGroupDetails(groupId));
         dispatch(showNotification('success', 'Utworzono nowy post w grupie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
@@ -477,7 +455,7 @@ export const editGroupPost = (groupId, postId, postFormData) => (dispatch) => {
     .editGroupPost(postId, postFormData)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getGroupPosts(groupId));
+        dispatch(getGroupDetails(groupId));
         dispatch(showNotification('success', 'Edytowano post w grupie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -496,7 +474,7 @@ export const deleteGroupPost =
       .deleteGroupPost(postId, postFormData)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getGroupPosts(groupId));
+          dispatch(getGroupDetails(groupId));
           dispatch(showNotification('success', 'Usunięto post w grupie'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -729,3 +707,50 @@ export const setGroupMemberPermission = (groupId, memberId) => (dispatch) => {
       console.log(error);
     });
 };
+
+export const deleteGroupMember = (groupId, memberId) => (dispatch) => {
+  return groupService
+    .deleteGroupMember(groupId, memberId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getGroupDetails(groupId));
+        dispatch(showNotification('success', 'Usunięto członka grupy'));
+      } else if (response.status === 403) {
+        dispatch(
+          showNotification(
+            'warning',
+            'Tylko administrator lub zastępca może usuwać członków'
+          )
+        );
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const leaveGroup = (groupId) => (dispatch) => {
+  return groupService
+    .leaveGroup(groupId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getGroupDetails(groupId));
+        dispatch(showNotification('success', 'Opuszczono grupę'));
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const clearGroupData = () => ({
+  type: groupTypes.CLEAR_GROUP_DETAILS,
+});

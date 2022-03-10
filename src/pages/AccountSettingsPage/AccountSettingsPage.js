@@ -21,8 +21,17 @@ import {
 import PageHeader from '../../components/PageHeader/PageHeader';
 
 const TabPanel = (props) => {
-  const { children, value, index } = props;
-  return <div>{value === index && <div>{children}</div>}</div>;
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      id={`tabpanel-${index}`}
+      {...other}
+      hidden={value !== index}
+    >
+      {value === index && <div>{children}</div>}
+    </div>
+  );
 };
 
 const AccountSettingsPage = (props) => {

@@ -224,16 +224,6 @@ const deleteGroupInterest = (groupId, interestId) => {
   );
 };
 
-const getGroupPosts = (groupId) => {
-  return fetch(endpoints.groupPosts.replace('{groupId}', groupId), {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
-  });
-};
-
 const createGroupPost = (groupId, formData) => {
   return fetch(endpoints.groupPosts.replace('{groupId}', groupId), {
     method: 'POST',
@@ -379,7 +369,7 @@ const deleteGroupThreadAnswerReview = (reviewId) => {
 
 const setGroupMemberPermission = (groupId, memberId) => {
   return fetch(
-    endpoints.groupMemberPermission
+    endpoints.manageGroupMember
       .replace('{groupId}', groupId)
       .replace('{memberId}', memberId),
     {
@@ -390,6 +380,31 @@ const setGroupMemberPermission = (groupId, memberId) => {
       },
     }
   );
+};
+
+const deleteGroupMember = (groupId, memberId) => {
+  return fetch(
+    endpoints.manageGroupMember
+      .replace('{groupId}', groupId)
+      .replace('{memberId}', memberId),
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
+const leaveGroup = (groupId) => {
+  return fetch(endpoints.leaveGroup.replace('{groupId}', groupId), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
 };
 
 export default {
@@ -411,7 +426,6 @@ export default {
   deleteGroupRule,
   addGroupInterest,
   deleteGroupInterest,
-  getGroupPosts,
   createGroupPost,
   editGroupPost,
   deleteGroupPost,
@@ -425,4 +439,6 @@ export default {
   editGroupThreadAnswerReview,
   deleteGroupThreadAnswerReview,
   setGroupMemberPermission,
+  deleteGroupMember,
+  leaveGroup,
 };

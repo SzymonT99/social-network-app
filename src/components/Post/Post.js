@@ -645,7 +645,7 @@ Post.propTypes = {
   authorName: PropTypes.string.isRequired,
   profilePhoto: PropTypes.object,
   createdDate: PropTypes.object.isRequired,
-  content: PropTypes.string.isRequired,
+  content: PropTypes.string,
   likesNumber: PropTypes.number.isRequired,
   commentsNumber: PropTypes.number.isRequired,
   sharesNumber: PropTypes.number.isRequired,

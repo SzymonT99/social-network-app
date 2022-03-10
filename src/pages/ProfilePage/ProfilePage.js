@@ -97,25 +97,16 @@ import {
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
+      id={`tabpanel-${index}`}
       {...other}
     >
       {value === index && <div className={classes.tabContent}>{children}</div>}
     </div>
   );
-};
-
-const a11yProps = (index) => {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
 };
 
 const relationshipStatusTypes = {
@@ -597,29 +588,25 @@ const ProfilePage = (props) => {
             >
               <Tab
                 className={classes.tabItem}
-                {...a11yProps(0)}
+                id="tab-activity"
                 label="Aktywność"
               />
               <Tab
                 className={classes.tabItem}
-                {...a11yProps(1)}
+                id="tab-information"
                 label="Informacje"
               />
               <Tab
                 className={classes.tabItem}
-                {...a11yProps(2)}
+                id="tab-images"
                 label="Zdjęcia"
               />
               <Tab
                 className={classes.tabItem}
-                {...a11yProps(3)}
+                id="tab-friends"
                 label="Znajomi"
               />
-              <Tab
-                className={classes.tabItem}
-                {...a11yProps(4)}
-                label="Grupy"
-              />
+              <Tab className={classes.tabItem} id="tab-groups" label="Grupy" />
             </Tabs>
           </Paper>
           <TabPanel classes={classes} value={profileNavIndex} index={0}>
