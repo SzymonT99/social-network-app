@@ -6,10 +6,6 @@ import Typography from '@mui/material/Typography';
 import FriendListItem from '../FriendListItem/FriendListItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserFriends } from '../../redux/actions/friendAction';
-import {
-  refreshUserToken,
-  setTokenRefreshing,
-} from '../../redux/actions/authActions';
 
 const Rightbar = (props) => {
   const { classes } = props;

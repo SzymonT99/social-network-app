@@ -8,12 +8,19 @@ import { PropTypes } from 'prop-types';
 import { useHistory, useParams } from 'react-router-dom';
 import defaultImgLandscape from '../../assets/default-image-landscape.png';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Avatar,
   AvatarGroup,
   Button,
   Divider,
+  FormControl,
   InputAdornment,
   Link,
+  MenuItem,
+  Pagination,
+  Select,
   Tab,
   Tabs,
   TextField,
@@ -29,12 +36,15 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import GroupsIcon from '@mui/icons-material/Groups';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ForumIcon from '@mui/icons-material/Forum';
+import MessageIcon from '@mui/icons-material/Message';
 import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
 import {
-  clearGroupData,
   getGroupDetails,
   getGroupInvitations,
   getUsersWantedJoinGroup,
@@ -49,6 +59,8 @@ import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import PersonIcon from '@mui/icons-material/Person';
 import Post from '../../components/Post/Post';
+import SearchIcon from '@mui/icons-material/Search';
+import UserInformation from '../../components/Profile/UserInformation';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -89,6 +101,10 @@ const GroupDetailsPage = (props) => {
   const [openGroupPostCreationPopup, setOpenGroupPostCreationPopup] =
     useState(false);
   const [numberPostsShown, setNumberPostsShown] = useState(5);
+  const [searchedMember, setSearchedMember] = useState('');
+  const [membersOrder, setMembersOrder] = useState(1);
+  const [filteredMembers, setFilteredMembers] = useState([]);
+  const [membersPageNumber, setMembersPageNumber] = useState(1);
 
   useEffect(() => {
     (async () => {
@@ -101,7 +117,13 @@ const GroupDetailsPage = (props) => {
           dispatch(setTokenRefreshing(false));
         });
       }
-      dispatch(getGroupDetails(groupId));
+      dispatch(getGroupDetails(groupId)).then((data) => {
+        setFilteredMembers(
+          data.members.filter(
+            (member) => member.groupPermissionType === 'MEMBER'
+          )
+        );
+      });
       dispatch(getUsersWantedJoinGroup(groupId));
       dispatch(getGroupInvitations());
     })();
@@ -183,6 +205,70 @@ const GroupDetailsPage = (props) => {
     setOpenGroupPostCreationPopup(false);
   };
 
+  const generateGroupMemberNames = () => {
+    let names = '';
+    let groupMembersNumber = group.members.length;
+    group.members.map((member, index) => {
+      if (index < 4) {
+        names += member.user.firstName + ' ' + member.user.lastName + ', ';
+        groupMembersNumber--;
+      }
+    });
+
+    names = names.substring(0, names.length - 2);
+
+    if (groupMembersNumber !== 0) {
+      names += ' oraz ' + groupMembersNumber;
+    }
+
+    names += ' należy do grupy';
+
+    return names;
+  };
+
+  const handleChangeSearchedMember = (event) => {
+    let searchedMemberName = event.target.value;
+
+    setSearchedMember(searchedMemberName);
+
+    setFilteredMembers(
+      group.members.filter(
+        (member) =>
+          (member.user.firstName + member.user.lastName)
+            .toUpperCase()
+            .includes(searchedMemberName.toUpperCase()) &&
+          member.groupPermissionType === 'MEMBER'
+      )
+    );
+  };
+
+  const handleChangeMembersOrder = (event) => {
+    setMembersOrder(event.target.value);
+  };
+
+  const sortMembers = (memberOrderType) => {
+    if (memberOrderType === 1) {
+      filteredMembers.sort((a, b) => {
+        let x = a.user.firstName.toUpperCase();
+        let y = b.user.firstName.toUpperCase();
+        return x === y ? 0 : x > y ? 1 : -1;
+      });
+    } else if (memberOrderType === 2) {
+      filteredMembers.sort((x, y) => new Date(y.addedIn) - new Date(x.addedIn));
+    } else if (memberOrderType === 3) {
+      filteredMembers.sort((a, b) => {
+        let x = a.address.city.toUpperCase();
+        let y = b.address.city.toUpperCase();
+        return x === y ? 0 : x > y ? 1 : -1;
+      });
+    }
+    return filteredMembers;
+  };
+
+  const handleChangeMembersPageNumber = (event, value) => {
+    setMembersPageNumber(value);
+  };
+
   return (
     <>
       {group ? (
@@ -231,7 +317,11 @@ const GroupDetailsPage = (props) => {
                   </Typography>
                 </div>
                 <div className={classes.alignCenterRowInfo}>
-                  <AvatarGroup max={4}>
+                  <AvatarGroup
+                    max={10}
+                    className={classes.memberPhotosHover}
+                    onClick={() => setGroupNavIndex(2)}
+                  >
                     {group.members &&
                       group.members.map((groupMember) => (
                         <Avatar
@@ -278,7 +368,7 @@ const GroupDetailsPage = (props) => {
                 id="tab-members"
                 label="Członkowie"
               />
-              <Tab className={classes.tabItem} id="tab-friends" label="Forum" />
+              <Tab className={classes.tabItem} id="tab-forum" label="Forum" />
               <Tab
                 className={classes.tabItem}
                 id="tab-managment"
@@ -402,6 +492,11 @@ const GroupDetailsPage = (props) => {
                         {'• ' + interest.name}
                       </Typography>
                     ))}
+                    {group.interests.length === 0 && (
+                      <Typography variant="body1" marginLeft="32px">
+                        Nie określono
+                      </Typography>
+                    )}
                   </div>
                 </div>
               </Paper>
@@ -418,11 +513,16 @@ const GroupDetailsPage = (props) => {
                     Zobacz wszystkich
                   </Link>
                 </div>
-                <div className={classes.groupInfoBoxContent}>
+                <div className={classes.groupInfoNewMemberBoxContent}>
                   {getNewMembers().map((newMember) => (
                     <div
                       key={newMember.groupMemberId}
                       className={classes.newMemberBox}
+                      style={{
+                        borderBottom:
+                          getNewMembers().length > 1 &&
+                          '1px solid rgba(0, 0, 0, 0.22)',
+                      }}
                     >
                       <Avatar
                         src={
@@ -452,7 +552,12 @@ const GroupDetailsPage = (props) => {
                               .slice(0, 10)
                               .split('-')
                               .reverse()
-                              .join('.')}
+                              .join('.') +
+                            ' o ' +
+                            new Date(newMember.addedIn)
+                              .toJSON()
+                              .slice(10, 16)
+                              .replace('T', ' ')}
                         </span>
                       </Typography>
                     </div>
@@ -560,7 +665,464 @@ const GroupDetailsPage = (props) => {
                   </Link>
                 </div>
               )}
+              {group.posts.length === 0 && (
+                <div className={classes.noContent}>
+                  <Typography variant="h6" fontWeight="bold">
+                    Brak postów
+                  </Typography>
+                </div>
+              )}
             </div>
+          </TabPanel>
+          <TabPanel classes={classes} value={groupNavIndex} index={1}>
+            <Paper elevation={4} className={classes.informationSectionElement}>
+              <div className={classes.groupInfoBoxHeading}>
+                <Typography variant="h6">Informacje o grupie</Typography>
+              </div>
+              <div className={classes.groupInfoBoxContent}>
+                <Typography variant="subtitle1">{group.description}</Typography>
+                {group.isPublic ? (
+                  <div>
+                    <Typography
+                      variant="subtitle1"
+                      className={classes.groupBasicInfoItem}
+                      style={{ margin: '5px 0px 0px 0px' }}
+                    >
+                      <PublicIcon fontSize="medium" /> Grupa puliczna
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      marginLeft="32px"
+                      fontWeight={300}
+                    >
+                      Każda użytkownik może sprawdzić posty grupy, a także
+                      podstawowe informacje oraz członków grupy.
+                    </Typography>
+                  </div>
+                ) : (
+                  <div>
+                    <Typography
+                      variant="subtitle1"
+                      className={classes.groupBasicInfoItem}
+                      style={{ margin: '5px 0px 0px 0px' }}
+                    >
+                      <LockIcon fontSize="medium" /> Grupa prywatna
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      marginLeft="32px"
+                      fontWeight={300}
+                    >
+                      Dostęp do zawartości grupy jest ograniczony
+                    </Typography>
+                  </div>
+                )}
+                <Typography
+                  variant="subtitle1"
+                  className={classes.groupBasicInfoItem}
+                >
+                  <AddCircleIcon fontSize="medium" />{' '}
+                  {'Data utworzenia: ' +
+                    new Date(group.createdAt).getDate() +
+                    ' ' +
+                    new Date(group.createdAt).toLocaleString('default', {
+                      month: 'long',
+                    }) +
+                    ' ' +
+                    new Date(group.createdAt).getFullYear() +
+                    'r.'}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  className={classes.groupBasicInfoItem}
+                >
+                  <PersonIcon fontSize="medium" /> {'Założyciel: '}
+                  <Tooltip title="Zobacz profil" placement="right">
+                    <span
+                      onClick={() =>
+                        history.push(
+                          '/app/profile/' + group.groupCreator.userId
+                        )
+                      }
+                      className={classes.groupCreatorLink}
+                    >
+                      {group.groupCreator.firstName +
+                        ' ' +
+                        group.groupCreator.lastName}
+                    </span>
+                  </Tooltip>
+                </Typography>
+                <div>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.groupBasicInfoItem}
+                    style={{ margin: '5px 0px 0px 0px' }}
+                  >
+                    <InfoIcon fontSize="medium" /> Tematyka grupy:
+                  </Typography>
+                  {group.interests.map((interest) => (
+                    <Typography
+                      key={interest.interestId}
+                      variant="body1"
+                      marginLeft="32px"
+                      fontWeight={300}
+                    >
+                      {'• ' + interest.name}
+                    </Typography>
+                  ))}
+                  {group.interests.length === 0 && (
+                    <Typography variant="body1" marginLeft="32px">
+                      Nie określono
+                    </Typography>
+                  )}
+                </div>
+              </div>
+            </Paper>
+            <Paper elevation={4} className={classes.informationSectionElement}>
+              <div className={classes.groupInfoBoxHeading}>
+                <Typography variant="h6">Członkowie grupy</Typography>
+                <Link
+                  component="button"
+                  variant="subtitle1"
+                  onClick={() => {
+                    setGroupNavIndex(2);
+                  }}
+                >
+                  Zobacz wszystkich
+                </Link>
+              </div>
+              <div className={classes.groupInfoContainer}>
+                <AvatarGroup
+                  max={6}
+                  className={classes.memberPhotoGroup}
+                  onClick={() => setGroupNavIndex(2)}
+                >
+                  {group.members &&
+                    group.members.map((groupMember) => (
+                      <Avatar
+                        key={groupMember.groupMemberId}
+                        alt={
+                          groupMember.user.firstName +
+                          ' ' +
+                          groupMember.user.lastName
+                        }
+                        src={groupMember.user.profilePhoto.url}
+                      />
+                    ))}
+                </AvatarGroup>
+                <Typography variant="subtitle2">
+                  {generateGroupMemberNames()}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="bold"
+                  className={classes.groupBasicInfoItem}
+                >
+                  <GroupsIcon fontSize="medium" /> Podział na uprawnienia:
+                </Typography>
+                <Typography variant="subtitle2" marginLeft="30px">
+                  {'Administratorzy: ' +
+                    group.members.filter(
+                      (member) => member.groupPermissionType === 'ADMINISTRATOR'
+                    ).length}
+                </Typography>
+                <Typography variant="subtitle2" marginLeft="30px">
+                  {'Zastępcy: ' +
+                    group.members.filter(
+                      (member) => member.groupPermissionType === 'ASSISTANT'
+                    ).length}
+                </Typography>
+                <Typography variant="subtitle2" marginLeft="30px">
+                  {'Moderatorzy: ' +
+                    group.members.filter(
+                      (member) => member.groupPermissionType === 'MODERATOR'
+                    ).length}
+                </Typography>
+                <Typography variant="subtitle2" marginLeft="30px">
+                  {'Członkowie: ' +
+                    group.members.filter(
+                      (member) => member.groupPermissionType === 'MEMBER'
+                    ).length}
+                </Typography>
+              </div>
+            </Paper>
+            <Paper elevation={4} className={classes.informationSectionElement}>
+              <div className={classes.groupInfoBoxHeading}>
+                <Typography variant="h6">Aktywność grupy</Typography>
+              </div>
+              <div className={classes.groupInfoContainer}>
+                <Typography
+                  variant="subtitle1"
+                  className={classes.groupBasicInfoItem}
+                >
+                  <GroupsIcon fontSize="medium" />
+                  {group.members.length +
+                    (group.members.length === 1
+                      ? ' członek grupy'
+                      : ' członków grupy')}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  className={classes.groupBasicInfoItem}
+                >
+                  <MessageIcon fontSize="medium" />
+                  {group.posts.length +
+                    (group.posts.length === 1
+                      ? ' utworzony post na grupie'
+                      : ' utworzonych postów na grupie')}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  className={classes.groupBasicInfoItem}
+                >
+                  <ForumIcon fontSize="medium" />
+                  {group.threads.length +
+                    (group.threads.length === 1
+                      ? ' utworzony wątek na forum'
+                      : ' utworzonych wątków na forum')}
+                </Typography>
+              </div>
+            </Paper>
+            <Paper elevation={4} className={classes.informationSectionElement}>
+              <div className={classes.groupInfoBoxHeading}>
+                <Typography variant="h6">Regulamin grupy</Typography>
+              </div>
+              <div className={classes.groupInfoContainer}>
+                {group.rules.map((rule, index) => (
+                  <Accordion key={rule.ruleId}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      id={'accordion-header-' + index}
+                      className={classes.ruleItemHeading}
+                    >
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        {index + 1 + '. ' + rule.name}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography variant="subtitle2">
+                        {rule.description}
+                      </Typography>
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+                {group.rules.length === 0 && (
+                  <Typography
+                    variant="subtitle2"
+                    fontWeight="bold"
+                    textAlign="center"
+                  >
+                    Nie ustalono regulaminu
+                  </Typography>
+                )}
+              </div>
+            </Paper>
+          </TabPanel>
+          <TabPanel classes={classes} value={groupNavIndex} index={2}>
+            <Paper elevation={4} className={classes.memberSectionContainer}>
+              <div>
+                <Typography variant="h4" className={classes.memberSectionTitle}>
+                  Zarząd grupy
+                  <span className={classes.membersNumber}>
+                    {
+                      group.members.filter(
+                        (member) => member.groupPermissionType !== 'MEMBER'
+                      ).length
+                    }
+                  </span>
+                </Typography>
+                <Divider />
+              </div>
+              <Typography variant="h6" fontWeight="bold" marginTop="15px">
+                Administratorzy
+              </Typography>
+              <div className={classes.memberItemsContainer}>
+                {group.members
+                  .filter(
+                    (member) => member.groupPermissionType === 'ADMINISTRATOR'
+                  )
+                  .map((groupMember) => (
+                    <UserInformation
+                      key={groupMember.groupMemberId}
+                      name={
+                        groupMember.user.firstName +
+                        ' ' +
+                        groupMember.user.lastName
+                      }
+                      city={groupMember.address && groupMember.address.city}
+                      userId={groupMember.user.userId}
+                      profilePhoto={groupMember.user.profilePhoto}
+                      groupAddedIn={groupMember.addedIn}
+                    />
+                  ))}
+              </div>
+              <Typography variant="h6" fontWeight="bold" marginTop="10px">
+                Zastępcy
+              </Typography>
+              <div className={classes.memberItemsContainer}>
+                {group.members
+                  .filter(
+                    (member) => member.groupPermissionType === 'ASSISTANT'
+                  )
+                  .map((groupMember) => (
+                    <UserInformation
+                      key={groupMember.groupMemberId}
+                      name={
+                        groupMember.user.firstName +
+                        ' ' +
+                        groupMember.user.lastName
+                      }
+                      city={groupMember.address && groupMember.address.city}
+                      userId={groupMember.user.userId}
+                      profilePhoto={groupMember.user.profilePhoto}
+                      groupAddedIn={groupMember.addedIn}
+                    />
+                  ))}
+                {group.members.filter(
+                  (member) => member.groupPermissionType === 'ASSISTANT'
+                ).length === 0 && (
+                  <Typography textAlign="center" variant="subtitle2">
+                    Nie wybrano
+                  </Typography>
+                )}
+              </div>
+              <Typography variant="h6" fontWeight="bold" marginTop="10px">
+                Moderatorzy
+              </Typography>
+              <div className={classes.memberItemsContainer}>
+                {group.members
+                  .filter(
+                    (member) => member.groupPermissionType === 'MODERATOR'
+                  )
+                  .map((groupMember) => (
+                    <UserInformation
+                      key={groupMember.groupMemberId}
+                      name={
+                        groupMember.user.firstName +
+                        ' ' +
+                        groupMember.user.lastName
+                      }
+                      city={groupMember.address && groupMember.address.city}
+                      userId={groupMember.user.userId}
+                      profilePhoto={groupMember.user.profilePhoto}
+                      groupAddedIn={groupMember.addedIn}
+                    />
+                  ))}
+                {group.members.filter(
+                  (member) => member.groupPermissionType === 'MODERATOR'
+                ).length === 0 && (
+                  <Typography textAlign="center" variant="subtitle2">
+                    Nie wybrano
+                  </Typography>
+                )}
+              </div>
+            </Paper>
+            <Paper elevation={4} className={classes.memberSectionContainer}>
+              <div>
+                <Typography variant="h4" className={classes.memberSectionTitle}>
+                  Pozostali członkowie
+                  <span className={classes.membersNumber}>
+                    {
+                      group.members.filter(
+                        (member) => member.groupPermissionType === 'MEMBER'
+                      ).length
+                    }
+                  </span>
+                </Typography>
+                <Divider />
+                <div className={classes.membersActionContainer}>
+                  <TextField
+                    id="member-searchbar"
+                    placeholder="Wyszukaj członka"
+                    className={classes.memberSearchbar}
+                    value={searchedMember}
+                    onChange={handleChangeSearchedMember}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <div className={classes.membersOrderBox}>
+                    <Typography
+                      component="p"
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      marginRight="10px"
+                    >
+                      Sortuj według:
+                    </Typography>
+                    <FormControl sx={{ margin: 0 }}>
+                      <Select
+                        className={classes.memberOrderSelect}
+                        value={membersOrder}
+                        onChange={handleChangeMembersOrder}
+                        MenuProps={{ disableScrollLock: true }}
+                      >
+                        <MenuItem value={1}>Kolejności alfabetycznej</MenuItem>
+                        <MenuItem value={2}>Daty dołączenia</MenuItem>
+                        <MenuItem value={3}>Miejsca zamieszkania</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                </div>
+                <Divider />
+              </div>
+              <div
+                className={classes.memberItemsContainer}
+                style={{ marginTop: '10px' }}
+              >
+                {sortMembers(membersOrder)
+                  .slice((membersPageNumber - 1) * 6, membersPageNumber * 6)
+                  .map((groupMember) => (
+                    <UserInformation
+                      key={groupMember.groupMemberId}
+                      name={
+                        groupMember.user.firstName +
+                        ' ' +
+                        groupMember.user.lastName
+                      }
+                      city={groupMember.address && groupMember.address.city}
+                      userId={groupMember.user.userId}
+                      profilePhoto={groupMember.user.profilePhoto}
+                      groupAddedIn={groupMember.addedIn}
+                    />
+                  ))}
+                {group.members.filter(
+                  (member) => member.groupPermissionType === 'MEMBER'
+                ).length === 0 && (
+                  <Typography
+                    variant="h6"
+                    width="100%"
+                    marginTop="10px"
+                    marginBottom="10px"
+                    textAlign="center"
+                  >
+                    Brak innych członków
+                  </Typography>
+                )}
+              </div>
+              {group.members.filter(
+                (member) => member.groupPermissionType === 'MEMBER'
+              ).length > 6 && (
+                <Pagination
+                  className={classes.membersPagination}
+                  count={Math.ceil(
+                    group.members.filter(
+                      (member) => member.groupPermissionType === 'MEMBER'
+                    ).length / 6
+                  )}
+                  color="secondary"
+                  size="medium"
+                  showFirstButton
+                  showLastButton
+                  page={membersPageNumber}
+                  onChange={handleChangeMembersPageNumber}
+                />
+              )}
+            </Paper>
           </TabPanel>
         </div>
       ) : (

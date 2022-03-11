@@ -365,6 +365,13 @@ const styles = (theme) => ({
   profileNavHeadingBox: {
     margin: '20px 20px 0px 20px',
   },
+  friendSectionContainer: {
+    '&.MuiPaper-root': {
+      borderRadius: '10px',
+      width: '100%',
+      padding: '20px',
+    },
+  },
   friendTitle: {
     '&.MuiTypography-root ': {
       marginBottom: '10px',
@@ -392,6 +399,9 @@ const styles = (theme) => ({
     alignItems: 'center',
   },
   friendSearchbar: {
+    '&.MuiFormControl-root': {
+      margin: 0,
+    },
     '&.MuiTextField-root': {
       borderRadius: '5px',
       width: '60%',
@@ -423,8 +433,9 @@ const styles = (theme) => ({
   },
   friendInformationContainer: {
     display: 'flex',
-    margin: '10px',
     flexWrap: 'wrap',
+    padding: '10px 0px',
+    justifyContent: 'space-between',
   },
 });
 

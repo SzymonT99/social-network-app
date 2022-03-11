@@ -82,6 +82,8 @@ const styles = (theme) => ({
   tabContent: {
     width: '100%',
     display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   leftActivityContent: {
     flex: 2.8,
@@ -100,6 +102,10 @@ const styles = (theme) => ({
   },
   groupInfoBoxContent: {
     padding: '15px',
+    marginBottom: '15px',
+  },
+  groupInfoNewMemberBoxContent: {
+    padding: '0px 15px',
     marginBottom: '15px',
   },
   groupBasicInfoItem: {
@@ -147,6 +153,7 @@ const styles = (theme) => ({
     },
   },
   moreItemsContainer: {
+    marginBottom: '15px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -189,12 +196,124 @@ const styles = (theme) => ({
   newMemberBox: {
     display: 'flex',
     alignItems: 'center',
-    margin: '5px 0px',
+    padding: '15px 0px',
+    margin: 0,
   },
   newMemberAddedDate: {
     display: 'block',
     fontSize: '16px',
     fontWeight: 300,
+  },
+  noContent: {
+    marginTop: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  informationSectionElement: {
+    '&.MuiPaper-root': {
+      borderRadius: '10px',
+      width: '60%',
+      marginBottom: '15px',
+    },
+  },
+  groupInfoContainer: {
+    padding: '15px',
+  },
+  memberPhotoGroup: {
+    '&.MuiAvatarGroup-root': {
+      display: 'inline-flex',
+      marginBottom: '10px',
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
+  },
+  ruleItemHeading: {
+    '&.MuiAccordionSummary-root': {
+      '&.Mui-expanded': {
+        minHeight: 'auto',
+      },
+      '& .MuiAccordionSummary-content': {
+        margin: '10px 0px',
+      },
+    },
+  },
+  memberSectionContainer: {
+    '&.MuiPaper-root': {
+      borderRadius: '10px',
+      width: '100%',
+      padding: '20px',
+      marginBottom: '20px',
+    },
+  },
+  memberSectionTitle: {
+    '&.MuiTypography-root ': {
+      marginBottom: '10px',
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center',
+    },
+  },
+  membersNumber: {
+    backgroundColor: theme.palette.primary.main,
+    fontSize: '15px',
+    borderRadius: '50px',
+    color: 'white',
+    padding: '5px 10px',
+    marginLeft: '5px',
+  },
+  memberItemsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  membersActionContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: '15px 0px',
+  },
+  memberSearchbar: {
+    '&.MuiFormControl-root': {
+      margin: 0,
+    },
+    '&.MuiTextField-root': {
+      borderRadius: '5px',
+      width: '60%',
+      marginRight: '15px',
+    },
+  },
+  membersOrderBox: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  memberOrderSelect: {
+    '&.MuiOutlinedInput-root': {
+      width: '220px',
+    },
+  },
+  membersPagination: {
+    '&.MuiPagination-root': {
+      marginBottom: '10px',
+      '& .MuiPagination-ul': {
+        justifyContent: 'center',
+      },
+    },
+  },
+  memberPhotosHover: {
+    '&.MuiAvatarGroup-root': {
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
+  },
+  moreCommentsLink: {
+    '&.MuiLink-root': {
+      textDecoration: 'none',
+      alignSelf: 'center',
+      color: 'white',
+    },
   },
 });
 

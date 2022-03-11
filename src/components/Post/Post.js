@@ -425,7 +425,7 @@ const Post = (props) => {
             className={classes.likesContainer}
             onClick={() => setOpenLikesPopup(true)}
           >
-            <AvatarGroup max={4} className={classes.likedUsersContainer}>
+            <AvatarGroup max={4}>
               {likes.map((like) => (
                 <Avatar
                   key={like.likedUser.userId}

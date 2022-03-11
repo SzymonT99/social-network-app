@@ -21,15 +21,16 @@ import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 import PersonIcon from '@mui/icons-material/Person';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const FriendInformation = (props) => {
+const UserInformation = (props) => {
   const {
     classes,
     name,
     city,
-    userFriendId,
+    userId,
     friendList,
     profilePhoto,
     updateFriends,
+    groupAddedIn,
   } = props;
 
   const history = useHistory();
@@ -54,11 +55,11 @@ const FriendInformation = (props) => {
   useEffect(() => {
     let isMounted = true;
 
-    dispatch(getUserFriends(userFriendId, false, true)).then((friends) => {
+    dispatch(getUserFriends(userId, false, true)).then((friends) => {
       if (isMounted) {
         setUserFriends(friends);
         if (
-          loggedUser.userId !== parseInt(userFriendId) &&
+          loggedUser.userId !== parseInt(userId) &&
           friends.filter(
             (friend) =>
               friend.user.userId === loggedUser.userId &&
@@ -66,7 +67,7 @@ const FriendInformation = (props) => {
           ).length > 0
         ) {
           setIsUserFriend(true);
-        } else if (loggedUser.userId === parseInt(userFriendId)) {
+        } else if (loggedUser.userId === parseInt(userId)) {
           setIsUserFriend(null);
         } else {
           setIsUserFriend(false);
@@ -74,25 +75,25 @@ const FriendInformation = (props) => {
       }
     });
 
-    dispatch(
-      getReceivedFriendInvitations(userFriendId, false, false, true)
-    ).then((friendInvitations) => {
-      if (isMounted) {
-        setUserFriendInvitations(friendInvitations);
-        if (
-          loggedUser.userId !== parseInt(userFriendId) &&
-          friendInvitations.filter(
-            (friend) => friend.invitingUser.userId === loggedUser.userId
-          ).length > 0
-        ) {
-          setIsInvitedToFriend(true);
-        } else if (loggedUser.userId === parseInt(userFriendId)) {
-          setIsInvitedToFriend(null);
-        } else {
-          setIsInvitedToFriend(false);
+    dispatch(getReceivedFriendInvitations(userId, false, false, true)).then(
+      (friendInvitations) => {
+        if (isMounted) {
+          setUserFriendInvitations(friendInvitations);
+          if (
+            loggedUser.userId !== parseInt(userId) &&
+            friendInvitations.filter(
+              (friend) => friend.invitingUser.userId === loggedUser.userId
+            ).length > 0
+          ) {
+            setIsInvitedToFriend(true);
+          } else if (loggedUser.userId === parseInt(userId)) {
+            setIsInvitedToFriend(null);
+          } else {
+            setIsInvitedToFriend(false);
+          }
         }
       }
-    });
+    );
 
     return () => {
       isMounted = false;
@@ -102,15 +103,14 @@ const FriendInformation = (props) => {
   const handleManageFriend = () => {
     if (
       loggedUserFriendInvitations.filter(
-        (invitation) =>
-          invitation.invitingUser.userId === parseInt(userFriendId)
+        (invitation) => invitation.invitingUser.userId === parseInt(userId)
       ).length > 0
     ) {
-      dispatch(respondToFriendInvitation(parseInt(userFriendId), 'accept'));
+      dispatch(respondToFriendInvitation(parseInt(userId), 'accept'));
       setIsUserFriend(true);
       setIsInvitedToFriend(false);
     } else if (!isUserFriend && !isInvitedToFriend) {
-      dispatch(inviteToFriend(userFriendId));
+      dispatch(inviteToFriend(userId));
       setIsInvitedToFriend(true);
     } else if (!isUserFriend && isInvitedToFriend) {
       const invitedFriend = userFriendInvitations.find(
@@ -122,11 +122,19 @@ const FriendInformation = (props) => {
       const friend = userFriends.find(
         (friend) => friend.user.userId === loggedUser.userId
       );
-      dispatch(deleteFriend(friend.friendId)).then(() =>
-        dispatch(getUserFriends(selectedProfile.userProfileId)).then((data) => {
-          updateFriends(data);
-        })
-      );
+      if (!groupAddedIn) {
+        dispatch(deleteFriend(friend.friendId)).then(() =>
+          dispatch(getUserFriends(selectedProfile.userProfileId)).then(
+            (data) => {
+              updateFriends(data);
+            }
+          )
+        );
+      } else {
+        dispatch(deleteFriend(friend.friendId)).then(() =>
+          dispatch(getUserFriends(selectedProfile.userProfileId))
+        );
+      }
       setIsUserFriend(false);
       setIsInvitedToFriend(false);
     }
@@ -135,8 +143,7 @@ const FriendInformation = (props) => {
   const generateFriendBtn = () => {
     if (
       loggedUserFriendInvitations.filter(
-        (invitation) =>
-          invitation.invitingUser.userId === parseInt(userFriendId)
+        (invitation) => invitation.invitingUser.userId === parseInt(userId)
       ).length > 0
     ) {
       return (
@@ -180,26 +187,39 @@ const FriendInformation = (props) => {
   };
 
   return (
-    <div className={classes.friendInfoContainer}>
+    <div className={classes.userInfoContainer}>
       <img
         className={classes.friendPhoto}
         src={profilePhoto ? profilePhoto.url : defaultUserPhoto}
         alt={name}
-        onClick={() => history.push('/app/profile/' + userFriendId)}
+        onClick={() => history.push('/app/profile/' + userId)}
       />
-      <div className={classes.friendInfoContent}>
+      <div className={classes.userInfoContent}>
         <div>
           <Typography
             variant="h6"
-            className={classes.friendNameLink}
-            onClick={() => history.push('/app/profile/' + userFriendId)}
+            className={classes.userNameLink}
+            onClick={() => history.push('/app/profile/' + userId)}
           >
             {name}
           </Typography>
+          {groupAddedIn && (
+            <Typography variant="subtitle1" fontWeight={400}>
+              {'dołączył(a) ' +
+                new Date(groupAddedIn)
+                  .toJSON()
+                  .slice(0, 10)
+                  .split('-')
+                  .reverse()
+                  .join('.')}
+            </Typography>
+          )}
           <Typography variant="subtitle1">{city}</Typography>
-          <Typography variant="body1">
-            {'Liczba znajomych: ' + friendList.length}
-          </Typography>
+          {friendList && (
+            <Typography variant="body1">
+              {'Liczba znajomych: ' + friendList.length}
+            </Typography>
+          )}
         </div>
         {isUserFriend !== null && isInvitedToFriend !== null ? (
           <Button
@@ -236,14 +256,15 @@ const FriendInformation = (props) => {
   );
 };
 
-FriendInformation.propTypes = {
+UserInformation.propTypes = {
   classes: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   city: PropTypes.string,
-  userFriendId: PropTypes.number.isRequired,
-  friendList: PropTypes.array.isRequired,
-  updateFriends: PropTypes.func.isRequired,
+  userId: PropTypes.number.isRequired,
+  friendList: PropTypes.array,
+  updateFriends: PropTypes.func,
   profilePhoto: PropTypes.object,
+  groupAddedIn: PropTypes.string,
 };
 
-export default withStyles(styles)(FriendInformation);
+export default withStyles(styles)(UserInformation);

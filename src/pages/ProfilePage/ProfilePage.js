@@ -79,7 +79,7 @@ import {
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { setLoading } from '../../redux/actions/userActivityActions';
-import FriendInformation from '../../components/Profile/FriendInformation';
+import UserInformation from '../../components/Profile/UserInformation';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -1729,7 +1729,7 @@ const ProfilePage = (props) => {
                       );
                     })}
               </ImageList>
-              {userImages.length !== 0 && (
+              {userImages.length > 10 && (
                 <Pagination
                   className={classes.imagesPagination}
                   count={userImages && Math.ceil(userImages.length / 10)}
@@ -1754,8 +1754,8 @@ const ProfilePage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNavIndex} index={3}>
-            <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
-              <div className={classes.profileNavHeadingBox}>
+            <Paper elevation={4} className={classes.friendSectionContainer}>
+              <div>
                 <Typography variant="h4" className={classes.friendTitle}>
                   Znajomi
                   <span className={classes.friendNumber}>
@@ -1787,7 +1787,7 @@ const ProfilePage = (props) => {
                     >
                       Sortuj według:
                     </Typography>
-                    <FormControl>
+                    <FormControl sx={{ margin: 0 }}>
                       <Select
                         className={classes.friendOrderSelect}
                         value={friendsOrder}
@@ -1809,13 +1809,13 @@ const ProfilePage = (props) => {
                   sortFriends(friendsOrder)
                     .slice((friendsPageNumber - 1) * 6, friendsPageNumber * 6)
                     .map((friend) => (
-                      <FriendInformation
+                      <UserInformation
                         key={friend.friendId}
                         name={
                           friend.user.firstName + ' ' + friend.user.lastName
                         }
                         city={friend.address && friend.address.city}
-                        userFriendId={friend.user.userId}
+                        userId={friend.user.userId}
                         profilePhoto={friend.user.profilePhoto}
                         friendList={friend.userFriends}
                         updateFriends={updateFriendList}
@@ -1833,10 +1833,10 @@ const ProfilePage = (props) => {
                   </Typography>
                 )}
               </div>
-              {userFriends.length > 10 && (
+              {userFriends.length > 6 && (
                 <Pagination
                   className={classes.friendsPagination}
-                  count={userFriends && Math.ceil(userFriends.length / 10)}
+                  count={userFriends && Math.ceil(userFriends.length / 6)}
                   color="secondary"
                   size="medium"
                   showFirstButton

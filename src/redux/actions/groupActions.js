@@ -77,6 +77,7 @@ export const getGroupDetails = (groupId) => (dispatch) => {
               groupDetails: data,
             },
           });
+          return data;
         });
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
