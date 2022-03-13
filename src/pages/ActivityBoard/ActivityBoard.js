@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import PhotoIcon from '@mui/icons-material/Photo';
-import FriendInvitation from '../../components/FriendInvitation/FriendInvitation';
+import ReceivedInvitation from '../../components/ReceivedInvitation/ReceivedInvitation';
 import Post from '../../components/Post/Post';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
@@ -206,8 +206,9 @@ const ActivityBoard = (props) => {
                   Zaproszenia do znajomych
                 </Typography>
                 {loggedUserFriendInvitations.map((friendInvitation) => (
-                  <FriendInvitation
+                  <ReceivedInvitation
                     key={friendInvitation.friendId}
+                    friendInvitation
                     inviterId={friendInvitation.invitingUser.userId}
                     inviterName={
                       friendInvitation.invitingUser.firstName +

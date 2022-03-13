@@ -2,6 +2,7 @@ const styles = (theme) => ({
   groupHeadingContainer: {
     '&.MuiPaper-root': {
       marginTop: '20px',
+      marginBottom: '15px',
       borderRadius: '10px',
       position: 'relative',
     },
@@ -50,7 +51,7 @@ const styles = (theme) => ({
   groupNavContainer: {
     '&.MuiPaper-root': {
       borderRadius: '10px',
-      margin: '15px 0px',
+      marginBottom: '15px',
     },
   },
   tabsContainer: {
@@ -235,6 +236,8 @@ const styles = (theme) => ({
         minHeight: 'auto',
       },
       '& .MuiAccordionSummary-content': {
+        display: 'flex',
+        justifyContent: 'space-between',
         margin: '10px 0px',
       },
     },
@@ -313,6 +316,137 @@ const styles = (theme) => ({
       textDecoration: 'none',
       alignSelf: 'center',
       color: 'white',
+    },
+  },
+  newMemberName: {
+    fontWeight: 'bold',
+    '&:hover': {
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    },
+  },
+  settingsContainer: {
+    '&.MuiPaper-root': {
+      width: '100%',
+      marginBottom: '20px',
+      display: 'flex',
+      borderRadius: '10px',
+    },
+  },
+  groupSettingsNav: {
+    width: '30%',
+    borderRight: '1px solid rgba(0, 0, 0, 0.22)',
+  },
+  settingsContent: {
+    width: '70%',
+    padding: '30px',
+  },
+  settingsTabList: {
+    '&.MuiTabs-root': {
+      height: '100%',
+      '&:first-child': {
+        borderTopLeftRadius: '10px',
+      },
+      '& .MuiTabs-flexContainer': {
+        display: 'flex',
+        height: '100%',
+        flexDirection: 'column',
+        '& .MuiButtonBase-root': {
+          '&.Mui-disabled': {
+            color: 'rgb(166,174,193)',
+            backgroundColor: 'rgb(236,236,236)',
+          },
+          display: 'flex',
+          flexDirection: 'row',
+          fontWeight: 400,
+          textTransform: 'none',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          minHeight: 'auto',
+          fontSize: '17px',
+          padding: '15px 20px',
+          color: theme.palette.primary.main,
+          '& .MuiSvgIcon-root': {
+            margin: '0px 8px 0px 0px',
+          },
+          '&.Mui-selected': {
+            fontWeight: 'bold',
+            backgroundColor: 'rgba(90, 107, 133, 0.3)',
+            borderLeft: `4px solid ${theme.palette.primary.main}`,
+          },
+        },
+      },
+    },
+  },
+  settingsInformationHeadingWithAction: {
+    paddingBottom: '14px',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.4)',
+    marginBottom: '15px',
+    display: 'flex',
+    alignItems: ' center',
+    justifyContent: 'space-between',
+  },
+  settingsInformationHeading: {
+    '&.MuiTypography-root ': {
+      paddingBottom: '14px',
+      borderBottom: '1px solid rgba(0, 0, 0, 0.4)',
+      marginBottom: '15px',
+    },
+  },
+  editGroupInformationBtn: {
+    '&.MuiButtonBase-root': {
+      backgroundColor: 'rgb(212, 212, 212)',
+      color: theme.palette.primary.dark,
+      '&:hover': {
+        backgroundColor: 'rgb(161,161,161)',
+      },
+    },
+  },
+  interestList: {
+    '&.MuiList-root': {
+      width: '100%',
+      '& .MuiListItem-root': {
+        '& .MuiListItemText-root': {
+          marginLeft: '20px',
+          marginRight: '30px',
+        },
+        '& .MuiListItemSecondaryAction-root': {
+          display: 'none',
+        },
+        '&:hover': {
+          '& .MuiListItemSecondaryAction-root': {
+            display: 'flex',
+          },
+        },
+      },
+    },
+  },
+  addGroupInfoItemBtn: {
+    '&.MuiButton-root': {
+      margin: '5px 0 15px 0',
+      paddingLeft: 0,
+      textTransform: 'none',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
+  },
+  groupInvitationsContainer: {
+    minHeight: '200px',
+  },
+  deleteGroupContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    minHeight: '200px',
+  },
+  deleteGroupBtn: {
+    '&.MuiButton-root': {
+      marginTop: '15px',
+      textTransform: 'none',
+      fontSize: '16px',
+      width: '30%',
+      height: '45px',
     },
   },
 });

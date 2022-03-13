@@ -175,6 +175,13 @@ export const inviteToGroup =
           );
         } else if (response.status === 409) {
           dispatch(showNotification('warning', 'Już wysłano zaproszenie'));
+        } else if (response.status === 410) {
+          dispatch(
+            showNotification(
+              'warning',
+              'Użytkownik został wcześniej usunięty z grupy'
+            )
+          );
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -185,13 +192,12 @@ export const inviteToGroup =
   };
 
 export const respondToGroupInvitation =
-  (groupId, isInvitationAccepted) => (dispatch, getState) => {
+  (groupId, isInvitationAccepted) => (dispatch) => {
     return groupService
       .respondToGroupInvitation(groupId, isInvitationAccepted)
       .then((response) => {
         if (response.status === 200) {
           dispatch(getGroups());
-          dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
           if (isInvitationAccepted) {
             dispatch(showNotification('success', 'Dołączono do grupy'));
           } else {
@@ -272,6 +278,13 @@ export const requestToJoinGroup = (groupId) => (dispatch, getState) => {
             'Już wysłałeś prośbę lub otrzymałeś zaproszenie'
           )
         );
+      } else if (response.status === 410) {
+        dispatch(
+          showNotification(
+            'warning',
+            'Nie możesz dołączyć do grupy, z której Cię usunięto'
+          )
+        );
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -296,9 +309,8 @@ export const decideAboutUserGroupJoinRequest =
               showNotification('success', 'Odrzucono zgłoszenie do grupy')
             );
           }
-          dispatch(
-            getUsersWantedJoinGroup(getState().groups.groupDetails.groupId)
-          );
+          dispatch(getUsersWantedJoinGroup(groupId));
+          dispatch(getGroupDetails(groupId));
         } else if (response.status === 403) {
           dispatch(
             showNotification(
@@ -680,34 +692,35 @@ export const deleteGroupThreadAnswerReview =
       });
   };
 
-export const setGroupMemberPermission = (groupId, memberId) => (dispatch) => {
-  return groupService
-    .setGroupMemberPermission(groupId, memberId)
-    .then((response) => {
-      if (response.status === 200) {
-        dispatch(getGroupDetails(groupId));
-        dispatch(
-          showNotification('success', 'Zmieniono uprawnienie członka grupy')
-        );
-      } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Nieznane uprawnienie'));
-      } else if (response.status === 403) {
-        dispatch(
-          showNotification(
-            'warning',
-            'Tylko założyciel grupy może ustalać uprawnienia'
-          )
-        );
-      } else if (response.status === 404) {
-        dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+export const setGroupMemberPermission =
+  (groupId, memberId, permission) => (dispatch) => {
+    return groupService
+      .setGroupMemberPermission(groupId, memberId, permission)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(getGroupDetails(groupId));
+          dispatch(
+            showNotification('success', 'Zmieniono uprawnienie członka grupy')
+          );
+        } else if (response.status === 400) {
+          dispatch(showNotification('warning', 'Nieznane uprawnienie'));
+        } else if (response.status === 403) {
+          dispatch(
+            showNotification(
+              'warning',
+              'Tylko założyciel grupy może ustalać uprawnienia'
+            )
+          );
+        } else if (response.status === 404) {
+          dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const deleteGroupMember = (groupId, memberId) => (dispatch) => {
   return groupService

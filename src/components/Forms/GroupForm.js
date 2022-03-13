@@ -24,12 +24,16 @@ import {
   TextField,
   useTheme,
 } from '@mui/material';
-import { createGroup, getGroups } from '../../redux/actions/groupActions';
+import {
+  createGroup,
+  editGroup,
+  getGroups,
+} from '../../redux/actions/groupActions';
 
-function getStyles(interestId, groupInterest, theme) {
+function getStyles(interestId, groupInterests, theme) {
   return {
     fontWeight:
-      groupInterest.filter(
+      groupInterests.filter(
         (groupInterest) => groupInterest.interestId === interestId
       ).length !== 0
         ? theme.typography.fontWeightBold
@@ -38,7 +42,18 @@ function getStyles(interestId, groupInterest, theme) {
 }
 
 const GroupForm = (props) => {
-  const { classes, closePopup, updateGroups } = props;
+  const {
+    classes,
+    closePopup,
+    updateGroups,
+    edition,
+    groupId,
+    groupName,
+    groupDescription,
+    groupAccess,
+    groupImage,
+    groupInterests,
+  } = props;
 
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -51,6 +66,13 @@ const GroupForm = (props) => {
   const [uploadedImage, setUploadedImage] = useState(null);
 
   const imageInputRef = useRef(null);
+
+  useEffect(() => {
+    if (edition && groupImage !== null) {
+      convertUrlToFile(groupImage.filename, groupImage.url, groupImage.type);
+      setDisplayedImage(groupImage.url);
+    }
+  }, []);
 
   const convertUrlToFile = (filename, url, type) => {
     fetch(url).then(async (response) => {
@@ -73,10 +95,10 @@ const GroupForm = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      groupInterests: [],
-      description: '',
-      access: true,
+      name: edition ? groupName : '',
+      groupInterests: edition ? groupInterests : [],
+      description: edition ? groupDescription : '',
+      access: edition ? groupAccess : true,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -102,11 +124,15 @@ const GroupForm = (props) => {
         })
       );
 
-      dispatch(createGroup(formData)).then(() =>
-        dispatch(getGroups()).then((data) => {
-          updateGroups(data);
-        })
-      );
+      if (!edition) {
+        dispatch(createGroup(formData)).then(() =>
+          dispatch(getGroups()).then((data) => {
+            updateGroups(data);
+          })
+        );
+      } else {
+        dispatch(editGroup(groupId, formData));
+      }
 
       closePopup();
     },
@@ -277,7 +303,7 @@ const GroupForm = (props) => {
         type="submit"
         className={classes.formConfirmBtn}
       >
-        Utwórz grupę
+        {edition ? 'Zapisz zmiany' : 'Utwórz grupę'}
       </Button>
     </form>
   );
@@ -287,6 +313,21 @@ GroupForm.propTypes = {
   classes: PropTypes.object.isRequired,
   closePopup: PropTypes.func.isRequired,
   updateGroups: PropTypes.func,
+  edition: PropTypes.bool,
+  groupId: PropTypes.number,
+  groupName: PropTypes.string,
+  groupDescription: PropTypes.string,
+  groupImage: PropTypes.object,
+  groupAccess: PropTypes.bool,
+  groupInterests: PropTypes.array,
+};
+
+GroupForm.defaultProps = {
+  edition: false,
+  groupName: '',
+  groupDescription: '',
+  groupAccess: false,
+  groupInterests: [],
 };
 
 export default withStyles(styles)(GroupForm);

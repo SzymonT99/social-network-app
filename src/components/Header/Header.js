@@ -29,18 +29,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useHistory } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import { Logout, Settings } from '@mui/icons-material';
-import {
-  logoutUser,
-  refreshUserToken,
-  setTokenRefreshing,
-} from '../../redux/actions/authActions';
+import { logoutUser } from '../../redux/actions/authActions';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { changeUserStatus } from '../../redux/actions/userProfileActions';
 import ClearIcon from '@mui/icons-material/Clear';
 import CheckIcon from '@mui/icons-material/Check';
 import {
   getReceivedFriendInvitations,
-  getUserFriends,
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { getActivityNotification } from '../../redux/actions/userActivityActions';
@@ -104,7 +99,6 @@ const Header = (props) => {
   const isTokenRefreshing = useSelector(
     (state) => state.auth.isTokenRefreshing
   );
-  const isUserRemember = useSelector((state) => state.auth.remember);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const users = useSelector((state) => state.activity.users);
   const loggedUserFriendInvitations = useSelector(
@@ -216,9 +210,9 @@ const Header = (props) => {
           <Autocomplete
             fullWidth
             freeSolo
-            open={showOptions}
+            open={inputValue !== '' && showOptions}
             onOpen={() => {
-              if (inputValue) {
+              if (inputValue !== '') {
                 setShowOptions(true);
               }
             }}

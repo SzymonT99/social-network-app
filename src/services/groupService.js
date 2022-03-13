@@ -367,11 +367,15 @@ const deleteGroupThreadAnswerReview = (reviewId) => {
   );
 };
 
-const setGroupMemberPermission = (groupId, memberId) => {
+const setGroupMemberPermission = (groupId, memberId, permission) => {
   return fetch(
     endpoints.manageGroupMember
       .replace('{groupId}', groupId)
-      .replace('{memberId}', memberId),
+      .replace('{memberId}', memberId) +
+      '?' +
+      new URLSearchParams({
+        permission: permission,
+      }),
     {
       method: 'PUT',
       headers: {

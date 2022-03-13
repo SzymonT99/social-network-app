@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import {
+  getGroupDetails,
   requestToJoinGroup,
   respondToGroupInvitation,
 } from '../../redux/actions/groupActions';
@@ -38,10 +39,13 @@ const Group = (props) => {
   };
 
   const handleClickRespondToGroupInvitation = (isInvitationAccepted) => {
-    dispatch(respondToGroupInvitation(groupId, isInvitationAccepted));
-    if (isInvitationAccepted) {
-      history.push('/app/groups/' + groupId);
-    }
+    dispatch(respondToGroupInvitation(groupId, isInvitationAccepted)).then(() =>
+      dispatch(getGroupDetails(groupId)).then((data) => {
+        if (data && isInvitationAccepted) {
+          history.push('/app/groups/' + groupId);
+        }
+      })
+    );
   };
 
   const isUseGroupMember =

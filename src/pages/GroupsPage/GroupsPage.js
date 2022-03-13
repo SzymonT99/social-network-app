@@ -105,7 +105,7 @@ const GroupsPage = (props) => {
       );
     } else if (groupOrderType === 2) {
       filteredGroups.sort((x, y) => {
-        return y.membersNumber - x.membersNumber;
+        return y.members.length - x.members.length;
       });
     } else if (groupOrderType === 3) {
       filteredGroups.sort((x, y) => {
@@ -235,7 +235,7 @@ const GroupsPage = (props) => {
                     name={group.name}
                     interests={group.interests}
                     groupCreationDate={group.createdAt}
-                    membersNumber={group.membersNumber}
+                    membersNumber={group.members.length}
                     members={group.members}
                     postsNumber={group.postsNumber}
                     groupImage={group.image}
@@ -284,7 +284,7 @@ const GroupsPage = (props) => {
                     name={interestingGroup.name}
                     interests={interestingGroup.interests}
                     groupCreationDate={interestingGroup.createdAt}
-                    membersNumber={interestingGroup.membersNumber}
+                    membersNumber={interestingGroup.members.length}
                     members={interestingGroup.members}
                     postsNumber={interestingGroup.postsNumber}
                     groupImage={interestingGroup.image}
@@ -330,7 +330,7 @@ const GroupsPage = (props) => {
                   name={groupInvitation.groupName}
                   interests={groupInvitation.groupInterests}
                   groupCreationDate={groupInvitation.groupCreatedAt}
-                  membersNumber={groupInvitation.groupMembersNumber}
+                  membersNumber={groupInvitation.groupMembers.length}
                   members={groupInvitation.groupMembers}
                   postsNumber={groupInvitation.groupPostsNumber}
                   groupImage={groupInvitation.groupImage}

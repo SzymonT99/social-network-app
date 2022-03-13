@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
@@ -16,8 +16,12 @@ import {
   Button,
   Divider,
   FormControl,
+  IconButton,
   InputAdornment,
   Link,
+  List,
+  ListItem,
+  ListItemText,
   MenuItem,
   Pagination,
   Select,
@@ -40,17 +44,23 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ForumIcon from '@mui/icons-material/Forum';
 import MessageIcon from '@mui/icons-material/Message';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
 import {
+  deleteGroup,
+  deleteGroupInterest,
+  deleteGroupMember,
+  deleteGroupRule,
   getGroupDetails,
   getGroupInvitations,
   getUsersWantedJoinGroup,
   leaveGroup,
   requestToJoinGroup,
   respondToGroupInvitation,
+  setGroupMemberPermission,
 } from '../../redux/actions/groupActions';
 import InfoIcon from '@mui/icons-material/Info';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
@@ -61,6 +71,19 @@ import PersonIcon from '@mui/icons-material/Person';
 import Post from '../../components/Post/Post';
 import SearchIcon from '@mui/icons-material/Search';
 import UserInformation from '../../components/Profile/UserInformation';
+import EmailIcon from '@mui/icons-material/Email';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import InformationItem from '../../components/Profile/ProfileInformationItem';
+import GroupForm from '../../components/Forms/GroupForm';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import AddInterestForm from '../../components/Forms/AddInterestForm';
+import GroupRuleForm from '../../components/Forms/GroupRuleForm';
+import { getAllUsersInformation } from '../../redux/actions/userActivityActions';
+import SentInvitation from '../../components/SentInvitation/SentInvitation';
+import ReceivedInvitation from '../../components/ReceivedInvitation/ReceivedInvitation';
+import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+import ActionConfirmation from '../../components/ActionConfirmation/ActionConfirmation';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -71,9 +94,18 @@ const TabPanel = (props) => {
       id={`tabpanel-${index}`}
       {...other}
     >
-      {value === index && <div className={classes.tabContent}>{children}</div>}
+      {value === index && (
+        <div className={classes && classes.tabContent}>{children}</div>
+      )}
     </div>
   );
+};
+
+const groupPermissions = {
+  ADMINISTRATOR: 'Administrator',
+  ASSISTANT: 'Zastępca',
+  MODERATOR: 'Moderator',
+  MEMBER: 'Członek',
 };
 
 const GroupDetailsPage = (props) => {
@@ -96,6 +128,7 @@ const GroupDetailsPage = (props) => {
   const groupInvitations = useSelector(
     (state) => state.groups.groupInvitations
   );
+  const users = useSelector((state) => state.activity.users);
 
   const [groupNavIndex, setGroupNavIndex] = useState(0);
   const [openGroupPostCreationPopup, setOpenGroupPostCreationPopup] =
@@ -105,6 +138,17 @@ const GroupDetailsPage = (props) => {
   const [membersOrder, setMembersOrder] = useState(1);
   const [filteredMembers, setFilteredMembers] = useState([]);
   const [membersPageNumber, setMembersPageNumber] = useState(1);
+  const [groupSettingsNavValue, setGroupSettingsNavValue] = useState(0);
+  const [openGroupEditionPopup, setOpenGroupEditionPopup] = useState(false);
+  const [showInterestForm, setShowInterestForm] = useState(false);
+  const [openRuleAddFormPopup, setOpenRuleAddFormPopup] = useState(false);
+  const [openEditionGroupRulePopup, setOpenEditionGroupRulePopup] =
+    useState(false);
+  const [searchedUserText, setSearchedUserText] = useState('');
+  const [searchedUsers, setSearchedUsers] = useState([]);
+  const [openDeleteGroupPopup, setOpenDeleteGroupPopup] = useState(false);
+  const [memberTableRows, setMemberTableRows] = useState([]);
+  const [memberStatusOfUser, setMemberStatusOfUser] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -118,16 +162,133 @@ const GroupDetailsPage = (props) => {
         });
       }
       dispatch(getGroupDetails(groupId)).then((data) => {
+        const userMember = data.members.find(
+          (member) => member.user.userId === loggedUser.userId
+        );
+
+        if (userMember) {
+          setMemberStatusOfUser(userMember.groupPermissionType);
+        } else {
+          setMemberStatusOfUser('NOT_MEMBER');
+        }
+
         setFilteredMembers(
           data.members.filter(
             (member) => member.groupPermissionType === 'MEMBER'
           )
         );
+        const tableRows = data.members.map((member, index) => ({
+          id: member.groupMemberId,
+          orderNumber: index + 1,
+          firstName: member.user.firstName,
+          lastName: member.user.lastName,
+          joinDate: new Date(member.addedIn),
+          permission: groupPermissions[member.groupPermissionType],
+        }));
+        setMemberTableRows(tableRows);
       });
       dispatch(getUsersWantedJoinGroup(groupId));
       dispatch(getGroupInvitations());
+      dispatch(getAllUsersInformation());
     })();
   }, [groupId]);
+
+  const handleClickDeleteGroupMember = useCallback(
+    (id) => () => {
+      setTimeout(() => {
+        dispatch(deleteGroupMember(parseInt(groupId), id));
+        setMemberTableRows((prevRows) =>
+          prevRows.filter((row) => row.id !== id)
+        );
+      });
+    },
+    []
+  );
+
+  const tableColumns = useMemo(
+    () => [
+      { field: 'orderNumber', headerName: 'Nr.', type: 'number', width: 30 },
+      {
+        field: 'firstName',
+        headerName: 'Imię',
+        width: 140,
+      },
+      {
+        field: 'lastName',
+        headerName: 'Nazwisko',
+        width: 140,
+      },
+      {
+        field: 'joinDate',
+        headerName: 'Data dołączenia',
+        type: 'dateTime',
+        width: 160,
+      },
+      {
+        field: 'permission',
+        width: 130,
+        editable: memberStatusOfUser !== 'ASSISTANT',
+        type: 'singleSelect',
+        valueOptions: ['Administrator', 'Zastępca', 'Moderator', 'Członek'],
+        renderHeader: () => {
+          if (memberStatusOfUser !== 'ASSISTANT') {
+            return (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontWeight: 'bold',
+                }}
+              >
+                {'Uprawnienie'}
+                <EditIcon sx={{ fontSize: '20px', marginLeft: '12px' }} />
+              </div>
+            );
+          }
+        },
+      },
+      {
+        field: 'action',
+        headerName: 'Usuń',
+        width: 60,
+        type: 'actions',
+        getActions: (params) => [
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Usuń"
+            onClick={handleClickDeleteGroupMember(params.id)}
+            disabled={
+              memberStatusOfUser === 'ASSISTANT'
+                ? group.members.filter(
+                    (member) =>
+                      (member.groupPermissionType !== 'MEMBER' ||
+                        member.groupPermissionType !== 'MODERATOR') &&
+                      member.groupMemberId === params.id
+                  ).length !== 0
+                : group.members.filter(
+                    (member) =>
+                      member.groupPermissionType === 'ADMINISTRATOR' &&
+                      member.groupMemberId === params.id
+                  ).length !== 0
+            }
+          />,
+        ],
+      },
+    ],
+    [handleClickDeleteGroupMember, memberStatusOfUser]
+  );
+
+  const handleRowEditCommit = React.useCallback((params) => {
+    let permission;
+    for (let type in groupPermissions) {
+      if (params.value === groupPermissions[type]) {
+        permission = type;
+      }
+    }
+    dispatch(
+      setGroupMemberPermission(parseInt(groupId), params.id, permission)
+    );
+  }, []);
 
   const generateGroupActionBtn = () => {
     if (
@@ -194,7 +355,7 @@ const GroupDetailsPage = (props) => {
     const newMembers = group.members.filter(
       (member) => new Date(member.addedIn) > currentDateMinusTwoWeek
     );
-    return newMembers;
+    return newMembers.sort((x, y) => new Date(y.addedIn) - new Date(x.addedIn));
   };
 
   const handleChangeGroupNav = (event, newValue) => {
@@ -269,6 +430,64 @@ const GroupDetailsPage = (props) => {
     setMembersPageNumber(value);
   };
 
+  const handleChangeGroupSettingsNav = (event, newValue) => {
+    setGroupSettingsNavValue(newValue);
+  };
+
+  const handleCloseGroupEditionPopup = () => {
+    setOpenGroupEditionPopup(false);
+  };
+
+  const handleCloseRuleAddFormPopup = () => {
+    setOpenRuleAddFormPopup(false);
+  };
+
+  const handleCloseEditionGroupRulePopup = () => {
+    setOpenEditionGroupRulePopup(false);
+  };
+
+  const handleClickDeleteGroupInterest = (interestId) => {
+    dispatch(deleteGroupInterest(parseInt(groupId), interestId));
+  };
+
+  const handleClickEditGroupRule = (event) => {
+    setOpenEditionGroupRulePopup(true);
+    event.stopPropagation();
+  };
+
+  const handleClickDeleteGroupRule = (event, ruleId) => {
+    dispatch(deleteGroupRule(parseInt(groupId), ruleId));
+    event.stopPropagation();
+  };
+
+  const handleChangeSearchedUser = (event) => {
+    const typedText = event.target.value;
+    setSearchedUserText(typedText);
+
+    if (typedText !== '') {
+      setSearchedUsers(
+        users.filter((user) => {
+          let userName = user.firstName + ' ' + user.lastName;
+          return (
+            userName.toUpperCase().includes(typedText.toUpperCase()) &&
+            group.members.filter((member) => member.user.userId === user.userId)
+              .length === 0
+          );
+        })
+      );
+    } else {
+      setSearchedUsers([]);
+    }
+  };
+
+  const handleCloseGroupDeletePopup = () => {
+    setOpenDeleteGroupPopup(false);
+  };
+
+  const handleDeleteGroup = () => {
+    dispatch(deleteGroup(parseInt(groupId)));
+  };
+
   return (
     <>
       {group ? (
@@ -336,54 +555,62 @@ const GroupDetailsPage = (props) => {
                       ))}
                   </AvatarGroup>
                   {group.groupCreator &&
-                    group.groupCreator.userId !== loggedUser.userId &&
-                    generateGroupActionBtn()}
+                  group.groupCreator.userId !== loggedUser.userId ? (
+                    generateGroupActionBtn()
+                  ) : (
+                    <Button
+                      variant="contained"
+                      className={classes.groupActionBtn}
+                      onClick={() => {
+                        setGroupNavIndex(4);
+                        setGroupSettingsNavValue(1);
+                      }}
+                    >
+                      <AddCircleOutlineIcon sx={{ marginRight: '7px' }} />
+                      Dodaj członków
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
           </Paper>
-          <Paper elevation={4} className={classes.groupNavContainer}>
-            <Tabs
-              value={groupNavIndex}
-              onChange={handleChangeGroupNav}
-              className={classes.tabsContainer}
-              TabIndicatorProps={{
-                style: {
-                  display: 'none',
-                },
-              }}
-            >
-              <Tab
-                className={classes.tabItem}
-                id="tab-activity"
-                label="Aktywność"
-              />
-              <Tab
-                className={classes.tabItem}
-                id="tab-information"
-                label="Informacje"
-              />
-              <Tab
-                className={classes.tabItem}
-                id="tab-members"
-                label="Członkowie"
-              />
-              <Tab className={classes.tabItem} id="tab-forum" label="Forum" />
-              <Tab
-                className={classes.tabItem}
-                id="tab-managment"
-                label="Zarządzanie"
-                disabled={
-                  group.members &&
-                  group.members.filter(
-                    (member) =>
-                      member.user.userId === loggedUser.userId &&
-                      member.groupPermissionType !== 'MEMBER'
-                  ).length === 0
-                }
-              />
-            </Tabs>
-          </Paper>
+          {memberStatusOfUser !== 'NOT_MEMBER' && (
+            <Paper elevation={4} className={classes.groupNavContainer}>
+              <Tabs
+                value={groupNavIndex}
+                onChange={handleChangeGroupNav}
+                className={classes.tabsContainer}
+                TabIndicatorProps={{
+                  style: {
+                    display: 'none',
+                  },
+                }}
+              >
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-activity"
+                  label="Aktywność"
+                />
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-information"
+                  label="Informacje"
+                />
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-members"
+                  label="Członkowie"
+                />
+                <Tab className={classes.tabItem} id="tab-forum" label="Forum" />
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-managment"
+                  label="Zarządzanie"
+                  disabled={memberStatusOfUser === 'MEMBER'}
+                />
+              </Tabs>
+            </Paper>
+          )}
           <TabPanel classes={classes} value={groupNavIndex} index={0}>
             <div className={classes.leftActivityContent}>
               <Paper elevation={4} sx={{ borderRadius: '10px' }}>
@@ -500,115 +727,133 @@ const GroupDetailsPage = (props) => {
                   </div>
                 </div>
               </Paper>
-              <Paper elevation={4} sx={{ borderRadius: '10px' }}>
-                <div className={classes.groupInfoBoxHeading}>
-                  <Typography variant="h6">Nowi członkowie</Typography>
-                  <Link
-                    component="button"
-                    variant="subtitle1"
-                    onClick={() => {
-                      setGroupNavIndex(2);
-                    }}
+              {memberStatusOfUser !== 'NOT_MEMBER' ||
+                (memberStatusOfUser === null && (
+                  <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+                    <div className={classes.groupInfoBoxHeading}>
+                      <Typography variant="h6">Nowi członkowie</Typography>
+                      <Link
+                        component="button"
+                        variant="subtitle1"
+                        onClick={() => {
+                          setGroupNavIndex(2);
+                        }}
+                      >
+                        Zobacz wszystkich
+                      </Link>
+                    </div>
+                    <div className={classes.groupInfoNewMemberBoxContent}>
+                      {getNewMembers().map((newMember) => (
+                        <div
+                          key={newMember.groupMemberId}
+                          className={classes.newMemberBox}
+                          style={{
+                            borderBottom:
+                              getNewMembers().length > 1 &&
+                              '1px solid rgba(0, 0, 0, 0.22)',
+                          }}
+                        >
+                          <Avatar
+                            src={
+                              newMember.user.profilePhoto
+                                ? newMember.user.profilePhoto.url
+                                : defaultUserPhoto
+                            }
+                            alt={
+                              newMember.user
+                                ? newMember.user.firstName +
+                                  ' ' +
+                                  newMember.user.lastName
+                                : 'Zalogowany użytkownik'
+                            }
+                            className={classes.userPhotoSmall}
+                            onClick={() =>
+                              history.push(
+                                '/app/profile/' + newMember.user.userId
+                              )
+                            }
+                          />
+                          <Typography variant="subtitle2" marginLeft="20px">
+                            <span
+                              className={classes.newMemberName}
+                              onClick={() =>
+                                history.push(
+                                  '/app/profile/' + newMember.user.userId
+                                )
+                              }
+                            >
+                              {newMember.user.firstName +
+                                ' ' +
+                                newMember.user.lastName}
+                            </span>
+                            <span className={classes.newMemberAddedDate}>
+                              {'dołączył(a) do grupy: ' +
+                                new Date(newMember.addedIn)
+                                  .toJSON()
+                                  .slice(0, 10)
+                                  .split('-')
+                                  .reverse()
+                                  .join('.') +
+                                ' o ' +
+                                new Date(newMember.addedIn)
+                                  .toJSON()
+                                  .slice(10, 16)
+                                  .replace('T', ' ')}
+                            </span>
+                          </Typography>
+                        </div>
+                      ))}
+                    </div>
+                  </Paper>
+                ))}
+            </div>
+            <div className={classes.rightActivityContent}>
+              {memberStatusOfUser !== 'NOT_MEMBER' ||
+                (memberStatusOfUser === null && (
+                  <Paper
+                    elevation={4}
+                    sx={{ borderRadius: '10px' }}
+                    className={classes.postCreateBox}
                   >
-                    Zobacz wszystkich
-                  </Link>
-                </div>
-                <div className={classes.groupInfoNewMemberBoxContent}>
-                  {getNewMembers().map((newMember) => (
-                    <div
-                      key={newMember.groupMemberId}
-                      className={classes.newMemberBox}
-                      style={{
-                        borderBottom:
-                          getNewMembers().length > 1 &&
-                          '1px solid rgba(0, 0, 0, 0.22)',
-                      }}
-                    >
+                    <Typography fontWeight="bold" variant="h6">
+                      Utwórz post
+                    </Typography>
+                    <Divider className={classes.divider} />
+                    <div className={classes.postCreateContent}>
                       <Avatar
                         src={
-                          newMember.user.profilePhoto
-                            ? newMember.user.profilePhoto.url
+                          loggedUserProfile &&
+                          loggedUserProfile.profilePhoto !== null
+                            ? loggedUserProfile.profilePhoto.url
                             : defaultUserPhoto
                         }
                         alt={
-                          newMember.user
-                            ? newMember.user.firstName +
+                          loggedUserProfile
+                            ? loggedUserProfile.firstName +
                               ' ' +
-                              newMember.user.lastName
+                              loggedUserProfile.lastName
                             : 'Zalogowany użytkownik'
                         }
-                        className={classes.userPhotoSmall}
+                        className={classes.postCreationUserPhoto}
                       />
-                      <Typography variant="subtitle2" marginLeft="20px">
-                        <span style={{ fontWeight: 'bold' }}>
-                          {newMember.user.firstName +
-                            ' ' +
-                            newMember.user.lastName}
-                        </span>
-                        <span className={classes.newMemberAddedDate}>
-                          {'dołączył(a) do grupy: ' +
-                            new Date(newMember.addedIn)
-                              .toJSON()
-                              .slice(0, 10)
-                              .split('-')
-                              .reverse()
-                              .join('.') +
-                            ' o ' +
-                            new Date(newMember.addedIn)
-                              .toJSON()
-                              .slice(10, 16)
-                              .replace('T', ' ')}
-                        </span>
-                      </Typography>
+                      <TextField
+                        fullWidth
+                        placeholder="Napisz coś tutaj..."
+                        multiline
+                        rows={2}
+                        className={classes.postInput}
+                        onClick={() => setOpenGroupPostCreationPopup(true)}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <PhotoIcon className={classes.photoIcon} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
                     </div>
-                  ))}
-                </div>
-              </Paper>
-            </div>
-            <div className={classes.rightActivityContent}>
-              <Paper
-                elevation={4}
-                sx={{ borderRadius: '10px' }}
-                className={classes.postCreateBox}
-              >
-                <Typography fontWeight="bold" variant="h6">
-                  Utwórz post
-                </Typography>
-                <Divider className={classes.divider} />
-                <div className={classes.postCreateContent}>
-                  <Avatar
-                    src={
-                      loggedUserProfile &&
-                      loggedUserProfile.profilePhoto !== null
-                        ? loggedUserProfile.profilePhoto.url
-                        : defaultUserPhoto
-                    }
-                    alt={
-                      loggedUserProfile
-                        ? loggedUserProfile.firstName +
-                          ' ' +
-                          loggedUserProfile.lastName
-                        : 'Zalogowany użytkownik'
-                    }
-                    className={classes.postCreationUserPhoto}
-                  />
-                  <TextField
-                    fullWidth
-                    placeholder="Napisz coś tutaj..."
-                    multiline
-                    rows={2}
-                    className={classes.postInput}
-                    onClick={() => setOpenGroupPostCreationPopup(true)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <PhotoIcon className={classes.photoIcon} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </div>
-              </Paper>
+                  </Paper>
+                ))}
               <Popup
                 open={openGroupPostCreationPopup}
                 type="post"
@@ -645,7 +890,12 @@ const GroupDetailsPage = (props) => {
                       likes={post.likes}
                       isEdited={post.isEdited}
                       isPublic={post.isPublic}
-                      isCommentingBlocked={post.isCommentingBlocked}
+                      isCommentingBlocked={
+                        memberStatusOfUser === 'NOT_MEMBER' ||
+                        memberStatusOfUser === null
+                          ? true
+                          : post.isCommentingBlocked
+                      }
                       editionDate={post.editedAt}
                     />
                   );
@@ -1123,6 +1373,371 @@ const GroupDetailsPage = (props) => {
                 />
               )}
             </Paper>
+          </TabPanel>
+          <TabPanel classes={classes} value={groupNavIndex} index={3}>
+            Forum
+          </TabPanel>
+          <TabPanel classes={classes} value={groupNavIndex} index={4}>
+            <Paper elevation={4} className={classes.settingsContainer}>
+              <div className={classes.groupSettingsNav}>
+                <Tabs
+                  value={groupSettingsNavValue}
+                  onChange={handleChangeGroupSettingsNav}
+                  className={classes.settingsTabList}
+                  TabIndicatorProps={{
+                    style: {
+                      display: 'none',
+                    },
+                  }}
+                >
+                  <Tab label="Ustawienia grupy" icon={<SettingsIcon />} />
+                  <Tab
+                    label="Dodawanie członków"
+                    icon={<AddCircleIcon />}
+                    disabled={memberStatusOfUser === 'MODERATOR'}
+                  />
+                  <Tab
+                    label="Prośby o dołączenie"
+                    icon={<EmailIcon />}
+                    disabled={memberStatusOfUser === 'MODERATOR'}
+                  />
+                  <Tab
+                    label="Zarządzanie członkami"
+                    icon={<PeopleIcon />}
+                    disabled={memberStatusOfUser === 'MODERATOR'}
+                  />
+                  <Tab
+                    label="Usuwanie grupy"
+                    icon={<DeleteIcon />}
+                    disabled={
+                      memberStatusOfUser === 'ASSISTANT' ||
+                      memberStatusOfUser === 'MODERATOR'
+                    }
+                  />
+                </Tabs>
+              </div>
+              <div className={classes.settingsContent}>
+                <TabPanel value={groupSettingsNavValue} index={0}>
+                  <div className={classes.settingsInformationHeadingWithAction}>
+                    <Typography variant="h5">Informacje o grupie</Typography>
+                    {memberStatusOfUser !== 'MODERATOR' && (
+                      <Tooltip title="Edytuj informacje" placement="left">
+                        <IconButton
+                          className={classes.editGroupInformationBtn}
+                          onClick={() => setOpenGroupEditionPopup(true)}
+                        >
+                          <EditIcon color="primary" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    <Popup
+                      open={openGroupEditionPopup}
+                      type="groups"
+                      title="Zaaktualizuj grupę"
+                      onClose={handleCloseGroupEditionPopup}
+                    >
+                      <GroupForm
+                        closePopup={handleCloseGroupEditionPopup}
+                        edition
+                        groupId={group.groupId}
+                        groupName={group.name}
+                        groupDescription={group.description}
+                        groupImage={group.image}
+                        groupAccess={group.isPublic}
+                        groupInterests={group.interests}
+                      />
+                    </Popup>
+                  </div>
+                  <InformationItem title="Nazwa grupy" content={group.name} />
+                  <InformationItem
+                    title="Opis grupy"
+                    content={group.description}
+                  />
+                  <Typography
+                    variant="h5"
+                    sx={{ marginTop: '15px' }}
+                    className={classes.settingsInformationHeading}
+                  >
+                    Tematyka grupy
+                  </Typography>
+                  {group.interests.length > 0 && (
+                    <List className={classes.interestList}>
+                      {group.interests
+                        .sort((x, y) => {
+                          let a = x.name.toUpperCase(),
+                            b = y.name.toUpperCase();
+                          return a === b ? 0 : a > b ? 1 : -1;
+                        })
+                        .map((groupInterest) => (
+                          <ListItem
+                            key={groupInterest.interestId}
+                            disableGutters
+                            secondaryAction={
+                              <IconButton
+                                onClick={() =>
+                                  handleClickDeleteGroupInterest(
+                                    groupInterest.interestId
+                                  )
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            }
+                          >
+                            <FiberManualRecordIcon
+                              color="secondary"
+                              fontSize="14px"
+                            />
+                            <ListItemText
+                              disableTypography
+                              primary={
+                                <Typography noWrap variant="subtitle2">
+                                  {groupInterest.name}
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                        ))}
+                    </List>
+                  )}
+                  <Button
+                    color="secondary"
+                    variant="text"
+                    className={classes.addGroupInfoItemBtn}
+                    onClick={() => setShowInterestForm(!showInterestForm)}
+                  >
+                    <AddCircleOutlineIcon />
+                    <Typography variant="subtitle1" marginLeft="10px">
+                      Dodaj zainteresowanie
+                    </Typography>
+                  </Button>
+                  {showInterestForm && (
+                    <AddInterestForm
+                      forGroup
+                      groupId={group.groupId}
+                      currentInterests={group.interests}
+                      onCloseForm={() => setShowInterestForm(false)}
+                    />
+                  )}
+                  <Typography
+                    variant="h5"
+                    sx={{ marginTop: '10px' }}
+                    className={classes.settingsInformationHeadingWithAction}
+                  >
+                    Regulamin grupy
+                  </Typography>
+                  <div style={{ margin: '20px 0px' }}>
+                    {group.rules.map((rule, index) => (
+                      <Accordion key={rule.ruleId}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          id={'accordion-header-' + index}
+                          className={classes.ruleItemHeading}
+                        >
+                          <Typography variant="subtitle1" fontWeight="bold">
+                            {index + 1 + '. ' + rule.name}
+                          </Typography>
+                          {memberStatusOfUser !== 'MODERATOR' && (
+                            <div>
+                              <IconButton
+                                onClick={(event) =>
+                                  handleClickEditGroupRule(event)
+                                }
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                onClick={(event) =>
+                                  handleClickDeleteGroupRule(event, rule.ruleId)
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </div>
+                          )}
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Typography variant="subtitle2">
+                            {rule.description}
+                          </Typography>
+                        </AccordionDetails>
+                        <Popup
+                          open={openEditionGroupRulePopup}
+                          type="groupRule"
+                          title="Edytuj zasadę w grupie"
+                          onClose={handleCloseEditionGroupRulePopup}
+                        >
+                          <GroupRuleForm
+                            closePopup={handleCloseEditionGroupRulePopup}
+                            edition
+                            groupId={parseInt(groupId)}
+                            ruleId={rule.ruleId}
+                            ruleName={rule.name}
+                            ruleDescription={rule.description}
+                          />
+                        </Popup>
+                      </Accordion>
+                    ))}
+                    {group.rules.length === 0 && (
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight="bold"
+                        textAlign="center"
+                      >
+                        Nie ustalono regulaminu
+                      </Typography>
+                    )}
+                  </div>
+                  {memberStatusOfUser !== 'MODERATOR' && (
+                    <Button
+                      color="secondary"
+                      variant="text"
+                      className={classes.addGroupInfoItemBtn}
+                      onClick={() => setOpenRuleAddFormPopup(true)}
+                    >
+                      <AddCircleOutlineIcon />
+                      <Typography variant="subtitle1" marginLeft="10px">
+                        Dodaj zasadę
+                      </Typography>
+                    </Button>
+                  )}
+                  <Popup
+                    open={openRuleAddFormPopup}
+                    type="groupRule"
+                    title="Dodaj nową zasadę w grupie"
+                    onClose={handleCloseRuleAddFormPopup}
+                  >
+                    <GroupRuleForm
+                      closePopup={handleCloseRuleAddFormPopup}
+                      groupId={parseInt(groupId)}
+                    />
+                  </Popup>
+                </TabPanel>
+                <TabPanel value={groupSettingsNavValue} index={1}>
+                  <Typography
+                    variant="h5"
+                    className={classes.settingsInformationHeading}
+                  >
+                    Zapraszanie nowych członków
+                  </Typography>
+                  <TextField
+                    id="user-searchbar"
+                    fullWidth
+                    sx={{ marginTop: '10px' }}
+                    placeholder="Szukaj osób"
+                    value={searchedUserText}
+                    onChange={handleChangeSearchedUser}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <div className={classes.groupInvitationsContainer}>
+                    {searchedUsers.map((searchedUser) => (
+                      <SentInvitation
+                        key={searchedUser.userId}
+                        groupInvitation
+                        groupId={parseInt(groupId)}
+                        userId={searchedUser.userId}
+                        name={
+                          searchedUser.firstName + ' ' + searchedUser.lastName
+                        }
+                        avatar={searchedUser.profilePhoto}
+                      />
+                    ))}
+                  </div>
+                </TabPanel>
+                <TabPanel value={groupSettingsNavValue} index={2}>
+                  <Typography
+                    variant="h5"
+                    className={classes.settingsInformationHeading}
+                  >
+                    Decydowanie o prośbach dołączenia
+                  </Typography>
+                  <div className={classes.groupInvitationsContainer}>
+                    {userGroupJoinRequests.map((request) => (
+                      <ReceivedInvitation
+                        key={request.userId}
+                        groupInvitation
+                        groupId={parseInt(groupId)}
+                        inviterId={request.userId}
+                        inviterName={request.firstName + ' ' + request.lastName}
+                        inviterPhoto={request.profilePhoto}
+                      />
+                    ))}
+                    {userGroupJoinRequests.length === 0 && (
+                      <Typography marginTop="10px" variant="subtitle2">
+                        Brak próśb o dołączenie
+                      </Typography>
+                    )}
+                  </div>
+                </TabPanel>
+                <TabPanel value={groupSettingsNavValue} index={3}>
+                  <Typography
+                    variant="h5"
+                    className={classes.settingsInformationHeading}
+                  >
+                    Zarządzanie członkami grupy
+                  </Typography>
+                  <div style={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                      columns={tableColumns}
+                      rows={memberTableRows}
+                      pageSize={5}
+                      rowsPerPageOptions={[5]}
+                      disableSelectionOnClick
+                      onCellEditCommit={handleRowEditCommit}
+                      disableColumnMenu
+                    />
+                  </div>
+                </TabPanel>
+                <TabPanel value={groupSettingsNavValue} index={4}>
+                  <Typography
+                    variant="h5"
+                    className={classes.settingsInformationHeading}
+                  >
+                    Usuwanie grupy
+                  </Typography>
+                  <div className={classes.deleteGroupContainer}>
+                    <Typography variant="subtitle1">
+                      Usunięcie grupy spowoduje utratę całej zawartości w tym
+                      utworzonych postów, wątków oraz komentarzy, a także usunie
+                      wszystkich jej członków.
+                    </Typography>
+                    <Button
+                      color="secondary"
+                      variant="contained"
+                      className={classes.deleteGroupBtn}
+                      onClick={() => setOpenDeleteGroupPopup(true)}
+                    >
+                      Usuń grupę
+                    </Button>
+                  </div>
+                  <Popup
+                    open={openDeleteGroupPopup}
+                    type="confirmation"
+                    title="Usuwanie grupy"
+                    onClose={handleCloseGroupDeletePopup}
+                  >
+                    <ActionConfirmation
+                      title="Czy napewno chcesz usunąć grupę?"
+                      confirmationAction={handleDeleteGroup}
+                      rejectionAction={handleCloseGroupDeletePopup}
+                    />
+                  </Popup>
+                </TabPanel>
+              </div>
+            </Paper>
+            {/*Zarządzanie <br />*/}
+            {/*# Założyciel(Administrator): <br />*/}
+            {/*- 8. Usuwanie i edytowanie postów/wątków/komentarzy <br />*/}
+            {/*# Zastępca: <br />*/}
+            {/*- 8. Usuwanie i edytowanie postów/wątków/komentarzy <br />*/}
+            {/*# Moderator: <br />*/}
+            {/*- 8. Usuwanie i edytowanie postów/wątków/komentarzy <br />*/}
           </TabPanel>
         </div>
       ) : (

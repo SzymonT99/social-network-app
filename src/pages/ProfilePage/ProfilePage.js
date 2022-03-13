@@ -59,7 +59,7 @@ import AddWorkPlaceForm from '../../components/Forms/AddWorkPlaceForm';
 import EditIcon from '@mui/icons-material/Edit';
 import AddUserFavouriteForm from '../../components/Forms/AddUserFavouriteForm';
 import UserFavouriteItemList from '../../components/Profile/UserFavouriteItemList';
-import AddUserInterestForm from '../../components/Forms/AddUserInterestForm';
+import AddInterestForm from '../../components/Forms/AddInterestForm';
 import { useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -162,6 +162,7 @@ const ProfilePage = (props) => {
   const [openAddSchoolPopup, setOpenAddSchoolPopup] = useState(false);
   const [openAddWorkPopup, setOpenAddWorkPopup] = useState(false);
   const [showFavouriteForm, setShowFavouriteForm] = useState(false);
+  const [showInterestForm, setShowInterestForm] = useState(false);
   const [imagesPageNumber, setImagesPageNumber] = useState(1);
   const [openProfileEdition, setOpenProfileEdition] = useState(false);
   const [openAddAddressFormPopup, setOpenAddAddressFormPopup] = useState(false);
@@ -1583,9 +1584,7 @@ const ProfilePage = (props) => {
                           color="secondary"
                           variant="text"
                           className={classes.addProfileInfoItemBtn}
-                          onClick={() =>
-                            setShowFavouriteForm(!showFavouriteForm)
-                          }
+                          onClick={() => setShowInterestForm(!showInterestForm)}
                         >
                           <AddCircleOutlineIcon />
                           <Typography variant="subtitle1" marginLeft="10px">
@@ -1593,10 +1592,11 @@ const ProfilePage = (props) => {
                           </Typography>
                         </Button>
                       )}
-                      {showFavouriteForm && (
-                        <AddUserInterestForm
+                      {showInterestForm && (
+                        <AddInterestForm
                           userId={loggedUser.userId}
-                          onCloseForm={() => setShowFavouriteForm(false)}
+                          currentInterests={userInterests}
+                          onCloseForm={() => setShowInterestForm(false)}
                         />
                       )}
                     </TabPanelMUI>
