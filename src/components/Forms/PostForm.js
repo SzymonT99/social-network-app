@@ -20,7 +20,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost, editPost } from '../../redux/actions/postActions';
 import { showNotification } from '../../redux/actions/notificationActions';
-import { createGroupPost } from '../../redux/actions/groupActions';
+import {
+  createGroupPost,
+  editGroupPost,
+} from '../../redux/actions/groupActions';
 
 const PostForm = (props) => {
   const {
@@ -105,11 +108,15 @@ const PostForm = (props) => {
           dispatch(createGroupPost(groupId, formData));
         }
       } else {
-        dispatch(editPost(editedPostId, formData));
+        if (!groupPost) {
+          dispatch(editPost(editedPostId, formData));
+        } else {
+          dispatch(editGroupPost(groupId, editedPostId, formData));
+        }
       }
       closePopup();
     } else {
-      dispatch(showNotification('warning', 'Podaj treśc postu'));
+      dispatch(showNotification('warning', 'Podaj treść postu'));
     }
   };
 

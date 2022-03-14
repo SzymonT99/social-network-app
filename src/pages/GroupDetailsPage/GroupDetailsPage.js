@@ -808,52 +808,51 @@ const GroupDetailsPage = (props) => {
                 ))}
             </div>
             <div className={classes.rightActivityContent}>
-              {memberStatusOfUser !== 'NOT_MEMBER' ||
-                (memberStatusOfUser === null && (
-                  <Paper
-                    elevation={4}
-                    sx={{ borderRadius: '10px' }}
-                    className={classes.postCreateBox}
-                  >
-                    <Typography fontWeight="bold" variant="h6">
-                      Utwórz post
-                    </Typography>
-                    <Divider className={classes.divider} />
-                    <div className={classes.postCreateContent}>
-                      <Avatar
-                        src={
-                          loggedUserProfile &&
-                          loggedUserProfile.profilePhoto !== null
-                            ? loggedUserProfile.profilePhoto.url
-                            : defaultUserPhoto
-                        }
-                        alt={
-                          loggedUserProfile
-                            ? loggedUserProfile.firstName +
-                              ' ' +
-                              loggedUserProfile.lastName
-                            : 'Zalogowany użytkownik'
-                        }
-                        className={classes.postCreationUserPhoto}
-                      />
-                      <TextField
-                        fullWidth
-                        placeholder="Napisz coś tutaj..."
-                        multiline
-                        rows={2}
-                        className={classes.postInput}
-                        onClick={() => setOpenGroupPostCreationPopup(true)}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <PhotoIcon className={classes.photoIcon} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </div>
-                  </Paper>
-                ))}
+              {memberStatusOfUser !== 'NOT_MEMBER' && (
+                <Paper
+                  elevation={4}
+                  sx={{ borderRadius: '10px' }}
+                  className={classes.postCreateBox}
+                >
+                  <Typography fontWeight="bold" variant="h6">
+                    Utwórz post
+                  </Typography>
+                  <Divider className={classes.divider} />
+                  <div className={classes.postCreateContent}>
+                    <Avatar
+                      src={
+                        loggedUserProfile &&
+                        loggedUserProfile.profilePhoto !== null
+                          ? loggedUserProfile.profilePhoto.url
+                          : defaultUserPhoto
+                      }
+                      alt={
+                        loggedUserProfile
+                          ? loggedUserProfile.firstName +
+                            ' ' +
+                            loggedUserProfile.lastName
+                          : 'Zalogowany użytkownik'
+                      }
+                      className={classes.postCreationUserPhoto}
+                    />
+                    <TextField
+                      fullWidth
+                      placeholder="Napisz coś tutaj..."
+                      multiline
+                      rows={2}
+                      className={classes.postInput}
+                      onClick={() => setOpenGroupPostCreationPopup(true)}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <PhotoIcon className={classes.photoIcon} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
+                </Paper>
+              )}
               <Popup
                 open={openGroupPostCreationPopup}
                 type="post"
@@ -871,6 +870,8 @@ const GroupDetailsPage = (props) => {
                   return (
                     <Post
                       key={post.postId}
+                      isGroupPost
+                      groupId={parseInt(groupId)}
                       postId={post.postId}
                       authorId={post.postAuthor.userId}
                       authorName={
@@ -897,6 +898,10 @@ const GroupDetailsPage = (props) => {
                           : post.isCommentingBlocked
                       }
                       editionDate={post.editedAt}
+                      accessToManagement={
+                        memberStatusOfUser !== 'MEMBER' &&
+                        memberStatusOfUser !== 'NOT_MEMBER'
+                      }
                     />
                   );
                 }
@@ -1690,7 +1695,6 @@ const GroupDetailsPage = (props) => {
                       rowsPerPageOptions={[5]}
                       disableSelectionOnClick
                       onCellEditCommit={handleRowEditCommit}
-                      disableColumnMenu
                     />
                   </div>
                 </TabPanel>

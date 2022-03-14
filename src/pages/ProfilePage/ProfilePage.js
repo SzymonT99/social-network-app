@@ -94,6 +94,8 @@ import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
+import Group from '../../components/Group/Group';
+import { getUserGroups } from '../../redux/actions/groupActions';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -144,6 +146,7 @@ const ProfilePage = (props) => {
   const loggedUserFriendInvitations = useSelector(
     (state) => state.friends.receivedFriendInvitations
   );
+  const userGroups = useSelector((state) => state.selectedProfile.userGroups);
   const isLoading = useSelector((state) => state.activity.isLoading);
 
   const history = useHistory();
@@ -175,6 +178,7 @@ const ProfilePage = (props) => {
   const [friendsOrder, setFriendsOrder] = useState(1);
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [friendsPageNumber, setFriendsPageNumber] = useState(1);
+  const [groupsPageNumber, setGroupsPageNumber] = useState(1);
 
   useEffect(() => {
     (async () => {
@@ -229,6 +233,7 @@ const ProfilePage = (props) => {
           }
         }
       );
+      dispatch(getUserGroups(selectedUserId));
     })();
 
     return () => {
@@ -426,6 +431,10 @@ const ProfilePage = (props) => {
 
   const updateFriendList = (updatedFriendList) => {
     setFilteredFriends(updatedFriendList);
+  };
+
+  const handleChangeGroupsPageNumber = (event, value) => {
+    setGroupsPageNumber(value);
   };
 
   return (
@@ -1848,7 +1857,45 @@ const ProfilePage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNavIndex} index={4}>
-            Grupy
+            <div className={classes.groupsListContainer}>
+              {userGroups
+                .slice((groupsPageNumber - 1) * 6, groupsPageNumber * 6)
+                .map((group) => (
+                  <Group
+                    key={group.groupId}
+                    groupId={group.groupId}
+                    name={group.name}
+                    interests={group.interests}
+                    groupCreationDate={group.createdAt}
+                    membersNumber={group.members.length}
+                    members={group.members}
+                    postsNumber={group.postsNumber}
+                    groupImage={group.image}
+                    showInProfile
+                  />
+                ))}
+              {userGroups.length > 6 && (
+                <Paper elevation={4} className={classes.paginationContainer}>
+                  <Pagination
+                    className={classes.groupsPagination}
+                    count={userGroups && Math.ceil(userGroups.length / 6)}
+                    color="secondary"
+                    size="large"
+                    showFirstButton
+                    showLastButton
+                    page={groupsPageNumber}
+                    onChange={handleChangeGroupsPageNumber}
+                  />
+                </Paper>
+              )}
+              {userGroups.length === 0 && (
+                <div className={classes.noContent}>
+                  <Typography variant="h6" fontWeight="bold">
+                    Brak grup
+                  </Typography>
+                </div>
+              )}
+            </div>
           </TabPanel>
         </div>
       ) : (

@@ -1,6 +1,7 @@
 import groupService from '../../services/groupService';
 import groupTypes from '../types/groupTypes';
 import { showNotification } from './notificationActions';
+import userProfileTypes from '../types/userProfileTypes';
 
 export const createGroup = (groupFormData) => (dispatch) => {
   return groupService
@@ -118,7 +119,7 @@ export const getUserGroups = (userId) => (dispatch) => {
       if (response.status === 200) {
         return response.json().then((data) => {
           dispatch({
-            type: groupTypes.FETCH_USER_GROUPS,
+            type: userProfileTypes.FETCH_USER_GROUPS,
             payload: {
               userGroups: data,
             },
@@ -481,24 +482,23 @@ export const editGroupPost = (groupId, postId, postFormData) => (dispatch) => {
     });
 };
 
-export const deleteGroupPost =
-  (groupId, postId, postFormData) => (dispatch) => {
-    return groupService
-      .deleteGroupPost(postId, postFormData)
-      .then((response) => {
-        if (response.status === 200) {
-          dispatch(getGroupDetails(groupId));
-          dispatch(showNotification('success', 'Usunięto post w grupie'));
-        } else if (response.status === 403) {
-          dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else {
-          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+export const deleteGroupPost = (groupId, postId) => (dispatch) => {
+  return groupService
+    .deleteGroupPost(postId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getGroupDetails(groupId));
+        dispatch(showNotification('success', 'Usunięto post w grupie'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 export const createGroupThread = (groupId, groupThread) => (dispatch) => {
   return groupService

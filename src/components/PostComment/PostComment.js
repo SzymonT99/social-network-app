@@ -18,6 +18,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import UsersListPopup from '../UsersListPopup/UsersListPopup';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { useHistory } from 'react-router-dom';
+import { getGroupDetails } from '../../redux/actions/groupActions';
 
 const formatTime = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
@@ -77,13 +78,15 @@ const PostComment = (props) => {
     authorName,
     createdDate,
     userStatus,
-    postAuthorId,
     authorId,
     likes,
     isEdited,
     authorProfilePhoto,
     sharing,
     highlightComment,
+    accessToManagement,
+    isGroupPostComment,
+    groupId,
   } = props;
 
   const userId = useSelector((state) => state.auth.user.userId);
@@ -256,7 +259,7 @@ const PostComment = (props) => {
               </Typography>
             )}
           </div>
-          {authorId === userId && (
+          {(authorId === userId || accessToManagement === true) && (
             <div>
               <Button
                 className={classes.commentActionItem}
@@ -311,12 +314,14 @@ PostComment.propTypes = {
   authorId: PropTypes.number.isRequired,
   isEdited: PropTypes.bool.isRequired,
   authorProfilePhoto: PropTypes.object,
+  accessToManagement: PropTypes.bool,
 };
 
 PostComment.defaultProps = {
   likes: [],
   sharing: false,
   highlightComment: false,
+  accessToManagement: false,
 };
 
 export default withStyles(styles)(PostComment);

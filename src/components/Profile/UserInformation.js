@@ -98,7 +98,7 @@ const UserInformation = (props) => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isUserFriend, isInvitedToFriend]);
 
   const handleManageFriend = () => {
     if (

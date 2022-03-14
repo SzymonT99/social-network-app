@@ -437,6 +437,35 @@ const styles = (theme) => ({
     padding: '10px 0px',
     justifyContent: 'space-between',
   },
+  groupsListContainer: {
+    marginTop: '15px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridGap: '15px',
+  },
+  groupsPagination: {
+    '&.MuiPagination-root': {
+      padding: '15px',
+      '& .MuiPagination-ul': {
+        justifyContent: 'center',
+      },
+    },
+  },
+  paginationContainer: {
+    '&.MuiPaper-root': {
+      width: '100%',
+      borderRadius: '10px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  },
+  noContent: {
+    marginTop: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default styles;

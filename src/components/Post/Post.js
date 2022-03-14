@@ -51,6 +51,7 @@ import PostForm from '../Forms/PostForm';
 import SharePostForm from '../Forms/SharePostForm';
 import ActivityHeading from '../ActivityHeading/ActivityHeading';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
+import { deleteGroupPost } from '../../redux/actions/groupActions';
 
 const Post = (props) => {
   const {
@@ -75,6 +76,9 @@ const Post = (props) => {
     asSharing,
     highlightCommentById,
     isFavourite,
+    accessToManagement,
+    isGroupPost,
+    groupId,
   } = props;
 
   const dispatch = useDispatch();
@@ -194,7 +198,11 @@ const Post = (props) => {
   };
 
   const handleDeletePost = () => {
-    dispatch(deletePost(postId));
+    if (!isGroupPost) {
+      dispatch(deletePost(postId));
+    } else {
+      dispatch(deleteGroupPost(groupId, postId));
+    }
     handleClosePostOption();
   };
 
@@ -254,7 +262,6 @@ const Post = (props) => {
         isEdited={isEdited}
       >
         <>
-          {' '}
           {!asSharing && !isFavourite ? (
             <div>
               <IconButton onClick={handleClickPostOption}>
@@ -283,12 +290,11 @@ const Post = (props) => {
                 <MenuItem
                   onClick={handleClickAddFavouritePost}
                   className={classes.postMenuItem}
-                  sx={
-                    authorId &&
-                    authorId === userId && {
-                      borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-                    }
-                  }
+                  sx={{
+                    borderBottom:
+                      (authorId === userId || accessToManagement === true) &&
+                      '1px solid rgba(0, 0, 0, 0.12)',
+                  }}
                 >
                   <ListItemIcon>
                     <FavoriteIcon fontSize="medium" />
@@ -302,7 +308,7 @@ const Post = (props) => {
                     }
                   />
                 </MenuItem>
-                {authorId && authorId === userId && (
+                {(authorId === userId || accessToManagement === true) && (
                   <div>
                     <MenuItem
                       className={classes.postMenuItem}
@@ -547,6 +553,7 @@ const Post = (props) => {
                     likes={comment.userLikes}
                     isEdited={comment.isEdited}
                     authorProfilePhoto={comment.commentAuthor.profilePhoto}
+                    accessToManagement={accessToManagement}
                   />
                 );
               }
@@ -616,11 +623,12 @@ const Post = (props) => {
         <PostForm
           edition
           closePopup={handleCloseEditionPostPopup}
-          userId={authorId}
           postText={content}
           postImages={images}
           postIsPublic={isPublic}
           editedPostId={postId}
+          groupPost={isGroupPost}
+          groupId={isGroupPost && groupId}
         />
       </Popup>
       <Popup
@@ -659,12 +667,17 @@ Post.propTypes = {
   asSharing: PropTypes.bool,
   highlightCommentById: PropTypes.number,
   isFavourite: PropTypes.bool,
+  accessToManagement: PropTypes.bool,
+  isGroupPost: PropTypes.bool,
+  groupId: PropTypes.number,
 };
 
 Post.defaultProps = {
   asSharing: false,
   highlightCommentById: null,
   isFavourite: false,
+  accessToManagement: false,
+  isGroupPost: false,
 };
 
 export default withStyles(styles)(Post);

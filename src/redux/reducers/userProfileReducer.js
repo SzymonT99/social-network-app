@@ -4,6 +4,7 @@ const initialState = {
   userProfile: null,
   userActivity: null,
   userFavourites: [],
+  userGroups: [],
   possibleInterests: [],
   userInterests: [],
   images: [],
@@ -33,6 +34,11 @@ const userProfileReducer = (state = initialState, action) => {
       return {
         ...state,
         userFavourites: action.payload.userFavourites,
+      };
+    case types.FETCH_USER_GROUPS:
+      return {
+        ...state,
+        userGroups: action.payload.userGroups,
       };
     case types.FETCH_POSSIBLE_INTERESTS:
       return {
