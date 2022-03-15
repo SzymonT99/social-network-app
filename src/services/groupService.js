@@ -411,6 +411,16 @@ const leaveGroup = (groupId) => {
   });
 };
 
+const getGroupForumStats = (groupId) => {
+  return fetch(endpoints.groupForumStats.replace('{groupId}', groupId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   createGroup,
   editGroup,
@@ -445,4 +455,5 @@ export default {
   setGroupMemberPermission,
   deleteGroupMember,
   leaveGroup,
+  getGroupForumStats,
 };

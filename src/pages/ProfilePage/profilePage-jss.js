@@ -438,7 +438,6 @@ const styles = (theme) => ({
     justifyContent: 'space-between',
   },
   groupsListContainer: {
-    marginTop: '15px',
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
     gridGap: '15px',

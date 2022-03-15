@@ -6,8 +6,8 @@ const initialState = {
   groupDetails: null,
   groupInvitations: [],
   userGroupJoinRequests: [],
-  currentGroupPosts: [],
   possibleInterests: [],
+  currentForumStats: [],
 };
 
 const groupReducer = (state = initialState, action) => {
@@ -37,15 +37,15 @@ const groupReducer = (state = initialState, action) => {
         ...state,
         userGroupJoinRequests: action.payload.userGroupJoinRequests,
       };
-    case groupTypes.FETCH_GROUP_POSTS:
-      return {
-        ...state,
-        currentGroupPosts: action.payload.currentGroupPosts,
-      };
     case groupTypes.FETCH_POSSIBLE_INTERESTS:
       return {
         ...state,
         possibleInterests: action.payload.possibleInterests,
+      };
+    case groupTypes.FETCH_GROUP_FORUM_STATS:
+      return {
+        ...state,
+        currentForumStats: action.payload.currentForumStats,
       };
     case groupTypes.CLEAR_GROUP_DETAILS:
       return {

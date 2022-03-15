@@ -84,6 +84,7 @@ import SentInvitation from '../../components/SentInvitation/SentInvitation';
 import ReceivedInvitation from '../../components/ReceivedInvitation/ReceivedInvitation';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import ActionConfirmation from '../../components/ActionConfirmation/ActionConfirmation';
+import GroupForum from '../../components/GroupForum/GroupForum';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -130,7 +131,7 @@ const GroupDetailsPage = (props) => {
   );
   const users = useSelector((state) => state.activity.users);
 
-  const [groupNavIndex, setGroupNavIndex] = useState(0);
+  const [groupNavIndex, setGroupNavIndex] = useState(3);
   const [openGroupPostCreationPopup, setOpenGroupPostCreationPopup] =
     useState(false);
   const [numberPostsShown, setNumberPostsShown] = useState(5);
@@ -491,7 +492,7 @@ const GroupDetailsPage = (props) => {
   return (
     <>
       {group ? (
-        <div>
+        <div className={classes.wrapper}>
           <Paper elevation={4} className={classes.groupHeadingContainer}>
             <Button
               variant="contained"
@@ -1380,7 +1381,7 @@ const GroupDetailsPage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={groupNavIndex} index={3}>
-            Forum
+            <GroupForum groupId={parseInt(groupId)} />
           </TabPanel>
           <TabPanel classes={classes} value={groupNavIndex} index={4}>
             <Paper elevation={4} className={classes.settingsContainer}>
@@ -1735,13 +1736,6 @@ const GroupDetailsPage = (props) => {
                 </TabPanel>
               </div>
             </Paper>
-            {/*Zarządzanie <br />*/}
-            {/*# Założyciel(Administrator): <br />*/}
-            {/*- 8. Usuwanie i edytowanie postów/wątków/komentarzy <br />*/}
-            {/*# Zastępca: <br />*/}
-            {/*- 8. Usuwanie i edytowanie postów/wątków/komentarzy <br />*/}
-            {/*# Moderator: <br />*/}
-            {/*- 8. Usuwanie i edytowanie postów/wątków/komentarzy <br />*/}
           </TabPanel>
         </div>
       ) : (

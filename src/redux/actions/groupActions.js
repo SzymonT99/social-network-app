@@ -765,6 +765,26 @@ export const leaveGroup = (groupId) => (dispatch) => {
     });
 };
 
-export const clearGroupData = () => ({
-  type: groupTypes.CLEAR_GROUP_DETAILS,
-});
+export const getGroupForumStats = (groupId) => (dispatch) => {
+  return groupService
+    .getGroupForumStats(groupId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: groupTypes.FETCH_GROUP_FORUM_STATS,
+            payload: {
+              currentForumStats: data,
+            },
+          });
+        });
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

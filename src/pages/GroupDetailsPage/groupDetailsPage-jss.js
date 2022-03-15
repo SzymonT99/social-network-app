@@ -1,7 +1,9 @@
 const styles = (theme) => ({
+  wrapper: {
+    margin: '20px 0px',
+  },
   groupHeadingContainer: {
     '&.MuiPaper-root': {
-      marginTop: '20px',
       marginBottom: '15px',
       borderRadius: '10px',
       position: 'relative',
