@@ -257,7 +257,6 @@ const createGroupThread = (groupId, formData) => {
   return fetch(endpoints.createGroupThread.replace('{groupId}', groupId), {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: authorization(),
     },
     body: formData,
@@ -268,7 +267,6 @@ const editGroupThread = (threadId, formData) => {
   return fetch(endpoints.manageGroupThread.replace('{threadId}', threadId), {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: authorization(),
     },
     body: formData,

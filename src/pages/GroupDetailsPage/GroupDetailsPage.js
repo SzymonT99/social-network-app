@@ -1381,7 +1381,7 @@ const GroupDetailsPage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={groupNavIndex} index={3}>
-            <GroupForum groupId={parseInt(groupId)} />
+            <GroupForum groupId={parseInt(groupId)} threads={group.threads} />
           </TabPanel>
           <TabPanel classes={classes} value={groupNavIndex} index={4}>
             <Paper elevation={4} className={classes.settingsContainer}>

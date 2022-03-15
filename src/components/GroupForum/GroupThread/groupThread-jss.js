@@ -1,4 +1,5 @@
 const styles = (theme) => ({
+  threadContainer: { '&.MuiAccordion-root': { marginBottom: '10px' } },
   threadHeadingContainer: {
     '&.MuiAccordionSummary-root': {
       padding: '6px 15px',
@@ -10,6 +11,13 @@ const styles = (theme) => ({
       },
     },
   },
+  memberNameText: {
+    fontWeight: 'bold',
+    '&:hover': {
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    },
+  },
   threadHeadingContent: {
     display: 'flex',
     flexDirection: 'column',
@@ -19,8 +27,8 @@ const styles = (theme) => ({
   },
   memberPhoto: {
     '&.MuiAvatar-root': {
-      width: '60px',
-      height: '60px',
+      width: '65px',
+      height: '65px',
     },
   },
   threadAnswersNumberInfo: {
@@ -31,7 +39,7 @@ const styles = (theme) => ({
   threadManageContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '10px',
+    marginBottom: '5px',
     paddingLeft: '20px',
   },
   threadDetailsContainer: {
@@ -40,7 +48,7 @@ const styles = (theme) => ({
     },
   },
   manageThreadAction: {
-    '&.MuiTypography-root': {
+    '&.MuiButton-root': {
       display: 'flex',
       alignItems: 'center',
       marginRight: '20px',
@@ -66,6 +74,52 @@ const styles = (theme) => ({
     '&.MuiTypography-root': {
       fontWeight: 'bold',
       marginLeft: '20px',
+      marginBottom: '5px',
+    },
+  },
+  createAnswerContainer: {
+    margin: '15px 0px',
+    display: 'flex',
+  },
+  createAnswerContent: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+  },
+  memberPhotoSmall: {
+    '&.MuiAvatar-root': {
+      width: '50px',
+      height: '50px',
+      marginRight: '20px',
+    },
+  },
+  answerInput: {
+    '&.MuiFormControl-root': {
+      width: '70%',
+      marginBottom: 0,
+      '& .MuiInputBase-root': {
+        minHeight: '55px',
+        borderRadius: '10px',
+        fontSize: '15px',
+        border: '1px solid rgba(0, 0, 0, 0.22)',
+        '&.Mui-focused': {
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderWidth: 0,
+          },
+        },
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderWidth: 0,
+        },
+      },
+    },
+  },
+  answerBtn: {
+    '&.MuiButton-root': {
+      marginLeft: '20px',
+      fontSize: '17px',
+      height: '55px',
+      width: '26%',
     },
   },
 });
