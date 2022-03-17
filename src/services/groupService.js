@@ -333,7 +333,7 @@ const createGroupThreadAnswerReview = (answerId, rate) => {
         'Content-Type': 'application/json',
         Authorization: authorization(),
       },
-      body: JSON.stringify(rate),
+      body: JSON.stringify({ rate }),
     }
   );
 };
@@ -347,20 +347,7 @@ const editGroupThreadAnswerReview = (reviewId, rate) => {
         'Content-Type': 'application/json',
         Authorization: authorization(),
       },
-      body: JSON.stringify(rate),
-    }
-  );
-};
-
-const deleteGroupThreadAnswerReview = (reviewId) => {
-  return fetch(
-    endpoints.manageGroupThreadAnswerReview.replace('{reviewId}', reviewId),
-    {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: authorization(),
-      },
+      body: JSON.stringify({ rate }),
     }
   );
 };
@@ -409,6 +396,16 @@ const leaveGroup = (groupId) => {
   });
 };
 
+const getGroupForum = (groupId) => {
+  return fetch(endpoints.groupForum.replace('{groupId}', groupId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 const getGroupForumStats = (groupId) => {
   return fetch(endpoints.groupForumStats.replace('{groupId}', groupId), {
     method: 'GET',
@@ -449,9 +446,9 @@ export default {
   deleteGroupThreadAnswer,
   createGroupThreadAnswerReview,
   editGroupThreadAnswerReview,
-  deleteGroupThreadAnswerReview,
   setGroupMemberPermission,
   deleteGroupMember,
   leaveGroup,
+  getGroupForum,
   getGroupForumStats,
 };

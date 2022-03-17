@@ -55,6 +55,7 @@ import {
   deleteGroupMember,
   deleteGroupRule,
   getGroupDetails,
+  getGroupForumThreads,
   getGroupInvitations,
   getUsersWantedJoinGroup,
   leaveGroup,
@@ -123,6 +124,7 @@ const GroupDetailsPage = (props) => {
   const isUserRemember = useSelector((state) => state.auth.remember);
 
   const group = useSelector((state) => state.groups.groupDetails);
+  const threads = useSelector((state) => state.groups.groupForum.threads);
   const userGroupJoinRequests = useSelector(
     (state) => state.groups.userGroupJoinRequests
   );
@@ -131,7 +133,7 @@ const GroupDetailsPage = (props) => {
   );
   const users = useSelector((state) => state.activity.users);
 
-  const [groupNavIndex, setGroupNavIndex] = useState(3);
+  const [groupNavIndex, setGroupNavIndex] = useState(0);
   const [openGroupPostCreationPopup, setOpenGroupPostCreationPopup] =
     useState(false);
   const [numberPostsShown, setNumberPostsShown] = useState(5);
@@ -169,6 +171,7 @@ const GroupDetailsPage = (props) => {
 
         if (userMember) {
           setMemberStatusOfUser(userMember.groupPermissionType);
+          dispatch(getGroupForumThreads(groupId));
         } else {
           setMemberStatusOfUser('NOT_MEMBER');
         }
@@ -1127,16 +1130,18 @@ const GroupDetailsPage = (props) => {
                       ? ' utworzony post na grupie'
                       : ' utworzonych postów na grupie')}
                 </Typography>
-                <Typography
-                  variant="subtitle1"
-                  className={classes.groupBasicInfoItem}
-                >
-                  <ForumIcon fontSize="medium" />
-                  {group.threads.length +
-                    (group.threads.length === 1
-                      ? ' utworzony wątek na forum'
-                      : ' utworzonych wątków na forum')}
-                </Typography>
+                {threads && (
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.groupBasicInfoItem}
+                  >
+                    <ForumIcon fontSize="medium" />
+                    {threads.length +
+                      (threads.length === 1
+                        ? ' utworzony wątek na forum'
+                        : ' utworzonych wątków na forum')}
+                  </Typography>
+                )}
               </div>
             </Paper>
             <Paper elevation={4} className={classes.informationSectionElement}>
@@ -1381,7 +1386,10 @@ const GroupDetailsPage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={groupNavIndex} index={3}>
-            <GroupForum groupId={parseInt(groupId)} threads={group.threads} />
+            <GroupForum
+              groupId={parseInt(groupId)}
+              memberStatusOfUser={memberStatusOfUser}
+            />
           </TabPanel>
           <TabPanel classes={classes} value={groupNavIndex} index={4}>
             <Paper elevation={4} className={classes.settingsContainer}>

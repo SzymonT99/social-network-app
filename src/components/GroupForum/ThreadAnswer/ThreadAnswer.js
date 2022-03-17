@@ -11,8 +11,10 @@ import ActionConfirmation from '../../ActionConfirmation/ActionConfirmation';
 import { formatCreationDate } from '../../../utils/formatCreationDate';
 import { showNotification } from '../../../redux/actions/notificationActions';
 import {
+  createGroupThreadAnswerReview,
   deleteGroupThreadAnswer,
   editGroupThreadAnswer,
+  editGroupThreadAnswerReview,
 } from '../../../redux/actions/groupActions';
 import Popup from '../../Popup/Popup';
 
@@ -34,13 +36,14 @@ const ThreadAnswer = (props) => {
     userStatus,
     userProfilePhoto,
     createdDate,
+    isEdited,
+    reviews,
     averageRating,
     accessToManagement,
   } = props;
 
   const loggedUser = useSelector((state) => state.auth.user);
 
-  const [answerRating, setAnswerRating] = useState(averageRating);
   const [isDisabled, setIsDisabled] = useState(true);
   const [answerText, setAnswerText] = useState(text);
   const [openDeleteAnswerPopup, setOpenDeleteAnswerPopup] = useState(false);
@@ -58,7 +61,18 @@ const ThreadAnswer = (props) => {
   }, [isDisabled]);
 
   const handleChangeRating = (event, newValue) => {
-    setAnswerRating((averageRating + newValue) / 2);
+    dispatch(createGroupThreadAnswerReview(groupId, answerId, newValue)).then(
+      (response) => {
+        if (response.status === 409) {
+          const userReviewId = reviews.find(
+            ({ author }) => author.user.userId === loggedUser.userId
+          ).answerReviewId;
+          dispatch(
+            editGroupThreadAnswerReview(groupId, userReviewId, newValue)
+          );
+        }
+      }
+    );
   };
 
   const handleChangeAnswer = (event) => {
@@ -107,60 +121,64 @@ const ThreadAnswer = (props) => {
             />
           </Badge>
         </div>
-        <div className={classes.answerContent}>
-          <div className={classes.answerHeading}>
-            <Typography variant="subtitle2" fontWeight="bold">
-              <span
-                className={classes.authorName}
-                onClick={() => history.push('/app/profile/' + authorId)}
-              >
-                {memberName}
-              </span>
-              <span className={classes.answerTime}>
-                {' ' + formatCreationDate(new Date(createdDate))}
-              </span>
-            </Typography>
-            <Rating
-              name="answer-rating"
-              precision={0.1}
-              value={answerRating}
-              onChange={(event, newValue) =>
-                handleChangeRating(event, newValue)
-              }
+        <div style={{ width: '100%' }}>
+          <div className={classes.answerContent}>
+            <div className={classes.answerHeading}>
+              <Typography variant="subtitle2" fontWeight="bold">
+                <span
+                  className={classes.authorName}
+                  onClick={() => history.push('/app/profile/' + authorId)}
+                >
+                  {memberName}
+                </span>
+                <span className={classes.answerTime}>
+                  {' odpowiedział(a) ' +
+                    formatCreationDate(new Date(createdDate)) +
+                    (isEdited ? ' (edytowany)' : '')}
+                </span>
+              </Typography>
+              <Rating
+                name="answer-rating"
+                precision={0.2}
+                value={averageRating}
+                onChange={(event, newValue) =>
+                  handleChangeRating(event, newValue)
+                }
+              />
+            </div>
+            <TextField
+              fullWidth
+              multiline
+              disabled={isDisabled}
+              inputRef={answerInputRef}
+              maxRows={3}
+              className={classes.answerInput}
+              value={answerText}
+              onChange={handleChangeAnswer}
             />
           </div>
-          <TextField
-            fullWidth
-            multiline
-            disabled={isDisabled}
-            inputRef={answerInputRef}
-            maxRows={3}
-            className={classes.answerInput}
-            value={answerText}
-            onChange={handleChangeAnswer}
-          />
+          {!isDisabled && (
+            <div className={classes.editActionContainer}>
+              <Button
+                color="secondary"
+                variant="contained"
+                className={classes.editActionBtn}
+                onClick={handleClickEditAnswer}
+              >
+                Zmień komentarz
+              </Button>
+              <Button
+                color="primary"
+                variant="contained"
+                className={classes.editActionBtn}
+                onClick={() => setIsDisabled(true)}
+              >
+                Anuluj
+              </Button>
+            </div>
+          )}
         </div>
       </div>
-      {!isDisabled && (
-        <div className={classes.editActionContainer}>
-          <Button
-            color="secondary"
-            variant="contained"
-            className={classes.editActionBtn}
-            onClick={handleClickEditAnswer}
-          >
-            Zmień komentarz
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            className={classes.editActionBtn}
-            onClick={() => setIsDisabled(true)}
-          >
-            Anuluj
-          </Button>
-        </div>
-      )}
       {(authorId === loggedUser.userId || accessToManagement === true) && (
         <div className={classes.answerBtnContainer}>
           <Button
@@ -206,7 +224,9 @@ ThreadAnswer.propTypes = {
   memberName: PropTypes.string.isRequired,
   userProfilePhoto: PropTypes.object,
   createdDate: PropTypes.string.isRequired,
-  averageRating: PropTypes.number.isRequired,
+  isEdited: PropTypes.bool.isRequired,
+  reviews: PropTypes.array.isRequired,
+  averageRating: PropTypes.number,
   accessToManagement: PropTypes.bool,
 };
 

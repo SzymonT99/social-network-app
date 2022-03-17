@@ -54,6 +54,20 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  loadingContainer: {
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: ' center',
+  },
+  threadsPagination: {
+    '&.MuiPagination-root': {
+      padding: '15px',
+      '& .MuiPagination-ul': {
+        justifyContent: 'center',
+      },
+    },
+  },
 });
 
 export default styles;

@@ -90,5 +90,6 @@ export const endpoints = {
     baseUrl + '/api/groups/threads/answers/reviews/{reviewId}',
   manageGroupMember: baseUrl + '/api/groups/{groupId}/members/{memberId}',
   leaveGroup: baseUrl + '/api/groups/{groupId}/leave',
+  groupForum: baseUrl + '/api/groups/{groupId}/forum',
   groupForumStats: baseUrl + '/api/groups/{groupId}/forum/stats',
 };

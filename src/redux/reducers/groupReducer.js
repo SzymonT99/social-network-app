@@ -1,4 +1,5 @@
 import groupTypes from '../types/groupTypes';
+import groupForum from '../../components/GroupForum/GroupForum';
 
 const initialState = {
   publicGroups: [],
@@ -7,7 +8,7 @@ const initialState = {
   groupInvitations: [],
   userGroupJoinRequests: [],
   possibleInterests: [],
-  currentForumStats: [],
+  groupForum: {},
 };
 
 const groupReducer = (state = initialState, action) => {
@@ -42,10 +43,21 @@ const groupReducer = (state = initialState, action) => {
         ...state,
         possibleInterests: action.payload.possibleInterests,
       };
+    case groupTypes.FETCH_GROUP_FORUM:
+      return {
+        ...state,
+        groupForum: {
+          ...state.groupForum,
+          threads: action.payload.forumThreads,
+        },
+      };
     case groupTypes.FETCH_GROUP_FORUM_STATS:
       return {
         ...state,
-        currentForumStats: action.payload.currentForumStats,
+        groupForum: {
+          ...state.groupForum,
+          stats: action.payload.forumStats,
+        },
       };
     case groupTypes.CLEAR_GROUP_DETAILS:
       return {

@@ -12,7 +12,6 @@ const styles = (theme) => ({
     margin: '15px 0px',
   },
   answerContent: {
-    width: '100%',
     borderRadius: '10px',
     border: '1px solid rgba(0, 0, 0, 0.22)',
     padding: '10px 15px',
@@ -51,12 +50,11 @@ const styles = (theme) => ({
     },
   },
   editActionContainer: {
-    marginTop: '8px',
+    marginTop: '10px',
   },
   editActionBtn: {
     '&.MuiButton-root': {
-      textTransform: 'none',
-      padding: '2px 15px',
+      padding: '4px 20px',
       margin: 0,
       minWidth: 0,
       fontSize: '15px',

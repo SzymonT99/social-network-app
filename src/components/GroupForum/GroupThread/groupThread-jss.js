@@ -116,6 +116,7 @@ const styles = (theme) => ({
   },
   answerBtn: {
     '&.MuiButton-root': {
+      borderRadius: '10px',
       marginLeft: '20px',
       fontSize: '17px',
       height: '55px',

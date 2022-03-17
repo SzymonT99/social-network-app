@@ -505,7 +505,7 @@ export const createGroupThread = (groupId, groupThread) => (dispatch) => {
     .createGroupThread(groupId, groupThread)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getGroupDetails(groupId));
+        dispatch(getGroupForumThreads(groupId));
         dispatch(showNotification('success', 'Utworzono nowy wątek w grupie'));
       } else if (response.status === 404) {
         dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
@@ -524,7 +524,7 @@ export const editGroupThread =
       .editGroupThread(threadId, groupThread)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(showNotification('success', 'Edytowano wątek w grupie'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -542,7 +542,7 @@ export const deleteGroupThread = (groupId, threadId) => (dispatch) => {
     .deleteGroupThread(threadId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getGroupDetails(groupId));
+        dispatch(getGroupForumThreads(groupId));
         dispatch(showNotification('success', 'Usunięto wątek w grupie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -561,7 +561,7 @@ export const createGroupThreadAnswer =
       .createGroupThreadAnswer(threadId, answer)
       .then((response) => {
         if (response.status === 201) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(
             showNotification(
               'success',
@@ -585,7 +585,7 @@ export const editGroupThreadAnswer =
       .editGroupThreadAnswer(answerId, answer)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(
             showNotification('success', 'Edytowano komentarz na wątek w grupie')
           );
@@ -605,7 +605,7 @@ export const deleteGroupThreadAnswer = (groupId, answerId) => (dispatch) => {
     .deleteGroupThreadAnswer(answerId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getGroupDetails(groupId));
+        dispatch(getGroupForumThreads(groupId));
         dispatch(
           showNotification('success', 'Usunięto komentarz na wątek w grupie')
         );
@@ -626,7 +626,7 @@ export const createGroupThreadAnswerReview =
       .createGroupThreadAnswerReview(answerId, rate)
       .then((response) => {
         if (response.status === 201) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(
             showNotification(
               'success',
@@ -635,9 +635,8 @@ export const createGroupThreadAnswerReview =
           );
         } else if (response.status === 404) {
           dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
-        } else {
-          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
+        return response;
       })
       .catch((error) => {
         console.log(error);
@@ -650,35 +649,11 @@ export const editGroupThreadAnswerReview =
       .editGroupThreadAnswerReview(reviewId, rate)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(
             showNotification(
               'success',
               'Edytowano ocenę komentarza na wątek w grupie'
-            )
-          );
-        } else if (response.status === 403) {
-          dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else {
-          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-export const deleteGroupThreadAnswerReview =
-  (groupId, reviewId) => (dispatch) => {
-    return groupService
-      .deleteGroupThreadAnswerReview(reviewId)
-      .then((response) => {
-        if (response.status === 200) {
-          dispatch(getGroupDetails(groupId));
-          dispatch(
-            showNotification(
-              'success',
-              'Usunięto ocenę komentarza na wątek w grupie'
             )
           );
         } else if (response.status === 403) {
@@ -765,6 +740,32 @@ export const leaveGroup = (groupId) => (dispatch) => {
     });
 };
 
+export const getGroupForumThreads = (groupId) => (dispatch) => {
+  return groupService
+    .getGroupForum(groupId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: groupTypes.FETCH_GROUP_FORUM,
+            payload: {
+              forumThreads: data,
+            },
+          });
+          dispatch(getGroupForumStats(groupId));
+          return data;
+        });
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const getGroupForumStats = (groupId) => (dispatch) => {
   return groupService
     .getGroupForumStats(groupId)
@@ -774,7 +775,7 @@ export const getGroupForumStats = (groupId) => (dispatch) => {
           dispatch({
             type: groupTypes.FETCH_GROUP_FORUM_STATS,
             payload: {
-              currentForumStats: data,
+              forumStats: data,
             },
           });
         });

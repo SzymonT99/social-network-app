@@ -40,12 +40,13 @@ const activeStatus = {
 const GroupThread = (props) => {
   const {
     classes,
+    threadExpanded,
+    changeThreadExpanded,
     groupId,
     threadId,
     title,
     content,
     threadImage,
-    groupMemberId,
     authorId,
     memberName,
     createdDate,
@@ -66,7 +67,6 @@ const GroupThread = (props) => {
   const [createdAnswer, setCreatedAnswer] = useState('');
   const [openDeleteThreadPopup, setOpenDeleteThreadPopup] = useState(false);
   const [openThreadEditionPopup, setOpenThreadEditionPopup] = useState(false);
-
   const handleChangeCreatedAnswer = (event) => {
     setCreatedAnswer(event.target.value);
   };
@@ -98,6 +98,8 @@ const GroupThread = (props) => {
       elevation={4}
       style={{ borderRadius: '10px' }}
       className={classes.threadContainer}
+      expanded={threadExpanded}
+      onChange={changeThreadExpanded}
     >
       <AccordionSummary className={classes.threadHeadingContainer}>
         <Badge
@@ -215,14 +217,17 @@ const GroupThread = (props) => {
               groupId={groupId}
               text={answer.text}
               createdDate={answer.date}
+              isEdited={answer.isEdited}
               averageRating={answer.averageRating}
               groupMemberId={answer.author.groupMemberId}
               memberName={
                 answer.author.user.firstName + ' ' + answer.author.user.lastName
               }
               authorId={answer.author.user.userId}
+              reviews={answer.reviews}
               userStatus={answer.author.user.activityStatus}
               userProfilePhoto={answer.author.user.profilePhoto}
+              accessToManagement={accessToManagement}
             />
           ))}
         </div>
@@ -249,6 +254,12 @@ const GroupThread = (props) => {
               className={classes.answerInput}
               value={createdAnswer}
               onChange={handleChangeCreatedAnswer}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleClickAddAnswer();
+                  e.preventDefault();
+                }
+              }}
             />
             <Button
               variant="contained"
@@ -267,12 +278,13 @@ const GroupThread = (props) => {
 
 GroupThread.propTypes = {
   classes: PropTypes.object.isRequired,
+  threadExpanded: PropTypes.bool.isRequired,
+  changeThreadExpanded: PropTypes.func.isRequired,
   groupId: PropTypes.number.isRequired,
   threadId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   threadImage: PropTypes.object,
-  groupMemberId: PropTypes.number.isRequired,
   authorId: PropTypes.number.isRequired,
   userStatus: PropTypes.string.isRequired,
   memberName: PropTypes.string.isRequired,

@@ -66,7 +66,9 @@ const ForumStats = (props) => {
                 </Typography>
               </div>
               <Typography variant="subtitle1" fontWeight="bold">
-                {rankingItem.statsValue}
+                {statsType === 'average_answer_ratings'
+                  ? Math.round(rankingItem.statsValue * 100) / 100
+                  : rankingItem.statsValue}
               </Typography>
             </div>
           );
