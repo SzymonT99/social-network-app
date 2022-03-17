@@ -85,7 +85,9 @@ const AddUserFavouriteForm = (props) => {
   return (
     <form noValidate style={{ margin: '15px 0' }}>
       <div className={classes.userFavouriteItemFormContainer}>
-        <FormControl sx={{ width: '35%', paddingRight: '15px' }}>
+        <FormControl
+          sx={{ width: '35%', paddingRight: '15px', marginBottom: 0 }}
+        >
           <InputLabel id="favourite-type-select-label">Rodzaj</InputLabel>
           <Select
             labelId="favourite-type-select-label"

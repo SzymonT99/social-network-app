@@ -1,6 +1,7 @@
 import groupService from '../../services/groupService';
 import groupTypes from '../types/groupTypes';
 import { showNotification } from './notificationActions';
+import userProfileTypes from '../types/userProfileTypes';
 
 export const createGroup = (groupFormData) => (dispatch) => {
   return groupService
@@ -67,7 +68,7 @@ export const deleteGroup = (groupId) => (dispatch) => {
 
 export const getGroupDetails = (groupId) => (dispatch) => {
   return groupService
-    .getEventById(groupId)
+    .getGroupDetails(groupId)
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {
@@ -77,6 +78,7 @@ export const getGroupDetails = (groupId) => (dispatch) => {
               groupDetails: data,
             },
           });
+          return data;
         });
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
@@ -117,7 +119,7 @@ export const getUserGroups = (userId) => (dispatch) => {
       if (response.status === 200) {
         return response.json().then((data) => {
           dispatch({
-            type: groupTypes.FETCH_USER_GROUPS,
+            type: userProfileTypes.FETCH_USER_GROUPS,
             payload: {
               userGroups: data,
             },
@@ -174,6 +176,13 @@ export const inviteToGroup =
           );
         } else if (response.status === 409) {
           dispatch(showNotification('warning', 'Już wysłano zaproszenie'));
+        } else if (response.status === 410) {
+          dispatch(
+            showNotification(
+              'warning',
+              'Użytkownik został wcześniej usunięty z grupy'
+            )
+          );
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -184,13 +193,12 @@ export const inviteToGroup =
   };
 
 export const respondToGroupInvitation =
-  (groupId, isInvitationAccepted) => (dispatch, getState) => {
+  (groupId, isInvitationAccepted) => (dispatch) => {
     return groupService
       .respondToGroupInvitation(groupId, isInvitationAccepted)
       .then((response) => {
         if (response.status === 200) {
           dispatch(getGroups());
-          dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
           if (isInvitationAccepted) {
             dispatch(showNotification('success', 'Dołączono do grupy'));
           } else {
@@ -271,6 +279,13 @@ export const requestToJoinGroup = (groupId) => (dispatch, getState) => {
             'Już wysłałeś prośbę lub otrzymałeś zaproszenie'
           )
         );
+      } else if (response.status === 410) {
+        dispatch(
+          showNotification(
+            'warning',
+            'Nie możesz dołączyć do grupy, z której Cię usunięto'
+          )
+        );
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -295,9 +310,8 @@ export const decideAboutUserGroupJoinRequest =
               showNotification('success', 'Odrzucono zgłoszenie do grupy')
             );
           }
-          dispatch(
-            getUsersWantedJoinGroup(getState().groups.groupDetails.groupId)
-          );
+          dispatch(getUsersWantedJoinGroup(groupId));
+          dispatch(getGroupDetails(groupId));
         } else if (response.status === 403) {
           dispatch(
             showNotification(
@@ -432,34 +446,12 @@ export const deleteGroupInterest =
       });
   };
 
-export const getGroupPosts = (groupId) => (dispatch) => {
-  return groupService
-    .getGroupPosts(groupId)
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json().then((data) => {
-          dispatch({
-            type: groupTypes.FETCH_GROUP_POSTS,
-            payload: {
-              currentGroupPosts: data,
-            },
-          });
-        });
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
 export const createGroupPost = (groupId, postFormData) => (dispatch) => {
   return groupService
     .createGroupPost(groupId, postFormData)
     .then((response) => {
-      if (response.status === 200) {
-        dispatch(getGroupPosts(groupId));
+      if (response.status === 201) {
+        dispatch(getGroupDetails(groupId));
         dispatch(showNotification('success', 'Utworzono nowy post w grupie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
@@ -477,7 +469,7 @@ export const editGroupPost = (groupId, postId, postFormData) => (dispatch) => {
     .editGroupPost(postId, postFormData)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getGroupPosts(groupId));
+        dispatch(getGroupDetails(groupId));
         dispatch(showNotification('success', 'Edytowano post w grupie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -490,31 +482,30 @@ export const editGroupPost = (groupId, postId, postFormData) => (dispatch) => {
     });
 };
 
-export const deleteGroupPost =
-  (groupId, postId, postFormData) => (dispatch) => {
-    return groupService
-      .deleteGroupPost(postId, postFormData)
-      .then((response) => {
-        if (response.status === 200) {
-          dispatch(getGroupPosts(groupId));
-          dispatch(showNotification('success', 'Usunięto post w grupie'));
-        } else if (response.status === 403) {
-          dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else {
-          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+export const deleteGroupPost = (groupId, postId) => (dispatch) => {
+  return groupService
+    .deleteGroupPost(postId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getGroupDetails(groupId));
+        dispatch(showNotification('success', 'Usunięto post w grupie'));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 export const createGroupThread = (groupId, groupThread) => (dispatch) => {
   return groupService
     .createGroupThread(groupId, groupThread)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getGroupDetails(groupId));
+        dispatch(getGroupForumThreads(groupId));
         dispatch(showNotification('success', 'Utworzono nowy wątek w grupie'));
       } else if (response.status === 404) {
         dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
@@ -533,7 +524,7 @@ export const editGroupThread =
       .editGroupThread(threadId, groupThread)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(showNotification('success', 'Edytowano wątek w grupie'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -551,7 +542,7 @@ export const deleteGroupThread = (groupId, threadId) => (dispatch) => {
     .deleteGroupThread(threadId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getGroupDetails(groupId));
+        dispatch(getGroupForumThreads(groupId));
         dispatch(showNotification('success', 'Usunięto wątek w grupie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -570,7 +561,7 @@ export const createGroupThreadAnswer =
       .createGroupThreadAnswer(threadId, answer)
       .then((response) => {
         if (response.status === 201) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(
             showNotification(
               'success',
@@ -594,7 +585,7 @@ export const editGroupThreadAnswer =
       .editGroupThreadAnswer(answerId, answer)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(
             showNotification('success', 'Edytowano komentarz na wątek w grupie')
           );
@@ -614,7 +605,7 @@ export const deleteGroupThreadAnswer = (groupId, answerId) => (dispatch) => {
     .deleteGroupThreadAnswer(answerId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getGroupDetails(groupId));
+        dispatch(getGroupForumThreads(groupId));
         dispatch(
           showNotification('success', 'Usunięto komentarz na wątek w grupie')
         );
@@ -635,7 +626,7 @@ export const createGroupThreadAnswerReview =
       .createGroupThreadAnswerReview(answerId, rate)
       .then((response) => {
         if (response.status === 201) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(
             showNotification(
               'success',
@@ -644,9 +635,8 @@ export const createGroupThreadAnswerReview =
           );
         } else if (response.status === 404) {
           dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
-        } else {
-          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
+        return response;
       })
       .catch((error) => {
         console.log(error);
@@ -659,7 +649,7 @@ export const editGroupThreadAnswerReview =
       .editGroupThreadAnswerReview(reviewId, rate)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupForumThreads(groupId));
           dispatch(
             showNotification(
               'success',
@@ -677,21 +667,27 @@ export const editGroupThreadAnswerReview =
       });
   };
 
-export const deleteGroupThreadAnswerReview =
-  (groupId, reviewId) => (dispatch) => {
+export const setGroupMemberPermission =
+  (groupId, memberId, permission) => (dispatch) => {
     return groupService
-      .deleteGroupThreadAnswerReview(reviewId)
+      .setGroupMemberPermission(groupId, memberId, permission)
       .then((response) => {
         if (response.status === 200) {
           dispatch(getGroupDetails(groupId));
           dispatch(
+            showNotification('success', 'Zmieniono uprawnienie członka grupy')
+          );
+        } else if (response.status === 400) {
+          dispatch(showNotification('warning', 'Nieznane uprawnienie'));
+        } else if (response.status === 403) {
+          dispatch(
             showNotification(
-              'success',
-              'Usunięto ocenę komentarza na wątek w grupie'
+              'warning',
+              'Tylko założyciel grupy może ustalać uprawnienia'
             )
           );
-        } else if (response.status === 403) {
-          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else if (response.status === 404) {
+          dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -701,24 +697,88 @@ export const deleteGroupThreadAnswerReview =
       });
   };
 
-export const setGroupMemberPermission = (groupId, memberId) => (dispatch) => {
+export const deleteGroupMember = (groupId, memberId) => (dispatch) => {
   return groupService
-    .setGroupMemberPermission(groupId, memberId)
+    .deleteGroupMember(groupId, memberId)
     .then((response) => {
       if (response.status === 200) {
         dispatch(getGroupDetails(groupId));
-        dispatch(
-          showNotification('success', 'Zmieniono uprawnienie członka grupy')
-        );
-      } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Nieznane uprawnienie'));
+        dispatch(showNotification('success', 'Usunięto członka grupy'));
       } else if (response.status === 403) {
         dispatch(
           showNotification(
             'warning',
-            'Tylko założyciel grupy może ustalać uprawnienia'
+            'Tylko administrator lub zastępca może usuwać członków'
           )
         );
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const leaveGroup = (groupId) => (dispatch) => {
+  return groupService
+    .leaveGroup(groupId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getGroupDetails(groupId));
+        dispatch(showNotification('success', 'Opuszczono grupę'));
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getGroupForumThreads = (groupId) => (dispatch) => {
+  return groupService
+    .getGroupForum(groupId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: groupTypes.FETCH_GROUP_FORUM,
+            payload: {
+              forumThreads: data,
+            },
+          });
+          dispatch(getGroupForumStats(groupId));
+          return data;
+        });
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getGroupForumStats = (groupId) => (dispatch) => {
+  return groupService
+    .getGroupForumStats(groupId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: groupTypes.FETCH_GROUP_FORUM_STATS,
+            payload: {
+              forumStats: data,
+            },
+          });
+        });
       } else if (response.status === 404) {
         dispatch(showNotification('warning', 'Nie należysz do danej grupy'));
       } else {

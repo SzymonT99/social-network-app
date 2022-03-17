@@ -1,14 +1,14 @@
 import groupTypes from '../types/groupTypes';
+import groupForum from '../../components/GroupForum/GroupForum';
 
 const initialState = {
   publicGroups: [],
-  userGroups: [],
   userInterestingGroups: [],
   groupDetails: null,
   groupInvitations: [],
   userGroupJoinRequests: [],
-  currentGroupPosts: [],
   possibleInterests: [],
+  groupForum: {},
 };
 
 const groupReducer = (state = initialState, action) => {
@@ -17,11 +17,6 @@ const groupReducer = (state = initialState, action) => {
       return {
         ...state,
         publicGroups: action.payload.publicGroups,
-      };
-    case groupTypes.FETCH_USER_GROUPS:
-      return {
-        ...state,
-        userGroups: action.payload.userGroups,
       };
     case groupTypes.FETCH_USER_INTERESTING_GROUPS:
       return {
@@ -43,15 +38,31 @@ const groupReducer = (state = initialState, action) => {
         ...state,
         userGroupJoinRequests: action.payload.userGroupJoinRequests,
       };
-    case groupTypes.FETCH_GROUP_POSTS:
-      return {
-        ...state,
-        currentGroupPosts: action.payload.currentGroupPosts,
-      };
     case groupTypes.FETCH_POSSIBLE_INTERESTS:
       return {
         ...state,
         possibleInterests: action.payload.possibleInterests,
+      };
+    case groupTypes.FETCH_GROUP_FORUM:
+      return {
+        ...state,
+        groupForum: {
+          ...state.groupForum,
+          threads: action.payload.forumThreads,
+        },
+      };
+    case groupTypes.FETCH_GROUP_FORUM_STATS:
+      return {
+        ...state,
+        groupForum: {
+          ...state.groupForum,
+          stats: action.payload.forumStats,
+        },
+      };
+    case groupTypes.CLEAR_GROUP_DETAILS:
+      return {
+        ...state,
+        groupDetails: [],
       };
     default:
       return state;

@@ -59,7 +59,7 @@ import AddWorkPlaceForm from '../../components/Forms/AddWorkPlaceForm';
 import EditIcon from '@mui/icons-material/Edit';
 import AddUserFavouriteForm from '../../components/Forms/AddUserFavouriteForm';
 import UserFavouriteItemList from '../../components/Profile/UserFavouriteItemList';
-import AddUserInterestForm from '../../components/Forms/AddUserInterestForm';
+import AddInterestForm from '../../components/Forms/AddInterestForm';
 import { useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -79,7 +79,7 @@ import {
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { setLoading } from '../../redux/actions/userActivityActions';
-import FriendInformation from '../../components/Profile/FriendInformation';
+import UserInformation from '../../components/Profile/UserInformation';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -94,28 +94,21 @@ import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
+import Group from '../../components/Group/Group';
+import { getUserGroups } from '../../redux/actions/groupActions';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
+      id={`tabpanel-${index}`}
       {...other}
     >
       {value === index && <div className={classes.tabContent}>{children}</div>}
     </div>
   );
-};
-
-const a11yProps = (index) => {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
 };
 
 const relationshipStatusTypes = {
@@ -153,6 +146,7 @@ const ProfilePage = (props) => {
   const loggedUserFriendInvitations = useSelector(
     (state) => state.friends.receivedFriendInvitations
   );
+  const userGroups = useSelector((state) => state.selectedProfile.userGroups);
   const isLoading = useSelector((state) => state.activity.isLoading);
 
   const history = useHistory();
@@ -171,6 +165,7 @@ const ProfilePage = (props) => {
   const [openAddSchoolPopup, setOpenAddSchoolPopup] = useState(false);
   const [openAddWorkPopup, setOpenAddWorkPopup] = useState(false);
   const [showFavouriteForm, setShowFavouriteForm] = useState(false);
+  const [showInterestForm, setShowInterestForm] = useState(false);
   const [imagesPageNumber, setImagesPageNumber] = useState(1);
   const [openProfileEdition, setOpenProfileEdition] = useState(false);
   const [openAddAddressFormPopup, setOpenAddAddressFormPopup] = useState(false);
@@ -183,6 +178,7 @@ const ProfilePage = (props) => {
   const [friendsOrder, setFriendsOrder] = useState(1);
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [friendsPageNumber, setFriendsPageNumber] = useState(1);
+  const [groupsPageNumber, setGroupsPageNumber] = useState(1);
 
   useEffect(() => {
     (async () => {
@@ -237,6 +233,7 @@ const ProfilePage = (props) => {
           }
         }
       );
+      dispatch(getUserGroups(selectedUserId));
     })();
 
     return () => {
@@ -436,6 +433,10 @@ const ProfilePage = (props) => {
     setFilteredFriends(updatedFriendList);
   };
 
+  const handleChangeGroupsPageNumber = (event, value) => {
+    setGroupsPageNumber(value);
+  };
+
   return (
     <>
       {!isLoading ? (
@@ -597,29 +598,25 @@ const ProfilePage = (props) => {
             >
               <Tab
                 className={classes.tabItem}
-                {...a11yProps(0)}
+                id="tab-activity"
                 label="Aktywność"
               />
               <Tab
                 className={classes.tabItem}
-                {...a11yProps(1)}
+                id="tab-information"
                 label="Informacje"
               />
               <Tab
                 className={classes.tabItem}
-                {...a11yProps(2)}
+                id="tab-images"
                 label="Zdjęcia"
               />
               <Tab
                 className={classes.tabItem}
-                {...a11yProps(3)}
+                id="tab-friends"
                 label="Znajomi"
               />
-              <Tab
-                className={classes.tabItem}
-                {...a11yProps(4)}
-                label="Grupy"
-              />
+              <Tab className={classes.tabItem} id="tab-groups" label="Grupy" />
             </Tabs>
           </Paper>
           <TabPanel classes={classes} value={profileNavIndex} index={0}>
@@ -1596,9 +1593,7 @@ const ProfilePage = (props) => {
                           color="secondary"
                           variant="text"
                           className={classes.addProfileInfoItemBtn}
-                          onClick={() =>
-                            setShowFavouriteForm(!showFavouriteForm)
-                          }
+                          onClick={() => setShowInterestForm(!showInterestForm)}
                         >
                           <AddCircleOutlineIcon />
                           <Typography variant="subtitle1" marginLeft="10px">
@@ -1606,10 +1601,11 @@ const ProfilePage = (props) => {
                           </Typography>
                         </Button>
                       )}
-                      {showFavouriteForm && (
-                        <AddUserInterestForm
+                      {showInterestForm && (
+                        <AddInterestForm
                           userId={loggedUser.userId}
-                          onCloseForm={() => setShowFavouriteForm(false)}
+                          currentInterests={userInterests}
+                          onCloseForm={() => setShowInterestForm(false)}
                         />
                       )}
                     </TabPanelMUI>
@@ -1742,7 +1738,7 @@ const ProfilePage = (props) => {
                       );
                     })}
               </ImageList>
-              {userImages.length !== 0 && (
+              {userImages.length > 10 && (
                 <Pagination
                   className={classes.imagesPagination}
                   count={userImages && Math.ceil(userImages.length / 10)}
@@ -1767,8 +1763,8 @@ const ProfilePage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNavIndex} index={3}>
-            <Paper elevation={4} sx={{ borderRadius: '10px', width: '100%' }}>
-              <div className={classes.profileNavHeadingBox}>
+            <Paper elevation={4} className={classes.friendSectionContainer}>
+              <div>
                 <Typography variant="h4" className={classes.friendTitle}>
                   Znajomi
                   <span className={classes.friendNumber}>
@@ -1800,7 +1796,7 @@ const ProfilePage = (props) => {
                     >
                       Sortuj według:
                     </Typography>
-                    <FormControl>
+                    <FormControl sx={{ margin: 0 }}>
                       <Select
                         className={classes.friendOrderSelect}
                         value={friendsOrder}
@@ -1822,13 +1818,13 @@ const ProfilePage = (props) => {
                   sortFriends(friendsOrder)
                     .slice((friendsPageNumber - 1) * 6, friendsPageNumber * 6)
                     .map((friend) => (
-                      <FriendInformation
+                      <UserInformation
                         key={friend.friendId}
                         name={
                           friend.user.firstName + ' ' + friend.user.lastName
                         }
                         city={friend.address && friend.address.city}
-                        userFriendId={friend.user.userId}
+                        userId={friend.user.userId}
                         profilePhoto={friend.user.profilePhoto}
                         friendList={friend.userFriends}
                         updateFriends={updateFriendList}
@@ -1846,10 +1842,10 @@ const ProfilePage = (props) => {
                   </Typography>
                 )}
               </div>
-              {userFriends.length > 10 && (
+              {userFriends.length > 6 && (
                 <Pagination
                   className={classes.friendsPagination}
-                  count={userFriends && Math.ceil(userFriends.length / 10)}
+                  count={userFriends && Math.ceil(userFriends.length / 6)}
                   color="secondary"
                   size="medium"
                   showFirstButton
@@ -1861,7 +1857,45 @@ const ProfilePage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNavIndex} index={4}>
-            Grupy
+            <div className={classes.groupsListContainer}>
+              {userGroups
+                .slice((groupsPageNumber - 1) * 6, groupsPageNumber * 6)
+                .map((group) => (
+                  <Group
+                    key={group.groupId}
+                    groupId={group.groupId}
+                    name={group.name}
+                    interests={group.interests}
+                    groupCreationDate={group.createdAt}
+                    membersNumber={group.members.length}
+                    members={group.members}
+                    postsNumber={group.postsNumber}
+                    groupImage={group.image}
+                    showInProfile
+                  />
+                ))}
+              {userGroups.length > 6 && (
+                <Paper elevation={4} className={classes.paginationContainer}>
+                  <Pagination
+                    className={classes.groupsPagination}
+                    count={userGroups && Math.ceil(userGroups.length / 6)}
+                    color="secondary"
+                    size="large"
+                    showFirstButton
+                    showLastButton
+                    page={groupsPageNumber}
+                    onChange={handleChangeGroupsPageNumber}
+                  />
+                </Paper>
+              )}
+              {userGroups.length === 0 && (
+                <div className={classes.noContent}>
+                  <Typography variant="h6" fontWeight="bold">
+                    Brak grup
+                  </Typography>
+                </div>
+              )}
+            </div>
           </TabPanel>
         </div>
       ) : (

@@ -23,7 +23,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Popup from '../../components/Popup/Popup';
 import EventForm from '../../components/Forms/EventForm';
 import ActionConfirmation from '../../components/ActionConfirmation/ActionConfirmation';
-import EventInvitation from '../../components/EventInvitation/EventInvitation';
+import SentInvitation from '../../components/SentInvitation/SentInvitation';
 import CircularProgress from '@mui/material/CircularProgress';
 import EventIcon from '@mui/icons-material/Event';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -301,39 +301,22 @@ const EventsPageDetails = (props) => {
                 onClose={handleCloseEventInvitationsPopup}
               >
                 <div className={classes.eventInvitationsList}>
-                  {loggedUserFriends.map((friend) => {
-                    if (
-                      event.members.filter(
-                        (member) =>
-                          member.eventMember.userId === friend.user.userId
-                      ).length === 0
-                    ) {
-                      return (
-                        <EventInvitation
-                          key={friend.user.userId}
-                          eventId={parseInt(eventId)}
-                          userFriendId={friend.user.userId}
-                          friendName={
-                            friend.user.firstName + ' ' + friend.user.lastName
-                          }
-                          friendAvatar={friend.user.profilePhoto}
-                        />
-                      );
-                    } else {
-                      return (
-                        <EventInvitation
-                          key={friend.user.userId}
-                          disabled
-                          eventId={parseInt(eventId)}
-                          userFriendId={friend.user.userId}
-                          friendName={
-                            friend.user.firstName + ' ' + friend.user.lastName
-                          }
-                          friendAvatar={friend.user.profilePhoto}
-                        />
-                      );
-                    }
-                  })}
+                  {loggedUserFriends.map((friend) => (
+                    <SentInvitation
+                      key={friend.user.userId}
+                      eventInvitation
+                      eventId={parseInt(eventId)}
+                      userId={friend.user.userId}
+                      name={friend.user.firstName + ' ' + friend.user.lastName}
+                      avatar={friend.user.profilePhoto}
+                      disabled={
+                        event.members.filter(
+                          (member) =>
+                            member.eventMember.userId === friend.user.userId
+                        ).length !== 0
+                      }
+                    />
+                  ))}
                   {loggedUserFriends.length === 0 && (
                     <Typography
                       fontWeight="bold"

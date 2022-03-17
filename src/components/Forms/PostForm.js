@@ -20,6 +20,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPost, editPost } from '../../redux/actions/postActions';
 import { showNotification } from '../../redux/actions/notificationActions';
+import {
+  createGroupPost,
+  editGroupPost,
+} from '../../redux/actions/groupActions';
 
 const PostForm = (props) => {
   const {
@@ -30,6 +34,8 @@ const PostForm = (props) => {
     postImages,
     postIsPublic,
     editedPostId,
+    groupPost,
+    groupId,
   } = props;
 
   const dispatch = useDispatch();
@@ -96,13 +102,21 @@ const PostForm = (props) => {
 
     if (postContent !== '') {
       if (!edition) {
-        dispatch(createPost(formData));
+        if (!groupPost) {
+          dispatch(createPost(formData));
+        } else {
+          dispatch(createGroupPost(groupId, formData));
+        }
       } else {
-        dispatch(editPost(editedPostId, formData));
+        if (!groupPost) {
+          dispatch(editPost(editedPostId, formData));
+        } else {
+          dispatch(editGroupPost(groupId, editedPostId, formData));
+        }
       }
       closePopup();
     } else {
-      dispatch(showNotification('warning', 'Podaj treśc postu'));
+      dispatch(showNotification('warning', 'Podaj treść postu'));
     }
   };
 
@@ -238,6 +252,8 @@ PostForm.propTypes = {
   postText: PropTypes.string,
   postImages: PropTypes.array,
   postIsPublic: PropTypes.bool,
+  groupPost: PropTypes.bool,
+  groupId: PropTypes.number,
 };
 
 PostForm.defaultProps = {
@@ -245,6 +261,7 @@ PostForm.defaultProps = {
   postText: '',
   postImages: [],
   postIsPublic: false,
+  groupPost: false,
 };
 
 export default withStyles(styles)(PostForm);

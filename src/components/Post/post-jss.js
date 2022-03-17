@@ -106,14 +106,6 @@ const styles = (theme) => ({
       },
     },
   },
-  likedUsersContainer: {
-    '&.MuiAvatarGroup-root': {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-    },
-  },
   likedUserAvatar: {
     '&.MuiAvatar-root': {
       width: '30px',

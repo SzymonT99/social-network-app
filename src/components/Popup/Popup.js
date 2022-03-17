@@ -13,6 +13,8 @@ const Popup = (props) => {
     post: '43%',
     event: '43%',
     groups: '43%',
+    groupRule: '40%',
+    groupThread: '46%',
     eventInvitations: '30%',
     profileInfo: '35%',
     profileForm: '60%',

@@ -62,12 +62,12 @@ const styles = (theme) => ({
       },
     },
   },
-  friendInfoContainer: {
-    width: '48%',
+  userInfoContainer: {
+    width: '49%',
     height: '150px',
     display: 'flex',
     border: '1px solid rgba(0, 0, 0, 0.22)',
-    margin: '10px 10px',
+    margin: '10px 0px',
   },
   friendPhoto: {
     height: '100%',
@@ -77,14 +77,14 @@ const styles = (theme) => ({
       cursor: 'pointer',
     },
   },
-  friendInfoContent: {
+  userInfoContent: {
     width: '70%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '0px 20px',
   },
-  friendNameLink: {
+  userNameLink: {
     '&.MuiTypography-root': {
       fontWeight: 'bold',
       margin: 0,

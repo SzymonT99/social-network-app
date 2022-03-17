@@ -224,16 +224,6 @@ const deleteGroupInterest = (groupId, interestId) => {
   );
 };
 
-const getGroupPosts = (groupId) => {
-  return fetch(endpoints.groupPosts.replace('{groupId}', groupId), {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
-  });
-};
-
 const createGroupPost = (groupId, formData) => {
   return fetch(endpoints.groupPosts.replace('{groupId}', groupId), {
     method: 'POST',
@@ -267,7 +257,6 @@ const createGroupThread = (groupId, formData) => {
   return fetch(endpoints.createGroupThread.replace('{groupId}', groupId), {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: authorization(),
     },
     body: formData,
@@ -278,7 +267,6 @@ const editGroupThread = (threadId, formData) => {
   return fetch(endpoints.manageGroupThread.replace('{threadId}', threadId), {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: authorization(),
     },
     body: formData,
@@ -345,7 +333,7 @@ const createGroupThreadAnswerReview = (answerId, rate) => {
         'Content-Type': 'application/json',
         Authorization: authorization(),
       },
-      body: JSON.stringify(rate),
+      body: JSON.stringify({ rate }),
     }
   );
 };
@@ -359,14 +347,35 @@ const editGroupThreadAnswerReview = (reviewId, rate) => {
         'Content-Type': 'application/json',
         Authorization: authorization(),
       },
-      body: JSON.stringify(rate),
+      body: JSON.stringify({ rate }),
     }
   );
 };
 
-const deleteGroupThreadAnswerReview = (reviewId) => {
+const setGroupMemberPermission = (groupId, memberId, permission) => {
   return fetch(
-    endpoints.manageGroupThreadAnswerReview.replace('{reviewId}', reviewId),
+    endpoints.manageGroupMember
+      .replace('{groupId}', groupId)
+      .replace('{memberId}', memberId) +
+      '?' +
+      new URLSearchParams({
+        permission: permission,
+      }),
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
+const deleteGroupMember = (groupId, memberId) => {
+  return fetch(
+    endpoints.manageGroupMember
+      .replace('{groupId}', groupId)
+      .replace('{memberId}', memberId),
     {
       method: 'DELETE',
       headers: {
@@ -377,19 +386,34 @@ const deleteGroupThreadAnswerReview = (reviewId) => {
   );
 };
 
-const setGroupMemberPermission = (groupId, memberId) => {
-  return fetch(
-    endpoints.groupMemberPermission
-      .replace('{groupId}', groupId)
-      .replace('{memberId}', memberId),
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: authorization(),
-      },
-    }
-  );
+const leaveGroup = (groupId) => {
+  return fetch(endpoints.leaveGroup.replace('{groupId}', groupId), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const getGroupForum = (groupId) => {
+  return fetch(endpoints.groupForum.replace('{groupId}', groupId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const getGroupForumStats = (groupId) => {
+  return fetch(endpoints.groupForumStats.replace('{groupId}', groupId), {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
 };
 
 export default {
@@ -411,7 +435,6 @@ export default {
   deleteGroupRule,
   addGroupInterest,
   deleteGroupInterest,
-  getGroupPosts,
   createGroupPost,
   editGroupPost,
   deleteGroupPost,
@@ -423,6 +446,9 @@ export default {
   deleteGroupThreadAnswer,
   createGroupThreadAnswerReview,
   editGroupThreadAnswerReview,
-  deleteGroupThreadAnswerReview,
   setGroupMemberPermission,
+  deleteGroupMember,
+  leaveGroup,
+  getGroupForum,
+  getGroupForumStats,
 };

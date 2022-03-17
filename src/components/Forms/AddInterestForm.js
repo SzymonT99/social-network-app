@@ -15,11 +15,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   addUserInterests,
   getPossibleInterests,
-  getUserInterests,
 } from '../../redux/actions/userProfileActions';
+import { addGroupInterest } from '../../redux/actions/groupActions';
 
-const AddUserInterestForm = (props) => {
-  const { classes, onCloseForm, userId } = props;
+const AddInterestForm = (props) => {
+  const { classes, onCloseForm, forGroup, groupId, currentInterests } = props;
 
   const dispatch = useDispatch();
 
@@ -27,15 +27,10 @@ const AddUserInterestForm = (props) => {
     (state) => state.selectedProfile.possibleInterests
   );
 
-  const userInterests = useSelector(
-    (state) => state.selectedProfile.userInterests
-  );
-
   const [interestValue, setInterestValue] = useState(1);
 
   useEffect(() => {
     dispatch(getPossibleInterests());
-    dispatch(getUserInterests(userId));
   }, []);
 
   const handleChangeInterest = (event) => {
@@ -44,11 +39,15 @@ const AddUserInterestForm = (props) => {
 
   const handleClickAddInterest = () => {
     if (
-      !userInterests.filter(
-        (userInterest) => userInterest.interestId === interestValue
+      !currentInterests.filter(
+        (interest) => interest.interestId === interestValue
       ).length > 0
     ) {
-      dispatch(addUserInterests(interestValue));
+      if (!forGroup) {
+        dispatch(addUserInterests(interestValue));
+      } else {
+        dispatch(addGroupInterest(groupId, interestValue));
+      }
       onCloseForm();
     } else {
       dispatch(showNotification('warning', 'Już wybrano to zainteresowanie'));
@@ -60,12 +59,12 @@ const AddUserInterestForm = (props) => {
       noValidate
       style={{
         margin: '15px 0',
-        display: ' flex',
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
       }}
     >
-      <FormControl sx={{ width: '60%', paddingRight: '15px' }}>
+      <FormControl sx={{ width: '60%', paddingRight: '15px', marginBottom: 0 }}>
         <InputLabel id="interest-select-label">Zainteresowanie</InputLabel>
         <Select
           labelId="interest-select-label"
@@ -106,10 +105,12 @@ const AddUserInterestForm = (props) => {
   );
 };
 
-AddUserInterestForm.propTypes = {
+AddInterestForm.propTypes = {
   classes: PropTypes.object.isRequired,
   onCloseForm: PropTypes.func.isRequired,
-  userId: PropTypes.number.isRequired,
+  currentInterests: PropTypes.array.isRequired,
+  forGroup: PropTypes.bool,
+  groupId: PropTypes.number,
 };
 
-export default withStyles(styles)(AddUserInterestForm);
+export default withStyles(styles)(AddInterestForm);

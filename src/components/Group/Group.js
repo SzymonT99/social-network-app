@@ -3,11 +3,12 @@ import { withStyles } from '@mui/styles';
 import styles from './group-jss';
 import { PropTypes } from 'prop-types';
 import defaultImg from '../../assets/default-image.png';
-import { Button, Divider, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import {
+  getGroupDetails,
   requestToJoinGroup,
   respondToGroupInvitation,
 } from '../../redux/actions/groupActions';
@@ -25,6 +26,7 @@ const Group = (props) => {
     groupImage,
     invitation,
     invitationDate,
+    showInProfile,
   } = props;
 
   const history = useHistory();
@@ -38,19 +40,28 @@ const Group = (props) => {
   };
 
   const handleClickRespondToGroupInvitation = (isInvitationAccepted) => {
-    dispatch(respondToGroupInvitation(groupId, isInvitationAccepted));
-    if (isInvitationAccepted) {
-      history.push('/app/groups/' + groupId);
-    }
+    dispatch(respondToGroupInvitation(groupId, isInvitationAccepted)).then(() =>
+      dispatch(getGroupDetails(groupId)).then((data) => {
+        if (data && isInvitationAccepted) {
+          history.push('/app/groups/' + groupId);
+        }
+      })
+    );
   };
 
   const isUseGroupMember =
     members.filter(
-      (groupMember) => groupMember.member.userId === loggedUser.userId
+      (groupMember) => groupMember.user.userId === loggedUser.userId
     ).length !== 0;
 
   return (
-    <div className={classes.groupContainer}>
+    <div
+      className={classNames(
+        classes.groupContainer,
+        showInProfile && classes.groupContainerHover
+      )}
+      onClick={() => showInProfile && history.push('/app/groups/' + groupId)}
+    >
       {invitation && (
         <div className={classes.invitationInfo}>
           <Typography variant="subtitle2" fontWeight={500} textAlign="center">
@@ -72,7 +83,7 @@ const Group = (props) => {
       <img
         src={groupImage ? groupImage.url : defaultImg}
         className={classes.groupImage}
-        style={invitation && { borderRadius: '0px' }}
+        style={{ borderRadius: invitation && '0px' }}
         alt="Zdjęcie Grupy"
       />
       <div className={classes.groupInformationContainer}>
@@ -123,49 +134,51 @@ const Group = (props) => {
           </Typography>
         </div>
 
-        <div className={classes.groupBtnContainer}>
-          {!invitation && (
-            <Button
-              color="secondary"
-              variant="contained"
-              className={classes.groupBtn}
-              onClick={handleClickSendRequestToJoinGroup}
-              disabled={isUseGroupMember}
-            >
-              {!isUseGroupMember ? 'Dołącz do grupy' : 'Należysz do grupy'}
-            </Button>
-          )}
-          {invitation && (
-            <>
+        {!showInProfile && (
+          <div className={classes.groupBtnContainer}>
+            {!invitation && (
               <Button
                 color="secondary"
                 variant="contained"
-                className={classes.groupInvitationBtn}
-                onClick={() => handleClickRespondToGroupInvitation(true)}
+                className={classes.groupBtn}
+                onClick={handleClickSendRequestToJoinGroup}
+                disabled={isUseGroupMember}
               >
-                Akceptuj
+                {!isUseGroupMember ? 'Dołącz do grupy' : 'Należysz do grupy'}
               </Button>
-              <Button
-                color="primary"
-                variant="contained"
-                className={classes.groupInvitationBtn}
-                onClick={() => handleClickRespondToGroupInvitation(false)}
-              >
-                Odrzuć
-              </Button>
-            </>
-          )}
-          <Button
-            variant="contained"
-            className={classNames(
-              !invitation ? classes.groupBtn : classes.groupInvitationBtn,
-              classes.showGroupBtn
             )}
-            onClick={() => history.push('/app/groups/' + groupId)}
-          >
-            Zobacz
-          </Button>
-        </div>
+            {invitation && (
+              <>
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  className={classes.groupInvitationBtn}
+                  onClick={() => handleClickRespondToGroupInvitation(true)}
+                >
+                  Akceptuj
+                </Button>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  className={classes.groupInvitationBtn}
+                  onClick={() => handleClickRespondToGroupInvitation(false)}
+                >
+                  Odrzuć
+                </Button>
+              </>
+            )}
+            <Button
+              variant="contained"
+              className={classNames(
+                !invitation ? classes.groupBtn : classes.groupInvitationBtn,
+                classes.showGroupBtn
+              )}
+              onClick={() => history.push('/app/groups/' + groupId)}
+            >
+              Zobacz
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -183,6 +196,12 @@ Group.propTypes = {
   groupImage: PropTypes.object,
   invitation: PropTypes.bool,
   invitationDate: PropTypes.string,
+  showInProfile: PropTypes.bool,
+};
+
+Group.defaultProps = {
+  invitation: false,
+  showInProfile: false,
 };
 
 export default withStyles(styles)(Group);

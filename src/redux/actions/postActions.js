@@ -2,6 +2,7 @@ import postTypes from '../types/postTypes';
 import postService from '../../services/postService';
 import { showNotification } from './notificationActions';
 import { getUserActivity } from './userProfileActions';
+import { getGroupDetails } from './groupActions';
 
 export const createPost = (postFormData) => (dispatch, getState) => {
   return postService
@@ -133,6 +134,10 @@ export const likePost =
             );
           }
 
+          if (getState().groups.groupDetails) {
+            dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
+          }
+
           if (
             getState().auth.favouritePosts.filter(
               (post) => post.postId === postId
@@ -187,6 +192,10 @@ export const dislikePost =
             );
           }
 
+          if (getState().groups.groupDetails) {
+            dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
+          }
+
           if (
             getState().auth.favouritePosts.filter(
               (post) => post.postId === postId
@@ -233,6 +242,10 @@ export const commentPost =
                   getState().selectedProfile.userProfile.userProfileId
                 )
               );
+            }
+
+            if (getState().groups.groupDetails) {
+              dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
             }
 
             if (
@@ -289,6 +302,10 @@ export const editPostComment =
             );
           }
 
+          if (getState().groups.groupDetails) {
+            dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
+          }
+
           if (
             getState().auth.favouritePosts.filter(
               (post) => post.postId === postId
@@ -334,6 +351,10 @@ export const deletePostComment =
                 getState().selectedProfile.userProfile.userProfileId
               )
             );
+          }
+
+          if (getState().groups.groupDetails) {
+            dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
           }
 
           if (
@@ -397,6 +418,10 @@ export const likePostComment =
             );
           }
 
+          if (getState().groups.groupDetails) {
+            dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
+          }
+
           if (
             getState().auth.favouritePosts.filter(
               (post) => post.postId === postId
@@ -450,6 +475,10 @@ export const dislikePostComment =
                 getState().selectedProfile.userProfile.userProfileId
               )
             );
+          }
+
+          if (getState().groups.groupDetails) {
+            dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
           }
 
           if (
@@ -534,6 +563,7 @@ export const managePostCommentsAccess =
               showNotification('success', 'Odblokowano możliwość komentowania')
             );
           }
+
           if (!isSharing) {
             dispatch({
               type: postTypes.POST_COMMENTS_ACCESS,
@@ -551,6 +581,11 @@ export const managePostCommentsAccess =
               },
             });
           }
+
+          if (getState().groups.groupDetails) {
+            dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
+          }
+
           dispatch(getUserActivity(getState().auth.user.userId));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
@@ -698,8 +733,6 @@ export const addPostToFavourite = (postId) => (dispatch, getState) => {
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else {
-        console.log('response.status');
-        console.log(response.status);
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
     })
