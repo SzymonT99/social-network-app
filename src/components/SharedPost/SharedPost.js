@@ -40,6 +40,7 @@ import { showNotification } from '../../redux/actions/notificationActions';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import CommentIcon from '@mui/icons-material/Comment';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
+import { formatCreationDate } from '../../utils/formatCreationDate';
 
 const SharedPost = (props) => {
   const {
@@ -59,6 +60,11 @@ const SharedPost = (props) => {
     likes,
     comments,
     highlightCommentById,
+    isActivity,
+    activityType,
+    activityAuthorName,
+    activityAuthorPhoto,
+    activityDate,
   } = props;
 
   const dispatch = useDispatch();
@@ -192,6 +198,34 @@ const SharedPost = (props) => {
       sx={{ borderRadius: '10px' }}
       className={classes.sharedPostContainer}
     >
+      {isActivity && (
+        <div>
+          <div className={classes.activityInformationContainer}>
+            <Avatar
+              src={
+                activityAuthorPhoto ? activityAuthorPhoto.url : defaultUserPhoto
+              }
+              alt={activityAuthorName ? activityAuthorName : 'Autor aktywności'}
+              className={classes.userPhotoInfo}
+            />
+            <Typography
+              variant="body1"
+              className={classes.activityUserNameText}
+            >
+              {activityAuthorName}
+              <span className={classes.activityActionDescription}>
+                {activityType === 'LIKE_SHARED_POST'
+                  ? ' polubił(a) post'
+                  : ' skomentował(a) post'}
+              </span>
+            </Typography>
+            <Typography variant="body2" className={classes.activityDateText}>
+              {formatCreationDate(new Date(activityDate))}
+            </Typography>
+          </div>
+          <Divider sx={{ margin: '15px 0px' }} />
+        </div>
+      )}
       <ActivityHeading
         authorId={authorId}
         authorName={authorName}
@@ -497,10 +531,17 @@ SharedPost.propTypes = {
   isCommentingBlocked: PropTypes.bool.isRequired,
   likes: PropTypes.array.isRequired,
   comments: PropTypes.array.isRequired,
+  highlightCommentById: PropTypes.number,
+  isActivity: PropTypes.bool,
+  activityType: PropTypes.string,
+  activityAuthorName: PropTypes.string,
+  activityAuthorPhoto: PropTypes.object,
+  activityDate: PropTypes.string,
 };
 
 SharedPost.defaultProps = {
   highlightCommentById: null,
+  isActivity: false,
 };
 
 export default withStyles(styles)(SharedPost);

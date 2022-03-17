@@ -103,14 +103,13 @@ const ActivityHeading = (props) => {
               {authorName}
             </span>
             <span className={classes.actionName}>{activityTitle}</span>
-            {isEdited && (
-              <Typography component="span" variant="body2" fontWeight="bold">
-                {' - edytowano ' +
-                  editionDate.substring(0, editionDate.length - 3)}
-              </Typography>
-            )}
           </Typography>
           <Typography variant="body2">{formatPostTime(createdDate)}</Typography>
+          {isEdited && (
+            <Typography variant="body2" fontWeight={500}>
+              {'edytowano ' + editionDate.substring(0, editionDate.length - 3)}
+            </Typography>
+          )}
         </div>
       </div>
       {children}

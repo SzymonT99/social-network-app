@@ -144,7 +144,7 @@ const styles = (theme) => ({
   },
   postCreateContent: {
     display: 'flex',
-    paddingTop: '10px',
+    paddingTop: '15px',
   },
   postInput: {
     '& .MuiInputBase-root': {

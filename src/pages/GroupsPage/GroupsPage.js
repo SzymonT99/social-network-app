@@ -243,7 +243,7 @@ const GroupsPage = (props) => {
                 ))
             ) : (
               <div className={classes.loadingContainer}>
-                <CircularProgress color="secondary" />
+                <CircularProgress color="secondary" size="150px" />
               </div>
             )}
           </div>
@@ -292,7 +292,7 @@ const GroupsPage = (props) => {
                 ))
             ) : (
               <div className={classes.loadingContainer}>
-                <CircularProgress color="secondary" />
+                <CircularProgress color="secondary" size="150px" />
               </div>
             )}
           </div>
@@ -340,7 +340,7 @@ const GroupsPage = (props) => {
               ))
             ) : (
               <div className={classes.loadingContainer}>
-                <CircularProgress color="secondary" />
+                <CircularProgress color="secondary" size="150px" />
               </div>
             )}
           </div>

@@ -52,6 +52,7 @@ import SharePostForm from '../Forms/SharePostForm';
 import ActivityHeading from '../ActivityHeading/ActivityHeading';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { deleteGroupPost } from '../../redux/actions/groupActions';
+import { formatCreationDate } from '../../utils/formatCreationDate';
 
 const Post = (props) => {
   const {
@@ -79,6 +80,11 @@ const Post = (props) => {
     accessToManagement,
     isGroupPost,
     groupId,
+    isActivity,
+    activityType,
+    activityAuthorName,
+    activityAuthorPhoto,
+    activityDate,
   } = props;
 
   const dispatch = useDispatch();
@@ -203,6 +209,7 @@ const Post = (props) => {
     } else {
       dispatch(deleteGroupPost(groupId, postId));
     }
+    handleClosePostDeletePopup();
     handleClosePostOption();
   };
 
@@ -246,11 +253,38 @@ const Post = (props) => {
     <Paper
       elevation={!asSharing ? 4 : 0}
       sx={{
-        borderRadius: '10px',
         border: asSharing && '1px solid rgba(0, 0, 0, 0.87)',
       }}
       className={classes.postContainer}
     >
+      {isActivity && (
+        <div>
+          <div className={classes.activityInformationContainer}>
+            <Avatar
+              src={
+                activityAuthorPhoto ? activityAuthorPhoto.url : defaultUserPhoto
+              }
+              alt={activityAuthorName ? activityAuthorName : 'Autor aktywności'}
+              className={classes.userPhotoInfo}
+            />
+            <Typography
+              variant="body1"
+              className={classes.activityUserNameText}
+            >
+              {activityAuthorName}
+              <span className={classes.activityActionDescription}>
+                {activityType === 'LIKE_POST'
+                  ? ' polubił(a) post'
+                  : ' skomentował(a) post'}
+              </span>
+            </Typography>
+            <Typography variant="body2" className={classes.activityDateText}>
+              {formatCreationDate(new Date(activityDate))}
+            </Typography>
+          </div>
+          <Divider sx={{ margin: '15px 0px' }} />
+        </div>
+      )}
       <ActivityHeading
         authorId={authorId}
         authorName={authorName}
@@ -573,10 +607,7 @@ const Post = (props) => {
               </div>
             )}
           {postComments.length !== 0 && commentsDisplayed && (
-            <Divider
-              className={classes.divider}
-              style={{ marginTop: '15px' }}
-            />
+            <Divider sx={{ marginTop: '15px' }} />
           )}
           {!isCommentingBlocked && (
             <div className={classes.addCommentContainer}>
@@ -670,6 +701,11 @@ Post.propTypes = {
   accessToManagement: PropTypes.bool,
   isGroupPost: PropTypes.bool,
   groupId: PropTypes.number,
+  isActivity: PropTypes.bool,
+  activityType: PropTypes.string,
+  activityAuthorName: PropTypes.string,
+  activityAuthorPhoto: PropTypes.object,
+  activityDate: PropTypes.string,
 };
 
 Post.defaultProps = {
@@ -678,6 +714,7 @@ Post.defaultProps = {
   isFavourite: false,
   accessToManagement: false,
   isGroupPost: false,
+  isActivity: false,
 };
 
 export default withStyles(styles)(Post);

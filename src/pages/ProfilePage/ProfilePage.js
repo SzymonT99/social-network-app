@@ -550,7 +550,7 @@ const ProfilePage = (props) => {
                   </div>
                 ) : (
                   <div className={classes.loadingContainer}>
-                    <CircularProgress color="secondary" />
+                    <CircularProgress color="secondary" size="150px" />
                   </div>
                 )}
                 <List
@@ -1156,10 +1156,7 @@ const ProfilePage = (props) => {
                 </TabContext>
               ) : (
                 <div className={classes.loadingContainer}>
-                  <CircularProgress
-                    color="secondary"
-                    sx={{ width: '300px', height: '300px' }}
-                  />
+                  <CircularProgress color="secondary" size="240px" />
                 </div>
               )}
             </div>
@@ -1703,10 +1700,7 @@ const ProfilePage = (props) => {
                   </div>
                 ) : (
                   <div className={classes.loadingContainer}>
-                    <CircularProgress
-                      color="secondary"
-                      sx={{ width: '300px', height: '300px' }}
-                    />
+                    <CircularProgress color="secondary" size="240px" />
                   </div>
                 )}
               </TabContext>

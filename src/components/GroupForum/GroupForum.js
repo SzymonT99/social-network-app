@@ -188,7 +188,7 @@ const GroupForum = (props) => {
         </div>
       ) : (
         <div className={classes.loadingContainer}>
-          <CircularProgress color="secondary" size="150px" />
+          <CircularProgress color="secondary" size="240px" />
         </div>
       )}
     </>

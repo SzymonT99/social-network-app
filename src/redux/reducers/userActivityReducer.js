@@ -32,87 +32,221 @@ const userActivityReducer = (state = initialState, action) => {
     case postTypes.EDIT_POST:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: action.payload.updatedPost,
-              }
-            : boardItem
-        ),
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: action.payload.updatedPost,
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: action.payload.updatedPost,
+              },
+            };
+          } else if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharedPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: action.payload.updatedPost,
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharedPost.postId ===
+              action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.sharedPost,
+                  sharedPost: action.payload.updatedPost,
+                },
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.DELETE_POST:
       return {
         ...state,
-        board: state.board.filter(
-          (boardItem) => boardItem.activity.postId !== action.payload.postId
-        ),
+        board: state.board.filter((boardItem) => {
+          if (boardItem.activityType === 'CREATE_POST')
+            return boardItem.activity.postId !== action.payload.postId;
+          else if (
+            boardItem.activityType === 'LIKE_POST' ||
+            boardItem.activityType === 'COMMENT_POST'
+          )
+            return boardItem.activity.post.postId !== action.payload.postId;
+        }),
       };
     case postTypes.LIKE_POST:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  likes: [...boardItem.activity.likes, action.payload.liked],
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                likes: [...boardItem.activity.likes, action.payload.liked],
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
+                  likes: [
+                    ...boardItem.activity.post.likes,
+                    action.payload.liked,
+                  ],
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.DISLIKE_POST:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  likes: boardItem.activity.likes.filter(
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                likes: boardItem.activity.likes.filter(
+                  (liked) => liked.likedUser.userId !== action.payload.userId
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
+                  likes: boardItem.activity.post.likes.filter(
                     (liked) => liked.likedUser.userId !== action.payload.userId
                   ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else {
+            return boardItem;
+          }
+        }),
       };
     case postTypes.COMMENT_POST:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                comments: [
+                  action.payload.comment,
+                  ...boardItem.activity.comments,
+                ],
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
                   comments: [
                     action.payload.comment,
-                    ...boardItem.activity.comments,
+                    ...boardItem.activity.post.comments,
                   ],
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else {
+            return boardItem;
+          }
+        }),
       };
     case postTypes.EDIT_POST_COMMENT:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  comments: boardItem.activity.comments.map((comment) =>
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                comments: boardItem.activity.comments.map((comment) =>
+                  comment.commentId === action.payload.commentId
+                    ? {
+                        ...comment,
+                        text: action.payload.comment,
+                        isEdited: true,
+                      }
+                    : comment
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
+                  comments: boardItem.activity.post.comments.map((comment) =>
                     comment.commentId === action.payload.commentId
                       ? {
                           ...comment,
@@ -122,39 +256,89 @@ const userActivityReducer = (state = initialState, action) => {
                       : comment
                   ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else {
+            return boardItem;
+          }
+        }),
       };
     case postTypes.DELETE_POST_COMMENT:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  comments: boardItem.activity.comments.filter(
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                comments: boardItem.activity.comments.filter(
+                  (comment) => comment.commentId !== action.payload.commentId
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
+                  comments: boardItem.activity.post.comments.filter(
                     (comment) => comment.commentId !== action.payload.commentId
                   ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else {
+            return boardItem;
+          }
+        }),
       };
     case postTypes.LIKE_POST_COMMENT:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  comments: boardItem.activity.comments.map((comment) =>
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                comments: boardItem.activity.comments.map((comment) =>
+                  comment.commentId === action.payload.commentId
+                    ? {
+                        ...comment,
+                        userLikes: [
+                          ...comment.userLikes,
+                          action.payload.likedUser,
+                        ],
+                      }
+                    : comment
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
+                  comments: boardItem.activity.post.comments.map((comment) =>
                     comment.commentId === action.payload.commentId
                       ? {
                           ...comment,
@@ -166,21 +350,50 @@ const userActivityReducer = (state = initialState, action) => {
                       : comment
                   ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else {
+            return boardItem;
+          }
+        }),
       };
     case postTypes.DISLIKE_POST_COMMENT:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  comments: boardItem.activity.comments.map((comment) =>
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                comments: boardItem.activity.comments.map((comment) =>
+                  comment.commentId === action.payload.commentId
+                    ? {
+                        ...comment,
+                        userLikes: comment.userLikes.filter(
+                          (userLiked) =>
+                            userLiked.userId !== action.payload.userId
+                        ),
+                      }
+                    : comment
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
+                  comments: boardItem.activity.post.comments.map((comment) =>
                     comment.commentId === action.payload.commentId
                       ? {
                           ...comment,
@@ -192,41 +405,78 @@ const userActivityReducer = (state = initialState, action) => {
                       : comment
                   ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else {
+            return boardItem;
+          }
+        }),
       };
     case postTypes.POST_ACCESS:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                isPublic: action.payload.isPublic,
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
                   isPublic: action.payload.isPublic,
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.POST_COMMENTS_ACCESS:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
-          boardItem.activity.postId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'CREATE_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                isCommentingBlocked: action.payload.isCommentingBlocked,
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_POST' ||
+              boardItem.activityType === 'COMMENT_POST') &&
+            boardItem.activity.post.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                post: {
+                  ...boardItem.activity.post,
                   isCommentingBlocked: action.payload.isCommentingBlocked,
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.SHARE_POST:
       return {
@@ -236,10 +486,21 @@ const userActivityReducer = (state = initialState, action) => {
     case postTypes.DELETE_SHARED_POST:
       return {
         ...state,
-        board: state.board.filter(
-          (boardItem) =>
-            boardItem.activity.sharedPostId !== action.payload.sharedPostId
-        ),
+        board: state.board.filter((boardItem) => {
+          if (boardItem.activityType === 'SHARE_POST') {
+            return (
+              boardItem.activity.sharedPostId !== action.payload.sharedPostId
+            );
+          } else if (
+            boardItem.activityType === 'LIKE_SHARED_POST' ||
+            boardItem.activityType === 'COMMENT_SHARED_POST'
+          ) {
+            return (
+              boardItem.activity.sharedPost.sharedPostId !==
+              action.payload.sharedPostId
+            );
+          } else return boardItem;
+        }),
       };
     case postTypes.UPDATE_SHARED_POST:
       return {
@@ -282,187 +543,388 @@ const userActivityReducer = (state = initialState, action) => {
     case postTypes.LIKE_SHARED_POST:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharingLikes: [
+                  ...boardItem.activity.sharingLikes,
+                  action.payload.liked,
+                ],
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
                   sharingLikes: [
-                    ...boardItem.activity.sharingLikes,
+                    ...boardItem.activity.sharedPost.sharingLikes,
                     action.payload.liked,
                   ],
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.DISLIKE_SHARED_POST:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  sharingLikes: boardItem.activity.sharingLikes.filter(
-                    (liked) => liked.likedUser.userId !== action.payload.userId
-                  ),
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharingLikes: boardItem.activity.sharingLikes.filter(
+                  (liked) => liked.likedUser.userId !== action.payload.userId
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
+                  sharingLikes:
+                    boardItem.activity.sharedPost.sharingLikes.filter(
+                      (liked) =>
+                        liked.likedUser.userId !== action.payload.userId
+                    ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.COMMENT_SHARED_POST:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharingComments: [
+                  action.payload.comment,
+                  ...boardItem.activity.sharingComments,
+                ],
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
                   sharingComments: [
                     action.payload.comment,
-                    ...boardItem.activity.sharingComments,
+                    ...boardItem.activity.sharedPost.sharingComments,
                   ],
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.EDIT_SHARED_POST_COMMENT:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  sharingComments: boardItem.activity.sharingComments.map(
-                    (comment) =>
-                      comment.commentId === action.payload.commentId
-                        ? {
-                            ...comment,
-                            text: action.payload.comment,
-                            isEdited: true,
-                          }
-                        : comment
-                  ),
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharingComments: boardItem.activity.sharingComments.map(
+                  (comment) =>
+                    comment.commentId === action.payload.commentId
+                      ? {
+                          ...comment,
+                          text: action.payload.comment,
+                          isEdited: true,
+                        }
+                      : comment
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
+                  sharingComments:
+                    boardItem.activity.sharedPost.sharingComments.map(
+                      (comment) =>
+                        comment.commentId === action.payload.commentId
+                          ? {
+                              ...comment,
+                              text: action.payload.comment,
+                              isEdited: true,
+                            }
+                          : comment
+                    ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.DELETE_SHARED_POST_COMMENT:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  sharingComments: boardItem.activity.sharingComments.filter(
-                    (comment) => comment.commentId !== action.payload.commentId
-                  ),
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharingComments: boardItem.activity.sharingComments.filter(
+                  (comment) => comment.commentId !== action.payload.commentId
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
+                  sharingComments:
+                    boardItem.activity.sharedPost.sharingComments.filter(
+                      (comment) =>
+                        comment.commentId !== action.payload.commentId
+                    ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.LIKE_SHARED_POST_COMMENT:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  sharingComments: boardItem.activity.sharingComments.map(
-                    (comment) =>
-                      comment.commentId === action.payload.commentId
-                        ? {
-                            ...comment,
-                            userLikes: [
-                              ...comment.userLikes,
-                              action.payload.likedUser,
-                            ],
-                          }
-                        : comment
-                  ),
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharingComments: boardItem.activity.sharingComments.map(
+                  (comment) =>
+                    comment.commentId === action.payload.commentId
+                      ? {
+                          ...comment,
+                          userLikes: [
+                            ...comment.userLikes,
+                            action.payload.likedUser,
+                          ],
+                        }
+                      : comment
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
+                  sharingComments:
+                    boardItem.activity.sharedPost.sharingComments.map(
+                      (comment) =>
+                        comment.commentId === action.payload.commentId
+                          ? {
+                              ...comment,
+                              userLikes: [
+                                ...comment.userLikes,
+                                action.payload.likedUser,
+                              ],
+                            }
+                          : comment
+                    ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.DISLIKE_SHARED_POST_COMMENT:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
-                  sharingComments: boardItem.activity.sharingComments.map(
-                    (comment) =>
-                      comment.commentId === action.payload.commentId
-                        ? {
-                            ...comment,
-                            userLikes: comment.userLikes.filter(
-                              (userLiked) =>
-                                userLiked.userId !== action.payload.userId
-                            ),
-                          }
-                        : comment
-                  ),
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharingComments: boardItem.activity.sharingComments.map(
+                  (comment) =>
+                    comment.commentId === action.payload.commentId
+                      ? {
+                          ...comment,
+                          userLikes: comment.userLikes.filter(
+                            (userLiked) =>
+                              userLiked.userId !== action.payload.userId
+                          ),
+                        }
+                      : comment
+                ),
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
+                  sharingComments:
+                    boardItem.activity.sharedPost.sharingComments.map(
+                      (comment) =>
+                        comment.commentId === action.payload.commentId
+                          ? {
+                              ...comment,
+                              userLikes: comment.userLikes.filter(
+                                (userLiked) =>
+                                  userLiked.userId !== action.payload.userId
+                              ),
+                            }
+                          : comment
+                    ),
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.SHARED_POST_ACCESS:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                isPublic: action.payload.isPublic,
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
                   isPublic: action.payload.isPublic,
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case postTypes.SHARED_POST_COMMENTS_ACCESS:
       return {
         ...state,
-        board: state.board.map((boardItem) =>
-          boardItem.activityType === 'SHARE_POST' &&
-          boardItem.activity.sharingId === action.payload.postId
-            ? {
-                ...boardItem,
-                activity: {
-                  ...boardItem.activity,
+        board: state.board.map((boardItem) => {
+          if (
+            boardItem.activityType === 'SHARE_POST' &&
+            boardItem.activity.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                isCommentingBlocked: action.payload.isCommentingBlocked,
+              },
+            };
+          } else if (
+            (boardItem.activityType === 'LIKE_SHARED_POST' ||
+              boardItem.activityType === 'COMMENT_SHARED_POST') &&
+            boardItem.activity.sharedPost.sharingId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                sharedPost: {
+                  ...boardItem.activity.sharedPost,
                   isCommentingBlocked: action.payload.isCommentingBlocked,
                 },
-              }
-            : boardItem
-        ),
+              },
+            };
+          } else return boardItem;
+        }),
       };
     case activityTypes.FETCH_ALL_USERS_INFORMATION:
       return {
@@ -475,5 +937,4 @@ const userActivityReducer = (state = initialState, action) => {
       return state;
   }
 };
-
 export default userActivityReducer;

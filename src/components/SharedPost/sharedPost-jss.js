@@ -128,6 +128,31 @@ const styles = (theme) => ({
       cursor: 'pointer',
     },
   },
+  activityInformationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  activityUserNameText: {
+    '&.MuiTypography-root': {
+      fontWeight: 'bold',
+      marginLeft: '10px',
+    },
+  },
+  userPhotoInfo: {
+    '&.MuiAvatar-root': {
+      width: '40px',
+      height: '40px',
+    },
+  },
+  activityActionDescription: {
+    fontWeight: 300,
+  },
+  activityDateText: {
+    '&.MuiTypography-root': {
+      lineHeight: 0,
+      marginLeft: '3px',
+    },
+  },
 });
 
 export default styles;

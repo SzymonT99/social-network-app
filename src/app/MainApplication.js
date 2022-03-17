@@ -1,5 +1,5 @@
 import { Route, Switch } from 'react-router-dom';
-import ActivityBoard from '../pages/ActivityBoard/ActivityBoard';
+import ActivityBoard from '../pages/ActivityBoardPage/ActivityBoard';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import AppTemplate from '../templates/AppTemplate';
 import EventsPage from '../pages/EventsPage/EventsPage';
