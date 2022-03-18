@@ -1,5 +1,7 @@
 import activityTypes from '../types/userActivityTypes';
 import postTypes from '../types/postTypes';
+import eventTypes from '../types/eventTypes';
+import groupTypes from '../types/groupTypes';
 
 const initialState = {
   isLoading: false,
@@ -80,6 +82,20 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CREATE_GROUP_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                text: action.payload.updatedPost.text,
+                images: action.payload.updatedPost.images,
+                editedAt: action.payload.updatedPost.editedAt,
+                isEdited: true,
+              },
+            };
           } else return boardItem;
         }),
       };
@@ -87,13 +103,29 @@ const userActivityReducer = (state = initialState, action) => {
       return {
         ...state,
         board: state.board.filter((boardItem) => {
-          if (boardItem.activityType === 'CREATE_POST')
+          if (
+            boardItem.activityType === 'CREATE_POST' ||
+            boardItem.activityType === 'CREATE_GROUP_POST'
+          )
             return boardItem.activity.postId !== action.payload.postId;
           else if (
             boardItem.activityType === 'LIKE_POST' ||
             boardItem.activityType === 'COMMENT_POST'
           )
             return boardItem.activity.post.postId !== action.payload.postId;
+          else if (
+            boardItem.activityType === 'CREATE_GROUP_POST' &&
+            boardItem.activity.postId === action.payload.postId
+          )
+            return boardItem.activity.postId !== action.payload.postId;
+          else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          )
+            return (
+              boardItem.activity.changePhotoPost.postId !==
+              action.payload.postId
+            );
         }),
       };
     case postTypes.LIKE_POST:
@@ -101,7 +133,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -129,6 +162,23 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
+                  likes: [
+                    ...boardItem.activity.changePhotoPost.likes,
+                    action.payload.liked,
+                  ],
+                },
+              },
+            };
           } else return boardItem;
         }),
       };
@@ -137,7 +187,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -166,6 +217,22 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
+                  likes: boardItem.activity.changePhotoPost.likes.filter(
+                    (liked) => liked.likedUser.userId !== action.payload.userId
+                  ),
+                },
+              },
+            };
           } else {
             return boardItem;
           }
@@ -176,7 +243,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -207,6 +275,23 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
+                  comments: [
+                    action.payload.comment,
+                    ...boardItem.activity.changePhotoPost.comments,
+                  ],
+                },
+              },
+            };
           } else {
             return boardItem;
           }
@@ -217,7 +302,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -258,6 +344,29 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
+                  comments: boardItem.activity.changePhotoPost.comments.map(
+                    (comment) =>
+                      comment.commentId === action.payload.commentId
+                        ? {
+                            ...comment,
+                            text: action.payload.comment,
+                            isEdited: true,
+                          }
+                        : comment
+                  ),
+                },
+              },
+            };
           } else {
             return boardItem;
           }
@@ -268,7 +377,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -297,6 +407,22 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
+                  comments: boardItem.activity.changePhotoPost.comments.filter(
+                    (comment) => comment.commentId !== action.payload.commentId
+                  ),
+                },
+              },
+            };
           } else {
             return boardItem;
           }
@@ -307,7 +433,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -352,6 +479,31 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
+                  comments: boardItem.activity.changePhotoPost.comments.map(
+                    (comment) =>
+                      comment.commentId === action.payload.commentId
+                        ? {
+                            ...comment,
+                            userLikes: [
+                              ...comment.userLikes,
+                              action.payload.likedUser,
+                            ],
+                          }
+                        : comment
+                  ),
+                },
+              },
+            };
           } else {
             return boardItem;
           }
@@ -362,7 +514,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -407,6 +560,31 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
+                  comments: boardItem.activity.changePhotoPost.comments.map(
+                    (comment) =>
+                      comment.commentId === action.payload.commentId
+                        ? {
+                            ...comment,
+                            userLikes: comment.userLikes.filter(
+                              (userLiked) =>
+                                userLiked.userId !== action.payload.userId
+                            ),
+                          }
+                        : comment
+                  ),
+                },
+              },
+            };
           } else {
             return boardItem;
           }
@@ -417,7 +595,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -442,6 +621,20 @@ const userActivityReducer = (state = initialState, action) => {
                 },
               },
             };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
+                  isPublic: action.payload.isPublic,
+                },
+              },
+            };
           } else return boardItem;
         }),
       };
@@ -450,7 +643,8 @@ const userActivityReducer = (state = initialState, action) => {
         ...state,
         board: state.board.map((boardItem) => {
           if (
-            boardItem.activityType === 'CREATE_POST' &&
+            (boardItem.activityType === 'CREATE_POST' ||
+              boardItem.activityType === 'CREATE_GROUP_POST') &&
             boardItem.activity.postId === action.payload.postId
           ) {
             return {
@@ -471,6 +665,20 @@ const userActivityReducer = (state = initialState, action) => {
                 ...boardItem.activity,
                 post: {
                   ...boardItem.activity.post,
+                  isCommentingBlocked: action.payload.isCommentingBlocked,
+                },
+              },
+            };
+          } else if (
+            boardItem.activityType === 'CHANGE_PROFILE_PHOTO' &&
+            boardItem.activity.changePhotoPost.postId === action.payload.postId
+          ) {
+            return {
+              ...boardItem,
+              activity: {
+                ...boardItem.activity,
+                changePhotoPost: {
+                  ...boardItem.activity.changePhotoPost,
                   isCommentingBlocked: action.payload.isCommentingBlocked,
                 },
               },
@@ -506,7 +714,8 @@ const userActivityReducer = (state = initialState, action) => {
       return {
         ...state,
         board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
+          (boardItem.activityType === 'CREATE_POST' ||
+            boardItem.activityType === 'CREATE_GROUP_POST') &&
           boardItem.activity.postId === action.payload.basePostId
             ? {
                 ...boardItem,
@@ -525,7 +734,8 @@ const userActivityReducer = (state = initialState, action) => {
       return {
         ...state,
         board: state.board.map((boardItem) =>
-          boardItem.activityType === 'CREATE_POST' &&
+          (boardItem.activityType === 'CREATE_POST' ||
+            boardItem.activityType === 'CREATE_GROUP_POST') &&
           boardItem.activity.postId === action.payload.basePostId
             ? {
                 ...boardItem,
@@ -930,6 +1140,52 @@ const userActivityReducer = (state = initialState, action) => {
       return {
         ...state,
         users: action.payload.users,
+      };
+    case eventTypes.UPDATE_RESPOND_TO_EVENT:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          (boardItem.activityType === 'RESPOND_TO_EVENT' ||
+            boardItem.activityType === 'SHARE_EVENT') &&
+          boardItem.activity.event.eventId === action.payload.eventId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  event: {
+                    ...boardItem.activity.event,
+                    members: boardItem.activity.event.members.filter(
+                      (member) =>
+                        member.eventMember.userId !== action.payload.userId
+                    ),
+                  },
+                },
+              }
+            : boardItem
+        ),
+      };
+    case eventTypes.RESPOND_TO_EVENT:
+      return {
+        ...state,
+        board: state.board.map((boardItem) =>
+          (boardItem.activityType === 'RESPOND_TO_EVENT' ||
+            boardItem.activityType === 'SHARE_EVENT') &&
+          boardItem.activity.event.eventId === action.payload.eventId
+            ? {
+                ...boardItem,
+                activity: {
+                  ...boardItem.activity,
+                  event: {
+                    ...boardItem.activity.event,
+                    members: [
+                      ...boardItem.activity.event.members,
+                      action.payload.member,
+                    ],
+                  },
+                },
+              }
+            : boardItem
+        ),
       };
     case activityTypes.CLEAR_ALL:
       return initialState;

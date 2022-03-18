@@ -122,10 +122,10 @@ const PostComment = (props) => {
         <Badge
           variant="dot"
           overlap="circular"
+          className={classes.avatarBadge}
           sx={{
             marginRight: '20px',
             '& .MuiBadge-badge': {
-              position: 'absolute',
               backgroundColor: activeStatus[userStatus],
             },
           }}

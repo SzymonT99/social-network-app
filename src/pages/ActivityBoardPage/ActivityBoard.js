@@ -28,6 +28,9 @@ import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
+import ActivityBoardItem from '../../components/ActivityBoardItem/ActivityBoardItem';
+import Event from '../../components/Event/Event';
+import Group from '../../components/Group/Group';
 
 const ActivityBoard = (props) => {
   const { classes } = props;
@@ -265,6 +268,134 @@ const ActivityBoard = (props) => {
                       likes={item.activity.sharingLikes}
                       comments={item.activity.sharingComments}
                     />
+                  );
+                } else if (item.activityType === 'CREATE_GROUP_POST') {
+                  return (
+                    <Post
+                      key={index}
+                      authorId={item.activityAuthor.userId}
+                      authorName={
+                        item.activityAuthor.firstName +
+                        ' ' +
+                        item.activityAuthor.lastName
+                      }
+                      profilePhoto={item.activityAuthor.profilePhoto}
+                      createdDate={new Date(item.activityDate)}
+                      images={item.activity.images}
+                      likesNumber={item.activity.likes.length}
+                      sharesNumber={item.activity.sharing.length}
+                      commentsNumber={item.activity.comments.length}
+                      comments={item.activity.comments}
+                      content={item.activity.text}
+                      userStatus={item.activityAuthor.activityStatus}
+                      postId={item.activity.postId}
+                      likes={item.activity.likes}
+                      isEdited={item.activity.isEdited}
+                      isPublic={item.activity.isPublic}
+                      isCommentingBlocked={item.activity.isCommentingBlocked}
+                      editionDate={item.activity.editedAt}
+                      isGroupPostActivity
+                      groupId={item.activity.group.groupId}
+                      groupName={item.activity.group.name}
+                      groupImage={item.activity.group.image}
+                    />
+                  );
+                } else if (item.activityType === 'CHANGE_PROFILE_PHOTO') {
+                  return (
+                    <Post
+                      key={index}
+                      authorId={item.activityAuthor.userId}
+                      authorName={
+                        item.activityAuthor.firstName +
+                        ' ' +
+                        item.activityAuthor.lastName
+                      }
+                      profilePhoto={item.activityAuthor.profilePhoto}
+                      createdDate={new Date(item.activityDate)}
+                      images={item.activity.changePhotoPost.images}
+                      likesNumber={item.activity.changePhotoPost.likes.length}
+                      sharesNumber={
+                        item.activity.changePhotoPost.sharing.length
+                      }
+                      commentsNumber={
+                        item.activity.changePhotoPost.comments.length
+                      }
+                      comments={item.activity.changePhotoPost.comments}
+                      content={item.activity.changePhotoPost.text}
+                      userStatus={item.activityAuthor.activityStatus}
+                      postId={item.activity.changePhotoPost.postId}
+                      likes={item.activity.changePhotoPost.likes}
+                      isEdited={item.activity.changePhotoPost.isEdited}
+                      isPublic={item.activity.changePhotoPost.isPublic}
+                      isCommentingBlocked={
+                        item.activity.changePhotoPost.isCommentingBlocked
+                      }
+                      editionDate={item.activity.changePhotoPost.editedAt}
+                      isChangeProfilePhotoPost
+                    />
+                  );
+                } else if (
+                  item.activityType === 'RESPOND_TO_EVENT' ||
+                  item.activityType === 'SHARE_EVENT'
+                ) {
+                  return (
+                    <ActivityBoardItem
+                      key={index}
+                      authorId={item.activityAuthor.userId}
+                      authorName={
+                        item.activityAuthor.firstName +
+                        ' ' +
+                        item.activityAuthor.lastName
+                      }
+                      authorStatus={item.activityAuthor.activityStatus}
+                      profilePhoto={item.activityAuthor.profilePhoto}
+                      activityDate={new Date(item.activityDate)}
+                      activityTitle={
+                        item.activityType === 'SHARE_EVENT'
+                          ? ' udostępnił(a) wydarzenie'
+                          : item.activity.participationStatus === 'TAKE_PART'
+                          ? ' bierze udział w wydarzeniu'
+                          : ' interesuje się wydarzeniem'
+                      }
+                    >
+                      <Event
+                        eventId={item.activity.event.eventId}
+                        title={item.activity.event.title}
+                        date={item.activity.event.eventDate}
+                        eventImage={item.activity.event.image}
+                        address={item.activity.event.eventAddress}
+                        members={item.activity.event.members}
+                        activityItem
+                      />
+                    </ActivityBoardItem>
+                  );
+                } else if (item.activityType === 'JOIN_TO_GROUP') {
+                  return (
+                    <ActivityBoardItem
+                      key={index}
+                      authorId={item.activityAuthor.userId}
+                      authorName={
+                        item.activityAuthor.firstName +
+                        ' ' +
+                        item.activityAuthor.lastName
+                      }
+                      authorStatus={item.activityAuthor.activityStatus}
+                      profilePhoto={item.activityAuthor.profilePhoto}
+                      activityDate={new Date(item.activityDate)}
+                      activityTitle={' dołączył(a) do grupy'}
+                    >
+                      <Group
+                        groupId={item.activity.group.groupId}
+                        name={item.activity.group.name}
+                        interests={item.activity.group.interests}
+                        groupCreationDate={item.activity.group.createdAt}
+                        membersNumber={item.activity.group.members.length}
+                        members={item.activity.group.members}
+                        postsNumber={item.activity.group.postsNumber}
+                        groupImage={item.activity.group.image}
+                        activityItem
+                      />
+                    </ActivityBoardItem>
                   );
                 }
               }

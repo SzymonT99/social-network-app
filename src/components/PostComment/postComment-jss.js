@@ -116,6 +116,14 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  avatarBadge: {
+    '& .MuiBadge-badge': {
+      width: '14px',
+      height: '14px',
+      borderRadius: '50px',
+      border: `2px solid ${theme.palette.background.paper}`,
+    },
+  },
 });
 
 export default styles;

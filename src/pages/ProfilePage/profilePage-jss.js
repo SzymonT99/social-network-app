@@ -452,6 +452,7 @@ const styles = (theme) => ({
   },
   paginationContainer: {
     '&.MuiPaper-root': {
+      marginTop: '15px',
       width: '100%',
       borderRadius: '10px',
       display: 'flex',

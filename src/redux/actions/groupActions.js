@@ -2,6 +2,12 @@ import groupService from '../../services/groupService';
 import groupTypes from '../types/groupTypes';
 import { showNotification } from './notificationActions';
 import userProfileTypes from '../types/userProfileTypes';
+import postTypes from '../types/postTypes';
+import authTypes from '../types/authTypes';
+import { getUserProfile } from './userProfileActions';
+import { getUserFriends } from './friendAction';
+import { getAllUsersInformation } from './userActivityActions';
+import eventTypes from '../types/eventTypes';
 
 export const createGroup = (groupFormData) => (dispatch) => {
   return groupService
@@ -80,6 +86,8 @@ export const getGroupDetails = (groupId) => (dispatch) => {
           });
           return data;
         });
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Grupa została usunięta'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -469,8 +477,18 @@ export const editGroupPost = (groupId, postId, postFormData) => (dispatch) => {
     .editGroupPost(postId, postFormData)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getGroupDetails(groupId));
-        dispatch(showNotification('success', 'Edytowano post w grupie'));
+        return response.json().then((data) => {
+          dispatch({
+            type: postTypes.EDIT_POST,
+            payload: {
+              postId: data.postId,
+              updatedPost: data,
+            },
+          });
+          dispatch(getGroupDetails(groupId));
+          dispatch(showNotification('success', 'Edytowano post grupy'));
+          return response;
+        });
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else {
@@ -488,7 +506,7 @@ export const deleteGroupPost = (groupId, postId) => (dispatch) => {
     .then((response) => {
       if (response.status === 200) {
         dispatch(getGroupDetails(groupId));
-        dispatch(showNotification('success', 'Usunięto post w grupie'));
+        dispatch(showNotification('success', 'Usunięto post grupy'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else {

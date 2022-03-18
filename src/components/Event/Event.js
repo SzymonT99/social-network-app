@@ -3,7 +3,7 @@ import { withStyles } from '@mui/styles';
 import styles from './event-jss';
 import { PropTypes } from 'prop-types';
 import defaultEventImg from '../../assets/default-event-photo.png';
-import { Button, Typography } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import { LocationOn, AccessTime, Share } from '@mui/icons-material';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +12,7 @@ import {
   respondToEvent,
   shareEvent,
 } from '../../redux/actions/eventActions';
+import classNames from 'classnames';
 
 const Event = (props) => {
   const {
@@ -25,6 +26,7 @@ const Event = (props) => {
     eventImage,
     invitation,
     invitationDate,
+    activityItem,
   } = props;
 
   const history = useHistory();
@@ -34,11 +36,15 @@ const Event = (props) => {
   const loggedUser = useSelector((state) => state.auth.user);
 
   const handleClickEventReaction = (event, reaction) => {
-    dispatch(respondToEvent(eventId, reaction)).then(() =>
-      dispatch(getEvents()).then((data) => {
-        updateEvents(data);
-      })
-    );
+    if (!activityItem) {
+      dispatch(respondToEvent(eventId, reaction)).then(() =>
+        dispatch(getEvents()).then((data) => {
+          updateEvents(data);
+        })
+      );
+    } else {
+      dispatch(respondToEvent(eventId, reaction));
+    }
     event.stopPropagation();
   };
 
@@ -48,8 +54,12 @@ const Event = (props) => {
   };
 
   return (
-    <div
-      className={classes.eventContainer}
+    <Paper
+      elevation={!activityItem ? 4 : 0}
+      className={classNames(
+        classes.eventContainer,
+        !activityItem && classes.eventHover
+      )}
       onClick={() => history.push('/app/events/' + eventId)}
     >
       {invitation && (
@@ -73,7 +83,7 @@ const Event = (props) => {
       <img
         src={eventImage ? eventImage.url : defaultEventImg}
         className={classes.eventImage}
-        style={invitation && { borderRadius: '0px' }}
+        style={{ borderRadius: invitation && '0px' }}
         alt="Zdjęcie wydarzenia"
       />
       <div className={classes.eventInformationContainer}>
@@ -92,7 +102,10 @@ const Event = (props) => {
               new Date(date).toJSON().slice(10, 16).replace('T', ' ')}
           </Typography>
         </div>
-        <div className={classes.eventInformationRow}>
+        <div
+          className={classes.eventInformationRow}
+          style={{ width: activityItem && '550px' }}
+        >
           <LocationOn className={classes.timeIcon} />
           <Typography variant="subtitle2" noWrap>
             {address.country +
@@ -122,6 +135,7 @@ const Event = (props) => {
             color="secondary"
             variant="contained"
             className={classes.eventReactionBtn}
+            style={{ width: activityItem && '30%' }}
             onClick={(event) => handleClickEventReaction(event, 'INTERESTED')}
             disabled={
               members.filter(
@@ -137,6 +151,7 @@ const Event = (props) => {
             color="secondary"
             variant="contained"
             className={classes.eventReactionBtn}
+            style={{ width: activityItem && '30%' }}
             onClick={(event) => handleClickEventReaction(event, 'TAKE_PART')}
             disabled={
               members.filter(
@@ -153,6 +168,7 @@ const Event = (props) => {
               color="primary"
               variant="contained"
               className={classes.eventReactionBtn}
+              style={{ width: activityItem && '20%' }}
               onClick={(event) => handleClickShareEvent(event, eventId)}
             >
               <Share />
@@ -170,21 +186,27 @@ const Event = (props) => {
           )}
         </div>
       </div>
-    </div>
+    </Paper>
   );
 };
 
 Event.propTypes = {
   classes: PropTypes.object.isRequired,
   eventId: PropTypes.number.isRequired,
-  updateEvents: PropTypes.func.isRequired,
+  updateEvents: PropTypes.func,
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   address: PropTypes.object.isRequired,
   members: PropTypes.array.isRequired,
   eventImage: PropTypes.object,
   invitation: PropTypes.bool,
+  activityItem: PropTypes.bool,
   invitationDate: PropTypes.string,
+};
+
+Event.defaultProps = {
+  invitation: false,
+  activityItem: false,
 };
 
 export default withStyles(styles)(Event);

@@ -79,12 +79,16 @@ const Post = (props) => {
     isFavourite,
     accessToManagement,
     isGroupPost,
+    isGroupPostActivity,
     groupId,
+    groupName,
+    groupImage,
     isActivity,
     activityType,
     activityAuthorName,
     activityAuthorPhoto,
     activityDate,
+    isChangeProfilePhotoPost,
   } = props;
 
   const dispatch = useDispatch();
@@ -290,10 +294,18 @@ const Post = (props) => {
         authorName={authorName}
         profilePhoto={profilePhoto}
         createdDate={createdDate}
-        activityTitle=" dodał(a) nowy post"
+        activityTitle={
+          !isChangeProfilePhotoPost
+            ? ' dodał(a) nowy post'
+            : ' zmienił(a) zdjęcie profilowe'
+        }
         editionDate={editionDate}
         userStatus={userStatus}
         isEdited={isEdited}
+        postGroupActivity={isGroupPostActivity}
+        groupId={groupId}
+        groupName={groupName}
+        groupImage={groupImage}
       >
         <>
           {!asSharing && !isFavourite ? (
@@ -344,22 +356,24 @@ const Post = (props) => {
                 </MenuItem>
                 {(authorId === userId || accessToManagement === true) && (
                   <div>
-                    <MenuItem
-                      className={classes.postMenuItem}
-                      onClick={handleEditPost}
-                    >
-                      <ListItemIcon>
-                        <EditIcon fontSize="medium" />
-                      </ListItemIcon>
-                      <ListItemText
-                        disableTypography
-                        primary={
-                          <Typography variant="subtitle2">
-                            Edytuj post
-                          </Typography>
-                        }
-                      />
-                    </MenuItem>
+                    {!isChangeProfilePhotoPost && (
+                      <MenuItem
+                        className={classes.postMenuItem}
+                        onClick={handleEditPost}
+                      >
+                        <ListItemIcon>
+                          <EditIcon fontSize="medium" />
+                        </ListItemIcon>
+                        <ListItemText
+                          disableTypography
+                          primary={
+                            <Typography variant="subtitle2">
+                              Edytuj post
+                            </Typography>
+                          }
+                        />
+                      </MenuItem>
+                    )}
                     <MenuItem
                       className={classes.postMenuItem}
                       onClick={handleManagePostAccess}
@@ -529,17 +543,19 @@ const Post = (props) => {
                 </Typography>
               </Button>
             )}
-            <Button className={classes.postBtn} onClick={handleSharePost}>
-              <Typography
-                variant="subtitle2"
-                className={classes.postReactionItem}
-              >
-                <ShareOutlinedIcon
-                  sx={{ fontSize: '35px', marginRight: '6px' }}
-                />
-                {'Udostępnij | ' + sharesNumber}
-              </Typography>
-            </Button>
+            {!isChangeProfilePhotoPost && (
+              <Button className={classes.postBtn} onClick={handleSharePost}>
+                <Typography
+                  variant="subtitle2"
+                  className={classes.postReactionItem}
+                >
+                  <ShareOutlinedIcon
+                    sx={{ fontSize: '35px', marginRight: '6px' }}
+                  />
+                  {'Udostępnij | ' + sharesNumber}
+                </Typography>
+              </Button>
+            )}
           </div>
           <Divider />
           {highlightComment !== null && (
@@ -700,7 +716,11 @@ Post.propTypes = {
   isFavourite: PropTypes.bool,
   accessToManagement: PropTypes.bool,
   isGroupPost: PropTypes.bool,
+  isGroupPostActivity: PropTypes.bool,
+  isChangeProfilePhotoPost: PropTypes.bool,
   groupId: PropTypes.number,
+  groupName: PropTypes.string,
+  groupImage: PropTypes.object,
   isActivity: PropTypes.bool,
   activityType: PropTypes.string,
   activityAuthorName: PropTypes.string,
@@ -714,7 +734,9 @@ Post.defaultProps = {
   isFavourite: false,
   accessToManagement: false,
   isGroupPost: false,
+  isGroupPostActivity: false,
   isActivity: false,
+  isChangeProfilePhotoPost: false,
 };
 
 export default withStyles(styles)(Post);

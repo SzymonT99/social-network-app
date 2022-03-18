@@ -5,51 +5,10 @@ import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
 import { Badge } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-
+import defaultImg from '../../assets/default-image.png';
 import Avatar from '@mui/material/Avatar';
 import { useHistory } from 'react-router-dom';
-
-const formatPostTime = (createdDate) => {
-  let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
-  let minutes = Math.floor(diffInMs / 60);
-
-  if (minutes < 30) {
-    return 'kilka minut temu';
-  } else if (minutes < 90) {
-    return '1 godz. temu';
-  } else if (minutes >= 90 && minutes < 150) {
-    return '2 godz. temu';
-  } else if (minutes >= 150 && minutes < 210) {
-    return '3 godz. temu';
-  } else if (minutes >= 210 && minutes < 270) {
-    return '4 godz. temu';
-  } else if (minutes >= 270 && minutes < 1440) {
-    return 'kilka godz. temu';
-  } else if (minutes >= 1440 && minutes < 1560) {
-    return '1 dzień temu';
-  } else if (minutes >= 1560 && minutes < 3000) {
-    return '2 dni temu';
-  } else if (minutes >= 3000 && minutes < 3100) {
-    return '3 dni temu';
-  } else {
-    let day = createdDate.getDate();
-    let month = createdDate.getMonth() + 1;
-    let year = createdDate.getFullYear();
-    let hour = createdDate.getHours();
-    let minutes = createdDate.getMinutes();
-    return (
-      (day <= 9 ? '0' + day : day) +
-      '.' +
-      (month <= 9 ? '0' + month : month) +
-      '.' +
-      year +
-      ' r. ' +
-      (hour <= 9 ? '0' + hour : hour) +
-      ':' +
-      (minutes <= 9 ? '0' + minutes : minutes)
-    );
-  }
-};
+import { formatCreationDate } from '../../utils/formatCreationDate';
 
 const ActivityHeading = (props) => {
   const {
@@ -63,6 +22,10 @@ const ActivityHeading = (props) => {
     createdDate,
     editionDate,
     children,
+    postGroupActivity,
+    groupId,
+    groupName,
+    groupImage,
   } = props;
 
   const history = useHistory();
@@ -77,35 +40,80 @@ const ActivityHeading = (props) => {
   return (
     <div className={classes.headingBox}>
       <div className={classes.authorContainer}>
-        <Badge
-          variant="dot"
-          overlap="circular"
-          sx={{
-            marginRight: '20px',
-            '& .MuiBadge-badge': {
-              backgroundColor: activeStatus[userStatus],
-            },
-          }}
-        >
-          <Avatar
-            src={profilePhoto ? profilePhoto.url : defaultUserPhoto}
-            alt={authorName}
-            className={classes.userPhoto}
-            onClick={() => history.push('/app/profile/' + authorId)}
-          />
-        </Badge>
+        {postGroupActivity && (
+          <div className={classes.groupActivityContainer}>
+            <img
+              src={groupImage ? groupImage.url : defaultImg}
+              alt={groupName}
+              className={classes.groupImageBox}
+              onClick={() => history.push('/app/groups/' + groupId)}
+            />
+            <Badge
+              variant="dot"
+              overlap="circular"
+              sx={{
+                '& .MuiBadge-badge': {
+                  border: `1px solid #FFF`,
+                  backgroundColor: activeStatus[userStatus],
+                },
+              }}
+            >
+              <Avatar
+                src={profilePhoto ? profilePhoto.url : defaultUserPhoto}
+                alt={authorName}
+                className={classes.groupMemberPhoto}
+              />
+            </Badge>
+          </div>
+        )}
+        {!postGroupActivity && (
+          <Badge
+            variant="dot"
+            overlap="circular"
+            className={classes.avatarBadge}
+            sx={{
+              marginRight: '20px',
+              '& .MuiBadge-badge': {
+                backgroundColor: activeStatus[userStatus],
+              },
+            }}
+          >
+            <Avatar
+              src={profilePhoto ? profilePhoto.url : defaultUserPhoto}
+              alt={authorName}
+              className={classes.userPhoto}
+              onClick={() => history.push('/app/profile/' + authorId)}
+            />
+          </Badge>
+        )}
         <div>
-          <Typography variant="subtitle1" fontWeight="bold">
+          {postGroupActivity && (
+            <Typography
+              variant="subtitle1"
+              className={classes.groupNameText}
+              onClick={() => history.push('/app/group/' + groupId)}
+            >
+              {groupName}
+            </Typography>
+          )}
+          <Typography
+            variant={!postGroupActivity ? 'subtitle1' : 'body1'}
+            fontWeight="bold"
+          >
             <span
               className={classes.authorName}
               onClick={() => history.push('/app/profile/' + authorId)}
             >
               {authorName}
             </span>
-            <span className={classes.actionName}>{activityTitle}</span>
+            <span className={classes.actionName}>
+              {activityTitle + (postGroupActivity ? ' w grupie' : '')}
+            </span>
           </Typography>
-          <Typography variant="body2">{formatPostTime(createdDate)}</Typography>
-          {isEdited && (
+          <Typography variant="body2">
+            {formatCreationDate(createdDate)}
+          </Typography>
+          {isEdited && !postGroupActivity && (
             <Typography variant="body2" fontWeight={500}>
               {'edytowano ' + editionDate.substring(0, editionDate.length - 3)}
             </Typography>
@@ -119,13 +127,24 @@ const ActivityHeading = (props) => {
 
 ActivityHeading.propTypes = {
   classes: PropTypes.object.isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.element,
   authorId: PropTypes.number.isRequired,
   authorName: PropTypes.string.isRequired,
   profilePhoto: PropTypes.object,
   userStatus: PropTypes.string.isRequired,
   activityTitle: PropTypes.string.isRequired,
   createdDate: PropTypes.object.isRequired,
+  postGroupActivity: PropTypes.bool,
+  isEdited: PropTypes.bool,
+  editionDate: PropTypes.bool,
+  groupId: PropTypes.number,
+  groupName: PropTypes.string,
+  groupImage: PropTypes.object,
+};
+
+ActivityHeading.defaultProps = {
+  postGroupActivity: false,
+  isEdited: false,
 };
 
 export default withStyles(styles)(ActivityHeading);
