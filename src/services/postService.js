@@ -11,6 +11,15 @@ const createPost = (formData) => {
   });
 };
 
+const getPostDetails = (postId) => {
+  return fetch(endpoints.postDetails.replace('{postId}', postId), {
+    method: 'GET',
+    headers: {
+      Authorization: authorization(),
+    },
+  });
+};
+
 const editPost = (postId, formData) => {
   return fetch(endpoints.managePost.replace('{postId}', postId), {
     method: 'PUT',
@@ -188,6 +197,7 @@ const getFavouritePosts = (userId) => {
 
 export default {
   createPost,
+  getPostDetails,
   editPost,
   deletePost,
   likePost,

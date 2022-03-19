@@ -24,6 +24,7 @@ const AppTemplate = (props) => {
         <Sidebar />
         <div className={classes.contentContainer}>
           <main className={classes.contentApp}>{children}</main>
+          {/*<Copyright />*/}
         </div>
         <Rightbar />
       </div>

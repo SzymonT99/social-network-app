@@ -1,6 +1,7 @@
 import eventService from '../../services/eventService';
 import eventTypes from '../types/eventTypes';
 import { showNotification } from './notificationActions';
+import postTypes from '../types/postTypes';
 
 export const createEvent = (eventFormData) => (dispatch) => {
   return eventService
@@ -133,6 +134,33 @@ export const respondToEvent = (eventId, reaction) => (dispatch, getState) => {
       if (response.status === 200) {
         dispatch(getEvents());
         dispatch(getEventById(getState().events.eventDetails.eventId));
+        dispatch({
+          type: eventTypes.UPDATE_RESPOND_TO_EVENT,
+          payload: {
+            eventId: eventId,
+            userId: getState().auth.user.userId,
+          },
+        });
+        dispatch({
+          type: eventTypes.RESPOND_TO_EVENT,
+          payload: {
+            eventId: eventId,
+            member: {
+              eventMember: {
+                userId: getState().auth.user.userId,
+                activityStatus: 'ONLINE',
+                email: getState().auth.userProfile.email,
+                firstName: getState().auth.userProfile.firstName,
+                lastName: getState().auth.userProfile.lastName,
+                profilePhoto: getState().auth.userProfile.profilePhoto,
+              },
+              participationStatus: reaction,
+              addedIn: new Date().toDateString(),
+              invitationDate: null,
+              invitationDisplayed: false,
+            },
+          },
+        });
         if (reaction === 'TAKE_PART') {
           dispatch(showNotification('success', 'Dołączono do wydarzenia'));
         } else if (reaction === 'INTERESTED') {

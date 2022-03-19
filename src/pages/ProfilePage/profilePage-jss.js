@@ -144,7 +144,7 @@ const styles = (theme) => ({
   },
   postCreateContent: {
     display: 'flex',
-    paddingTop: '10px',
+    paddingTop: '15px',
   },
   postInput: {
     '& .MuiInputBase-root': {
@@ -452,6 +452,7 @@ const styles = (theme) => ({
   },
   paginationContainer: {
     '&.MuiPaper-root': {
+      marginTop: '15px',
       width: '100%',
       borderRadius: '10px',
       display: 'flex',

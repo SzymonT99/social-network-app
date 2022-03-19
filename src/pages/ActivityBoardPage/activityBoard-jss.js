@@ -2,33 +2,37 @@ const styles = (theme) => ({
   boardContainer: {
     width: '100%',
     display: 'flex',
+    margin: '20px 0px',
   },
   activityContent: {
     flex: 4.5,
-  },
-  activityWrapper: {
-    padding: '20px 10px 20px 20px',
+    marginRight: '20px',
   },
   infoContent: {
     flex: 2.5,
   },
-  infoWrapper: {
-    padding: '20px 20px 20px 10px',
+  activityInvitationInfo: {
+    '&.MuiPaper-root': {
+      borderRadius: '10px',
+      padding: '15px',
+    },
   },
   postCreateBox: {
-    padding: '15px',
-    marginBottom: '15px',
+    '&.MuiPaper-root': {
+      borderRadius: '10px',
+      padding: '15px',
+      marginBottom: '15px',
+    },
   },
   divider: {
     paddingTop: '5px',
   },
   postCreateContent: {
     display: 'flex',
-    paddingTop: '10px',
+    paddingTop: '15px',
   },
   userPhoto: {
     '&.MuiAvatar-root': {
-      display: 'block',
       width: '50px',
       height: '50px',
       marginRight: '15px',

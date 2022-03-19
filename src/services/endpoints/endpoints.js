@@ -6,6 +6,7 @@ export const endpoints = {
   logout: baseUrl + '/api/auth/logout/{userId}',
   userProfile: baseUrl + '/api/profile/{userId}/information',
   createPost: baseUrl + '/api/posts',
+  postDetails: baseUrl + '/api/posts/{postId}',
   getActivityBoard: baseUrl + '/api/activity',
   likePost: baseUrl + '/api/posts/{postId}/like',
   dislikePost: baseUrl + '/api/posts/{postId}/liked',

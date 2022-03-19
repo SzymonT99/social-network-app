@@ -3,7 +3,7 @@ import { withStyles } from '@mui/styles';
 import styles from './group-jss';
 import { PropTypes } from 'prop-types';
 import defaultImg from '../../assets/default-image.png';
-import { Button, Typography } from '@mui/material';
+import { Button, Paper, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -27,6 +27,7 @@ const Group = (props) => {
     invitation,
     invitationDate,
     showInProfile,
+    activityItem,
   } = props;
 
   const history = useHistory();
@@ -55,10 +56,11 @@ const Group = (props) => {
     ).length !== 0;
 
   return (
-    <div
+    <Paper
+      elevation={!activityItem ? 4 : 0}
       className={classNames(
         classes.groupContainer,
-        showInProfile && classes.groupContainerHover
+        showInProfile && !activityItem && classes.groupContainerHover
       )}
       onClick={() => showInProfile && history.push('/app/groups/' + groupId)}
     >
@@ -180,7 +182,7 @@ const Group = (props) => {
           </div>
         )}
       </div>
-    </div>
+    </Paper>
   );
 };
 
@@ -197,11 +199,13 @@ Group.propTypes = {
   invitation: PropTypes.bool,
   invitationDate: PropTypes.string,
   showInProfile: PropTypes.bool,
+  activityItem: PropTypes.bool,
 };
 
 Group.defaultProps = {
   invitation: false,
   showInProfile: false,
+  activityItem: false,
 };
 
 export default withStyles(styles)(Group);

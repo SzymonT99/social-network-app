@@ -8,6 +8,7 @@ import EventIcon from '@mui/icons-material/Event';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import PeopleIcon from '@mui/icons-material/People';
 import GroupsIcon from '@mui/icons-material/Groups';
+import MessageIcon from '@mui/icons-material/Message';
 
 const PageHeader = (props) => {
   const { classes, heading, type } = props;
@@ -18,6 +19,7 @@ const PageHeader = (props) => {
     favourites: <BookmarkIcon className={classes.headingIcon} />,
     friends: <PeopleIcon className={classes.headingIcon} />,
     groups: <GroupsIcon className={classes.headingIcon} />,
+    post: <MessageIcon className={classes.headingIcon} />,
   };
 
   return (

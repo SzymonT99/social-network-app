@@ -66,9 +66,6 @@ const styles = (theme) => ({
     '&.MuiAvatar-root': {
       width: '55px',
       height: '55px',
-      '&:hover': {
-        cursor: 'pointer',
-      },
     },
   },
   userMenu: {
@@ -149,14 +146,27 @@ const styles = (theme) => ({
       },
     },
   },
-  activityAuthorName: {
-    '&.MuiTypography-root': {
-      fontWeight: 'bold',
+  activityNotificationItem: {
+    '&.MuiListItem-root': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
       '&:hover': {
-        textDecoration: 'underline',
+        backgroundColor: '#e5e5e5',
         cursor: 'pointer',
       },
     },
+  },
+  activityNotificationItemInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '68%',
+  },
+  groupImage: {
+    marginRight: '20px',
+    height: '50px',
+    width: '50px',
+    borderRadius: '10px',
   },
 });
 

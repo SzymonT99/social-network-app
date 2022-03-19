@@ -84,6 +84,14 @@ const styles = (theme) => ({
     justifyContent: 'flex-end',
     marginTop: '5px',
   },
+  avatarBadge: {
+    '& .MuiBadge-badge': {
+      width: '14px',
+      height: '14px',
+      borderRadius: '50px',
+      border: `2px solid ${theme.palette.background.paper}`,
+    },
+  },
 });
 
 export default styles;

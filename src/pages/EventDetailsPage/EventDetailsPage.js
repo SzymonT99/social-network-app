@@ -563,7 +563,7 @@ const EventsPageDetails = (props) => {
         </div>
       ) : (
         <div className={classes.loadingContainer}>
-          <CircularProgress color="secondary" />
+          <CircularProgress color="secondary" size="240px" />
         </div>
       )}
     </>

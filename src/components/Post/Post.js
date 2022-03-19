@@ -52,6 +52,7 @@ import SharePostForm from '../Forms/SharePostForm';
 import ActivityHeading from '../ActivityHeading/ActivityHeading';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { deleteGroupPost } from '../../redux/actions/groupActions';
+import { formatCreationDate } from '../../utils/formatCreationDate';
 
 const Post = (props) => {
   const {
@@ -78,7 +79,16 @@ const Post = (props) => {
     isFavourite,
     accessToManagement,
     isGroupPost,
+    isGroupPostActivity,
     groupId,
+    groupName,
+    groupImage,
+    isActivity,
+    activityType,
+    activityAuthorName,
+    activityAuthorPhoto,
+    activityDate,
+    isChangeProfilePhotoPost,
   } = props;
 
   const dispatch = useDispatch();
@@ -203,6 +213,7 @@ const Post = (props) => {
     } else {
       dispatch(deleteGroupPost(groupId, postId));
     }
+    handleClosePostDeletePopup();
     handleClosePostOption();
   };
 
@@ -246,20 +257,55 @@ const Post = (props) => {
     <Paper
       elevation={!asSharing ? 4 : 0}
       sx={{
-        borderRadius: '10px',
         border: asSharing && '1px solid rgba(0, 0, 0, 0.87)',
       }}
       className={classes.postContainer}
     >
+      {isActivity && (
+        <div>
+          <div className={classes.activityInformationContainer}>
+            <Avatar
+              src={
+                activityAuthorPhoto ? activityAuthorPhoto.url : defaultUserPhoto
+              }
+              alt={activityAuthorName ? activityAuthorName : 'Autor aktywności'}
+              className={classes.userPhotoInfo}
+            />
+            <Typography
+              variant="body1"
+              className={classes.activityUserNameText}
+            >
+              {activityAuthorName}
+              <span className={classes.activityActionDescription}>
+                {activityType === 'LIKE_POST'
+                  ? ' polubił(a) post'
+                  : ' skomentował(a) post'}
+              </span>
+            </Typography>
+            <Typography variant="body2" className={classes.activityDateText}>
+              {formatCreationDate(new Date(activityDate))}
+            </Typography>
+          </div>
+          <Divider sx={{ margin: '15px 0px' }} />
+        </div>
+      )}
       <ActivityHeading
         authorId={authorId}
         authorName={authorName}
         profilePhoto={profilePhoto}
         createdDate={createdDate}
-        activityTitle=" dodał(a) nowy post"
+        activityTitle={
+          !isChangeProfilePhotoPost
+            ? ' dodał(a) nowy post'
+            : ' zmienił(a) zdjęcie profilowe'
+        }
         editionDate={editionDate}
         userStatus={userStatus}
         isEdited={isEdited}
+        postGroupActivity={isGroupPostActivity}
+        groupId={groupId}
+        groupName={groupName}
+        groupImage={groupImage}
       >
         <>
           {!asSharing && !isFavourite ? (
@@ -310,22 +356,24 @@ const Post = (props) => {
                 </MenuItem>
                 {(authorId === userId || accessToManagement === true) && (
                   <div>
-                    <MenuItem
-                      className={classes.postMenuItem}
-                      onClick={handleEditPost}
-                    >
-                      <ListItemIcon>
-                        <EditIcon fontSize="medium" />
-                      </ListItemIcon>
-                      <ListItemText
-                        disableTypography
-                        primary={
-                          <Typography variant="subtitle2">
-                            Edytuj post
-                          </Typography>
-                        }
-                      />
-                    </MenuItem>
+                    {!isChangeProfilePhotoPost && (
+                      <MenuItem
+                        className={classes.postMenuItem}
+                        onClick={handleEditPost}
+                      >
+                        <ListItemIcon>
+                          <EditIcon fontSize="medium" />
+                        </ListItemIcon>
+                        <ListItemText
+                          disableTypography
+                          primary={
+                            <Typography variant="subtitle2">
+                              Edytuj post
+                            </Typography>
+                          }
+                        />
+                      </MenuItem>
+                    )}
                     <MenuItem
                       className={classes.postMenuItem}
                       onClick={handleManagePostAccess}
@@ -495,17 +543,19 @@ const Post = (props) => {
                 </Typography>
               </Button>
             )}
-            <Button className={classes.postBtn} onClick={handleSharePost}>
-              <Typography
-                variant="subtitle2"
-                className={classes.postReactionItem}
-              >
-                <ShareOutlinedIcon
-                  sx={{ fontSize: '35px', marginRight: '6px' }}
-                />
-                {'Udostępnij | ' + sharesNumber}
-              </Typography>
-            </Button>
+            {!isChangeProfilePhotoPost && (
+              <Button className={classes.postBtn} onClick={handleSharePost}>
+                <Typography
+                  variant="subtitle2"
+                  className={classes.postReactionItem}
+                >
+                  <ShareOutlinedIcon
+                    sx={{ fontSize: '35px', marginRight: '6px' }}
+                  />
+                  {'Udostępnij | ' + sharesNumber}
+                </Typography>
+              </Button>
+            )}
           </div>
           <Divider />
           {highlightComment !== null && (
@@ -573,10 +623,7 @@ const Post = (props) => {
               </div>
             )}
           {postComments.length !== 0 && commentsDisplayed && (
-            <Divider
-              className={classes.divider}
-              style={{ marginTop: '15px' }}
-            />
+            <Divider sx={{ marginTop: '15px' }} />
           )}
           {!isCommentingBlocked && (
             <div className={classes.addCommentContainer}>
@@ -669,7 +716,16 @@ Post.propTypes = {
   isFavourite: PropTypes.bool,
   accessToManagement: PropTypes.bool,
   isGroupPost: PropTypes.bool,
+  isGroupPostActivity: PropTypes.bool,
+  isChangeProfilePhotoPost: PropTypes.bool,
   groupId: PropTypes.number,
+  groupName: PropTypes.string,
+  groupImage: PropTypes.object,
+  isActivity: PropTypes.bool,
+  activityType: PropTypes.string,
+  activityAuthorName: PropTypes.string,
+  activityAuthorPhoto: PropTypes.object,
+  activityDate: PropTypes.string,
 };
 
 Post.defaultProps = {
@@ -678,6 +734,9 @@ Post.defaultProps = {
   isFavourite: false,
   accessToManagement: false,
   isGroupPost: false,
+  isGroupPostActivity: false,
+  isActivity: false,
+  isChangeProfilePhotoPost: false,
 };
 
 export default withStyles(styles)(Post);

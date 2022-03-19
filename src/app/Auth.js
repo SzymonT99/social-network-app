@@ -5,31 +5,36 @@ import AuthTemplate from '../templates/AuthTemplate';
 import AccountActivatePage from '../pages/AccountActivatePage/AccountActivatePage';
 import ForgetPasswordPage from '../pages/ForgetPasswordPage/ForgetPasswordPage';
 import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
+import React from 'react';
+import Copyright from '../components/Copyright/Copyright';
 
 const Auth = () => {
   return (
-    <AuthTemplate>
-      <Switch>
-        <Route exact path="/" component={LoginPage} />
-        <Route exact path="/auth/login" component={LoginPage} />
-        <Route exact path="/auth/register" component={RegisterPage} />
-        <Route
-          exact
-          path="/auth/activate-account/:token"
-          component={AccountActivatePage}
-        />
-        <Route
-          exact
-          path="/auth/forget-password"
-          component={ForgetPasswordPage}
-        />
-        <Route
-          exact
-          path="/auth/reset-password/:resetCode"
-          component={ResetPasswordPage}
-        />
-      </Switch>
-    </AuthTemplate>
+    <>
+      <AuthTemplate>
+        <Switch>
+          <Route exact path="/" component={LoginPage} />
+          <Route exact path="/auth/login" component={LoginPage} />
+          <Route exact path="/auth/register" component={RegisterPage} />
+          <Route
+            exact
+            path="/auth/activate-account/:token"
+            component={AccountActivatePage}
+          />
+          <Route
+            exact
+            path="/auth/forget-password"
+            component={ForgetPasswordPage}
+          />
+          <Route
+            exact
+            path="/auth/reset-password/:resetCode"
+            component={ResetPasswordPage}
+          />
+        </Switch>
+      </AuthTemplate>
+      <Copyright />
+    </>
   );
 };
 

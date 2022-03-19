@@ -134,7 +134,7 @@ const styles = (theme) => ({
   },
   postCreateContent: {
     display: 'flex',
-    paddingTop: '10px',
+    paddingTop: '15px',
   },
   postCreationUserPhoto: {
     '&.MuiAvatar-root': {

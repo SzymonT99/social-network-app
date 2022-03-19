@@ -96,7 +96,7 @@ const FavouritePostsPage = (props) => {
           )
         ) : (
           <div className={classes.loadingContainer}>
-            <CircularProgress color="secondary" />
+            <CircularProgress color="secondary" size="240px" />
           </div>
         )}
         {favouritePosts.length === 0 && (

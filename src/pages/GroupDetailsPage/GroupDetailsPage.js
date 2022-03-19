@@ -57,6 +57,7 @@ import {
   getGroupDetails,
   getGroupForumThreads,
   getGroupInvitations,
+  getGroups,
   getUsersWantedJoinGroup,
   leaveGroup,
   requestToJoinGroup,
@@ -489,7 +490,11 @@ const GroupDetailsPage = (props) => {
   };
 
   const handleDeleteGroup = () => {
-    dispatch(deleteGroup(parseInt(groupId)));
+    dispatch(deleteGroup(parseInt(groupId))).then(() => {
+      dispatch(getGroups());
+    });
+    handleCloseGroupDeletePopup();
+    history.push('/app/groups');
   };
 
   return (

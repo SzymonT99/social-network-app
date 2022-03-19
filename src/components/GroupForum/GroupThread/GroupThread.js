@@ -105,6 +105,7 @@ const GroupThread = (props) => {
         <Badge
           variant="dot"
           overlap="circular"
+          className={classes.avatarBadge}
           sx={{
             '& .MuiBadge-badge': {
               backgroundColor: activeStatus[userStatus],

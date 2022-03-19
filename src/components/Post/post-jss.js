@@ -1,7 +1,10 @@
 const styles = (theme) => ({
   postContainer: {
-    padding: '15px',
-    marginBottom: '15px',
+    '&.MuiPaper-root': {
+      borderRadius: '10px',
+      padding: '15px',
+      marginBottom: '15px',
+    },
   },
   headingBox: {
     display: 'flex',
@@ -128,6 +131,31 @@ const styles = (theme) => ({
   postMenuItem: {
     '&.MuiMenuItem-root': {
       padding: '10px',
+    },
+  },
+  activityInformationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  activityUserNameText: {
+    '&.MuiTypography-root': {
+      fontWeight: 'bold',
+      marginLeft: '10px',
+    },
+  },
+  userPhotoInfo: {
+    '&.MuiAvatar-root': {
+      width: '40px',
+      height: '40px',
+    },
+  },
+  activityActionDescription: {
+    fontWeight: 300,
+  },
+  activityDateText: {
+    '&.MuiTypography-root': {
+      lineHeight: 0,
+      marginLeft: '3px',
     },
   },
 });

@@ -550,7 +550,7 @@ const ProfilePage = (props) => {
                   </div>
                 ) : (
                   <div className={classes.loadingContainer}>
-                    <CircularProgress color="secondary" />
+                    <CircularProgress color="secondary" size="150px" />
                   </div>
                 )}
                 <List
@@ -1156,10 +1156,7 @@ const ProfilePage = (props) => {
                 </TabContext>
               ) : (
                 <div className={classes.loadingContainer}>
-                  <CircularProgress
-                    color="secondary"
-                    sx={{ width: '300px', height: '300px' }}
-                  />
+                  <CircularProgress color="secondary" size="240px" />
                 </div>
               )}
             </div>
@@ -1703,10 +1700,7 @@ const ProfilePage = (props) => {
                   </div>
                 ) : (
                   <div className={classes.loadingContainer}>
-                    <CircularProgress
-                      color="secondary"
-                      sx={{ width: '300px', height: '300px' }}
-                    />
+                    <CircularProgress color="secondary" size="240px" />
                   </div>
                 )}
               </TabContext>
@@ -1857,23 +1851,25 @@ const ProfilePage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNavIndex} index={4}>
-            <div className={classes.groupsListContainer}>
-              {userGroups
-                .slice((groupsPageNumber - 1) * 6, groupsPageNumber * 6)
-                .map((group) => (
-                  <Group
-                    key={group.groupId}
-                    groupId={group.groupId}
-                    name={group.name}
-                    interests={group.interests}
-                    groupCreationDate={group.createdAt}
-                    membersNumber={group.members.length}
-                    members={group.members}
-                    postsNumber={group.postsNumber}
-                    groupImage={group.image}
-                    showInProfile
-                  />
-                ))}
+            <div>
+              <div className={classes.groupsListContainer}>
+                {userGroups
+                  .slice((groupsPageNumber - 1) * 6, groupsPageNumber * 6)
+                  .map((group) => (
+                    <Group
+                      key={group.groupId}
+                      groupId={group.groupId}
+                      name={group.name}
+                      interests={group.interests}
+                      groupCreationDate={group.createdAt}
+                      membersNumber={group.members.length}
+                      members={group.members}
+                      postsNumber={group.postsNumber}
+                      groupImage={group.image}
+                      showInProfile
+                    />
+                  ))}
+              </div>
               {userGroups.length > 6 && (
                 <Paper elevation={4} className={classes.paginationContainer}>
                   <Pagination
