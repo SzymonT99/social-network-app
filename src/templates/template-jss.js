@@ -21,7 +21,9 @@ const styles = (theme) => ({
     backgroundColor: '#E0E5EA',
     flex: 8,
     display: 'flex',
-    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+    minHeight: '100%',
   },
   contentApp: {
     width: '85%',

@@ -7,6 +7,7 @@ const initialState = {
   isLoading: false,
   board: [],
   notifications: [],
+  postDetails: null,
 };
 
 const userActivityReducer = (state = initialState, action) => {
@@ -25,6 +26,11 @@ const userActivityReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: action.payload.isLoading,
+      };
+    case postTypes.FETCH_POST_DETAILS:
+      return {
+        ...state,
+        postDetails: action.payload.postDetails,
       };
     case postTypes.CREATE_POST:
       return {

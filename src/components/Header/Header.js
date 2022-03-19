@@ -4,6 +4,7 @@ import styles from './header-jss';
 import { PropTypes } from 'prop-types';
 import logoWhite from '../../assets/logo-white.png';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
+import defaultImg from '../../assets/default-image.png';
 import Typography from '@mui/material/Typography';
 import {
   Autocomplete,
@@ -26,7 +27,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/Message';
 import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import { Logout, Settings } from '@mui/icons-material';
 import { logoutUser } from '../../redux/actions/authActions';
@@ -39,48 +40,7 @@ import {
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { getActivityNotification } from '../../redux/actions/userActivityActions';
-
-const formatActivityTime = (createdDate) => {
-  let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
-  let minutes = Math.floor(diffInMs / 60);
-
-  if (minutes < 30) {
-    return 'kilka minut temu';
-  } else if (minutes < 90) {
-    return '1 godz. temu';
-  } else if (minutes >= 90 && minutes < 150) {
-    return '2 godz. temu';
-  } else if (minutes >= 150 && minutes < 210) {
-    return '3 godz. temu';
-  } else if (minutes >= 210 && minutes < 270) {
-    return '4 godz. temu';
-  } else if (minutes >= 270 && minutes < 1440) {
-    return 'kilka godz. temu';
-  } else if (minutes >= 1440 && minutes < 1560) {
-    return '1 dzień temu';
-  } else if (minutes >= 1560 && minutes < 3000) {
-    return '2 dni temu';
-  } else if (minutes >= 3000 && minutes < 3100) {
-    return '3 dni temu';
-  } else {
-    let day = createdDate.getDate();
-    let month = createdDate.getMonth() + 1;
-    let year = createdDate.getFullYear();
-    let hour = createdDate.getHours();
-    let minutes = createdDate.getMinutes();
-    return (
-      (day <= 9 ? '0' + day : day) +
-      '.' +
-      (month <= 9 ? '0' + month : month) +
-      '.' +
-      year +
-      ' r. ' +
-      (hour <= 9 ? '0' + hour : hour) +
-      ':' +
-      (minutes <= 9 ? '0' + minutes : minutes)
-    );
-  }
-};
+import { formatCreationDate } from '../../utils/formatCreationDate';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -94,6 +54,8 @@ const Header = (props) => {
 
   const history = useHistory();
   const dispatch = useDispatch();
+
+  const location = useLocation();
 
   const loggedUser = useSelector((state) => state.auth.user);
   const isTokenRefreshing = useSelector(
@@ -135,7 +97,7 @@ const Header = (props) => {
         setOptions(usersArray);
       }
     }
-  }, [users, isTokenRefreshing]);
+  }, [users, isTokenRefreshing, location]);
 
   const handleChangeSearchedUser = (event, newValue) => {
     if (newValue !== null) {
@@ -162,6 +124,7 @@ const Header = (props) => {
   };
 
   const handleClickActivityNotification = (event) => {
+    dispatch(getActivityNotification(true));
     setAnchorElActivityNotif(event.currentTarget);
   };
 
@@ -188,10 +151,40 @@ const Header = (props) => {
     } else if (type === 'SHARE_USER_POST') {
       return 'Udostępnił Twój post';
     } else if (type === 'INVITATION_TO_GROUP') {
-      return 'Zaprosił Cię do grupy';
+      return 'Zaproszono Cię do grupy';
     } else if (type === 'POST_IN_GROUP') {
       return 'Dodał post na grupie';
+    } else if (type === 'ADDED_TO_GROUP') {
+      return 'Dodano Cię do grupy';
     }
+  };
+
+  const handleClickNotificationInfo = (activityNotification) => {
+    if (
+      activityNotification.notificationType ===
+      'ACCEPTANCE_INVITATION_TO_FRIENDS'
+    ) {
+      history.push('/app/profile/' + activityNotification.details.userFriendId);
+    } else if (
+      activityNotification.notificationType === 'LIKE_USER_POST' ||
+      activityNotification.notificationType === 'COMMENT_USER_POST' ||
+      activityNotification.notificationType === 'SHARE_USER_POST'
+    ) {
+      history.push('/app/posts/' + activityNotification.details.postId);
+    } else if (
+      activityNotification.notificationType === 'INVITATION_TO_EVENT'
+    ) {
+      history.push('/app/events');
+    } else if (
+      activityNotification.notificationType === 'INVITATION_TO_GROUP'
+    ) {
+      history.push('/app/groups');
+    } else if (activityNotification.notificationType === 'ADDED_TO_GROUP') {
+      history.push('/app/groups/' + activityNotification.details.groupId);
+    } else if (activityNotification.notificationType === 'POST_IN_GROUP') {
+      history.push('/app/groups/' + activityNotification.details.groupId);
+    }
+    handleCloseActivityNotification();
   };
 
   return (
@@ -204,7 +197,6 @@ const Header = (props) => {
         <img src={logoWhite} className={classes.logo} alt="Logo" />
         Social Network
       </Typography>
-
       <div className={classes.searchContainer}>
         <div className={classes.searchbar}>
           <Autocomplete
@@ -407,6 +399,7 @@ const Header = (props) => {
             anchorEl={anchorElActivityNotif}
             open={Boolean(anchorElActivityNotif)}
             onClick={handleCloseActivityNotification}
+            onClose={handleCloseActivityNotification}
             disableScrollLock={true}
             className={classes.activityNotificationMenu}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -415,64 +408,68 @@ const Header = (props) => {
             {activityNotifications.map((activityNotification, index) => (
               <ListItem
                 key={index}
+                className={classes.activityNotificationItem}
                 sx={{
                   borderBottom:
                     index + 1 < activityNotifications.length &&
                     '1px solid rgba(0, 0, 0, 0.4)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
                 }}
+                onClick={() =>
+                  handleClickNotificationInfo(activityNotification)
+                }
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    width: '68%',
-                  }}
-                >
+                <div className={classes.activityNotificationItemInfo}>
                   <ListItemAvatar>
-                    <Avatar
-                      src={
-                        activityNotification.activityInitiator.profilePhoto !==
-                        null
-                          ? activityNotification.activityInitiator.profilePhoto
-                              .url
-                          : defaultUserPhoto
-                      }
-                      alt={
-                        loggedUserProfile
-                          ? activityNotification.activityInitiator.firstName +
-                            ' ' +
-                            activityNotification.activityInitiator.lastName
-                          : 'Nazwa użytkownika'
-                      }
-                      className={classes.userPhoto}
-                      sx={{ marginRight: '20px' }}
-                      onClick={() =>
-                        history.push(
-                          '/app/profile/' +
-                            activityNotification.activityInitiator.userId
-                        )
-                      }
-                    />
+                    {activityNotification.notificationType !==
+                      'ADDED_TO_GROUP' &&
+                    activityNotification.notificationType !==
+                      'INVITATION_TO_GROUP' ? (
+                      <Avatar
+                        src={
+                          activityNotification.activityInitiator
+                            .profilePhoto !== null
+                            ? activityNotification.activityInitiator
+                                .profilePhoto.url
+                            : defaultUserPhoto
+                        }
+                        alt={
+                          loggedUserProfile
+                            ? activityNotification.activityInitiator.firstName +
+                              ' ' +
+                              activityNotification.activityInitiator.lastName
+                            : 'Nazwa użytkownika'
+                        }
+                        className={classes.userPhoto}
+                        sx={{ marginRight: '20px' }}
+                      />
+                    ) : (
+                      <img
+                        src={
+                          activityNotification.details.image
+                            ? activityNotification.details.image.url
+                            : defaultImg
+                        }
+                        alt="Zdjęcie grupy"
+                        className={classes.groupImage}
+                      />
+                    )}
                   </ListItemAvatar>
                   <ListItemText
                     primary={
-                      <Typography
-                        className={classes.activityAuthorName}
-                        variant="subtitle2"
-                        onClick={() =>
-                          history.push(
-                            '/app/profile/' +
-                              activityNotification.activityInitiator.userId
-                          )
-                        }
-                      >
-                        {activityNotification.activityInitiator.firstName +
-                          ' ' +
-                          activityNotification.activityInitiator.lastName}
-                      </Typography>
+                      activityNotification.notificationType !==
+                        'ADDED_TO_GROUP' &&
+                      activityNotification.notificationType !==
+                        'INVITATION_TO_GROUP' ? (
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          {activityNotification.activityInitiator.firstName +
+                            ' ' +
+                            activityNotification.activityInitiator.lastName}
+                        </Typography>
+                      ) : (
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          {activityNotification.details.name}
+                        </Typography>
+                      )
                     }
                     secondary={
                       <Typography variant="body1">
@@ -490,7 +487,7 @@ const Header = (props) => {
                   width="32%"
                   marginLeft="10px"
                 >
-                  {formatActivityTime(
+                  {formatCreationDate(
                     new Date(activityNotification.notificationDate)
                   )}
                 </Typography>
@@ -665,7 +662,10 @@ const Header = (props) => {
               />
             </MenuItem>
             <Divider className={classes.divider} />
-            <MenuItem className={classes.userMenuItem}>
+            <MenuItem
+              className={classes.userMenuItem}
+              onClick={() => history.push('/app/settings')}
+            >
               <ListItemIcon>
                 <Settings fontSize="medium" />
               </ListItemIcon>

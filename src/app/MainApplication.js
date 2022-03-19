@@ -9,6 +9,7 @@ import SettingsPage from '../pages/AccountSettingsPage/AccountSettingsPage';
 import FavouritePostsPage from '../pages/FavouritePostsPage/FavouritePostsPage';
 import GroupsPage from '../pages/GroupsPage/GroupsPage';
 import GroupDetailsPage from '../pages/GroupDetailsPage/GroupDetailsPage';
+import PostDetailsPage from '../pages/PostDetailsPage/PostDetailsPage';
 
 const MainApplication = () => {
   return (
@@ -35,6 +36,7 @@ const MainApplication = () => {
         />
         <Route exact path="/app/groups" component={GroupsPage} />
         <Route exact path="/app/groups/:groupId" component={GroupDetailsPage} />
+        <Route exact path="/app/posts/:postId" component={PostDetailsPage} />
       </Switch>
     </AppTemplate>
   );

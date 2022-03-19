@@ -55,7 +55,6 @@ export const deleteGroup = (groupId) => (dispatch) => {
     .deleteGroup(groupId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getGroups());
         dispatch(showNotification('success', 'Usunięto grupę'));
       } else if (response.status === 404) {
         dispatch(showNotification('warning', 'Nie należysz do tej grupy'));
@@ -88,6 +87,7 @@ export const getGroupDetails = (groupId) => (dispatch) => {
         });
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Grupa została usunięta'));
+        window.location.href = '/app/groups';
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }

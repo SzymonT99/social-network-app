@@ -43,6 +43,30 @@ export const createPost = (postFormData) => (dispatch, getState) => {
     });
 };
 
+export const getPostDetails = (postId) => (dispatch) => {
+  return postService
+    .getPostDetails(postId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: postTypes.FETCH_POST_DETAILS,
+            payload: {
+              postDetails: data,
+            },
+          });
+        });
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Post został usunięty'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const editPost = (postId, postFormData) => (dispatch, getState) => {
   return postService
     .editPost(postId, postFormData)
@@ -57,6 +81,7 @@ export const editPost = (postId, postFormData) => (dispatch, getState) => {
             },
           });
           dispatch(getUserActivity(getState().auth.user.userId));
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(showNotification('success', 'Edytowano post'));
         });
       } else if (response.status === 403) {
@@ -84,6 +109,7 @@ export const deletePost = (postId) => (dispatch, getState) => {
           },
         });
         dispatch(getUserActivity(getState().auth.user.userId));
+        if (getState().activity.postDetails) dispatch(getPostDetails(postId));
         dispatch(showNotification('success', 'Usunięto post'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -145,6 +171,8 @@ export const likePost =
           ) {
             dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
+
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(showNotification('success', 'Polubiono post'));
         } else if (response.status === 409) {
           dispatch(
@@ -203,6 +231,8 @@ export const dislikePost =
           ) {
             dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
+
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(showNotification('success', 'Usunięto polubienie postu'));
         } else if (response.status === 409) {
           dispatch(
@@ -255,6 +285,9 @@ export const commentPost =
             ) {
               dispatch(getUserFavouritePosts(getState().auth.user.userId));
             }
+
+            if (getState().activity.postDetails)
+              dispatch(getPostDetails(postId));
             dispatch(showNotification('success', 'Dodano komentarz'));
           });
         } else if (response.status === 400) {
@@ -313,6 +346,8 @@ export const editPostComment =
           ) {
             dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
+
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(showNotification('success', 'Komentarz został zmieniony'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -364,6 +399,8 @@ export const deletePostComment =
           ) {
             dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
+
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(showNotification('success', 'Komentarz został usunięty'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -429,6 +466,8 @@ export const likePostComment =
           ) {
             dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
+
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(showNotification('success', 'Polubiono komentarz'));
         } else if (response.status === 409) {
           dispatch(
@@ -488,6 +527,8 @@ export const dislikePostComment =
           ) {
             dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
+
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(
             showNotification('success', 'Usunięto polubienie komentarza')
           );
@@ -537,6 +578,8 @@ export const manageAccess =
               },
             });
           }
+
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(getUserActivity(getState().auth.user.userId));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
@@ -586,6 +629,7 @@ export const managePostCommentsAccess =
             dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
           }
 
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(getUserActivity(getState().auth.user.userId));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
@@ -650,6 +694,9 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
           ) {
             dispatch(getUserFavouritePosts(getState().auth.user.userId));
           }
+
+          if (getState().activity.postDetails)
+            dispatch(getPostDetails(basePostId));
           dispatch(showNotification('success', 'Udostępniono post'));
         });
       } else if (response.status === 400) {
