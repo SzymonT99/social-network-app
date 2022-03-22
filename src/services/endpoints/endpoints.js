@@ -93,4 +93,7 @@ export const endpoints = {
   leaveGroup: baseUrl + '/api/groups/{groupId}/leave',
   groupForum: baseUrl + '/api/groups/{groupId}/forum',
   groupForumStats: baseUrl + '/api/groups/{groupId}/forum/stats',
+  chat: baseUrl + '/api/chats',
+  chatDetails: baseUrl + '/api/chats/{chatId}',
+  chatMessage: baseUrl + '/api/chats/messages/{messageId}',
 };

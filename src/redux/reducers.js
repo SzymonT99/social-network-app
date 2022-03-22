@@ -6,6 +6,7 @@ import userProfileReducer from './reducers/userProfileReducer';
 import eventReducer from './reducers/eventReducer';
 import friendReducer from './reducers/friendReducer';
 import groupReducer from './reducers/groupReducer';
+import chatReducer from './reducers/chatReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   events: eventReducer,
   friends: friendReducer,
   groups: groupReducer,
+  chats: chatReducer,
 });
 
 export default rootReducer;

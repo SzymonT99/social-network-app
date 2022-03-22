@@ -1,7 +1,6 @@
 import eventService from '../../services/eventService';
 import eventTypes from '../types/eventTypes';
 import { showNotification } from './notificationActions';
-import postTypes from '../types/postTypes';
 
 export const createEvent = (eventFormData) => (dispatch) => {
   return eventService

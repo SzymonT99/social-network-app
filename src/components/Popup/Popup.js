@@ -12,6 +12,7 @@ const Popup = (props) => {
   const widthValues = {
     post: '43%',
     event: '46%',
+    chat: '40%',
     group: '46%',
     groupRule: '40%',
     groupThread: '46%',
