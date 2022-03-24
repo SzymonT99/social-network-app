@@ -136,7 +136,7 @@ ActivityHeading.propTypes = {
   createdDate: PropTypes.object.isRequired,
   postGroupActivity: PropTypes.bool,
   isEdited: PropTypes.bool,
-  editionDate: PropTypes.bool,
+  editionDate: PropTypes.string,
   groupId: PropTypes.number,
   groupName: PropTypes.string,
   groupImage: PropTypes.object,

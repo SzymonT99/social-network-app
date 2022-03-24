@@ -342,14 +342,8 @@ const styles = (theme) => ({
       },
     },
   },
-  friendManageBtn: {
-    '&.MuiButton-root': {
-      marginRight: '10px',
-    },
-  },
   friendDeleteBtn: {
     '&.MuiButton-root': {
-      marginRight: '10px',
       '&:hover': {
         backgroundColor: '#FF1C00',
       },
@@ -465,6 +459,13 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  friendChatBtn: {
+    '&.MuiButton-root': {
+      fontSize: '17px',
+      marginTop: '10px',
+      padding: '6px 20px',
+    },
   },
 });
 

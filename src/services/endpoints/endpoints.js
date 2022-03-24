@@ -94,6 +94,10 @@ export const endpoints = {
   groupForum: baseUrl + '/api/groups/{groupId}/forum',
   groupForumStats: baseUrl + '/api/groups/{groupId}/forum/stats',
   chat: baseUrl + '/api/chats',
+  privateChat: baseUrl + '/api/chats/private',
   chatDetails: baseUrl + '/api/chats/{chatId}',
   chatMessage: baseUrl + '/api/chats/messages/{messageId}',
+  addChatMember: baseUrl + '/api/chats/{chatId}/invite',
+  chatMemberPermission: baseUrl + '/api/chats/{chatId}/permission',
+  chatMember: baseUrl + '/api/chats/members/{chatMemberId}',
 };

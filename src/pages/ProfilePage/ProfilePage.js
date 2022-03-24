@@ -96,6 +96,8 @@ import {
 } from '../../redux/actions/authActions';
 import Group from '../../components/Group/Group';
 import { getUserGroups } from '../../redux/actions/groupActions';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import { getPrivateChat, setActiveChat } from '../../redux/actions/chatAction';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -437,6 +439,14 @@ const ProfilePage = (props) => {
     setGroupsPageNumber(value);
   };
 
+  const handleClickChatWithFriend = () => {
+    console.log('click');
+    dispatch(getPrivateChat(parseInt(selectedUserId))).then((data) => {
+      dispatch(setActiveChat(data.chatId));
+      history.push('/app/chat');
+    });
+  };
+
   return (
     <>
       {!isLoading ? (
@@ -501,7 +511,7 @@ const ProfilePage = (props) => {
                   )}
               </div>
               <div className={classes.profileHeadingInfo}>
-                {userProfile ? (
+                {userProfile && (
                   <div className={classes.profileHeadingInfoContent}>
                     <div>
                       <Typography
@@ -520,37 +530,55 @@ const ProfilePage = (props) => {
                       </Typography>
                     </div>
                     {parseInt(selectedUserId) !== loggedUser.userId && (
-                      <Button
-                        onMouseOver={() => setFriendBtnHover(true)}
-                        onMouseOut={() => setFriendBtnHover(false)}
-                        className={
-                          isUserFriend && !isInvitedToFriend
-                            ? classes.friendDeleteBtn
-                            : classes.friendManageBtn
-                        }
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleManageFriend}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          minWidth: '250px',
+                        }}
                       >
-                        {isUserFriend &&
-                        !isInvitedToFriend &&
-                        friendBtnHover ? (
-                          <Typography
-                            variant="subtitle1"
-                            className={classes.friendManageBtnContent}
+                        <Button
+                          onMouseOver={() => setFriendBtnHover(true)}
+                          onMouseOut={() => setFriendBtnHover(false)}
+                          className={
+                            isUserFriend && !isInvitedToFriend
+                              ? classes.friendDeleteBtn
+                              : null
+                          }
+                          variant="contained"
+                          color="secondary"
+                          onClick={handleManageFriend}
+                        >
+                          {isUserFriend &&
+                          !isInvitedToFriend &&
+                          friendBtnHover ? (
+                            <Typography
+                              variant="subtitle1"
+                              className={classes.friendManageBtnContent}
+                            >
+                              <PersonRemoveIcon sx={{ marginRight: '7px' }} />
+                              Usuń ze znajomych
+                            </Typography>
+                          ) : (
+                            generateFriendBtn()
+                          )}
+                        </Button>
+                        {isUserFriend && (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.friendChatBtn}
+                            onClick={handleClickChatWithFriend}
                           >
-                            <PersonRemoveIcon sx={{ marginRight: '7px' }} />
-                            Usuń ze znajomych
-                          </Typography>
-                        ) : (
-                          generateFriendBtn()
+                            <ChatBubbleIcon
+                              fontSize="small"
+                              sx={{ marginRight: '7px' }}
+                            />
+                            Wyślij wiadomość
+                          </Button>
                         )}
-                      </Button>
+                      </div>
                     )}
-                  </div>
-                ) : (
-                  <div className={classes.loadingContainer}>
-                    <CircularProgress color="secondary" size="150px" />
                   </div>
                 )}
                 <List

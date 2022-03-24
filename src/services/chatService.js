@@ -11,6 +11,22 @@ const createChat = (formData) => {
   });
 };
 
+const getPrivateChat = (userFriendId) => {
+  return fetch(
+    endpoints.privateChat +
+      '?' +
+      new URLSearchParams({
+        userFriendId: userFriendId,
+      }),
+    {
+      method: 'GET',
+      headers: {
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 const editChat = (chatId, formData) => {
   return fetch(endpoints.chatDetails.replace('{chatId}', chatId), {
     method: 'PUT',
@@ -25,7 +41,6 @@ const deleteChat = (chatId) => {
   return fetch(endpoints.chatDetails.replace('{chatId}', chatId), {
     method: 'DELETE',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: authorization(),
     },
   });
@@ -68,11 +83,78 @@ const getChatMessageById = (messageId) => {
   });
 };
 
+const editChatMessage = (messageId, formData) => {
+  return fetch(endpoints.chatMessage.replace('{messageId}', messageId), {
+    method: 'PUT',
+    headers: {
+      Authorization: authorization(),
+    },
+    body: formData,
+  });
+};
+
+const deleteChatMessage = (messageId) => {
+  return fetch(endpoints.chatMessage.replace('{messageId}', messageId), {
+    method: 'DELETE',
+    headers: {
+      Authorization: authorization(),
+    },
+  });
+};
+
+const addUserToChat = (chatId, userId) => {
+  return fetch(
+    endpoints.addChatMember.replace('{chatId}', chatId) +
+      '?' +
+      new URLSearchParams({
+        userId: userId,
+      }),
+    {
+      method: 'POST',
+      headers: {
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
+const setChatMemberPermission = (chatId, chatMemberId, canAddMembers) => {
+  return fetch(
+    endpoints.chatMemberPermission.replace('{chatId}', chatId) +
+      '?' +
+      new URLSearchParams({
+        chatMemberId: chatMemberId,
+        canAddMembers: canAddMembers,
+      }),
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
+const deleteMemberFromChat = (chatMemberId) => {
+  return fetch(endpoints.chatMember.replace('{chatMemberId}', chatMemberId), {
+    method: 'DELETE',
+    headers: {
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   createChat,
+  getPrivateChat,
   editChat,
   deleteChat,
   getUserChats,
   getChatDetails,
   getChatMessageById,
+  editChatMessage,
+  deleteChatMessage,
+  addUserToChat,
+  setChatMemberPermission,
+  deleteMemberFromChat,
 };

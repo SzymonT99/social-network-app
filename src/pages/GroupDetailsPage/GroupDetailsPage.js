@@ -625,15 +625,17 @@ const GroupDetailsPage = (props) => {
               <Paper elevation={4} sx={{ borderRadius: '10px' }}>
                 <div className={classes.groupInfoBoxHeading}>
                   <Typography variant="h6">Informacje o grupie</Typography>
-                  <Link
-                    component="button"
-                    variant="subtitle1"
-                    onClick={() => {
-                      setGroupNavIndex(1);
-                    }}
-                  >
-                    Zobacz więcej
-                  </Link>
+                  {memberStatusOfUser !== 'NOT_MEMBER' && (
+                    <Link
+                      component="button"
+                      variant="subtitle1"
+                      onClick={() => {
+                        setGroupNavIndex(1);
+                      }}
+                    >
+                      Zobacz więcej
+                    </Link>
+                  )}
                 </div>
                 <div className={classes.groupInfoBoxContent}>
                   <Typography variant="subtitle1">
@@ -736,85 +738,80 @@ const GroupDetailsPage = (props) => {
                   </div>
                 </div>
               </Paper>
-              {memberStatusOfUser !== 'NOT_MEMBER' ||
-                (memberStatusOfUser === null && (
-                  <Paper elevation={4} sx={{ borderRadius: '10px' }}>
-                    <div className={classes.groupInfoBoxHeading}>
-                      <Typography variant="h6">Nowi członkowie</Typography>
-                      <Link
-                        component="button"
-                        variant="subtitle1"
-                        onClick={() => {
-                          setGroupNavIndex(2);
-                        }}
-                      >
-                        Zobacz wszystkich
-                      </Link>
-                    </div>
-                    <div className={classes.groupInfoNewMemberBoxContent}>
-                      {getNewMembers().map((newMember) => (
-                        <div
-                          key={newMember.groupMemberId}
-                          className={classes.newMemberBox}
-                          style={{
-                            borderBottom:
-                              getNewMembers().length > 1 &&
-                              '1px solid rgba(0, 0, 0, 0.22)',
-                          }}
+              <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+                <div className={classes.groupInfoBoxHeading}>
+                  <Typography variant="h6">Nowi członkowie</Typography>
+                  <Link
+                    component="button"
+                    variant="subtitle1"
+                    onClick={() => {
+                      setGroupNavIndex(2);
+                    }}
+                  >
+                    Zobacz wszystkich
+                  </Link>
+                </div>
+                <div className={classes.groupInfoNewMemberBoxContent}>
+                  {getNewMembers().map((newMember) => (
+                    <div
+                      key={newMember.groupMemberId}
+                      className={classes.newMemberBox}
+                      style={{
+                        borderBottom:
+                          getNewMembers().length > 1 &&
+                          '1px solid rgba(0, 0, 0, 0.22)',
+                      }}
+                    >
+                      <Avatar
+                        src={
+                          newMember.user.profilePhoto
+                            ? newMember.user.profilePhoto.url
+                            : defaultUserPhoto
+                        }
+                        alt={
+                          newMember.user
+                            ? newMember.user.firstName +
+                              ' ' +
+                              newMember.user.lastName
+                            : 'Zalogowany użytkownik'
+                        }
+                        className={classes.userPhotoSmall}
+                        onClick={() =>
+                          history.push('/app/profile/' + newMember.user.userId)
+                        }
+                      />
+                      <Typography variant="subtitle2" marginLeft="20px">
+                        <span
+                          className={classes.newMemberName}
+                          onClick={() =>
+                            history.push(
+                              '/app/profile/' + newMember.user.userId
+                            )
+                          }
                         >
-                          <Avatar
-                            src={
-                              newMember.user.profilePhoto
-                                ? newMember.user.profilePhoto.url
-                                : defaultUserPhoto
-                            }
-                            alt={
-                              newMember.user
-                                ? newMember.user.firstName +
-                                  ' ' +
-                                  newMember.user.lastName
-                                : 'Zalogowany użytkownik'
-                            }
-                            className={classes.userPhotoSmall}
-                            onClick={() =>
-                              history.push(
-                                '/app/profile/' + newMember.user.userId
-                              )
-                            }
-                          />
-                          <Typography variant="subtitle2" marginLeft="20px">
-                            <span
-                              className={classes.newMemberName}
-                              onClick={() =>
-                                history.push(
-                                  '/app/profile/' + newMember.user.userId
-                                )
-                              }
-                            >
-                              {newMember.user.firstName +
-                                ' ' +
-                                newMember.user.lastName}
-                            </span>
-                            <span className={classes.newMemberAddedDate}>
-                              {'dołączył(a) do grupy: ' +
-                                new Date(newMember.addedIn)
-                                  .toJSON()
-                                  .slice(0, 10)
-                                  .split('-')
-                                  .reverse()
-                                  .join('.') +
-                                ' o ' +
-                                new Date(newMember.addedIn)
-                                  .toJSON()
-                                  .slice(10, 16)
-                                  .replace('T', ' ')}
-                            </span>
-                          </Typography>
-                        </div>
-                      ))}
+                          {newMember.user.firstName +
+                            ' ' +
+                            newMember.user.lastName}
+                        </span>
+                        <span className={classes.newMemberAddedDate}>
+                          {'dołączył(a) do grupy: ' +
+                            new Date(newMember.addedIn)
+                              .toJSON()
+                              .slice(0, 10)
+                              .split('-')
+                              .reverse()
+                              .join('.') +
+                            ' o ' +
+                            new Date(newMember.addedIn)
+                              .toJSON()
+                              .slice(10, 16)
+                              .replace('T', ' ')}
+                        </span>
+                      </Typography>
                     </div>
-                  </Paper>
-                ))}
+                  ))}
+                </div>
+              </Paper>
             </div>
             <div className={classes.rightActivityContent}>
               {memberStatusOfUser !== 'NOT_MEMBER' && (

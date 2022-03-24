@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './chatPage-jss';
@@ -8,7 +8,14 @@ import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
-import { Button, TextField } from '@mui/material';
+import {
+  Button,
+  Divider,
+  IconButton,
+  Paper,
+  TextField,
+  Tooltip,
+} from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Popup from '../../components/Popup/Popup';
 import ChatForm from '../../components/Forms/ChatForm';
@@ -16,7 +23,17 @@ import {
   getChatDetails,
   getChatMessageById,
   getUserChats,
+  setActiveChat,
 } from '../../redux/actions/chatAction';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ChatConversation from '../../components/ChatConversation/ChatConversation';
+import ChatMessage from '../../components/ChatMessage/ChatMessage';
+
+const ScrollToBottom = () => {
+  const elementRef = useRef();
+  useEffect(() => elementRef.current.scrollIntoView());
+  return <div ref={elementRef} />;
+};
 
 let stompClient = null;
 
@@ -33,28 +50,34 @@ const ChatPage = (props) => {
   const userChats = useSelector((state) => state.chats.userChats);
   const currentChat = useSelector((state) => state.chats.chatDetails);
 
+  const activeChatId = useSelector((state) => state.chats.activeChat);
+
   const [openChatCreationPopup, setOpenChatCreationPopup] = useState(false);
   const [text, setText] = useState('');
-  const [activeChat, setActiveChat] = useState(undefined);
 
   useEffect(() => {
     dispatch(getUserChats()).then((data) => {
-      if (data.length !== 0) {
-        setActiveChat(data[0].chatId);
+      if (data.length !== 0 && !activeChatId) {
+        dispatch(setActiveChat(data[0].chatId));
         dispatch(getChatDetails(data[0].chatId));
       }
     });
-  }, []);
-
-  useEffect(() => {
-    if (activeChat !== undefined) {
+    return () => {
       if (stompClient !== null) {
         stompClient.unsubscribe('topic', {});
       }
-      dispatch(getChatDetails(activeChat));
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeChatId !== undefined) {
+      if (stompClient !== null) {
+        stompClient.unsubscribe('topic', {});
+      }
+      dispatch(getChatDetails(activeChatId));
       chatConnect();
     }
-  }, [activeChat]);
+  }, [activeChatId]);
 
   const chatConnect = () => {
     let currentUser = JSON.parse(localStorage.getItem('state')).auth.user;
@@ -70,9 +93,13 @@ const ChatPage = (props) => {
   };
 
   const onConnected = () => {
-    stompClient.subscribe('/topic/messages/' + activeChat, onMessageReceived, {
-      id: 'topic',
-    });
+    stompClient.subscribe(
+      '/topic/messages/' + activeChatId,
+      onMessageReceived,
+      {
+        id: 'topic',
+      }
+    );
   };
 
   const onError = (err) => {
@@ -81,7 +108,7 @@ const ChatPage = (props) => {
 
   const onMessageReceived = (response) => {
     const messageNotification = JSON.parse(response.body);
-    if (activeChat === messageNotification.chatId) {
+    if (activeChatId === messageNotification.chatId) {
       dispatch(getChatMessageById(messageNotification.messageId));
     }
 
@@ -91,13 +118,13 @@ const ChatPage = (props) => {
   const sendMessage = (text) => {
     if (stompClient) {
       const message = {
-        chatId: activeChat,
+        chatId: activeChatId,
         userId: loggedUser.userId,
         message: text,
         messageType: 'CHAT',
       };
       stompClient.send(
-        '/app/chat/' + activeChat,
+        '/app/chat/' + activeChatId,
         { Authorization: 'Bearer ' + loggedUser.accessToken },
         JSON.stringify(message)
       );
@@ -109,72 +136,134 @@ const ChatPage = (props) => {
   };
 
   return (
-    <div className={classes.chatContainer}>
-      <div className={classes.conversationsContainer}>
-        <div style={{ height: '100px' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => setOpenChatCreationPopup(true)}
-          >
-            Utwórz nowy czat
-          </Button>
-          <Popup
-            open={openChatCreationPopup}
-            type="chat"
-            title="Utwórz czat"
-            onClose={handleCloseChatCreationPopup}
-          >
-            <ChatForm closePopup={handleCloseChatCreationPopup} />
-          </Popup>
-        </div>
-        {userChats &&
-          userChats.map((chat) => (
-            <Button
-              key={chat.chatId}
-              fullWidth
-              variant="contained"
-              color="secondary"
-              sx={{ margin: '10px 0px' }}
-              onClick={() => setActiveChat(chat.chatId)}
+    <div className={classes.wrapper}>
+      <Paper elevation={4} className={classes.chatContainer}>
+        <div className={classes.conversationsContainer}>
+          <div className={classes.conversationsHeadingBox}>
+            <Typography variant="h4">Czaty</Typography>
+            <Tooltip title="Utwórz nowy czat" placement="top">
+              <IconButton
+                className={classes.addNewChatBtn}
+                onClick={() => setOpenChatCreationPopup(true)}
+              >
+                <AddCircleOutlineIcon color="primary" />
+              </IconButton>
+            </Tooltip>
+            <Popup
+              open={openChatCreationPopup}
+              type="chat"
+              title="Utwórz czat"
+              onClose={handleCloseChatCreationPopup}
             >
-              {chat.name}
-            </Button>
-          ))}
-      </div>
-      <div className={classes.chatMessagesContainer}>
-        <div style={{ height: '90%' }}>
-          {currentChat &&
-            currentChat.messages &&
-            currentChat.messages.map((msg) => (
-              <Typography key={msg.messageId} variant="h5" textAlign="center">
-                {msg.createdAt +
-                  ' --- ' +
-                  msg.author.firstName +
-                  ': ' +
-                  msg.text}
+              <ChatForm closePopup={handleCloseChatCreationPopup} />
+            </Popup>
+          </div>
+          {userChats && (
+            <div className={classes.conversationsContent}>
+              <Typography variant="h6" className={classes.conversationsTitle}>
+                Znajomi
               </Typography>
-            ))}
+              <Divider className={classes.divider} />
+              {userChats.map((chat) => {
+                if (chat.isPrivate) {
+                  return (
+                    <ChatConversation
+                      key={chat.chatId}
+                      chatId={chat.chatId}
+                      chatName={chat.name}
+                      activityDate={chat.activityDate}
+                      lastMessage={chat.lastMessage}
+                      lastMessageAuthor={chat.lastMessageAuthor}
+                      newMessagesNumber={chat.newMessages}
+                      chatImage={chat.image}
+                      isPrivate
+                      friend={
+                        chat.members.find(
+                          (member) => member.user.userId !== loggedUser.userId
+                        ).user
+                      }
+                    />
+                  );
+                }
+              })}
+              {userChats.filter((chat) => chat.isPrivate).length === 0 && (
+                <Typography
+                  variant="subtitle2"
+                  className={classes.noConversationsInfo}
+                >
+                  Brak konwersacji
+                </Typography>
+              )}
+              <Typography variant="h6" className={classes.conversationsTitle}>
+                Konwersacje grupowe
+              </Typography>
+              <Divider className={classes.divider} />
+              {userChats.map((chat) => {
+                if (!chat.isPrivate) {
+                  return (
+                    <ChatConversation
+                      key={chat.chatId}
+                      chatId={chat.chatId}
+                      chatName={chat.name}
+                      activityDate={chat.activityDate}
+                      lastMessage={chat.lastMessage}
+                      newMessagesNumber={chat.newMessages}
+                      chatImage={chat.image}
+                    />
+                  );
+                }
+              })}
+              {userChats.filter((chat) => !chat.isPrivate).length === 0 && (
+                <Typography
+                  variant="subtitle2"
+                  className={classes.noConversationsInfo}
+                >
+                  Brak konwersacji
+                </Typography>
+              )}
+            </div>
+          )}
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <TextField
-            sx={{ width: '60%' }}
-            id="outlined-basic"
-            placeholder="Napisz widaomość"
-            variant="outlined"
-            onChange={(event) => setText(event.target.value)}
-          />
-          <Button
-            color="primary"
-            variant="contained"
-            sx={{ height: '55px' }}
-            onClick={() => sendMessage(text)}
-          >
-            Wyślij
-          </Button>
+        <div className={classes.chatMessagesContainer}>
+          <div className={classes.messagesContent}>
+            {currentChat &&
+              currentChat.messages &&
+              currentChat.messages.map((message) => (
+                <ChatMessage
+                  key={message.messageId}
+                  messageId={message.messageId}
+                  messageType={message.messageType}
+                  content={message.text}
+                  messageImage={message.image}
+                  author={message.author}
+                  createdAt={message.createdAt}
+                  isEdited={message.isEdited}
+                  editedAt={message.editedAt}
+                  isDeleted={message.isDeleted}
+                />
+              ))}
+            <ScrollToBottom />
+          </div>
+          <div className={classes.messageCreationContainer}>
+            <TextField
+              sx={{ width: '60%' }}
+              id="outlined-basic"
+              placeholder="Napisz widaomość"
+              variant="outlined"
+              onChange={(event) => setText(event.target.value)}
+            />
+            <Button
+              color="primary"
+              variant="contained"
+              sx={{ height: '55px' }}
+              onClick={() => sendMessage(text)}
+            >
+              Wyślij
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className={classes.chatMembersContainer}></div>
+        <div className={classes.chatMembersContainer}></div>
+      </Paper>
     </div>
   );
 };

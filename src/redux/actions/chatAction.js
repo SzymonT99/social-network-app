@@ -1,6 +1,5 @@
 import { showNotification } from './notificationActions';
 import chatService from '../../services/chatService';
-import eventTypes from '../types/eventTypes';
 import chatTypes from '../types/chatTypes';
 
 export const createChat = (chatFormData) => (dispatch) => {
@@ -12,6 +11,26 @@ export const createChat = (chatFormData) => (dispatch) => {
         dispatch(showNotification('success', 'Utworzono czat'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getPrivateChat = (userFriendId) => (dispatch) => {
+  return chatService
+    .getPrivateChat(userFriendId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch(setActiveChat(data.chatId));
+          return data;
+        });
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie znaleziono użytkownika'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -129,3 +148,114 @@ export const getChatMessageById = (messageId) => (dispatch) => {
       console.log(error);
     });
 };
+
+export const editChatMessage =
+  (messageId, formData) => (dispatch, getState) => {
+    return chatService
+      .editChatMessage(messageId, formData)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(getChatDetails(getState().chats.chatDetails.chatId));
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+export const deleteChatMessage = (messageId) => (dispatch) => {
+  return chatService
+    .deleteChatMessage(messageId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch({
+          type: chatTypes.DELETE_MESSAGE,
+          payload: {
+            messageId: messageId,
+          },
+        });
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const addUserToChat = (chatId, userId) => (dispatch) => {
+  return chatService
+    .addUserToChat(chatId, userId)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(getUserChats());
+        dispatch(getChatDetails(chatId));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const setChatMemberPermission =
+  (chatId, chatMemberId, canAddMembers) => (dispatch) => {
+    return chatService
+      .setChatMemberPermission(chatId, chatMemberId, canAddMembers)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(getUserChats());
+          dispatch({
+            type: chatTypes.CHANGE_MEMBER_PERMISSION,
+            payload: {
+              chatMemberId: chatMemberId,
+              canAddMembers: canAddMembers,
+            },
+          });
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+export const deleteMemberFromChat = (chatMemberId) => (dispatch) => {
+  return chatService
+    .deleteMemberFromChat(chatMemberId)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getUserChats());
+        dispatch({
+          type: chatTypes.DELETE_MEMBER,
+          payload: {
+            chatMemberId: chatMemberId,
+          },
+        });
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const setActiveChat = (chatId) => ({
+  type: chatTypes.SET_ACTIVE_CHAT,
+  payload: {
+    chatId,
+  },
+});

@@ -27,5 +27,8 @@ const styles = (theme) => ({
   contentApp: {
     width: '85%',
   },
+  contentChatApp: {
+    width: '97%',
+  },
 });
 export default styles;
