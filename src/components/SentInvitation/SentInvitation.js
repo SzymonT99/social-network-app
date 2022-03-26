@@ -9,9 +9,10 @@ import Avatar from '@mui/material/Avatar';
 import { inviteToEvent } from '../../redux/actions/eventActions';
 import { useHistory } from 'react-router-dom';
 import { inviteToGroup } from '../../redux/actions/groupActions';
+import { addUserToChat } from '../../redux/actions/chatAction';
 
 const useStyles = makeStyles((theme) => ({
-  eventInvitationContainer: {
+  invitationContainer: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -42,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#D4D4D4',
       borderRadius: '5px',
       color: 'black',
-
       '&:hover': {
         backgroundColor: '#8a8a8a',
       },
@@ -56,10 +56,13 @@ const SentInvitation = (props) => {
     eventInvitation,
     groupId,
     groupInvitation,
+    chatId,
+    chatInvitation,
     userId,
     name,
     avatar,
     disabled,
+    addToChatNotification,
   } = props;
 
   const classes = useStyles();
@@ -68,17 +71,24 @@ const SentInvitation = (props) => {
 
   const dispatch = useDispatch();
 
+  const [buttonDisabled, setButtonDisabled] = useState(disabled);
+
   const handleClickInvite = () => {
+    setButtonDisabled(true);
     if (eventInvitation) {
       dispatch(inviteToEvent(eventId, userId));
     }
     if (groupInvitation) {
       dispatch(inviteToGroup(groupId, userId));
     }
+    if (chatInvitation) {
+      dispatch(addUserToChat(chatId, userId));
+      addToChatNotification(chatId, userId);
+    }
   };
 
   return (
-    <div className={classes.eventInvitationContainer}>
+    <div className={classes.invitationContainer}>
       <Avatar
         src={avatar ? avatar.url : defaultUserPhoto}
         alt={name ? name : 'Nazwa użytkownika'}
@@ -97,9 +107,9 @@ const SentInvitation = (props) => {
         variant="contained"
         className={classes.inviteBtn}
         onClick={handleClickInvite}
-        disabled={disabled}
+        disabled={buttonDisabled}
       >
-        Zaproś
+        {!chatInvitation ? 'Zaproś' : 'Dodaj'}
       </Button>
     </div>
   );
@@ -110,10 +120,17 @@ SentInvitation.propTypes = {
   eventInvitation: PropTypes.bool,
   groupId: PropTypes.number,
   groupInvitation: PropTypes.bool,
+  chatId: PropTypes.number,
+  chatInvitation: PropTypes.bool,
   userId: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   avatar: PropTypes.object,
   disabled: PropTypes.bool,
+  addToChatNotification: PropTypes.func,
+};
+
+SentInvitation.defaultProps = {
+  disabled: false,
 };
 
 export default SentInvitation;

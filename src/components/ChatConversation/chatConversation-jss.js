@@ -1,10 +1,10 @@
 const styles = (theme) => ({
   conversationContainer: {
-    margin: '5px 0px',
+    margin: '5px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '10px 10px',
+    padding: '10px 5px',
     '&:hover': {
       backgroundColor: '#f3f3f3',
       cursor: 'pointer',

@@ -66,7 +66,7 @@ const ChatConversation = (props) => {
           {lastMessage && lastMessageAuthor
             ? lastMessageAuthor.userId === loggedUser.userId
               ? 'Ty: ' + lastMessage
-              : lastMessage
+              : lastMessageAuthor.firstName + ': ' + lastMessage
             : 'Brak wiadomości'}
         </Typography>
         {activityDate && (
@@ -75,7 +75,7 @@ const ChatConversation = (props) => {
           </Typography>
         )}
       </div>
-      {newMessagesNumber > 0 && (
+      {newMessagesNumber > 0 && chatId !== activeChatId && (
         <span className={classes.notificationNumber}>{newMessagesNumber}</span>
       )}
     </div>

@@ -45,6 +45,7 @@ export const editChat = (chatId, chatFormData) => (dispatch) => {
     .editChat(chatId, chatFormData)
     .then((response) => {
       if (response.status === 200) {
+        dispatch(getChatDetails(chatId));
         dispatch(getUserChats());
         dispatch(showNotification('success', 'Edytowano czat'));
       } else if (response.status === 403) {
@@ -66,6 +67,8 @@ export const deleteChat = (chatId) => (dispatch) => {
     .then((response) => {
       if (response.status === 200) {
         dispatch(getUserChats());
+        dispatch(setActiveChat(undefined));
+        window.location.reload();
         dispatch(showNotification('success', 'Usunięto czat'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -117,6 +120,9 @@ export const getChatDetails = (chatId) => (dispatch) => {
           });
           return data;
         });
+      } else if (response.status === 404) {
+        dispatch(setActiveChat(undefined));
+        window.location.reload();
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -126,28 +132,61 @@ export const getChatDetails = (chatId) => (dispatch) => {
     });
 };
 
-export const getChatMessageById = (messageId) => (dispatch) => {
-  return chatService
-    .getChatMessageById(messageId)
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json().then((data) => {
-          dispatch({
-            type: chatTypes.ADD_NEW_MESSAGE,
-            payload: {
-              newMessage: data,
-            },
+export const getChatMessageById =
+  (messageId, edition = false) =>
+  (dispatch, getState) => {
+    return chatService
+      .getChatMessageById(messageId)
+      .then((response) => {
+        if (response.status === 200) {
+          return response.json().then((data) => {
+            if (
+              getState().chats.chatDetails.messages.filter(
+                (message) =>
+                  message.messageType === 'TYPING' &&
+                  message.author.userId === data.author.userId
+              ).length !== 0
+            ) {
+              dispatch({
+                type: chatTypes.DELETE_TYPING_MESSAGE,
+                payload: {
+                  userId: data.author.userId,
+                },
+              });
+            }
+
+            if (
+              getState().chats.chatDetails.messages.filter(
+                (message) => message.messageId === messageId
+              ).length !== 0 &&
+              edition
+            ) {
+              dispatch({
+                type: chatTypes.EDIT_MESSAGE,
+                payload: {
+                  messageId: messageId,
+                  message: data,
+                },
+              });
+            } else {
+              dispatch({
+                type: chatTypes.ADD_NEW_MESSAGE,
+                payload: {
+                  newMessage: data,
+                },
+              });
+            }
+
+            return data;
           });
-          return data;
-        });
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const editChatMessage =
   (messageId, formData) => (dispatch, getState) => {
@@ -178,6 +217,7 @@ export const deleteChatMessage = (messageId) => (dispatch) => {
             messageId: messageId,
           },
         });
+        dispatch(showNotification('success', 'Usunięto wiadomość'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
       } else {
@@ -196,8 +236,11 @@ export const addUserToChat = (chatId, userId) => (dispatch) => {
       if (response.status === 201) {
         dispatch(getUserChats());
         dispatch(getChatDetails(chatId));
+        dispatch(showNotification('success', 'Dodano do czatu'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else if (response.status === 409) {
+        dispatch(showNotification('warning', 'Użytkownik już należy do czatu'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -214,6 +257,7 @@ export const setChatMemberPermission =
       .then((response) => {
         if (response.status === 200) {
           dispatch(getUserChats());
+          dispatch(getChatDetails(chatId));
           dispatch({
             type: chatTypes.CHANGE_MEMBER_PERMISSION,
             payload: {
@@ -221,6 +265,7 @@ export const setChatMemberPermission =
               canAddMembers: canAddMembers,
             },
           });
+          dispatch(showNotification('success', 'Zmieniono uprawnienie'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
         } else {
@@ -232,26 +277,33 @@ export const setChatMemberPermission =
       });
   };
 
-export const deleteMemberFromChat = (chatMemberId) => (dispatch) => {
-  return chatService
-    .deleteMemberFromChat(chatMemberId)
-    .then((response) => {
-      if (response.status === 200) {
-        dispatch(getUserChats());
-        dispatch({
-          type: chatTypes.DELETE_MEMBER,
-          payload: {
-            chatMemberId: chatMemberId,
-          },
-        });
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+export const deleteMemberFromChat =
+  (chatMemberId, isDeletedByAdmin) => (dispatch, getState) => {
+    return chatService
+      .deleteMemberFromChat(chatMemberId)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(getUserChats());
+          dispatch(getChatDetails(getState().chats.chatDetails.chatId));
+          dispatch({
+            type: chatTypes.DELETE_MEMBER,
+            payload: {
+              chatMemberId: chatMemberId,
+            },
+          });
+          if (isDeletedByAdmin) {
+            dispatch(showNotification('success', 'Usunięto członka czatu'));
+          } else {
+            dispatch(showNotification('success', 'Opuszczono czat'));
+          }
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const setActiveChat = (chatId) => ({
   type: chatTypes.SET_ACTIVE_CHAT,
@@ -259,3 +311,34 @@ export const setActiveChat = (chatId) => ({
     chatId,
   },
 });
+
+export const addTypingMessage = (typingMessage) => (dispatch, getState) => {
+  if (
+    getState().chats.chatDetails.messages.filter(
+      (message) =>
+        message.messageType === 'TYPING' &&
+        message.author.userId === typingMessage.author.userId
+    ).length === 0
+  ) {
+    dispatch({
+      type: chatTypes.ADD_TYPING_MESSAGE,
+      payload: {
+        typingMessage,
+      },
+    });
+  } else if (
+    getState().chats.chatDetails.messages.filter(
+      (message) =>
+        message.messageType === 'TYPING' &&
+        message.author.userId === typingMessage.author.userId
+    ).length !== 0 &&
+    typingMessage.text === ''
+  ) {
+    dispatch({
+      type: chatTypes.DELETE_TYPING_MESSAGE,
+      payload: {
+        userId: typingMessage.author.userId,
+      },
+    });
+  }
+};

@@ -15,6 +15,15 @@ const styles = (theme) => ({
       marginRight: '15px',
     },
   },
+  chatMemberPhoto: {
+    '&.MuiAvatar-root': {
+      width: '45px',
+      height: '45px',
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
+  },
   postInput: {
     '& .MuiInputBase-root': {
       borderRadius: '0px',
@@ -221,6 +230,61 @@ const styles = (theme) => ({
     '& .MuiInputBase-root': {
       '& .Mui-disabled': {
         WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)',
+      },
+    },
+  },
+  addChatMembersContainer: {
+    minHeight: '200px',
+    display: 'flex',
+    marginBottom: '15px',
+  },
+  membersSearchContainer: {
+    width: '65%',
+    paddingRight: '15px',
+    borderRight: '1px solid rgba(0, 0, 0, 0.22)',
+  },
+  addedMemberContainer: {
+    width: '35%',
+    marginLeft: '15px',
+  },
+  addedChatMember: {
+    '&.MuiTypography-root': {
+      display: 'flex',
+      alignItems: 'center',
+      margin: '5px 0px',
+      '& .MuiSvgIcon-root': {
+        marginRight: '10px',
+      },
+      '&:hover': {
+        cursor: ' pointer',
+        textDecoration: 'underline',
+      },
+    },
+  },
+  invitationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: '10px 0',
+  },
+  searchedUserName: {
+    '&.MuiTypography-root': {
+      marginLeft: '15px',
+      flex: 1,
+      '&:hover': {
+        cursor: 'pointer',
+        textDecoration: 'underline',
+      },
+    },
+  },
+  addChatMemberBtn: {
+    '&.MuiButton-root': {
+      marginLeft: '10px',
+      backgroundColor: '#D4D4D4',
+      borderRadius: '5px',
+      color: 'black',
+      '&:hover': {
+        backgroundColor: '#8a8a8a',
       },
     },
   },

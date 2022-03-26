@@ -6,6 +6,7 @@ import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import {
   Badge,
   IconButton,
+  Link,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -19,6 +20,14 @@ import { useHistory } from 'react-router-dom';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { showNotification } from '../../redux/actions/notificationActions';
+import {
+  deleteChatMessage,
+  editChatMessage,
+} from '../../redux/actions/chatAction';
+import Popup from '../Popup/Popup';
+import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
+import classNames from 'classnames';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -34,15 +43,17 @@ const MAX_MESSAGE_WIDTH = 350;
 const ChatMessage = (props) => {
   const {
     classes,
+    chatId,
     messageId,
     content,
     author,
     messageType,
     createdAt,
     isEdited,
-    editedAt,
     isDeleted,
     messageImage,
+    isAuthorDeleted,
+    manageMessage,
   } = props;
 
   const history = useHistory();
@@ -54,13 +65,27 @@ const ChatMessage = (props) => {
   const messageRef = useRef(null);
 
   const [isDisabled, setIsDisabled] = useState(true);
-  const [messageText, setMessageText] = useState(content);
+  const [messageText, setMessageText] = useState(
+    !isDeleted ? content : 'Usunięto wiadomość'
+  );
   const [messageFieldWidth, setMessageFieldWidth] = useState(
     DEFAULT_MESSAGE_WIDTH
   );
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openDeletePopup, setOpenDeletePopup] = useState(false);
 
   useEffect(() => {
+    setMessageText(!isDeleted ? content : 'Usunięto wiadomość');
+  }, [isDeleted, content]);
+
+  useEffect(() => {
+    if (!isDisabled) {
+      messageRef.current.focus();
+    }
+  }, [isDisabled]);
+
+  useEffect(() => {
+    if (messageText == null) return;
     if (
       messageText.length * FONT_SIZE > DEFAULT_MESSAGE_WIDTH &&
       messageText.length * FONT_SIZE < MAX_MESSAGE_WIDTH
@@ -71,7 +96,7 @@ const ChatMessage = (props) => {
     } else {
       setMessageFieldWidth(DEFAULT_MESSAGE_WIDTH);
     }
-  }, [messageText]);
+  }, [messageText, content]);
 
   const generatePublicationDate = (messageDate) => {
     if (
@@ -99,6 +124,17 @@ const ChatMessage = (props) => {
     }
   };
 
+  const Typing = ({ isAuthor }) => (
+    <div
+      className={classes.typingContainer}
+      style={{ backgroundColor: !isAuthor && '#ECEEF1' }}
+    >
+      <div className={classes.typingDot} />
+      <div className={classes.typingDot} />
+      <div className={classes.typingDot} />
+    </div>
+  );
+
   const handleMessageChange = (event) => {
     setMessageText(event.target.value);
   };
@@ -109,6 +145,55 @@ const ChatMessage = (props) => {
 
   const handleClickMessageManage = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleClickEditMessage = () => {
+    handleCloseMessageManage();
+    setIsDisabled(false);
+  };
+
+  const editMessage = () => {
+    if (messageText === '') {
+      dispatch(
+        showNotification('warning', 'Nie można pozostawić pustej treści')
+      );
+    } else {
+      const formData = new FormData();
+
+      formData.append('image', null);
+
+      const message = {
+        chatId: chatId,
+        userId: author.userId,
+        message: messageText,
+        messageType: messageType,
+      };
+
+      formData.append(
+        'message',
+        new Blob([JSON.stringify(message)], {
+          type: 'application/json',
+        })
+      );
+      dispatch(editChatMessage(messageId, formData));
+      manageMessage('MESSAGE_EDIT', chatId, author.userId, messageId);
+      setIsDisabled(true);
+    }
+  };
+
+  const handleClickDeleteMessage = () => {
+    handleCloseMessageManage();
+    setOpenDeletePopup(true);
+  };
+
+  const deleteMessage = () => {
+    dispatch(deleteChatMessage(messageId));
+    manageMessage('MESSAGE_DELETE', chatId, author.userId, messageId);
+    setOpenDeletePopup(false);
+  };
+
+  const handleCloseDeletePopup = () => {
+    setOpenDeletePopup(false);
   };
 
   return (
@@ -145,99 +230,181 @@ const ChatMessage = (props) => {
             onClick={() => history.push('/app/profile/' + author.userId)}
           />
         </Badge>
-        <Typography fontSize="11px" className={classes.messageTimeText}>
-          {generatePublicationDate(createdAt)}
-        </Typography>
+        {messageType !== 'TYPING' && (
+          <Typography fontSize="11px" className={classes.messageTimeText}>
+            {generatePublicationDate(createdAt)}
+          </Typography>
+        )}
       </div>
-      <div className={classes.messageContent}>
-        <Typography variant="subtitle2" fontWeight={500}>
-          {author.firstName + ' ' + author.lastName}
-        </Typography>
-        <div
-          className={
-            loggedUser.userId === author.userId && classes.messageDetailsContent
-          }
-        >
-          {loggedUser.userId === author.userId && (
-            <div className={classes.manageMessageBox}>
-              <IconButton onClick={handleClickMessageManage}>
-                <MoreVertIcon fontSize="small" />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleCloseMessageManage}
-                disableScrollLock={true}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
+      {messageType === 'CHAT' && (
+        <div className={classes.messageContent}>
+          <Typography variant="subtitle2" fontWeight={500}>
+            {author.firstName + ' ' + author.lastName}
+            <span className={classes.authorIsNotMemberText}>
+              {isAuthorDeleted ? ' (Nie należy już do czatu)' : ''}
+            </span>
+          </Typography>
+          {isEdited && !isDeleted && (
+            <Typography fontSize="11px" fontWeight={300} lineHeight={1.2}>
+              (edytowano)
+            </Typography>
+          )}
+          <div
+            className={
+              loggedUser.userId === author.userId
+                ? classes.messageDetailsContent
+                : null
+            }
+          >
+            {loggedUser.userId === author.userId && !isDeleted && (
+              <div className={classes.manageMessageBox}>
+                <IconButton onClick={handleClickMessageManage}>
+                  <MoreVertIcon fontSize="small" />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleCloseMessageManage}
+                  disableScrollLock={true}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                >
+                  <MenuItem onClick={handleClickEditMessage}>
+                    <ListItemIcon>
+                      <EditIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">
+                          Edytuj wiadomość
+                        </Typography>
+                      }
+                    />
+                  </MenuItem>
+                  <MenuItem onClick={handleClickDeleteMessage}>
+                    <ListItemIcon>
+                      <DeleteForeverIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">
+                          Usuń wiadomość
+                        </Typography>
+                      }
+                    />
+                  </MenuItem>
+                </Menu>
+                <Popup
+                  open={openDeletePopup}
+                  type="confirmation"
+                  title="Usuwanie wiadomości"
+                  onClose={handleCloseDeletePopup}
+                >
+                  <ActionConfirmation
+                    title="Czy napewno chcesz usunąć wskazaną wiadomość?"
+                    confirmationAction={deleteMessage}
+                    rejectionAction={handleCloseDeletePopup}
+                  />
+                </Popup>
+              </div>
+            )}
+            <TextField
+              multiline
+              disabled={isDisabled}
+              inputRef={messageRef}
+              className={
+                loggedUser.userId !== author.userId
+                  ? classes.otherMessageField
+                  : classes.userMessageField
+              }
+              value={messageText}
+              sx={{
+                width: `${messageFieldWidth}px`,
+              }}
+              onChange={handleMessageChange}
+            />
+          </div>
+          {!isDisabled && (
+            <div>
+              <Link
+                component="button"
+                variant="body2"
+                className={classes.messageEditBtn}
+                onClick={editMessage}
               >
-                <MenuItem>
-                  <ListItemIcon>
-                    <EditIcon fontSize="medium" />
-                  </ListItemIcon>
-                  <ListItemText
-                    disableTypography
-                    primary={
-                      <Typography variant="subtitle2">
-                        Edytuj wiadomość
-                      </Typography>
-                    }
-                  />
-                </MenuItem>
-                <MenuItem>
-                  <ListItemIcon>
-                    <DeleteForeverIcon fontSize="medium" />
-                  </ListItemIcon>
-                  <ListItemText
-                    disableTypography
-                    primary={
-                      <Typography variant="subtitle2">
-                        Usuń wiadomość
-                      </Typography>
-                    }
-                  />
-                </MenuItem>
-              </Menu>
+                Zapisz
+              </Link>
+              <Link
+                component="button"
+                className={classes.messageEditBtn}
+                onClick={() => setIsDisabled(true)}
+              >
+                Anuluj
+              </Link>
             </div>
           )}
-          <TextField
-            multiline
-            disabled={isDisabled}
-            inputRef={messageRef}
-            className={
-              loggedUser.userId !== author.userId
-                ? classes.otherMessageField
-                : classes.userMessageField
-            }
-            value={messageText}
-            sx={{
-              width: `${messageFieldWidth}px`,
-            }}
-            onChange={handleMessageChange}
-          />
         </div>
-      </div>
+      )}
+      {(messageType === 'JOIN' ||
+        messageType === 'LEAVE' ||
+        messageType === 'CREATE') && (
+        <Typography variant="subtitle2" fontWeight="bold">
+          {author.firstName + ' ' + author.lastName}
+          <span className={classes.authorIsNotMemberText}>
+            {isAuthorDeleted ? ' (Nie należy już do czatu)' : ''}
+          </span>
+          <br />
+          <span className={classes.messageTypeText}>
+            {messageType !== 'CREATE'
+              ? messageType === 'JOIN'
+                ? 'dołączył(a) do czatu'
+                : 'opuścił(a) czat'
+              : 'utworzył(a) czat'}
+          </span>
+        </Typography>
+      )}
+      {messageType === 'TYPING' && (
+        <div
+          className={classNames(
+            classes.messageContent,
+            loggedUser.userId === author.userId && classes.authorMessageTyping
+          )}
+        >
+          <Typography variant="subtitle2" fontWeight={500} marginBottom="3px">
+            {author.firstName + ' ' + author.lastName}
+            <span className={classes.authorIsNotMemberText}>
+              {isAuthorDeleted ? ' (Nie należy już do czatu)' : ''}
+            </span>
+          </Typography>
+          <Typing isAuthor={loggedUser.userId === author.userId} />
+        </div>
+      )}
     </div>
   );
 };
 
 ChatMessage.propTypes = {
   classes: PropTypes.object.isRequired,
-  messageId: PropTypes.number.isRequired,
-  content: PropTypes.string.isRequired,
+  chatId: PropTypes.number.isRequired,
+  messageId: PropTypes.number,
+  content: PropTypes.string,
   author: PropTypes.object.isRequired,
   messageType: PropTypes.string.isRequired,
-  createdAt: PropTypes.string.isRequired,
+  createdAt: PropTypes.string,
   isEdited: PropTypes.bool,
   editedAt: PropTypes.string,
   isDeleted: PropTypes.bool,
   messageImage: PropTypes.object,
+  isAuthorDeleted: PropTypes.bool,
+  manageMessage: PropTypes.func,
 };
 
 export default withStyles(styles)(ChatMessage);

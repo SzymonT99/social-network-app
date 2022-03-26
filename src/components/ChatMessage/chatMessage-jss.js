@@ -87,7 +87,6 @@ const styles = (theme) => ({
       marginBottom: 0,
       '& .MuiOutlinedInput-input': {
         textAlign: 'right',
-        color: 'white',
       },
       '& .MuiInputBase-root': {
         borderRadius: '10px',
@@ -109,6 +108,70 @@ const styles = (theme) => ({
         },
       },
     },
+  },
+  messageEditBtn: {
+    '&.MuiLink-root': {
+      textDecoration: 'none',
+      marginLeft: '10px',
+      fontSize: '12px',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
+  },
+  messageTypeText: {
+    fontWeight: 400,
+    color: theme.palette.primary.main,
+  },
+  typingContainer: {
+    backgroundColor: theme.palette.secondary.light,
+    width: '80px',
+    height: '40px',
+    position: 'relative',
+    padding: '10px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  '@keyframes loadingFade': {
+    '0%': {
+      opacity: 0.2,
+    },
+    '50%': {
+      opacity: 0.8,
+    },
+    '100%': {
+      opacity: 0.2,
+    },
+  },
+  typingDot: {
+    width: '7px',
+    height: '7px',
+    margin: '0 4px',
+    backgroundColor: '#2c2c2c',
+    borderRadius: '50px',
+    opacity: 0,
+    animationName: '$loadingFade',
+    animation: 'loadingFade 1s infinite',
+    '&:nth-child(1)': {
+      animationDelay: '0s',
+    },
+    '&:nth-child(2)': {
+      animationDelay: '0.2s',
+    },
+    '&:nth-child(3)': {
+      animationDelay: '0.4s',
+    },
+  },
+  authorIsNotMemberText: {
+    fontWeight: 300,
+    fontSize: '15px',
+  },
+  authorMessageTyping: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
   },
 });
 

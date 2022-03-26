@@ -26,6 +26,23 @@ const chatReducer = (state = initialState, action) => {
           messages: [...state.chatDetails.messages, action.payload.newMessage],
         },
       };
+    case chatTypes.EDIT_MESSAGE:
+      return {
+        ...state,
+        chatDetails: {
+          ...state.chatDetails,
+          messages: state.chatDetails.messages.map((message) =>
+            message.messageId === action.payload.messageId
+              ? {
+                  ...message,
+                  text: action.payload.message.text,
+                  isEdited: true,
+                  editedAt: action.payload.message.editedAt,
+                }
+              : message
+          ),
+        },
+      };
     case chatTypes.DELETE_MESSAGE:
       return {
         ...state,
@@ -70,6 +87,31 @@ const chatReducer = (state = initialState, action) => {
       return {
         ...state,
         activeChat: action.payload.chatId,
+      };
+    case chatTypes.ADD_TYPING_MESSAGE:
+      return {
+        ...state,
+        chatDetails: {
+          ...state.chatDetails,
+          messages: [
+            ...state.chatDetails.messages,
+            action.payload.typingMessage,
+          ],
+        },
+      };
+    case chatTypes.DELETE_TYPING_MESSAGE:
+      return {
+        ...state,
+        chatDetails: {
+          ...state.chatDetails,
+          messages: state.chatDetails.messages.filter(
+            (message) =>
+              !(
+                message.messageType === 'TYPING' &&
+                message.author.userId === action.payload.userId
+              )
+          ),
+        },
       };
     default:
       return state;
