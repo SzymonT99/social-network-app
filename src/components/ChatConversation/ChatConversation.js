@@ -76,7 +76,7 @@ const ChatConversation = (props) => {
         )}
       </div>
       {newMessagesNumber > 0 && chatId !== activeChatId && (
-        <span className={classes.notificationNumber}>{newMessagesNumber}</span>
+        <div className={classes.notificationNumber}>{newMessagesNumber}</div>
       )}
     </div>
   );

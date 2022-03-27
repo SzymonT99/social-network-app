@@ -48,6 +48,8 @@ const styles = (theme) => ({
     scrollbarWidth: 'thin',
     padding: '10px',
     borderBottom: '1px solid rgba(0, 0, 0, 0.22)',
+    display: 'flex',
+    flexDirection: 'column-reverse',
   },
   messageCreationContainer: {
     height: '10%',

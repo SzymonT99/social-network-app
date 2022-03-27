@@ -20,7 +20,7 @@ import Popup from '../../Popup/Popup';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
-  BE_RIGHT_BACK: '#de681d',
+  BE_RIGHT_BACK: '#f59c11',
   BUSY: '#67207c',
   OFFLINE: '#FF1C00',
 };

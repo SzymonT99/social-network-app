@@ -79,3 +79,10 @@ export const setLoading = (isLoading) => ({
     isLoading: isLoading,
   },
 });
+
+export const setNotificationStomp = (stompClient) => ({
+  type: activityTypes.SET_NOTIFICATION_STOMP,
+  payload: {
+    notificationStomp: stompClient,
+  },
+});

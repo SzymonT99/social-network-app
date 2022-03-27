@@ -112,6 +112,7 @@ export const getChatDetails = (chatId) => (dispatch) => {
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {
+          dispatch(getUserChats());
           dispatch({
             type: chatTypes.FETCH_CHAT_DETAILS,
             payload: {
@@ -173,6 +174,15 @@ export const getChatMessageById =
                 type: chatTypes.ADD_NEW_MESSAGE,
                 payload: {
                   newMessage: data,
+                },
+              });
+            }
+
+            if (data.messageType === 'LEAVE') {
+              dispatch({
+                type: chatTypes.UPDATE_CHAT_MEMBERS,
+                payload: {
+                  deletedUserId: data.author.userId,
                 },
               });
             }
@@ -283,8 +293,6 @@ export const deleteMemberFromChat =
       .deleteMemberFromChat(chatMemberId)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getUserChats());
-          dispatch(getChatDetails(getState().chats.chatDetails.chatId));
           dispatch({
             type: chatTypes.DELETE_MEMBER,
             payload: {
@@ -295,6 +303,9 @@ export const deleteMemberFromChat =
             dispatch(showNotification('success', 'Usunięto członka czatu'));
           } else {
             dispatch(showNotification('success', 'Opuszczono czat'));
+            dispatch(getUserChats()).then((data) => {
+              dispatch(getChatDetails(data[0].chatId));
+            });
           }
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));

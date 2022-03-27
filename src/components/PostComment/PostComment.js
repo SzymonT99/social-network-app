@@ -22,8 +22,8 @@ import { formatCreationDate } from '../../utils/formatCreationDate';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
-  BE_RIGHT_BACK: 'orange',
-  BUSY: 'purple',
+  BE_RIGHT_BACK: '#f59c11',
+  BUSY: '#67207c',
   OFFLINE: '#FF1C00',
 };
 

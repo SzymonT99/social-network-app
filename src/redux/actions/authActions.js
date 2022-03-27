@@ -3,7 +3,10 @@ import authService from '../../services/authService';
 import { showNotification } from './notificationActions';
 import { getUserProfile } from './userProfileActions';
 import { getUserFriends } from './friendAction';
-import { getAllUsersInformation } from './userActivityActions';
+import {
+  getAllUsersInformation,
+  setNotificationStomp,
+} from './userActivityActions';
 
 export const register = (accountData) => (dispatch) => {
   return authService
@@ -101,12 +104,13 @@ export const setTokenRefreshing = (isTokenRefreshing) => ({
   },
 });
 
-export const logoutUser = (userId) => (dispatch) => {
+export const logoutUser = (userId) => (dispatch, getState) => {
   dispatch({ type: authTypes.LOG_OUT_USER });
   return authService
     .logout(userId)
     .then((response) => {
       if (response.status === 200) {
+        getState().activity.notificationStomp.unsubscribe('notifications', {});
         dispatch({ type: 'CLEAR_ALL' });
         dispatch(showNotification('success', 'Wylogowano'));
       } else if (response.status === 400) {

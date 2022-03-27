@@ -5,6 +5,7 @@ import groupTypes from '../types/groupTypes';
 
 const initialState = {
   isLoading: false,
+  notificationStomp: null,
   board: [],
   notifications: [],
   postDetails: null,
@@ -1192,6 +1193,11 @@ const userActivityReducer = (state = initialState, action) => {
               }
             : boardItem
         ),
+      };
+    case activityTypes.SET_NOTIFICATION_STOMP:
+      return {
+        ...state,
+        notificationStomp: action.payload.notificationStomp,
       };
     case activityTypes.CLEAR_ALL:
       return initialState;

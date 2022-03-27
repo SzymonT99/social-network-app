@@ -113,6 +113,16 @@ const chatReducer = (state = initialState, action) => {
           ),
         },
       };
+    case chatTypes.UPDATE_CHAT_MEMBERS:
+      return {
+        ...state,
+        chatDetails: {
+          ...state.chatDetails,
+          chatMembers: state.chatDetails.chatMembers.filter(
+            (member) => member.user.userId !== action.payload.deletedUserId
+          ),
+        },
+      };
     default:
       return state;
   }
