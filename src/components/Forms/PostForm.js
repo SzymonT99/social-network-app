@@ -132,10 +132,14 @@ const PostForm = (props) => {
   };
 
   const deleteImage = (deletedImg) => {
-    const index = displayedImages.indexOf(deletedImg);
     if (displayedImages.length > 1) {
-      setDisplayedImages(displayedImages.splice(index, 1));
-      setUploadedImages(Array.from(uploadedImages).splice(index, 1));
+      let index = displayedImages.indexOf(deletedImg);
+      setDisplayedImages(
+        displayedImages.filter((image) => image !== deletedImg)
+      );
+      const fileListArray = Array.from(uploadedImages);
+      fileListArray.splice(index, 1);
+      setUploadedImages(fileListArray);
     } else {
       setDisplayedImages([]);
       setUploadedImages([]);
@@ -162,7 +166,7 @@ const PostForm = (props) => {
           fullWidth
           placeholder="Napisz coś tutaj..."
           multiline
-          rows={4}
+          minRows={4}
           autoFocus
           className={classes.postInput}
           value={postContent}
@@ -172,18 +176,14 @@ const PostForm = (props) => {
       {displayedImages.length !== 0 && (
         <ImageList
           cols={displayedImages.length === 1 ? 1 : 2}
-          rowHeight={300}
+          rowHeight={displayedImages.length === 1 ? 420 : 300}
           className={classes.postImageList}
+          variant="quilted"
+          gap={10}
         >
           {displayedImages.map((img, index) => (
             <ImageListItem key={index} className={classes.uploadImageItem}>
-              <img
-                key={index}
-                src={img}
-                srcSet={img}
-                alt="Dodane zdjęcie"
-                loading="lazy"
-              />
+              <img key={index} src={img} alt="Dodane zdjęcie" loading="lazy" />
               <Button
                 className={classes.uploadImageDeleteBtn}
                 onClick={() => deleteImage(img)}

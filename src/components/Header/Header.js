@@ -4,6 +4,7 @@ import styles from './header-jss';
 import { PropTypes } from 'prop-types';
 import logoWhite from '../../assets/logo-white.png';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
+import defaultChatImage from '../../assets/default-chat-image.png';
 import defaultImg from '../../assets/default-image.png';
 import Typography from '@mui/material/Typography';
 import {
@@ -40,11 +41,16 @@ import {
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { getActivityNotification } from '../../redux/actions/userActivityActions';
-import { formatCreationDate } from '../../utils/formatCreationDate';
+import { formatActivityDate } from '../../utils/formatActivityDate';
+import {
+  getChatDetails,
+  getUserChats,
+  setActiveChat,
+} from '../../redux/actions/chatAction';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
-  BE_RIGHT_BACK: '#de681d',
+  BE_RIGHT_BACK: '#f59c11',
   BUSY: '#67207c',
   OFFLINE: '#FF1C00',
 };
@@ -70,6 +76,7 @@ const Header = (props) => {
   const activityNotifications = useSelector(
     (state) => state.activity.notifications
   );
+  const userChats = useSelector((state) => state.chats.userChats);
 
   const [options, setOptions] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
@@ -78,6 +85,7 @@ const Header = (props) => {
   const [anchorElAccountMenu, setAnchorElAccountMenu] = useState(null);
   const [anchorElFriendsNotif, setAnchorElFriendsNotif] = useState(null);
   const [anchorElActivityNotif, setAnchorElActivityNotif] = useState(null);
+  const [anchorElChatNotif, setAnchorElChatNotif] = useState(null);
 
   useEffect(() => {
     const isTokenExpired =
@@ -86,6 +94,7 @@ const Header = (props) => {
     if (!isTokenExpired) {
       dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
       dispatch(getActivityNotification());
+      dispatch(getUserChats());
       if (users) {
         let usersArray = [];
         users.forEach((user) =>
@@ -97,7 +106,7 @@ const Header = (props) => {
         setOptions(usersArray);
       }
     }
-  }, [users, isTokenRefreshing, location]);
+  }, [users, isTokenRefreshing]);
 
   const handleChangeSearchedUser = (event, newValue) => {
     if (newValue !== null) {
@@ -131,6 +140,14 @@ const Header = (props) => {
   const handleCloseActivityNotification = () => {
     setAnchorElActivityNotif(null);
     dispatch(getActivityNotification(true));
+  };
+
+  const handleClickChatNotification = (event) => {
+    setAnchorElChatNotif(event.currentTarget);
+  };
+
+  const handleCloseChatNotification = (event) => {
+    setAnchorElChatNotif(null);
   };
 
   const handleClickRespondToFriendInvitation = (inviterId, reaction) => {
@@ -185,6 +202,12 @@ const Header = (props) => {
       history.push('/app/groups/' + activityNotification.details.groupId);
     }
     handleCloseActivityNotification();
+  };
+
+  const handleClickChat = (chatId) => {
+    dispatch(setActiveChat(chatId));
+    dispatch(getChatDetails(chatId));
+    history.push('/app/chat');
   };
 
   return (
@@ -487,7 +510,7 @@ const Header = (props) => {
                   width="32%"
                   marginLeft="10px"
                 >
-                  {formatCreationDate(
+                  {formatActivityDate(
                     new Date(activityNotification.notificationDate)
                   )}
                 </Typography>
@@ -503,7 +526,7 @@ const Header = (props) => {
               </Typography>
             )}
           </Menu>
-          <IconButton>
+          <IconButton onClick={handleClickChatNotification}>
             <Badge
               sx={{
                 '& .MuiBadge-badge': {
@@ -512,7 +535,17 @@ const Header = (props) => {
                 },
               }}
               overlap="circular"
-              badgeContent={4}
+              badgeContent={
+                location.pathname !== '/app/chat'
+                  ? userChats.filter(
+                      (chat) =>
+                        chat.newMessages > 0 &&
+                        chat.members.find(
+                          (member) => member.user.userId === loggedUser.userId
+                        ).hasMutedChat === false
+                    ).length
+                  : 0
+              }
             >
               <MessageIcon
                 color="primary"
@@ -520,6 +553,143 @@ const Header = (props) => {
               />
             </Badge>
           </IconButton>
+          <Menu
+            id="chat-notification-menu"
+            anchorEl={anchorElChatNotif}
+            open={Boolean(anchorElChatNotif)}
+            onClick={handleCloseChatNotification}
+            onClose={handleCloseChatNotification}
+            disableScrollLock={true}
+            className={classes.chatNotificationMenu}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            {userChats.map((chat, index) => {
+              if (chat.lastMessage && chat.lastMessageAuthor) {
+                return (
+                  <ListItem
+                    key={chat.chatId}
+                    className={classes.activityNotificationItem}
+                    sx={{
+                      borderBottom:
+                        index + 1 < userChats.length &&
+                        '1px solid rgba(0, 0, 0, 0.4)',
+                    }}
+                    onClick={() => handleClickChat(chat.chatId)}
+                  >
+                    <div className={classes.chatInformationContainer}>
+                      <ListItemAvatar>
+                        {chat.isPrivate ? (
+                          <Avatar
+                            src={
+                              chat.members.find(
+                                (member) =>
+                                  member.user.userId !== loggedUser.userId
+                              ).user.profilePhoto !== null
+                                ? chat.members.find(
+                                    (member) =>
+                                      member.user.userId !== loggedUser.userId
+                                  ).user.profilePhoto.url
+                                : defaultUserPhoto
+                            }
+                            alt={
+                              loggedUserProfile
+                                ? chat.members.find(
+                                    (member) =>
+                                      member.user.userId !== loggedUser.userId
+                                  ).user.firstName +
+                                  ' ' +
+                                  chat.members.find(
+                                    (member) =>
+                                      member.user.userId !== loggedUser.userId
+                                  ).user.lastName
+                                : 'Nazwa użytkownika'
+                            }
+                            className={classes.userPhoto}
+                            sx={{ marginRight: '20px' }}
+                          />
+                        ) : (
+                          <img
+                            src={chat.image ? chat.image.url : defaultChatImage}
+                            alt="Zdjęcie czatu"
+                            className={classes.chatImage}
+                          />
+                        )}
+                      </ListItemAvatar>
+                      <div style={{ width: '80%' }}>
+                        <ListItemText
+                          primary={
+                            chat.isPrivate ? (
+                              <Typography
+                                variant="subtitle2"
+                                fontWeight="bold"
+                                noWrap
+                              >
+                                {chat.members.find(
+                                  (member) =>
+                                    member.user.userId !== loggedUser.userId
+                                ).user.firstName +
+                                  ' ' +
+                                  chat.members.find(
+                                    (member) =>
+                                      member.user.userId !== loggedUser.userId
+                                  ).user.lastName}
+                              </Typography>
+                            ) : (
+                              <Typography
+                                variant="subtitle2"
+                                fontWeight="bold"
+                                noWrap
+                              >
+                                {chat.name}
+                              </Typography>
+                            )
+                          }
+                          secondary={
+                            chat.isPrivate ? (
+                              <Typography variant="body1" noWrap>
+                                {(chat.lastMessageAuthor.userId ===
+                                loggedUser.userId
+                                  ? 'Ty: '
+                                  : '') + chat.lastMessage}
+                              </Typography>
+                            ) : (
+                              <Typography variant="body1" noWrap>
+                                {chat.lastMessageAuthor.firstName +
+                                  ' ' +
+                                  chat.lastMessageAuthor.lastName +
+                                  ': ' +
+                                  chat.lastMessage}
+                              </Typography>
+                            )
+                          }
+                        />
+                        <Typography fontSize="11px">
+                          {formatActivityDate(new Date(chat.activityDate))}
+                        </Typography>
+                      </div>
+                    </div>
+                    {chat.newMessages > 0 && (
+                      <div style={{ width: '10%', textAlign: 'right' }}>
+                        <span className={classes.notificationNumber}>
+                          {chat.newMessages}
+                        </span>
+                      </div>
+                    )}
+                  </ListItem>
+                );
+              }
+            })}
+            {userChats.length === 0 && (
+              <Typography
+                margin="10px 0px"
+                textAlign="center"
+                variant="subtitle2"
+              >
+                Brak powiadomień
+              </Typography>
+            )}
+          </Menu>
         </div>
         <div className={classes.userInfoBox}>
           <Typography

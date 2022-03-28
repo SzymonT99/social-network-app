@@ -6,7 +6,7 @@ const styles = (theme) => ({
     width: '100%',
     marginBottom: '15px',
   },
-  profileCoverImage: {
+  profileCoverBackground: {
     borderRadius: '10px 10px 0px 0px',
     height: '230px',
     position: 'relative',
@@ -342,14 +342,8 @@ const styles = (theme) => ({
       },
     },
   },
-  friendManageBtn: {
-    '&.MuiButton-root': {
-      marginRight: '10px',
-    },
-  },
   friendDeleteBtn: {
     '&.MuiButton-root': {
-      marginRight: '10px',
       '&:hover': {
         backgroundColor: '#FF1C00',
       },
@@ -465,6 +459,22 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  friendChatBtn: {
+    '&.MuiButton-root': {
+      fontSize: '17px',
+      marginTop: '10px',
+      padding: '6px 20px',
+    },
+  },
+  addedImageListItem: {
+    width: '100%',
+    height: '400px',
+    objectFit: 'cover',
+    '&:hover': {
+      cursor: 'pointer',
+      opacity: 0.7,
+    },
   },
 });
 

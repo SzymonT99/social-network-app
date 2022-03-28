@@ -1,4 +1,4 @@
-export const formatCreationDate = (createdDate) => {
+export const formatActivityDate = (createdDate) => {
   let diffInMs = (new Date().getTime() - createdDate.getTime()) / 1000;
   let minutes = Math.floor(diffInMs / 60);
 

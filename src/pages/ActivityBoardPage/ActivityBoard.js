@@ -20,7 +20,9 @@ import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import {
   getActivityBoard,
+  getActivityNotification,
   setLoading,
+  setNotificationStomp,
 } from '../../redux/actions/userActivityActions';
 import SharedPost from '../../components/SharedPost/SharedPost';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -31,6 +33,13 @@ import {
 import ActivityBoardItem from '../../components/ActivityBoardItem/ActivityBoardItem';
 import Event from '../../components/Event/Event';
 import Group from '../../components/Group/Group';
+import {
+  getReceivedFriendInvitations,
+  getUserFriends,
+} from '../../redux/actions/friendAction';
+import { getUserChats } from '../../redux/actions/chatAction';
+
+let stompClient = null;
 
 const ActivityBoard = (props) => {
   const { classes } = props;
@@ -66,8 +75,43 @@ const ActivityBoard = (props) => {
       }
       dispatch(setLoading(true));
       dispatch(getActivityBoard());
+      connect();
     })();
   }, []);
+
+  const connect = () => {
+    const Stomp = require('stompjs');
+    let SockJS = require('sockjs-client');
+    SockJS = new SockJS('http://localhost:8080/chat');
+    stompClient = Stomp.over(SockJS);
+    stompClient.connect({}, onConnected, onError);
+    dispatch(setNotificationStomp(stompClient));
+  };
+
+  const onConnected = () => {
+    stompClient.subscribe(
+      '/user/' + loggedUser.userId + '/queue/messages',
+      onMessageReceived,
+      { id: 'notifications' }
+    );
+  };
+
+  const onMessageReceived = (msg) => {
+    const notification = JSON.parse(msg.body);
+    if (notification.actionType === 'ACTIVITY_BOARD') {
+      dispatch(getActivityNotification());
+    } else if (notification.actionType === 'FRIEND_INVITATION') {
+      dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
+    } else if (notification.actionType === 'FRIENDS_STATUS') {
+      dispatch(getUserFriends(loggedUser.userId, true));
+    } else if (notification.actionType === 'CHAT') {
+      dispatch(getUserChats());
+    }
+  };
+
+  const onError = (err) => {
+    console.log(err);
+  };
 
   return (
     <>

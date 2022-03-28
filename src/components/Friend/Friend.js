@@ -13,6 +13,7 @@ import {
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import classNames from 'classnames';
+import { formatBaseDate } from '../../utils/formatBaseDate';
 
 const Friend = (props) => {
   const {
@@ -54,13 +55,7 @@ const Friend = (props) => {
       <div className={classes.friendContainer}>
         {!suggestion && (
           <Typography variant="body1" className={classes.invitationDateText}>
-            {'Data zaproszenia: ' +
-              new Date(invitationDate)
-                .toJSON()
-                .slice(0, 10)
-                .split('-')
-                .reverse()
-                .join('.')}
+            {'Data zaproszenia: ' + formatBaseDate(invitationDate)}
           </Typography>
         )}
         <img

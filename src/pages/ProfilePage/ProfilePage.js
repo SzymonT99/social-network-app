@@ -29,7 +29,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-import { PhotoCamera, Work } from '@mui/icons-material';
+import { PhotoCamera } from '@mui/icons-material';
 import { TabContext, TabList } from '@mui/lab';
 import TabPanelMUI from '@mui/lab/TabPanel';
 import PhotoIcon from '@mui/icons-material/Photo';
@@ -96,6 +96,9 @@ import {
 } from '../../redux/actions/authActions';
 import Group from '../../components/Group/Group';
 import { getUserGroups } from '../../redux/actions/groupActions';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import { getPrivateChat, setActiveChat } from '../../redux/actions/chatAction';
+import ModalImage from 'react-modal-image-responsive';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -437,6 +440,13 @@ const ProfilePage = (props) => {
     setGroupsPageNumber(value);
   };
 
+  const handleClickChatWithFriend = () => {
+    dispatch(getPrivateChat(parseInt(selectedUserId))).then((data) => {
+      dispatch(setActiveChat(data.chatId));
+      history.push('/app/chat');
+    });
+  };
+
   return (
     <>
       {!isLoading ? (
@@ -446,11 +456,7 @@ const ProfilePage = (props) => {
             sx={{ borderRadius: '10px' }}
             className={classes.profileHeadingContainer}
           >
-            <div className={classes.profileCoverImage}>
-              {userProfile && userProfile.coverImage && (
-                <img alt="Cover image" src={userProfile.coverImage} />
-              )}
-            </div>
+            <div className={classes.profileCoverBackground} />
             <div className={classes.profileInfoBox}>
               <div className={classes.userProfilePhotoBox}>
                 <img
@@ -501,7 +507,7 @@ const ProfilePage = (props) => {
                   )}
               </div>
               <div className={classes.profileHeadingInfo}>
-                {userProfile ? (
+                {userProfile && (
                   <div className={classes.profileHeadingInfoContent}>
                     <div>
                       <Typography
@@ -520,37 +526,55 @@ const ProfilePage = (props) => {
                       </Typography>
                     </div>
                     {parseInt(selectedUserId) !== loggedUser.userId && (
-                      <Button
-                        onMouseOver={() => setFriendBtnHover(true)}
-                        onMouseOut={() => setFriendBtnHover(false)}
-                        className={
-                          isUserFriend && !isInvitedToFriend
-                            ? classes.friendDeleteBtn
-                            : classes.friendManageBtn
-                        }
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleManageFriend}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          minWidth: '250px',
+                        }}
                       >
-                        {isUserFriend &&
-                        !isInvitedToFriend &&
-                        friendBtnHover ? (
-                          <Typography
-                            variant="subtitle1"
-                            className={classes.friendManageBtnContent}
+                        <Button
+                          onMouseOver={() => setFriendBtnHover(true)}
+                          onMouseOut={() => setFriendBtnHover(false)}
+                          className={
+                            isUserFriend && !isInvitedToFriend
+                              ? classes.friendDeleteBtn
+                              : null
+                          }
+                          variant="contained"
+                          color="secondary"
+                          onClick={handleManageFriend}
+                        >
+                          {isUserFriend &&
+                          !isInvitedToFriend &&
+                          friendBtnHover ? (
+                            <Typography
+                              variant="subtitle1"
+                              className={classes.friendManageBtnContent}
+                            >
+                              <PersonRemoveIcon sx={{ marginRight: '7px' }} />
+                              Usuń ze znajomych
+                            </Typography>
+                          ) : (
+                            generateFriendBtn()
+                          )}
+                        </Button>
+                        {isUserFriend && (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.friendChatBtn}
+                            onClick={handleClickChatWithFriend}
                           >
-                            <PersonRemoveIcon sx={{ marginRight: '7px' }} />
-                            Usuń ze znajomych
-                          </Typography>
-                        ) : (
-                          generateFriendBtn()
+                            <ChatBubbleIcon
+                              fontSize="small"
+                              sx={{ marginRight: '7px' }}
+                            />
+                            Wyślij wiadomość
+                          </Button>
                         )}
-                      </Button>
+                      </div>
                     )}
-                  </div>
-                ) : (
-                  <div className={classes.loadingContainer}>
-                    <CircularProgress color="secondary" size="150px" />
                   </div>
                 )}
                 <List
@@ -1714,24 +1738,28 @@ const ProfilePage = (props) => {
                 </Typography>
                 <Divider />
               </div>
-              <ImageList
-                gap={15}
-                variant="quilted"
-                cols={2}
-                rowHeight={420}
-                sx={{ margin: 0, padding: '20px' }}
+              <div
+                style={{
+                  padding: '20px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gridGap: '15px',
+                }}
               >
                 {userImages &&
                   userImages
                     .slice((imagesPageNumber - 1) * 10, imagesPageNumber * 10)
-                    .map((item) => {
-                      return (
-                        <ImageListItem key={item.url}>
-                          <img src={item.url} alt={item.filename} />
-                        </ImageListItem>
-                      );
-                    })}
-              </ImageList>
+                    .map((item, index) => (
+                      <ModalImage
+                        key={index}
+                        className={classes.addedImageListItem}
+                        small={item.url}
+                        medium={item.url}
+                        large={item.url}
+                        hideZoom
+                      />
+                    ))}
+              </div>
               {userImages.length > 10 && (
                 <Pagination
                   className={classes.imagesPagination}

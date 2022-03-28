@@ -13,6 +13,7 @@ import {
   shareEvent,
 } from '../../redux/actions/eventActions';
 import classNames from 'classnames';
+import { formatDateWithTime } from '../../utils/formatDateWithTime';
 
 const Event = (props) => {
   const {
@@ -68,15 +69,7 @@ const Event = (props) => {
             Zaproszono Cię na wydarzenie
           </Typography>
           <Typography variant="body1" textAlign="center">
-            {'Dnia ' +
-              new Date(invitationDate)
-                .toJSON()
-                .slice(0, 10)
-                .split('-')
-                .reverse()
-                .join('.') +
-              ' o godz. ' +
-              new Date(invitationDate).toJSON().slice(10, 16).replace('T', ' ')}
+            {'Dnia ' + formatDateWithTime(invitationDate)}
           </Typography>
         </div>
       )}
@@ -93,13 +86,7 @@ const Event = (props) => {
         <div className={classes.eventInformationRow}>
           <AccessTime className={classes.timeIcon} />
           <Typography variant="subtitle2">
-            {new Date(date)
-              .toJSON()
-              .slice(0, 10)
-              .split('-')
-              .reverse()
-              .join('.') +
-              new Date(date).toJSON().slice(10, 16).replace('T', ' ')}
+            {formatDateWithTime(date)}
           </Typography>
         </div>
         <div

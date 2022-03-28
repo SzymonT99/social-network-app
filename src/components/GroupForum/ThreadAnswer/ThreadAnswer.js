@@ -8,7 +8,7 @@ import { Avatar, Badge, Button, Rating, TextField } from '@mui/material';
 import defaultUserPhoto from '../../../assets/default-profile-photo.jpg';
 import Typography from '@mui/material/Typography';
 import ActionConfirmation from '../../ActionConfirmation/ActionConfirmation';
-import { formatCreationDate } from '../../../utils/formatCreationDate';
+import { formatActivityDate } from '../../../utils/formatActivityDate';
 import { showNotification } from '../../../redux/actions/notificationActions';
 import {
   createGroupThreadAnswerReview,
@@ -20,7 +20,7 @@ import Popup from '../../Popup/Popup';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
-  BE_RIGHT_BACK: '#de681d',
+  BE_RIGHT_BACK: '#f59c11',
   BUSY: '#67207c',
   OFFLINE: '#FF1C00',
 };
@@ -134,7 +134,7 @@ const ThreadAnswer = (props) => {
                 </span>
                 <span className={classes.answerTime}>
                   {' odpowiedział(a) ' +
-                    formatCreationDate(new Date(createdDate)) +
+                    formatActivityDate(new Date(createdDate)) +
                     (isEdited ? ' (edytowany)' : '')}
                 </span>
               </Typography>

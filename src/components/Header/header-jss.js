@@ -64,8 +64,8 @@ const styles = (theme) => ({
   },
   userPhoto: {
     '&.MuiAvatar-root': {
-      width: '55px',
-      height: '55px',
+      width: '50px',
+      height: '50px',
     },
   },
   userMenu: {
@@ -130,6 +130,19 @@ const styles = (theme) => ({
       width: '24%',
       borderRadius: '5px',
       maxHeight: '80%',
+      '& .MuiList-root': {
+        padding: 0,
+      },
+    },
+  },
+  chatNotificationMenu: {
+    '& .MuiPaper-root': {
+      width: '20%',
+      borderRadius: '5px',
+      maxHeight: '80%',
+      '& .MuiList-root': {
+        padding: 0,
+      },
     },
   },
   friendMenuBtn: {
@@ -151,6 +164,9 @@ const styles = (theme) => ({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
+      '& .MuiListItemText-root': {
+        marginBottom: 0,
+      },
       '&:hover': {
         backgroundColor: '#e5e5e5',
         cursor: 'pointer',
@@ -161,12 +177,32 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: '68%',
+    padding: '5px 0px',
   },
   groupImage: {
     marginRight: '20px',
     height: '50px',
     width: '50px',
     borderRadius: '10px',
+  },
+  chatImage: {
+    marginRight: '20px',
+    height: '50px',
+    width: '50px',
+    borderRadius: '50%',
+  },
+  notificationNumber: {
+    backgroundColor: theme.palette.secondary.main,
+    padding: '4px 8px',
+    borderRadius: '50px',
+    fontSize: '12px',
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  chatInformationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '90%',
   },
 });
 
