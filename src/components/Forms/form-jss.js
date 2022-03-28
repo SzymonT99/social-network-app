@@ -69,33 +69,38 @@ const styles = (theme) => ({
     },
   },
   postImageList: {
-    width: '100%',
-    height: '300px',
+    '&.MuiImageList-root': {
+      width: '100%',
+      marginTop: 0,
+    },
   },
   uploadImageDeleteBtn: {},
   uploadImageItem: {
-    position: 'relative',
-    '&:hover $img': {
-      opacity: '0.6',
-      cursor: 'pointer',
-    },
-    '& $uploadImageDeleteBtn': {
-      position: 'absolute',
-      display: 'none',
-      top: 0,
-      right: 0,
-      backgroundColor: theme.palette.secondary.dark,
-      color: 'white',
-      padding: 10,
-      margin: 0,
-      minWidth: 0,
-      maxHeight: 'auto',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    '&:hover $uploadImageDeleteBtn': {
-      display: 'flex',
-      backgroundColor: theme.palette.secondary.dark,
+    '&.MuiImageListItem-root': {
+      position: 'relative',
+      height: '500px',
+      '&:hover $img': {
+        opacity: '0.6',
+        cursor: 'pointer',
+      },
+      '& $uploadImageDeleteBtn': {
+        position: 'absolute',
+        display: 'none',
+        top: 0,
+        right: 0,
+        backgroundColor: theme.palette.secondary.dark,
+        color: 'white',
+        padding: 10,
+        margin: 0,
+        minWidth: 0,
+        maxHeight: 'auto',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      '&:hover $uploadImageDeleteBtn': {
+        display: 'flex',
+        backgroundColor: theme.palette.secondary.dark,
+      },
     },
   },
   schoolFormContainer: {

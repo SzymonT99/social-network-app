@@ -78,6 +78,22 @@ const styles = (theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+  },
+  notificationManageBtn: {
+    '&.MuiIconButton-root': {
+      position: 'absolute',
+      top: '10px',
+      right: '10px',
+    },
+  },
+  notificationManageBtnClicked: {
+    '&.MuiIconButton-root': {
+      backgroundColor: theme.palette.secondary.light,
+      '&:hover': {
+        backgroundColor: theme.palette.secondary.main,
+      },
+    },
   },
   conversationsTitle: {
     '&.MuiTypography-root': {
@@ -113,6 +129,7 @@ const styles = (theme) => ({
     width: '100px',
     height: '100px',
     borderRadius: '50%',
+    objectFit: 'cover',
   },
   chatNameText: {
     '&.MuiTypography-root': {
@@ -232,6 +249,16 @@ const styles = (theme) => ({
     alignItems: 'center',
     height: '100%',
     width: '100%',
+  },
+  chatImageListContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridGap: '10px',
+  },
+  chatImageListItem: {
+    height: '120px',
+    width: '100%',
+    objectFit: 'cover',
   },
 });
 

@@ -73,6 +73,17 @@ const setup = (store) => {
         return Promise.reject(response);
       } else {
         response = await originalFetch(resource, config);
+        if (response.status === 401) {
+          dispatch(logoutUser(loggedUser.userId));
+          window.location.href = '/auth/login';
+          dispatch(
+            showNotification(
+              'error',
+              'Usunięto token odświżania - wylogowano się z innej przeglądarki'
+            )
+          );
+          return Promise.reject(response);
+        }
         return response;
       }
     } else {

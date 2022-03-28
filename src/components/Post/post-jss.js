@@ -71,15 +71,6 @@ const styles = (theme) => ({
       },
     },
   },
-  postImageList: {
-    width: '100%',
-    height: '330px',
-    '& img': {
-      '&:hover': {
-        cursor: 'pointer',
-      },
-    },
-  },
   postBtn: {
     '&.MuiButton-root': {
       textTransform: 'none',
@@ -157,6 +148,21 @@ const styles = (theme) => ({
       lineHeight: 0,
       marginLeft: '3px',
     },
+  },
+  postImageListContainer: {
+    display: 'grid',
+    gridGap: '10px',
+    marginBottom: '10px',
+  },
+  postSmallImage: {
+    width: '100%',
+    height: '250px',
+    objectFit: 'cover',
+  },
+  postLargeImage: {
+    width: '100%',
+    height: '400px',
+    objectFit: 'cover',
   },
 });
 

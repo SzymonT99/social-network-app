@@ -52,7 +52,8 @@ import SharePostForm from '../Forms/SharePostForm';
 import ActivityHeading from '../ActivityHeading/ActivityHeading';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { deleteGroupPost } from '../../redux/actions/groupActions';
-import { formatCreationDate } from '../../utils/formatCreationDate';
+import { formatActivityDate } from '../../utils/formatActivityDate';
+import ModalImage from 'react-modal-image-responsive';
 
 const Post = (props) => {
   const {
@@ -283,7 +284,7 @@ const Post = (props) => {
               </span>
             </Typography>
             <Typography variant="body2" className={classes.activityDateText}>
-              {formatCreationDate(new Date(activityDate))}
+              {formatActivityDate(new Date(activityDate))}
             </Typography>
           </div>
           <Divider sx={{ margin: '15px 0px' }} />
@@ -460,18 +461,27 @@ const Post = (props) => {
         <Typography variant="body1">{content}</Typography>
       </div>
       {images.length !== 0 && (
-        <ImageList cols={1} rowHeight={300} className={classes.postImageList}>
+        <div
+          className={classes.postImageListContainer}
+          style={{
+            gridTemplateColumns: `repeat(${images.length > 1 ? 2 : 1}, 1fr)`,
+          }}
+        >
           {images.map((img, index) => (
-            <ImageListItem key={index} className={classes.uploadImageItem}>
-              <img
-                key={index}
-                src={img.url}
-                srcSet={img.url}
-                alt={img.filename}
-              />
-            </ImageListItem>
+            <ModalImage
+              key={index}
+              className={
+                images.length > 1
+                  ? classes.postSmallImage
+                  : classes.postLargeImage
+              }
+              small={img.url}
+              medium={img.url}
+              large={img.url}
+              hideZoom
+            />
           ))}
-        </ImageList>
+        </div>
       )}
       {!asSharing && (
         <>

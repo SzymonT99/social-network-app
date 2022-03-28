@@ -113,6 +113,7 @@ export const getChatDetails = (chatId) => (dispatch) => {
       if (response.status === 200) {
         return response.json().then((data) => {
           dispatch(getUserChats());
+          dispatch(getChatImages(chatId));
           dispatch({
             type: chatTypes.FETCH_CHAT_DETAILS,
             payload: {
@@ -288,7 +289,7 @@ export const setChatMemberPermission =
   };
 
 export const deleteMemberFromChat =
-  (chatMemberId, isDeletedByAdmin) => (dispatch, getState) => {
+  (chatMemberId, isDeletedByAdmin) => (dispatch) => {
     return chatService
       .deleteMemberFromChat(chatMemberId)
       .then((response) => {
@@ -307,6 +308,32 @@ export const deleteMemberFromChat =
               dispatch(getChatDetails(data[0].chatId));
             });
           }
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+export const setChatMemberChatNotifications =
+  (chatMemberId, isChatMuted) => (dispatch) => {
+    return chatService
+      .setChatMemberChatNotifications(chatMemberId, isChatMuted)
+      .then((response) => {
+        if (response.status === 200) {
+          if (isChatMuted) {
+            dispatch(
+              showNotification('success', 'Wyłączono powiadomienia czatu')
+            );
+          } else {
+            dispatch(
+              showNotification('success', 'Włączono powiadomienia czatu')
+            );
+          }
+        } else if (response.status === 404) {
+          dispatch(showNotification('warning', 'Nie znaleziono członka czatu'));
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }

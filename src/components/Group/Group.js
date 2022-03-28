@@ -12,6 +12,8 @@ import {
   requestToJoinGroup,
   respondToGroupInvitation,
 } from '../../redux/actions/groupActions';
+import { formatDateWithTime } from '../../utils/formatDateWithTime';
+import { formatBaseDate } from '../../utils/formatBaseDate';
 
 const Group = (props) => {
   const {
@@ -70,15 +72,7 @@ const Group = (props) => {
             Zaproszono Cię do grupy
           </Typography>
           <Typography variant="body1" textAlign="center">
-            {'Dnia ' +
-              new Date(invitationDate)
-                .toJSON()
-                .slice(0, 10)
-                .split('-')
-                .reverse()
-                .join('.') +
-              ' o godz. ' +
-              new Date(invitationDate).toJSON().slice(10, 16).replace('T', ' ')}
+            {'Dnia ' + formatDateWithTime(invitationDate)}
           </Typography>
         </div>
       )}
@@ -125,12 +119,7 @@ const Group = (props) => {
             <span className={classes.statsDescription}>Postów</span>
           </Typography>
           <Typography variant="subtitle2" textAlign="center" fontWeight="bold">
-            {new Date(groupCreationDate)
-              .toJSON()
-              .slice(0, 10)
-              .split('-')
-              .reverse()
-              .join('.')}
+            {formatBaseDate(groupCreationDate)}
             <br />
             <span className={classes.statsDescription}>Data założenia</span>
           </Typography>

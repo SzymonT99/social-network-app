@@ -32,10 +32,10 @@ import {
   deleteChat,
   deleteMemberFromChat,
   getChatDetails,
-  getChatImages,
   getChatMessageById,
   getUserChats,
   setActiveChat,
+  setChatMemberChatNotifications,
   uploadChatImages,
 } from '../../redux/actions/chatAction';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -60,14 +60,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import chatTypes from '../../redux/types/chatTypes';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import CircularProgress from '@mui/material/CircularProgress';
-import { showNotification } from '../../redux/actions/notificationActions';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import CloseIcon from '@mui/icons-material/Close';
-import { createPost, editPost } from '../../redux/actions/postActions';
-import {
-  createGroupPost,
-  editGroupPost,
-} from '../../redux/actions/groupActions';
+import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
+import classNames from 'classnames';
+import ModalImage from 'react-modal-image-responsive';
+import { formatBaseDate } from '../../utils/formatBaseDate';
 
 let stompClient = null;
 
@@ -100,6 +98,7 @@ const ChatPage = (props) => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [displayedImages, setDisplayedImages] = useState([]);
   const [openImagesPopup, setOpenImagesPopup] = useState(false);
+  const [chatMuted, setChatMuted] = useState(false);
 
   const imagesInputRef = useRef(null);
 
@@ -118,7 +117,11 @@ const ChatPage = (props) => {
         if (data.length !== 0 && !activeChatId) {
           dispatch(setActiveChat(data[0].chatId));
           dispatch(getChatDetails(data[0].chatId)).then((chat) => {
-            dispatch(getChatImages(data[0].chatId));
+            setChatMuted(
+              chat.chatMembers.find(
+                (member) => member.user.userId === loggedUser.userId
+              ).hasMutedChat
+            );
             if (chat.messages.length > 12) {
               setMaxShowedMessages(12);
             } else {
@@ -131,7 +134,7 @@ const ChatPage = (props) => {
     return () => {
       if (stompClient !== null) {
         stompClient.unsubscribe('chat', {});
-        dispatch(getChatDetails(currentChat.chatId));
+        dispatch(getChatDetails(activeChatId));
       }
     };
   }, []);
@@ -142,7 +145,11 @@ const ChatPage = (props) => {
         stompClient.unsubscribe('chat', {});
       }
       dispatch(getChatDetails(activeChatId)).then((chat) => {
-        dispatch(getChatImages(activeChatId));
+        setChatMuted(
+          chat.chatMembers.find(
+            (member) => member.user.userId === loggedUser.userId
+          ).hasMutedChat
+        );
         if (chat.messages.length > 12) {
           setMaxShowedMessages(12);
         } else {
@@ -390,9 +397,13 @@ const ChatPage = (props) => {
 
   const deleteImage = (deletedImg) => {
     if (displayedImages.length > 1) {
+      let index = displayedImages.indexOf(deletedImg);
       setDisplayedImages((prevState) =>
         prevState.filter((image) => image !== deletedImg)
       );
+      const fileListArray = Array.from(uploadedImages);
+      fileListArray.splice(index, 1);
+      setUploadedImages(fileListArray);
       setUploadedImages((prevState) =>
         prevState.filter((image) => image !== deletedImg)
       );
@@ -406,9 +417,17 @@ const ChatPage = (props) => {
     setOpenImagesPopup(false);
   };
 
+  const handleClickNotificationManage = () => {
+    let chatMemberId = currentChat.chatMembers.find(
+      (member) => member.user.userId === loggedUser.userId
+    ).chatMemberId;
+    dispatch(setChatMemberChatNotifications(chatMemberId, !chatMuted));
+    setChatMuted(!chatMuted);
+  };
+
   return (
     <div className={classes.wrapper}>
-      {currentChat && currentChat.messages && currentChat.images ? (
+      {currentChat && currentChat.messages && currentChat.addedImages ? (
         <Paper elevation={4} className={classes.chatContainer}>
           <div className={classes.conversationsContainer}>
             <div className={classes.conversationsHeadingBox}>
@@ -745,6 +764,20 @@ const ChatPage = (props) => {
                     </Popup>
                   </div>
                 )}
+              <Tooltip
+                title={chatMuted ? 'Odmutuj czat' : 'Mutuj czat'}
+                placement="bottom"
+              >
+                <IconButton
+                  onClick={handleClickNotificationManage}
+                  className={classNames(
+                    classes.notificationManageBtn,
+                    chatMuted && classes.notificationManageBtnClicked
+                  )}
+                >
+                  <NotificationsOffIcon fontSize="large" color="primary" />
+                </IconButton>
+              </Tooltip>
             </div>
             <div className={classes.chatSettingsContent}>
               <Accordion className={classes.activeChatInfoBox} disableGutters>
@@ -764,12 +797,7 @@ const ChatPage = (props) => {
                   <Typography variant="body1" className={classes.chatInfoRow}>
                     <AddCircleIcon />
                     {'Data utworzenia: ' +
-                      new Date(currentChat.createdAt)
-                        .toJSON()
-                        .slice(0, 10)
-                        .split('-')
-                        .reverse()
-                        .join('.')}
+                      formatBaseDate(currentChat.createdAt)}
                   </Typography>
                   {!currentChat.isPrivate && currentChat.chatCreator && (
                     <Typography variant="body1" className={classes.chatInfoRow}>
@@ -811,26 +839,32 @@ const ChatPage = (props) => {
                   <Typography variant="subtitle1">Zdjęcia</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {currentChat.images.length > 0 ? (
-                    <ImageList
-                      cols={2}
-                      rowHeight={120}
-                      gap={5}
-                      variant="quilted"
+                  {currentChat.addedImages.length > 0 ? (
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gridGap: '10px',
+                      }}
+                      className={classes.chatImageListContainer}
                     >
-                      {currentChat.images.map((img, index) => (
-                        <ImageListItem key={index}>
-                          <img
-                            key={index}
-                            src={img.url}
-                            alt="Dodane zdjęcie"
-                            loading="lazy"
-                          />
-                        </ImageListItem>
+                      {currentChat.addedImages.map((img, index) => (
+                        <ModalImage
+                          className={classes.chatImageListItem}
+                          key={index}
+                          small={img.url}
+                          medium={img.url}
+                          large={img.url}
+                          hideZoom
+                        />
                       ))}
-                    </ImageList>
+                    </div>
                   ) : (
-                    <Typography variant="subtitle2" marginTop="5px">
+                    <Typography
+                      variant="body1"
+                      marginTop="5px"
+                      fontWeight={300}
+                    >
                       Nie dodano zdjęć
                     </Typography>
                   )}

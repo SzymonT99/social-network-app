@@ -5,7 +5,7 @@ import { PropTypes } from 'prop-types';
 import defaultChatImage from '../../assets/default-chat-image.png';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import { Typography } from '@mui/material';
-import { formatCreationDate } from '../../utils/formatCreationDate';
+import { formatActivityDate } from '../../utils/formatActivityDate';
 import { setActiveChat } from '../../redux/actions/chatAction';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
@@ -71,7 +71,7 @@ const ChatConversation = (props) => {
         </Typography>
         {activityDate && (
           <Typography fontSize="10px" fontWeight={300} lineHeight={1}>
-            {formatCreationDate(new Date(activityDate))}
+            {formatActivityDate(new Date(activityDate))}
           </Typography>
         )}
       </div>

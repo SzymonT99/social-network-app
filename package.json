@@ -25,6 +25,7 @@
     "react-helmet": "^6.1.0",
     "react-imageslides": "^3.0.0-beta.2",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-modal-image-responsive": "^1.1.1",
     "react-notifications": "^1.7.3",
     "react-redux": "^7.2.6",
     "react-router-dom": "^5.3.0",

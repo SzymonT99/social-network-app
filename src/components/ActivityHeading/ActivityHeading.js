@@ -8,7 +8,7 @@ import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import defaultImg from '../../assets/default-image.png';
 import Avatar from '@mui/material/Avatar';
 import { useHistory } from 'react-router-dom';
-import { formatCreationDate } from '../../utils/formatCreationDate';
+import { formatActivityDate } from '../../utils/formatActivityDate';
 
 const ActivityHeading = (props) => {
   const {
@@ -111,7 +111,7 @@ const ActivityHeading = (props) => {
             </span>
           </Typography>
           <Typography variant="body2">
-            {formatCreationDate(createdDate)}
+            {formatActivityDate(createdDate)}
           </Typography>
           {isEdited && !postGroupActivity && (
             <Typography variant="body2" fontWeight={500}>

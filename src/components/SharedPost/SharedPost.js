@@ -40,7 +40,7 @@ import { showNotification } from '../../redux/actions/notificationActions';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import CommentIcon from '@mui/icons-material/Comment';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
-import { formatCreationDate } from '../../utils/formatCreationDate';
+import { formatActivityDate } from '../../utils/formatActivityDate';
 
 const SharedPost = (props) => {
   const {
@@ -220,7 +220,7 @@ const SharedPost = (props) => {
               </span>
             </Typography>
             <Typography variant="body2" className={classes.activityDateText}>
-              {formatCreationDate(new Date(activityDate))}
+              {formatActivityDate(new Date(activityDate))}
             </Typography>
           </div>
           <Divider sx={{ margin: '15px 0px' }} />

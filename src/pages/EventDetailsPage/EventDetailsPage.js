@@ -40,6 +40,7 @@ import {
   refreshUserToken,
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
+import { formatDateWithTime } from '../../utils/formatDateWithTime';
 
 const EventsPageDetails = (props) => {
   const { classes } = props;
@@ -382,16 +383,7 @@ const EventsPageDetails = (props) => {
                     <span className={classes.detailsItemTitle}>
                       {'Data utworzenia: '}
                     </span>
-                    {new Date(event.createdAt)
-                      .toJSON()
-                      .slice(0, 10)
-                      .split('-')
-                      .reverse()
-                      .join('.') +
-                      new Date(event.createdAt)
-                        .toJSON()
-                        .slice(10, 16)
-                        .replace('T', ' ')}
+                    {formatDateWithTime(event.createdAt)}
                   </Typography>
                 </div>
                 <div className={classes.eventDetailsItem}>

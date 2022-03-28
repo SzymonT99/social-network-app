@@ -5,7 +5,7 @@ import { PropTypes } from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import defaultEventImgLandscape from '../../assets/default-event-photo-landscape.png';
+import defaultChatImgLandscape from '../../assets/default-chat-image-landscape.png';
 import {
   Button,
   Divider,
@@ -16,7 +16,6 @@ import {
 import { createChat, editChat } from '../../redux/actions/chatAction';
 import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
-import SentInvitation from '../SentInvitation/SentInvitation';
 import Avatar from '@mui/material/Avatar';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import { useHistory } from 'react-router-dom';
@@ -148,7 +147,7 @@ const ChatForm = (props) => {
         <Grid item xs={12}>
           <div className={classes.formImageContainer}>
             <img
-              src={displayedImage ? displayedImage : defaultEventImgLandscape}
+              src={displayedImage ? displayedImage : defaultChatImgLandscape}
               alt="Zdjęcie czatu"
               className={classes.formImage}
             />

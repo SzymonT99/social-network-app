@@ -144,6 +144,22 @@ const deleteMemberFromChat = (chatMemberId) => {
   });
 };
 
+const setChatMemberChatNotifications = (chatMemberId, isChatMuted) => {
+  return fetch(
+    endpoints.chatMember.replace('{chatMemberId}', chatMemberId) +
+      '?' +
+      new URLSearchParams({
+        isChatMuted: isChatMuted,
+      }),
+    {
+      method: 'PUT',
+      headers: {
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 const uploadChatImages = (chatId, formData) => {
   return fetch(endpoints.chatImages.replace('{chatId}', chatId), {
     method: 'POST',
@@ -158,6 +174,7 @@ const getChatImages = (chatId) => {
   return fetch(endpoints.chatImages.replace('{chatId}', chatId), {
     method: 'GET',
     headers: {
+      'Content-Type': 'application/json',
       Authorization: authorization(),
     },
   });
@@ -176,6 +193,7 @@ export default {
   addUserToChat,
   setChatMemberPermission,
   deleteMemberFromChat,
+  setChatMemberChatNotifications,
   uploadChatImages,
   getChatImages,
 };

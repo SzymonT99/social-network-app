@@ -128,7 +128,7 @@ const chatReducer = (state = initialState, action) => {
         ...state,
         chatDetails: {
           ...state.chatDetails,
-          images: action.payload.chatImages,
+          addedImages: action.payload.chatImages,
         },
       };
     default:

@@ -41,7 +41,7 @@ import {
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
 import { getActivityNotification } from '../../redux/actions/userActivityActions';
-import { formatCreationDate } from '../../utils/formatCreationDate';
+import { formatActivityDate } from '../../utils/formatActivityDate';
 import {
   getChatDetails,
   getUserChats,
@@ -510,7 +510,7 @@ const Header = (props) => {
                   width="32%"
                   marginLeft="10px"
                 >
-                  {formatCreationDate(
+                  {formatActivityDate(
                     new Date(activityNotification.notificationDate)
                   )}
                 </Typography>
@@ -537,7 +537,13 @@ const Header = (props) => {
               overlap="circular"
               badgeContent={
                 location.pathname !== '/app/chat'
-                  ? userChats.filter((chat) => chat.newMessages > 0).length
+                  ? userChats.filter(
+                      (chat) =>
+                        chat.newMessages > 0 &&
+                        chat.members.find(
+                          (member) => member.user.userId === loggedUser.userId
+                        ).hasMutedChat === false
+                    ).length
                   : 0
               }
             >
@@ -659,7 +665,7 @@ const Header = (props) => {
                           }
                         />
                         <Typography fontSize="11px">
-                          {formatCreationDate(new Date(chat.activityDate))}
+                          {formatActivityDate(new Date(chat.activityDate))}
                         </Typography>
                       </div>
                     </div>

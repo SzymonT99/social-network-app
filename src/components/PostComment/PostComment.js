@@ -18,7 +18,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import UsersListPopup from '../UsersListPopup/UsersListPopup';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { useHistory } from 'react-router-dom';
-import { formatCreationDate } from '../../utils/formatCreationDate';
+import { formatActivityDate } from '../../utils/formatActivityDate';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -155,7 +155,7 @@ const PostComment = (props) => {
                 {authorName}
               </span>
               <span className={classes.commentTime}>
-                {' ' + formatCreationDate(createdDate)}
+                {' ' + formatActivityDate(createdDate)}
               </span>
             </Typography>
             <Typography variant="body2" fontWeight="bold">

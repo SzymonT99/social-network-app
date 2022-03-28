@@ -28,6 +28,8 @@ import {
 import Popup from '../Popup/Popup';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import classNames from 'classnames';
+import { formatBaseDate } from '../../utils/formatBaseDate';
+import { formatDateWithTime } from '../../utils/formatDateWithTime';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -100,25 +102,16 @@ const ChatMessage = (props) => {
 
   const generatePublicationDate = (messageDate) => {
     if (
-      new Date(messageDate).getDate() === new Date().getDate() &&
+      new Date(messageDate).getDay() === new Date().getDay() &&
       new Date(messageDate).getFullYear() === new Date().getFullYear()
     ) {
-      return new Date(messageDate).toJSON().slice(10, 16).replace('T', ' ');
+      return formatDateWithTime(messageDate).slice(10, 16);
     } else {
       return (
         <span>
-          <span>
-            {new Date(messageDate)
-              .toJSON()
-              .slice(0, 10)
-              .split('-')
-              .reverse()
-              .join('.')}
-          </span>
+          <span>{formatBaseDate(messageDate)}</span>
           <br />
-          <span>
-            {new Date(messageDate).toJSON().slice(10, 16).replace('T', ' ')}
-          </span>
+          <span>{formatDateWithTime(messageDate).slice(10, 16)}</span>
         </span>
       );
     }
