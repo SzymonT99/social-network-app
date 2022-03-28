@@ -132,10 +132,13 @@ const PostForm = (props) => {
   };
 
   const deleteImage = (deletedImg) => {
-    const index = displayedImages.indexOf(deletedImg);
     if (displayedImages.length > 1) {
-      setDisplayedImages(displayedImages.splice(index, 1));
-      setUploadedImages(Array.from(uploadedImages).splice(index, 1));
+      setDisplayedImages((prevState) =>
+        prevState.filter((image) => image !== deletedImg)
+      );
+      setUploadedImages((prevState) =>
+        prevState.filter((image) => image !== deletedImg)
+      );
     } else {
       setDisplayedImages([]);
       setUploadedImages([]);

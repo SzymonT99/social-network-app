@@ -123,6 +123,14 @@ const chatReducer = (state = initialState, action) => {
           ),
         },
       };
+    case chatTypes.FETCH_CHAT_IMAGES:
+      return {
+        ...state,
+        chatDetails: {
+          ...state.chatDetails,
+          images: action.payload.chatImages,
+        },
+      };
     default:
       return state;
   }

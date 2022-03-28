@@ -173,6 +173,12 @@ const styles = (theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-end',
   },
+  sentImage: {
+    width: '200px',
+    height: '200px',
+    borderRadius: '10px',
+    marginTop: '5px',
+  },
 });
 
 export default styles;

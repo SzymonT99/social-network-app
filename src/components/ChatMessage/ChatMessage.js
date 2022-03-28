@@ -249,89 +249,98 @@ const ChatMessage = (props) => {
               (edytowano)
             </Typography>
           )}
-          <div
-            className={
-              loggedUser.userId === author.userId
-                ? classes.messageDetailsContent
-                : null
-            }
-          >
-            {loggedUser.userId === author.userId && !isDeleted && (
-              <div className={classes.manageMessageBox}>
-                <IconButton onClick={handleClickMessageManage}>
-                  <MoreVertIcon fontSize="small" />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleCloseMessageManage}
-                  disableScrollLock={true}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                >
-                  <MenuItem onClick={handleClickEditMessage}>
-                    <ListItemIcon>
-                      <EditIcon fontSize="medium" />
-                    </ListItemIcon>
-                    <ListItemText
-                      disableTypography
-                      primary={
-                        <Typography variant="subtitle2">
-                          Edytuj wiadomość
-                        </Typography>
-                      }
-                    />
-                  </MenuItem>
-                  <MenuItem onClick={handleClickDeleteMessage}>
-                    <ListItemIcon>
-                      <DeleteForeverIcon fontSize="medium" />
-                    </ListItemIcon>
-                    <ListItemText
-                      disableTypography
-                      primary={
-                        <Typography variant="subtitle2">
-                          Usuń wiadomość
-                        </Typography>
-                      }
-                    />
-                  </MenuItem>
-                </Menu>
-                <Popup
-                  open={openDeletePopup}
-                  type="confirmation"
-                  title="Usuwanie wiadomości"
-                  onClose={handleCloseDeletePopup}
-                >
-                  <ActionConfirmation
-                    title="Czy napewno chcesz usunąć wskazaną wiadomość?"
-                    confirmationAction={deleteMessage}
-                    rejectionAction={handleCloseDeletePopup}
-                  />
-                </Popup>
-              </div>
-            )}
-            <TextField
-              multiline
-              disabled={isDisabled}
-              inputRef={messageRef}
-              className={
-                loggedUser.userId !== author.userId
-                  ? classes.otherMessageField
-                  : classes.userMessageField
-              }
-              value={messageText}
-              sx={{
-                width: `${messageFieldWidth}px`,
-              }}
-              onChange={handleMessageChange}
+          {messageImage && (
+            <img
+              src={messageImage.url}
+              alt="Zdjęcie czatu"
+              className={classes.sentImage}
             />
-          </div>
+          )}
+          {!messageImage && (
+            <div
+              className={
+                loggedUser.userId === author.userId
+                  ? classes.messageDetailsContent
+                  : null
+              }
+            >
+              {loggedUser.userId === author.userId && !isDeleted && (
+                <div className={classes.manageMessageBox}>
+                  <IconButton onClick={handleClickMessageManage}>
+                    <MoreVertIcon fontSize="small" />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleCloseMessageManage}
+                    disableScrollLock={true}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                  >
+                    <MenuItem onClick={handleClickEditMessage}>
+                      <ListItemIcon>
+                        <EditIcon fontSize="medium" />
+                      </ListItemIcon>
+                      <ListItemText
+                        disableTypography
+                        primary={
+                          <Typography variant="subtitle2">
+                            Edytuj wiadomość
+                          </Typography>
+                        }
+                      />
+                    </MenuItem>
+                    <MenuItem onClick={handleClickDeleteMessage}>
+                      <ListItemIcon>
+                        <DeleteForeverIcon fontSize="medium" />
+                      </ListItemIcon>
+                      <ListItemText
+                        disableTypography
+                        primary={
+                          <Typography variant="subtitle2">
+                            Usuń wiadomość
+                          </Typography>
+                        }
+                      />
+                    </MenuItem>
+                  </Menu>
+                  <Popup
+                    open={openDeletePopup}
+                    type="confirmation"
+                    title="Usuwanie wiadomości"
+                    onClose={handleCloseDeletePopup}
+                  >
+                    <ActionConfirmation
+                      title="Czy napewno chcesz usunąć wskazaną wiadomość?"
+                      confirmationAction={deleteMessage}
+                      rejectionAction={handleCloseDeletePopup}
+                    />
+                  </Popup>
+                </div>
+              )}
+              <TextField
+                multiline
+                disabled={isDisabled}
+                inputRef={messageRef}
+                className={
+                  loggedUser.userId !== author.userId
+                    ? classes.otherMessageField
+                    : classes.userMessageField
+                }
+                value={messageText}
+                sx={{
+                  width: `${messageFieldWidth}px`,
+                }}
+                onChange={handleMessageChange}
+              />
+            </div>
+          )}
           {!isDisabled && (
             <div>
               <Link

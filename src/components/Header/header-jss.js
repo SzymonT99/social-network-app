@@ -177,6 +177,7 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: '68%',
+    padding: '5px 0px',
   },
   groupImage: {
     marginRight: '20px',

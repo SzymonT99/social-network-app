@@ -316,6 +316,48 @@ export const deleteMemberFromChat =
       });
   };
 
+export const uploadChatImages = (chatId, formData) => (dispatch) => {
+  return chatService
+    .uploadChatImages(chatId, formData)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(getChatImages(chatId));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getChatImages = (chatId) => (dispatch) => {
+  return chatService
+    .getChatImages(chatId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: chatTypes.FETCH_CHAT_IMAGES,
+            payload: {
+              chatImages: data,
+            },
+          });
+          return data;
+        });
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const setActiveChat = (chatId) => ({
   type: chatTypes.SET_ACTIVE_CHAT,
   payload: {

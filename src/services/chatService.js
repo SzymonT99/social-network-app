@@ -144,6 +144,25 @@ const deleteMemberFromChat = (chatMemberId) => {
   });
 };
 
+const uploadChatImages = (chatId, formData) => {
+  return fetch(endpoints.chatImages.replace('{chatId}', chatId), {
+    method: 'POST',
+    headers: {
+      Authorization: authorization(),
+    },
+    body: formData,
+  });
+};
+
+const getChatImages = (chatId) => {
+  return fetch(endpoints.chatImages.replace('{chatId}', chatId), {
+    method: 'GET',
+    headers: {
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   createChat,
   getPrivateChat,
@@ -157,4 +176,6 @@ export default {
   addUserToChat,
   setChatMemberPermission,
   deleteMemberFromChat,
+  uploadChatImages,
+  getChatImages,
 };

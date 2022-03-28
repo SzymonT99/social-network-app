@@ -42,7 +42,11 @@ import {
 } from '../../redux/actions/friendAction';
 import { getActivityNotification } from '../../redux/actions/userActivityActions';
 import { formatCreationDate } from '../../utils/formatCreationDate';
-import { getChatDetails, setActiveChat } from '../../redux/actions/chatAction';
+import {
+  getChatDetails,
+  getUserChats,
+  setActiveChat,
+} from '../../redux/actions/chatAction';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -90,6 +94,7 @@ const Header = (props) => {
     if (!isTokenExpired) {
       dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
       dispatch(getActivityNotification());
+      dispatch(getUserChats());
       if (users) {
         let usersArray = [];
         users.forEach((user) =>

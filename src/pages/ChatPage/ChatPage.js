@@ -12,9 +12,12 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Badge,
   Button,
   Divider,
   IconButton,
+  ImageList,
+  ImageListItem,
   InputAdornment,
   Link,
   Paper,
@@ -29,9 +32,11 @@ import {
   deleteChat,
   deleteMemberFromChat,
   getChatDetails,
+  getChatImages,
   getChatMessageById,
   getUserChats,
   setActiveChat,
+  uploadChatImages,
 } from '../../redux/actions/chatAction';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ChatConversation from '../../components/ChatConversation/ChatConversation';
@@ -56,6 +61,13 @@ import chatTypes from '../../redux/types/chatTypes';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import CircularProgress from '@mui/material/CircularProgress';
 import { showNotification } from '../../redux/actions/notificationActions';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
+import CloseIcon from '@mui/icons-material/Close';
+import { createPost, editPost } from '../../redux/actions/postActions';
+import {
+  createGroupPost,
+  editGroupPost,
+} from '../../redux/actions/groupActions';
 
 let stompClient = null;
 
@@ -85,6 +97,11 @@ const ChatPage = (props) => {
   const [text, setText] = useState('');
   const [searchedUserName, setSearchedUserName] = useState('');
   const [searchedUsers, setSearchedUsers] = useState([]);
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [displayedImages, setDisplayedImages] = useState([]);
+  const [openImagesPopup, setOpenImagesPopup] = useState(false);
+
+  const imagesInputRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -101,6 +118,7 @@ const ChatPage = (props) => {
         if (data.length !== 0 && !activeChatId) {
           dispatch(setActiveChat(data[0].chatId));
           dispatch(getChatDetails(data[0].chatId)).then((chat) => {
+            dispatch(getChatImages(data[0].chatId));
             if (chat.messages.length > 12) {
               setMaxShowedMessages(12);
             } else {
@@ -124,6 +142,7 @@ const ChatPage = (props) => {
         stompClient.unsubscribe('chat', {});
       }
       dispatch(getChatDetails(activeChatId)).then((chat) => {
+        dispatch(getChatImages(activeChatId));
         if (chat.messages.length > 12) {
           setMaxShowedMessages(12);
         } else {
@@ -202,23 +221,34 @@ const ChatPage = (props) => {
   };
 
   const sendMessage = (text) => {
-    if (text !== '') {
-      if (stompClient) {
+    if (stompClient) {
+      if (uploadedImages.length > 0) {
+        const formData = new FormData();
+        for (let i = 0; i < uploadedImages.length; i++) {
+          formData.append('images', uploadedImages[i]);
+        }
+        formData.append('senderId', loggedUser.userId);
+
+        dispatch(uploadChatImages(currentChat.chatId, formData));
+        setDisplayedImages([]);
+        setUploadedImages([]);
+      }
+
+      if (text !== '') {
         const message = {
           chatId: activeChatId,
           userId: loggedUser.userId,
           message: text,
           messageType: 'CHAT',
         };
+
         stompClient.send(
-          '/app/chat/' + activeChatId,
+          '/app/chat/' + activeChatId + '/messages',
           { Authorization: 'Bearer ' + loggedUser.accessToken },
           JSON.stringify(message)
         );
         setText('');
       }
-    } else {
-      dispatch(showNotification('warning', 'Podaj treść wiadomości'));
     }
   };
 
@@ -238,7 +268,7 @@ const ChatPage = (props) => {
     let typingMessage = event.target.value;
     setText(typingMessage);
     stompClient.send(
-      '/app/chat/' + activeChatId,
+      '/app/chat/' + activeChatId + '/messages',
       { Authorization: 'Bearer ' + loggedUser.accessToken },
       JSON.stringify({
         chatId: activeChatId,
@@ -273,7 +303,7 @@ const ChatPage = (props) => {
     ).chatMemberId;
     dispatch(deleteMemberFromChat(userMemberId, false));
     stompClient.send(
-      '/app/chat/' + activeChatId,
+      '/app/chat/' + activeChatId + '/messages',
       { Authorization: 'Bearer ' + loggedUser.accessToken },
       JSON.stringify({
         chatId: activeChatId,
@@ -286,7 +316,7 @@ const ChatPage = (props) => {
 
   const addUserToChat = (chatId, addedUserId) => {
     stompClient.send(
-      '/app/chat/' + chatId,
+      '/app/chat/' + chatId + '/messages',
       { Authorization: 'Bearer ' + loggedUser.accessToken },
       JSON.stringify({
         chatId: chatId,
@@ -299,7 +329,7 @@ const ChatPage = (props) => {
 
   const manageMessage = (type, chatId, userId, messageId) => {
     stompClient.send(
-      '/app/chat/' + chatId,
+      '/app/chat/' + chatId + '/messages',
       { Authorization: 'Bearer ' + loggedUser.accessToken },
       JSON.stringify({
         chatId: chatId,
@@ -347,9 +377,38 @@ const ChatPage = (props) => {
     }
   };
 
+  const selectImages = (event) => {
+    let images = [];
+
+    for (let i = 0; i < event.target.files.length; i++) {
+      images.push(URL.createObjectURL(event.target.files[i]));
+    }
+
+    setDisplayedImages(images);
+    setUploadedImages(event.target.files);
+  };
+
+  const deleteImage = (deletedImg) => {
+    if (displayedImages.length > 1) {
+      setDisplayedImages((prevState) =>
+        prevState.filter((image) => image !== deletedImg)
+      );
+      setUploadedImages((prevState) =>
+        prevState.filter((image) => image !== deletedImg)
+      );
+    } else {
+      setDisplayedImages([]);
+      setUploadedImages([]);
+    }
+  };
+
+  const handleCloseImagesPopup = () => {
+    setOpenImagesPopup(false);
+  };
+
   return (
     <div className={classes.wrapper}>
-      {currentChat && currentChat.messages ? (
+      {currentChat && currentChat.messages && currentChat.images ? (
         <Paper elevation={4} className={classes.chatContainer}>
           <div className={classes.conversationsContainer}>
             <div className={classes.conversationsHeadingBox}>
@@ -488,9 +547,18 @@ const ChatPage = (props) => {
               <IconButton>
                 <SentimentSatisfiedAltIcon fontSize="medium" color="primary" />
               </IconButton>
-              <IconButton>
+              <IconButton onClick={() => imagesInputRef.current.click()}>
                 <ImageIcon fontSize="medium" color="primary" />
               </IconButton>
+              <input
+                style={{ display: 'none' }}
+                type="file"
+                id="multi"
+                ref={imagesInputRef}
+                multiple
+                accept="image/*"
+                onChange={selectImages}
+              />
               <TextField
                 fullWidth
                 placeholder="Napisz widaomość"
@@ -504,7 +572,64 @@ const ChatPage = (props) => {
                     e.preventDefault();
                   }
                 }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      edge="end"
+                      onClick={() => setOpenImagesPopup(true)}
+                    >
+                      <Badge
+                        className={classes.messageImageBade}
+                        overlap="circular"
+                        badgeContent={uploadedImages.length}
+                      >
+                        <PhotoLibraryIcon fontSize="large" />
+                      </Badge>
+                    </IconButton>
+                  ),
+                }}
               />
+              <Popup
+                open={openImagesPopup}
+                type="images"
+                title="Zdjęcia"
+                onClose={handleCloseImagesPopup}
+              >
+                {displayedImages.length > 0 ? (
+                  <ImageList
+                    cols={3}
+                    rowHeight={220}
+                    className={classes.messageImageList}
+                    gap={5}
+                    variant="quilted"
+                  >
+                    {displayedImages.map((img, index) => (
+                      <ImageListItem
+                        key={index}
+                        className={classes.uploadImageItem}
+                      >
+                        <img
+                          key={index}
+                          src={img}
+                          srcSet={img}
+                          alt="Dodane zdjęcie"
+                          loading="lazy"
+                        />
+                        <Button
+                          className={classes.uploadImageDeleteBtn}
+                          onClick={() => deleteImage(img)}
+                        >
+                          <CloseIcon />
+                        </Button>
+                      </ImageListItem>
+                    ))}
+                  </ImageList>
+                ) : (
+                  <Typography variant="subtitle2" marginTop="5px">
+                    Nie dodano zdjęć
+                  </Typography>
+                )}
+              </Popup>
               <Button
                 color="primary"
                 variant="contained"
@@ -686,7 +811,29 @@ const ChatPage = (props) => {
                   <Typography variant="subtitle1">Zdjęcia</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <Typography variant="body1">{'Zdjęcia: '}</Typography>
+                  {currentChat.images.length > 0 ? (
+                    <ImageList
+                      cols={2}
+                      rowHeight={120}
+                      gap={5}
+                      variant="quilted"
+                    >
+                      {currentChat.images.map((img, index) => (
+                        <ImageListItem key={index}>
+                          <img
+                            key={index}
+                            src={img.url}
+                            alt="Dodane zdjęcie"
+                            loading="lazy"
+                          />
+                        </ImageListItem>
+                      ))}
+                    </ImageList>
+                  ) : (
+                    <Typography variant="subtitle2" marginTop="5px">
+                      Nie dodano zdjęć
+                    </Typography>
+                  )}
                 </AccordionDetails>
               </Accordion>
               <Accordion className={classes.activeChatInfoBox} disableGutters>

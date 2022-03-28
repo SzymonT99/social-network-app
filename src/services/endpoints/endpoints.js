@@ -100,4 +100,5 @@ export const endpoints = {
   addChatMember: baseUrl + '/api/chats/{chatId}/invite',
   chatMemberPermission: baseUrl + '/api/chats/{chatId}/permission',
   chatMember: baseUrl + '/api/chats/members/{chatMemberId}',
+  chatImages: baseUrl + '/api/chats/{chatId}/images',
 };
