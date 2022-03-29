@@ -35,6 +35,7 @@ const Event = (props) => {
   const dispatch = useDispatch();
 
   const loggedUser = useSelector((state) => state.auth.user);
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const handleClickEventReaction = (event, reaction) => {
     if (!activityItem) {
@@ -117,61 +118,63 @@ const Event = (props) => {
             } os. weźmie udział`}
           </Typography>
         )}
-        <div className={classes.eventBtnContainer}>
-          <Button
-            color="secondary"
-            variant="contained"
-            className={classes.eventReactionBtn}
-            style={{ width: activityItem && '30%' }}
-            onClick={(event) => handleClickEventReaction(event, 'INTERESTED')}
-            disabled={
-              members.filter(
-                (member) =>
-                  member.eventMember.userId === loggedUser.userId &&
-                  member.participationStatus === 'INTERESTED'
-              ).length > 0
-            }
-          >
-            Interesuje mnie
-          </Button>
-          <Button
-            color="secondary"
-            variant="contained"
-            className={classes.eventReactionBtn}
-            style={{ width: activityItem && '30%' }}
-            onClick={(event) => handleClickEventReaction(event, 'TAKE_PART')}
-            disabled={
-              members.filter(
-                (member) =>
-                  member.eventMember.userId === loggedUser.userId &&
-                  member.participationStatus === 'TAKE_PART'
-              ).length > 0
-            }
-          >
-            Weź udział
-          </Button>
-          {!invitation && (
-            <Button
-              color="primary"
-              variant="contained"
-              className={classes.eventReactionBtn}
-              style={{ width: activityItem && '20%' }}
-              onClick={(event) => handleClickShareEvent(event, eventId)}
-            >
-              <Share />
-            </Button>
-          )}
-          {invitation && (
+        {isUserLoggedIn && (
+          <div className={classes.eventBtnContainer}>
             <Button
               color="secondary"
               variant="contained"
               className={classes.eventReactionBtn}
-              onClick={(event) => handleClickEventReaction(event, 'REJECTED')}
+              style={{ width: activityItem && '30%' }}
+              onClick={(event) => handleClickEventReaction(event, 'INTERESTED')}
+              disabled={
+                members.filter(
+                  (member) =>
+                    member.eventMember.userId === loggedUser.userId &&
+                    member.participationStatus === 'INTERESTED'
+                ).length > 0
+              }
             >
-              Odrzuć
+              Interesuje mnie
             </Button>
-          )}
-        </div>
+            <Button
+              color="secondary"
+              variant="contained"
+              className={classes.eventReactionBtn}
+              style={{ width: activityItem && '30%' }}
+              onClick={(event) => handleClickEventReaction(event, 'TAKE_PART')}
+              disabled={
+                members.filter(
+                  (member) =>
+                    member.eventMember.userId === loggedUser.userId &&
+                    member.participationStatus === 'TAKE_PART'
+                ).length > 0
+              }
+            >
+              Weź udział
+            </Button>
+            {!invitation && (
+              <Button
+                color="primary"
+                variant="contained"
+                className={classes.eventReactionBtn}
+                style={{ width: activityItem && '20%' }}
+                onClick={(event) => handleClickShareEvent(event, eventId)}
+              >
+                <Share />
+              </Button>
+            )}
+            {invitation && (
+              <Button
+                color="secondary"
+                variant="contained"
+                className={classes.eventReactionBtn}
+                onClick={(event) => handleClickEventReaction(event, 'REJECTED')}
+              >
+                Odrzuć
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </Paper>
   );

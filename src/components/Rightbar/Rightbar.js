@@ -16,20 +16,26 @@ const Rightbar = (props) => {
   const isTokenRefreshing = useSelector(
     (state) => state.auth.isTokenRefreshing
   );
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const loggedUserFriends = useSelector((state) => state.friends.userFriends);
 
   useEffect(() => {
-    const isTokenExpired =
-      new Date() > new Date(loggedUser.accessTokenExpirationDate);
+    if (isUserLoggedIn) {
+      const isTokenExpired =
+        new Date() > new Date(loggedUser.accessTokenExpirationDate);
 
-    if (!isTokenExpired) {
-      dispatch(getUserFriends(loggedUser.userId, true));
+      if (!isTokenExpired) {
+        dispatch(getUserFriends(loggedUser.userId, true));
+      }
     }
   }, [isTokenRefreshing]);
 
   return (
     <div className={classes.rightbarContainer}>
-      <div className={classes.rightbarWrapper}>
+      <div
+        className={classes.rightbarWrapper}
+        style={{ display: !isUserLoggedIn && 'none' }}
+      >
         <Typography variant="h6" fontWeight="bold">
           Lista znajomych
         </Typography>

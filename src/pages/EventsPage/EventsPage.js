@@ -43,6 +43,7 @@ const EventsPage = (props) => {
   );
   const loggedUser = useSelector((state) => state.auth.user);
   const isUserRemember = useSelector((state) => state.auth.remember);
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const [eventTabType, setEventTabType] = useState('1');
   const [eventsOrder, setEventsOrder] = useState(1);
@@ -54,6 +55,7 @@ const EventsPage = (props) => {
   useEffect(() => {
     (async () => {
       if (
+        isUserLoggedIn &&
         isUserRemember &&
         new Date() > new Date(loggedUser.accessTokenExpirationDate)
       ) {
@@ -65,7 +67,9 @@ const EventsPage = (props) => {
       dispatch(getEvents()).then((data) => {
         setFilteredEvents(data);
       });
-      dispatch(getEventInvitations());
+      if (isUserLoggedIn) {
+        dispatch(getEventInvitations());
+      }
     })();
   }, []);
 
@@ -135,42 +139,44 @@ const EventsPage = (props) => {
     <div className={classes.wrapper}>
       <PageHeader heading="Wydarzenia" type="events" />
       <TabContext value={eventTabType}>
-        <Paper elevation={4} className={classes.eventsTopContainer}>
-          <TabList
-            onChange={handleChangeEventTabType}
-            className={classes.tabsContainer}
-          >
-            <Tab
-              className={classes.tabItem}
-              label="Wszystkie wydarzenia"
-              value={'1'}
-            />
-            <Tab
-              className={classes.tabItem}
-              label="Zaproszenia na wydarzenie"
-              value={'2'}
-            />
-          </TabList>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.addEventBtn}
-            onClick={() => setOpenEventCreation(true)}
-          >
-            Utwórz nowe wydarzenie
-          </Button>
-          <Popup
-            open={openEventCreation}
-            type="event"
-            title="Utwórz wydarzenie"
-            onClose={handleCloseEventCreation}
-          >
-            <EventForm
-              closePopup={handleCloseEventCreation}
-              updateEvents={updateEvents}
-            />
-          </Popup>
-        </Paper>
+        {isUserLoggedIn && (
+          <Paper elevation={4} className={classes.eventsTopContainer}>
+            <TabList
+              onChange={handleChangeEventTabType}
+              className={classes.tabsContainer}
+            >
+              <Tab
+                className={classes.tabItem}
+                label="Wszystkie wydarzenia"
+                value={'1'}
+              />
+              <Tab
+                className={classes.tabItem}
+                label="Zaproszenia na wydarzenie"
+                value={'2'}
+              />
+            </TabList>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.addEventBtn}
+              onClick={() => setOpenEventCreation(true)}
+            >
+              Utwórz nowe wydarzenie
+            </Button>
+            <Popup
+              open={openEventCreation}
+              type="event"
+              title="Utwórz wydarzenie"
+              onClose={handleCloseEventCreation}
+            >
+              <EventForm
+                closePopup={handleCloseEventCreation}
+                updateEvents={updateEvents}
+              />
+            </Popup>
+          </Paper>
+        )}
         {eventTabType !== '2' && (
           <Paper elevation={4} className={classes.eventSearchbarContainer}>
             <TextField

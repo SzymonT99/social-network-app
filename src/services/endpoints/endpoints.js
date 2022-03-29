@@ -70,6 +70,7 @@ export const endpoints = {
   userGroups: baseUrl + '/api/users/{userId}/groups',
   interestingGroups: baseUrl + '/api/interesting-groups',
   groupDetails: baseUrl + '/api/groups/{groupId}',
+  groupDetailsPublic: baseUrl + '/api/public/groups/{groupId}',
   deleteGroup: baseUrl + '/api/groups/{groupId}?archive=true',
   inviteToGroup: baseUrl + '/api/groups/{groupId}/invite',
   groupInvitationRespond: baseUrl + '/api/groups/{groupId}/response',

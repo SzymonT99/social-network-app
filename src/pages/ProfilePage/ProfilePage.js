@@ -99,6 +99,7 @@ import { getUserGroups } from '../../redux/actions/groupActions';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { getPrivateChat, setActiveChat } from '../../redux/actions/chatAction';
 import ModalImage from 'react-modal-image-responsive';
+import { showNotification } from '../../redux/actions/notificationActions';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -131,6 +132,7 @@ const ProfilePage = (props) => {
   );
   const loggedUser = useSelector((state) => state.auth.user);
   const isLoggedUserRemember = useSelector((state) => state.auth.remember);
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
     (state) => state.selectedProfile.userActivity
@@ -185,7 +187,13 @@ const ProfilePage = (props) => {
 
   useEffect(() => {
     (async () => {
+      if (!isUserLoggedIn) {
+        history.goBack();
+        dispatch(showNotification('warning', 'Profil nie jest publiczny'));
+      }
+
       if (
+        isUserLoggedIn &&
         isLoggedUserRemember &&
         new Date() > new Date(loggedUser.accessTokenExpirationDate)
       ) {
@@ -194,49 +202,57 @@ const ProfilePage = (props) => {
           dispatch(setTokenRefreshing(false));
         });
       }
-      dispatch(setLoading(true));
+
+      if (!isUserLoggedIn) {
+        setProfileInfoNav(1);
+      }
+
       dispatch(getUserProfile(selectedUserId));
-      dispatch(getUserActivity(selectedUserId));
       dispatch(getUserFavouriteItems(selectedUserId));
       dispatch(getUserInterests(selectedUserId));
-      dispatch(getUserImages(selectedUserId));
 
-      dispatch(getUserFriends(selectedUserId)).then((friends) => {
-        setFilteredFriends(friends);
-        if (
-          loggedUser.userId !== parseInt(selectedUserId) &&
-          friends.filter(
-            (friend) =>
-              friend.user.userId === loggedUser.userId &&
-              friend.isInvitationAccepted === true
-          ).length > 0
-        ) {
-          setIsUserFriend(true);
-        } else if (loggedUser.userId === parseInt(selectedUserId)) {
-          setIsUserFriend(null);
-        } else {
-          setIsUserFriend(false);
-        }
-      });
+      if (isUserLoggedIn) {
+        dispatch(setLoading(true));
+        dispatch(getUserActivity(selectedUserId));
+        dispatch(getUserImages(selectedUserId));
 
-      dispatch(getReceivedFriendInvitations(selectedUserId)).then(
-        (friendInvitations) => {
-          dispatch(setLoading(false));
+        dispatch(getUserFriends(selectedUserId)).then((friends) => {
+          setFilteredFriends(friends);
           if (
             loggedUser.userId !== parseInt(selectedUserId) &&
-            friendInvitations.filter(
-              (friend) => friend.invitingUser.userId === loggedUser.userId
+            friends.filter(
+              (friend) =>
+                friend.user.userId === loggedUser.userId &&
+                friend.isInvitationAccepted === true
             ).length > 0
           ) {
-            setIsInvitedToFriend(true);
+            setIsUserFriend(true);
           } else if (loggedUser.userId === parseInt(selectedUserId)) {
-            setIsInvitedToFriend(null);
+            setIsUserFriend(null);
           } else {
-            setIsInvitedToFriend(false);
+            setIsUserFriend(false);
           }
-        }
-      );
-      dispatch(getUserGroups(selectedUserId));
+        });
+
+        dispatch(getReceivedFriendInvitations(selectedUserId)).then(
+          (friendInvitations) => {
+            dispatch(setLoading(false));
+            if (
+              loggedUser.userId !== parseInt(selectedUserId) &&
+              friendInvitations.filter(
+                (friend) => friend.invitingUser.userId === loggedUser.userId
+              ).length > 0
+            ) {
+              setIsInvitedToFriend(true);
+            } else if (loggedUser.userId === parseInt(selectedUserId)) {
+              setIsInvitedToFriend(null);
+            } else {
+              setIsInvitedToFriend(false);
+            }
+          }
+        );
+        dispatch(getUserGroups(selectedUserId));
+      }
     })();
 
     return () => {
@@ -468,7 +484,7 @@ const ProfilePage = (props) => {
                   alt="Zdjęcie użytkownika"
                   className={classes.userPhoto}
                 />
-                {parseInt(selectedUserId) === loggedUser.userId && (
+                {loggedUser && parseInt(selectedUserId) === loggedUser.userId && (
                   <label
                     htmlFor="icon-button-file"
                     className={classes.uploadCoverImageBtn}
@@ -491,9 +507,9 @@ const ProfilePage = (props) => {
                     </Tooltip>
                   </label>
                 )}
-                {parseInt(selectedUserId) === loggedUser.userId &&
-                  userProfile &&
-                  userProfile.profilePhoto !== null && (
+                {loggedUser &&
+                  parseInt(selectedUserId) === loggedUser.userId &&
+                  userProfile.profilePhoto && (
                     <div className={classes.deleteProfileImageBtn}>
                       <Tooltip title="Usuń zdjęcie profilowe" placement="left">
                         <IconButton
@@ -525,124 +541,133 @@ const ProfilePage = (props) => {
                         {userProfile.email}
                       </Typography>
                     </div>
-                    {parseInt(selectedUserId) !== loggedUser.userId && (
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          minWidth: '250px',
-                        }}
-                      >
-                        <Button
-                          onMouseOver={() => setFriendBtnHover(true)}
-                          onMouseOut={() => setFriendBtnHover(false)}
-                          className={
-                            isUserFriend && !isInvitedToFriend
-                              ? classes.friendDeleteBtn
-                              : null
-                          }
-                          variant="contained"
-                          color="secondary"
-                          onClick={handleManageFriend}
+                    {loggedUser &&
+                      parseInt(selectedUserId) !== loggedUser.userId && (
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            minWidth: '250px',
+                          }}
                         >
-                          {isUserFriend &&
-                          !isInvitedToFriend &&
-                          friendBtnHover ? (
-                            <Typography
-                              variant="subtitle1"
-                              className={classes.friendManageBtnContent}
-                            >
-                              <PersonRemoveIcon sx={{ marginRight: '7px' }} />
-                              Usuń ze znajomych
-                            </Typography>
-                          ) : (
-                            generateFriendBtn()
-                          )}
-                        </Button>
-                        {isUserFriend && (
                           <Button
+                            onMouseOver={() => setFriendBtnHover(true)}
+                            onMouseOut={() => setFriendBtnHover(false)}
+                            className={
+                              isUserFriend && !isInvitedToFriend
+                                ? classes.friendDeleteBtn
+                                : null
+                            }
                             variant="contained"
-                            color="primary"
-                            className={classes.friendChatBtn}
-                            onClick={handleClickChatWithFriend}
+                            color="secondary"
+                            onClick={handleManageFriend}
                           >
-                            <ChatBubbleIcon
-                              fontSize="small"
-                              sx={{ marginRight: '7px' }}
-                            />
-                            Wyślij wiadomość
+                            {isUserFriend &&
+                            !isInvitedToFriend &&
+                            friendBtnHover ? (
+                              <Typography
+                                variant="subtitle1"
+                                className={classes.friendManageBtnContent}
+                              >
+                                <PersonRemoveIcon sx={{ marginRight: '7px' }} />
+                                Usuń ze znajomych
+                              </Typography>
+                            ) : (
+                              generateFriendBtn()
+                            )}
                           </Button>
-                        )}
-                      </div>
-                    )}
+                          {isUserFriend && (
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              className={classes.friendChatBtn}
+                              onClick={handleClickChatWithFriend}
+                            >
+                              <ChatBubbleIcon
+                                fontSize="small"
+                                sx={{ marginRight: '7px' }}
+                              />
+                              Wyślij wiadomość
+                            </Button>
+                          )}
+                        </div>
+                      )}
                   </div>
                 )}
-                <List
-                  className={classes.profileInfoList}
-                  style={{ borderLeft: '1px solid black' }}
-                >
-                  <ListItem className={classes.profileInfoListItem}>
-                    <Typography variant="subtitle2">
-                      {'Znajomi: ' +
-                        (userActivity ? userActivity.friends.length : 0)}
-                    </Typography>
-                  </ListItem>
-                  <ListItem className={classes.profileInfoListItem}>
-                    <Typography variant="subtitle2">
-                      {'Posty: ' +
-                        (userActivity ? userActivity.createdPosts.length : 0)}
-                    </Typography>
-                  </ListItem>
-                  <ListItem className={classes.profileInfoListItem}>
-                    <Typography variant="subtitle2">
-                      {'Komentarze: ' +
-                        (userActivity ? userActivity.comments.length : 0)}
-                    </Typography>
-                  </ListItem>
-                  <ListItem className={classes.profileInfoListItem}>
-                    <Typography variant="subtitle2">
-                      {'Polubienia: ' +
-                        (userActivity ? userActivity.likes.length : 0)}
-                    </Typography>
-                  </ListItem>
-                </List>
+                {isUserLoggedIn && (
+                  <List
+                    className={classes.profileInfoList}
+                    style={{ borderLeft: '1px solid black' }}
+                  >
+                    <ListItem className={classes.profileInfoListItem}>
+                      <Typography variant="subtitle2">
+                        {'Znajomi: ' +
+                          (userActivity ? userActivity.friends.length : 0)}
+                      </Typography>
+                    </ListItem>
+                    <ListItem className={classes.profileInfoListItem}>
+                      <Typography variant="subtitle2">
+                        {'Posty: ' +
+                          (userActivity ? userActivity.createdPosts.length : 0)}
+                      </Typography>
+                    </ListItem>
+                    <ListItem className={classes.profileInfoListItem}>
+                      <Typography variant="subtitle2">
+                        {'Komentarze: ' +
+                          (userActivity ? userActivity.comments.length : 0)}
+                      </Typography>
+                    </ListItem>
+                    <ListItem className={classes.profileInfoListItem}>
+                      <Typography variant="subtitle2">
+                        {'Polubienia: ' +
+                          (userActivity ? userActivity.likes.length : 0)}
+                      </Typography>
+                    </ListItem>
+                  </List>
+                )}
               </div>
             </div>
           </Paper>
-          <Paper elevation={4} sx={{ borderRadius: '10px' }}>
-            <Tabs
-              value={profileNavIndex}
-              onChange={handleChangeProfileNav}
-              className={classes.tabsContainer}
-              TabIndicatorProps={{
-                style: {
-                  display: 'none',
-                },
-              }}
-            >
-              <Tab
-                className={classes.tabItem}
-                id="tab-activity"
-                label="Aktywność"
-              />
-              <Tab
-                className={classes.tabItem}
-                id="tab-information"
-                label="Informacje"
-              />
-              <Tab
-                className={classes.tabItem}
-                id="tab-images"
-                label="Zdjęcia"
-              />
-              <Tab
-                className={classes.tabItem}
-                id="tab-friends"
-                label="Znajomi"
-              />
-              <Tab className={classes.tabItem} id="tab-groups" label="Grupy" />
-            </Tabs>
-          </Paper>
+          {isUserLoggedIn && (
+            <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+              <Tabs
+                value={profileNavIndex}
+                onChange={handleChangeProfileNav}
+                className={classes.tabsContainer}
+                TabIndicatorProps={{
+                  style: {
+                    display: 'none',
+                  },
+                }}
+              >
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-activity"
+                  label="Aktywność"
+                />
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-information"
+                  label="Informacje"
+                />
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-images"
+                  label="Zdjęcia"
+                />
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-friends"
+                  label="Znajomi"
+                />
+                <Tab
+                  className={classes.tabItem}
+                  id="tab-groups"
+                  label="Grupy"
+                />
+              </Tabs>
+            </Paper>
+          )}
           <TabPanel classes={classes} value={profileNavIndex} index={0}>
             <div className={classes.leftActivityContent}>
               <Paper elevation={4} sx={{ borderRadius: '10px' }}>
@@ -1220,16 +1245,17 @@ const ProfilePage = (props) => {
                         <Typography variant="h5">
                           Podstawowe informacje
                         </Typography>
-                        {parseInt(selectedUserId) === loggedUser.userId && (
-                          <Tooltip title="Edytuj informacje" placement="left">
-                            <IconButton
-                              className={classes.editBaseInformationBtn}
-                              onClick={() => setOpenProfileEdition(true)}
-                            >
-                              <EditIcon color="primary" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
+                        {loggedUser &&
+                          parseInt(selectedUserId) === loggedUser.userId && (
+                            <Tooltip title="Edytuj informacje" placement="left">
+                              <IconButton
+                                className={classes.editBaseInformationBtn}
+                                onClick={() => setOpenProfileEdition(true)}
+                              >
+                                <EditIcon color="primary" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
                         <Popup
                           open={openProfileEdition}
                           type="profileForm"
@@ -1348,19 +1374,20 @@ const ProfilePage = (props) => {
                         className={classes.profileInformationHeadingWithAction}
                       >
                         <Typography variant="h5">Dane kontaktowe</Typography>
-                        {parseInt(selectedUserId) === loggedUser.userId && (
-                          <Tooltip
-                            title="Edytuj dane kontaktowe"
-                            placement="left"
-                          >
-                            <IconButton
-                              className={classes.editBaseInformationBtn}
-                              onClick={() => history.push('/app/settings')}
+                        {loggedUser &&
+                          parseInt(selectedUserId) === loggedUser.userId && (
+                            <Tooltip
+                              title="Edytuj dane kontaktowe"
+                              placement="left"
                             >
-                              <EditIcon color="primary" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
+                              <IconButton
+                                className={classes.editBaseInformationBtn}
+                                onClick={() => history.push('/app/settings')}
+                              >
+                                <EditIcon color="primary" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
                       </div>
                       <ProfileInformationItem
                         title="Adres email"
@@ -1375,7 +1402,8 @@ const ProfilePage = (props) => {
                         className={classes.profileInformationHeadingWithAction}
                       >
                         <Typography variant="h5">Adres zamieszkania</Typography>
-                        {parseInt(selectedUserId) === loggedUser.userId &&
+                        {loggedUser &&
+                          parseInt(selectedUserId) === loggedUser.userId &&
                           (userProfile.address !== null ? (
                             <Tooltip title="Edytuj Adres" placement="left">
                               <IconButton
@@ -1488,6 +1516,7 @@ const ProfilePage = (props) => {
                             startDate={school.startDate}
                             graduationDate={school.graduationDate}
                             manage={
+                              loggedUser &&
                               parseInt(selectedUserId) === loggedUser.userId
                             }
                           />
@@ -1520,23 +1549,25 @@ const ProfilePage = (props) => {
                           startDate={work.startDate}
                           endDate={work.endDate}
                           manage={
+                            loggedUser &&
                             parseInt(selectedUserId) === loggedUser.userId
                           }
                         />
                       ))}
-                      {parseInt(selectedUserId) === loggedUser.userId && (
-                        <Button
-                          color="secondary"
-                          variant="text"
-                          className={classes.addProfileInfoItemBtn}
-                          onClick={() => setOpenAddWorkPopup(true)}
-                        >
-                          <AddCircleOutlineIcon />
-                          <Typography variant="subtitle1" marginLeft="10px">
-                            Dodaj miejsce pracy
-                          </Typography>
-                        </Button>
-                      )}
+                      {loggedUser &&
+                        parseInt(selectedUserId) === loggedUser.userId && (
+                          <Button
+                            color="secondary"
+                            variant="text"
+                            className={classes.addProfileInfoItemBtn}
+                            onClick={() => setOpenAddWorkPopup(true)}
+                          >
+                            <AddCircleOutlineIcon />
+                            <Typography variant="subtitle1" marginLeft="10px">
+                              Dodaj miejsce pracy
+                            </Typography>
+                          </Button>
+                        )}
                       <Popup
                         open={openAddSchoolPopup}
                         type="profileInfo"
@@ -1579,6 +1610,7 @@ const ProfilePage = (props) => {
                                 key={userInterest.interestId}
                                 disableGutters
                                 secondaryAction={
+                                  loggedUser &&
                                   parseInt(selectedUserId) ===
                                     loggedUser.userId && (
                                     <IconButton
@@ -1609,19 +1641,22 @@ const ProfilePage = (props) => {
                             ))}
                         </List>
                       )}
-                      {parseInt(selectedUserId) === loggedUser.userId && (
-                        <Button
-                          color="secondary"
-                          variant="text"
-                          className={classes.addProfileInfoItemBtn}
-                          onClick={() => setShowInterestForm(!showInterestForm)}
-                        >
-                          <AddCircleOutlineIcon />
-                          <Typography variant="subtitle1" marginLeft="10px">
-                            Dodaj zainteresowanie
-                          </Typography>
-                        </Button>
-                      )}
+                      {loggedUser &&
+                        parseInt(selectedUserId) === loggedUser.userId && (
+                          <Button
+                            color="secondary"
+                            variant="text"
+                            className={classes.addProfileInfoItemBtn}
+                            onClick={() =>
+                              setShowInterestForm(!showInterestForm)
+                            }
+                          >
+                            <AddCircleOutlineIcon />
+                            <Typography variant="subtitle1" marginLeft="10px">
+                              Dodaj zainteresowanie
+                            </Typography>
+                          </Button>
+                        )}
                       {showInterestForm && (
                         <AddInterestForm
                           userId={loggedUser.userId}
@@ -1700,21 +1735,22 @@ const ProfilePage = (props) => {
                           />
                         </>
                       )}
-                      {parseInt(selectedUserId) === loggedUser.userId && (
-                        <Button
-                          color="secondary"
-                          variant="text"
-                          className={classes.addProfileInfoItemBtn}
-                          onClick={() =>
-                            setShowFavouriteForm(!showFavouriteForm)
-                          }
-                        >
-                          <AddCircleOutlineIcon />
-                          <Typography variant="subtitle1" marginLeft="10px">
-                            Dodaj ulubione
-                          </Typography>
-                        </Button>
-                      )}
+                      {loggedUser &&
+                        parseInt(selectedUserId) === loggedUser.userId && (
+                          <Button
+                            color="secondary"
+                            variant="text"
+                            className={classes.addProfileInfoItemBtn}
+                            onClick={() =>
+                              setShowFavouriteForm(!showFavouriteForm)
+                            }
+                          >
+                            <AddCircleOutlineIcon />
+                            <Typography variant="subtitle1" marginLeft="10px">
+                              Dodaj ulubione
+                            </Typography>
+                          </Button>
+                        )}
                       {showFavouriteForm && (
                         <AddUserFavouriteForm
                           onCloseForm={() => setShowFavouriteForm(false)}
@@ -1894,7 +1930,7 @@ const ProfilePage = (props) => {
                       members={group.members}
                       postsNumber={group.postsNumber}
                       groupImage={group.image}
-                      showInProfile
+                      asInformation
                     />
                   ))}
               </div>
