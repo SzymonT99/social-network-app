@@ -241,6 +241,7 @@ const GroupDetailsPage = (props) => {
       },
       {
         field: 'permission',
+        headerName: 'Uprawnienie',
         width: 130,
         editable: memberStatusOfUser !== 'ASSISTANT',
         type: 'singleSelect',
@@ -255,7 +256,7 @@ const GroupDetailsPage = (props) => {
                   fontWeight: 'bold',
                 }}
               >
-                {'Uprawnienie'}
+                Uprawnienie
                 <EditIcon sx={{ fontSize: '20px', marginLeft: '12px' }} />
               </div>
             );
@@ -1714,8 +1715,8 @@ const GroupDetailsPage = (props) => {
                     <DataGrid
                       columns={tableColumns}
                       rows={memberTableRows}
-                      pageSize={5}
-                      rowsPerPageOptions={[5]}
+                      rowsPerPageOptions={[10, 15, 20]}
+                      pagination
                       disableSelectionOnClick
                       onCellEditCommit={handleRowEditCommit}
                     />

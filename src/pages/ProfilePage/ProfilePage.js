@@ -203,7 +203,7 @@ const ProfilePage = (props) => {
       dispatch(getUserFavouriteItems(selectedUserId));
       dispatch(getUserInterests(selectedUserId));
 
-      if (!userProfile.isPublic) {
+      if (!isUserLoggedIn && !userProfile.isPublic) {
         history.goBack();
         dispatch(showNotification('warning', 'Profil nie jest publiczny'));
       }

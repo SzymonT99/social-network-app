@@ -255,6 +255,37 @@ const changeUserStatus = (status) => {
   );
 };
 
+const getAllUserAccounts = () => {
+  return fetch(endpoints.userAccountsForAdmin, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const manageUserAccountByAdmin = (userId, userAccount) => {
+  return fetch(endpoints.manageUserAccountByAdmin.replace('{userId}', userId), {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify(userAccount),
+  });
+};
+
+const deleteUserByAdmin = (userId) => {
+  return fetch(endpoints.manageUserAccountByAdmin.replace('{userId}', userId), {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
 export default {
   getUserProfile,
   getUserActivity,
@@ -279,4 +310,7 @@ export default {
   addUserAddress,
   editUserAddress,
   changeUserStatus,
+  getAllUserAccounts,
+  manageUserAccountByAdmin,
+  deleteUserByAdmin,
 };

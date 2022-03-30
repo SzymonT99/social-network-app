@@ -27,7 +27,6 @@ import PersonIcon from '@mui/icons-material/Person';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/Message';
 import { useDispatch, useSelector } from 'react-redux';
-import CircularProgress from '@mui/material/CircularProgress';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import { Logout, Settings } from '@mui/icons-material';
@@ -40,10 +39,7 @@ import {
   getReceivedFriendInvitations,
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
-import {
-  getActivityNotification,
-  getAllUsersInformation,
-} from '../../redux/actions/userActivityActions';
+import { getActivityNotification } from '../../redux/actions/userActivityActions';
 import { formatActivityDate } from '../../utils/formatActivityDate';
 import {
   getChatDetails,

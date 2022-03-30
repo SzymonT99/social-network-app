@@ -27,7 +27,7 @@ const styles = (theme) => ({
   contentApp: {
     width: '85%',
   },
-  contentChatApp: {
+  extendsContentApp: {
     width: '97%',
   },
 });
