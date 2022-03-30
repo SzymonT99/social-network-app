@@ -112,7 +112,16 @@ const Header = (props) => {
         }
       }
     } else {
-      dispatch(getAllUsersInformation());
+      if (users) {
+        let usersArray = [];
+        users.forEach((user) =>
+          usersArray.push({
+            label: user.firstName + ' ' + user.lastName,
+            id: user.userId,
+          })
+        );
+        setOptions(usersArray);
+      }
     }
   }, [users, isTokenRefreshing]);
 
@@ -272,7 +281,10 @@ const Header = (props) => {
           />
         </div>
       </div>
-      <div className={classes.actionContainer}>
+      <div
+        className={classes.actionContainer}
+        style={{ justifyContent: !isUserLoggedIn && 'flex-end' }}
+      >
         <div
           className={classes.actionIcons}
           style={{ display: !isUserLoggedIn && 'none' }}
@@ -712,11 +724,8 @@ const Header = (props) => {
             noWrap
             className={classes.nameAndSurname}
           >
-            {loggedUserProfile ? (
-              loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName
-            ) : (
-              <CircularProgress color="primary" />
-            )}
+            {loggedUserProfile &&
+              loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName}
           </Typography>
           <IconButton onClick={handleClickAccountMenu}>
             <Avatar
@@ -880,9 +889,14 @@ const Header = (props) => {
           </Menu>
         </div>
         {!isUserLoggedIn && (
-          <Link className={classes.createAccountLink} to="/auth/register">
-            Załóż konto
-          </Link>
+          <div>
+            <Link className={classes.createAccountLink} to="/auth/login">
+              Zaloguj się
+            </Link>
+            <Link className={classes.createAccountLink} to="/auth/register">
+              Załóż konto
+            </Link>
+          </div>
         )}
       </div>
     </div>

@@ -128,7 +128,6 @@ export const getGroups = () => (dispatch) => {
     .getGroups()
     .then((response) => {
       if (response.status === 200) {
-        console.log('GROUPS 200');
         return response.json().then((data) => {
           dispatch({
             type: groupTypes.FETCH_GROUPS,

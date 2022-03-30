@@ -20,6 +20,7 @@ import { authenticate } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import { PropTypes } from 'prop-types';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import authTypes from '../../redux/types/authTypes';
 
 const validationSchema = yup.object({
   login: yup
@@ -76,6 +77,11 @@ const LoginPage = (props) => {
     setShowPassword(!showPassword);
   };
 
+  const handleClickShowPublicContent = () => {
+    dispatch({ type: authTypes.SET_GUEST_ACCESS });
+    history.push('/app/public');
+  };
+
   return (
     <>
       <div className={classes.wrapper}>
@@ -100,7 +106,7 @@ const LoginPage = (props) => {
             <Button
               variant="contained"
               className={classes.publicContentBtn}
-              onClick={() => history.push('/app/public')}
+              onClick={handleClickShowPublicContent}
             >
               Przeglądaj publiczne treści
             </Button>

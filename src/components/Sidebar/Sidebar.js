@@ -78,7 +78,10 @@ const Sidebar = (props) => {
     if (index === 0) {
       history.push('/app');
     } else if (index === 1) {
-      history.push('/app/profile/' + loggedUserProfile.userProfileId);
+      history.push(
+        '/app/profile/' +
+          (isUserLoggedIn ? loggedUserProfile.userProfileId : '')
+      );
     } else if (index === 2) {
       dispatch(changeProfileNav(3));
       history.push('/app/friends');
@@ -103,7 +106,9 @@ const Sidebar = (props) => {
     if (pathDetails === '') {
       setSelectedItem(0);
     } else if (
-      pathDetails.includes('/profile/' + loggedUserProfile.userProfileId)
+      pathDetails.includes(
+        '/profile/' + (isUserLoggedIn ? loggedUserProfile.userProfileId : '')
+      )
     ) {
       setSelectedItem(1);
     } else if (pathDetails.includes('/friends')) {
@@ -118,6 +123,8 @@ const Sidebar = (props) => {
       setSelectedItem(6);
     } else if (pathDetails.includes('/settings')) {
       setSelectedItem(7);
+    } else if (pathDetails.includes('/public')) {
+      setSelectedItem(8);
     } else {
       setSelectedItem(null);
     }
@@ -130,20 +137,24 @@ const Sidebar = (props) => {
   return (
     <div className={classes.sidebarContainer}>
       <div className={classes.sidebarWrapper}>
-        {loggedUserProfile ? (
-          <Link
-            className={classes.userProfile}
-            to={'/app/profile/' + loggedUserProfile.userProfileId}
-          >
-            <img
-              src={
-                loggedUserProfile.profilePhoto !== null
-                  ? loggedUserProfile.profilePhoto.url
-                  : defaultUserPhoto
-              }
-              alt="Zdjęcie użytkownika"
-              className={classes.userPhoto}
-            />
+        <Link
+          className={classes.userProfile}
+          to={
+            loggedUserProfile
+              ? '/app/profile/' + loggedUserProfile.userProfileId
+              : '/app/public'
+          }
+        >
+          <img
+            src={
+              loggedUserProfile && loggedUserProfile.profilePhoto !== null
+                ? loggedUserProfile.profilePhoto.url
+                : defaultUserPhoto
+            }
+            alt="Zdjęcie użytkownika"
+            className={classes.userPhoto}
+          />
+          {loggedUserProfile && (
             <Typography
               variant="h4"
               textAlign="center"
@@ -151,10 +162,9 @@ const Sidebar = (props) => {
             >
               {loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName}
             </Typography>
-          </Link>
-        ) : (
-          <CircularProgress color="secondary" />
-        )}
+          )}
+        </Link>
+
         <Divider color="white" className={classes.divider} />
         <nav>
           <List>

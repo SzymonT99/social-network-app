@@ -5,7 +5,7 @@ export const endpoints = {
   authenticate: baseUrl + '/api/auth/login',
   logout: baseUrl + '/api/auth/logout/{userId}',
   userProfile: baseUrl + '/api/profile/{userId}/information',
-  createPost: baseUrl + '/api/posts',
+  post: baseUrl + '/api/posts',
   postDetails: baseUrl + '/api/posts/{postId}',
   getActivityBoard: baseUrl + '/api/activity',
   likePost: baseUrl + '/api/posts/{postId}/like',

@@ -187,11 +187,6 @@ const ProfilePage = (props) => {
 
   useEffect(() => {
     (async () => {
-      if (!isUserLoggedIn) {
-        history.goBack();
-        dispatch(showNotification('warning', 'Profil nie jest publiczny'));
-      }
-
       if (
         isUserLoggedIn &&
         isLoggedUserRemember &&
@@ -203,13 +198,15 @@ const ProfilePage = (props) => {
         });
       }
 
-      if (!isUserLoggedIn) {
-        setProfileInfoNav(1);
-      }
-
+      dispatch(setLoading(false));
       dispatch(getUserProfile(selectedUserId));
       dispatch(getUserFavouriteItems(selectedUserId));
       dispatch(getUserInterests(selectedUserId));
+
+      if (!userProfile.isPublic) {
+        history.goBack();
+        dispatch(showNotification('warning', 'Profil nie jest publiczny'));
+      }
 
       if (isUserLoggedIn) {
         dispatch(setLoading(true));
@@ -509,6 +506,7 @@ const ProfilePage = (props) => {
                 )}
                 {loggedUser &&
                   parseInt(selectedUserId) === loggedUser.userId &&
+                  userProfile &&
                   userProfile.profilePhoto && (
                     <div className={classes.deleteProfileImageBtn}>
                       <Tooltip title="Usuń zdjęcie profilowe" placement="left">
@@ -869,7 +867,7 @@ const ProfilePage = (props) => {
               )}
             </div>
             <div className={classes.rightActivityContent}>
-              {userActivity ? (
+              {userActivity && (
                 <TabContext value={activityValue}>
                   <Paper
                     elevation={4}
@@ -1203,10 +1201,6 @@ const ProfilePage = (props) => {
                     )}
                   </TabPanelMUI>
                 </TabContext>
-              ) : (
-                <div className={classes.loadingContainer}>
-                  <CircularProgress color="secondary" size="240px" />
-                </div>
               )}
             </div>
           </TabPanel>
@@ -1521,19 +1515,20 @@ const ProfilePage = (props) => {
                             }
                           />
                         ))}
-                      {parseInt(selectedUserId) === loggedUser.userId && (
-                        <Button
-                          color="secondary"
-                          variant="text"
-                          className={classes.addProfileInfoItemBtn}
-                          onClick={() => setOpenAddSchoolPopup(true)}
-                        >
-                          <AddCircleOutlineIcon />
-                          <Typography variant="subtitle1" marginLeft="10px">
-                            Dodaj szkołę
-                          </Typography>
-                        </Button>
-                      )}
+                      {loggedUser &&
+                        parseInt(selectedUserId) === loggedUser.userId && (
+                          <Button
+                            color="secondary"
+                            variant="text"
+                            className={classes.addProfileInfoItemBtn}
+                            onClick={() => setOpenAddSchoolPopup(true)}
+                          >
+                            <AddCircleOutlineIcon />
+                            <Typography variant="subtitle1" marginLeft="10px">
+                              Dodaj szkołę
+                            </Typography>
+                          </Button>
+                        )}
                       <Typography
                         variant="h5"
                         className={classes.profileInformationHeading}

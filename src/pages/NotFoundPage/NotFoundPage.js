@@ -80,8 +80,4 @@ const NotFoundPage = () => {
   );
 };
 
-NotFoundPage.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
 export default NotFoundPage;

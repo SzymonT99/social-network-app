@@ -205,9 +205,11 @@ const styles = (theme) => ({
     width: '90%',
   },
   createAccountLink: {
+    marginRight: '50px',
     textDecoration: 'none',
     color: theme.palette.primary.main,
-    fontSize: '17px',
+    fontSize: '26px',
+    fontWeight: 'bold',
     '&:hover': {
       textDecoration: 'underline',
       cursor: 'pointer',

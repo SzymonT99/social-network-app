@@ -9,6 +9,7 @@ const initialState = {
   board: [],
   notifications: [],
   postDetails: null,
+  publicPosts: [],
 };
 
 const userActivityReducer = (state = initialState, action) => {
@@ -32,6 +33,16 @@ const userActivityReducer = (state = initialState, action) => {
       return {
         ...state,
         postDetails: action.payload.postDetails,
+      };
+    case postTypes.FETCH_PUBLIC_POSTS:
+      return {
+        ...state,
+        publicPosts: [...state.publicPosts, ...action.payload.posts],
+      };
+    case postTypes.CLEAR_PUBLIC_POSTS:
+      return {
+        ...state,
+        publicPosts: [],
       };
     case postTypes.CREATE_POST:
       return {

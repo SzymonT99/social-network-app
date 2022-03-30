@@ -20,6 +20,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import DoNotDisturbIcon from '@mui/icons-material/DoNotDisturb';
 import PersonIcon from '@mui/icons-material/Person';
 import CircularProgress from '@mui/material/CircularProgress';
+import { formatBaseDate } from '../../utils/formatBaseDate';
 
 const UserInformation = (props) => {
   const {
@@ -37,6 +38,7 @@ const UserInformation = (props) => {
 
   const dispatch = useDispatch();
 
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserFriendInvitations = useSelector(
     (state) => state.friends.receivedFriendInvitations
@@ -55,45 +57,47 @@ const UserInformation = (props) => {
   useEffect(() => {
     let isMounted = true;
 
-    dispatch(getUserFriends(userId, false, true)).then((friends) => {
-      if (isMounted) {
-        setUserFriends(friends);
-        if (
-          loggedUser.userId !== parseInt(userId) &&
-          friends.filter(
-            (friend) =>
-              friend.user.userId === loggedUser.userId &&
-              friend.isInvitationAccepted === true
-          ).length > 0
-        ) {
-          setIsUserFriend(true);
-        } else if (loggedUser.userId === parseInt(userId)) {
-          setIsUserFriend(null);
-        } else {
-          setIsUserFriend(false);
-        }
-      }
-    });
-
-    dispatch(getReceivedFriendInvitations(userId, false, false, true)).then(
-      (friendInvitations) => {
+    if (isUserLoggedIn) {
+      dispatch(getUserFriends(userId, false, true)).then((friends) => {
         if (isMounted) {
-          setUserFriendInvitations(friendInvitations);
+          setUserFriends(friends);
           if (
             loggedUser.userId !== parseInt(userId) &&
-            friendInvitations.filter(
-              (friend) => friend.invitingUser.userId === loggedUser.userId
+            friends.filter(
+              (friend) =>
+                friend.user.userId === loggedUser.userId &&
+                friend.isInvitationAccepted === true
             ).length > 0
           ) {
-            setIsInvitedToFriend(true);
+            setIsUserFriend(true);
           } else if (loggedUser.userId === parseInt(userId)) {
-            setIsInvitedToFriend(null);
+            setIsUserFriend(null);
           } else {
-            setIsInvitedToFriend(false);
+            setIsUserFriend(false);
           }
         }
-      }
-    );
+      });
+
+      dispatch(getReceivedFriendInvitations(userId, false, false, true)).then(
+        (friendInvitations) => {
+          if (isMounted) {
+            setUserFriendInvitations(friendInvitations);
+            if (
+              loggedUser.userId !== parseInt(userId) &&
+              friendInvitations.filter(
+                (friend) => friend.invitingUser.userId === loggedUser.userId
+              ).length > 0
+            ) {
+              setIsInvitedToFriend(true);
+            } else if (loggedUser.userId === parseInt(userId)) {
+              setIsInvitedToFriend(null);
+            } else {
+              setIsInvitedToFriend(false);
+            }
+          }
+        }
+      );
+    }
 
     return () => {
       isMounted = false;
@@ -205,13 +209,7 @@ const UserInformation = (props) => {
           </Typography>
           {groupAddedIn && (
             <Typography variant="subtitle1" fontWeight={400}>
-              {'dołączył(a) ' +
-                new Date(groupAddedIn)
-                  .toJSON()
-                  .slice(0, 10)
-                  .split('-')
-                  .reverse()
-                  .join('.')}
+              {'dołączył(a) ' + formatBaseDate(groupAddedIn)}
             </Typography>
           )}
           <Typography variant="subtitle1">{city}</Typography>
@@ -221,7 +219,9 @@ const UserInformation = (props) => {
             </Typography>
           )}
         </div>
-        {isUserFriend !== null && isInvitedToFriend !== null ? (
+        {isUserLoggedIn &&
+        isUserFriend !== null &&
+        isInvitedToFriend !== null ? (
           <Button
             onMouseOver={() => setFriendBtnHover(true)}
             onMouseOut={() => setFriendBtnHover(false)}

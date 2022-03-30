@@ -89,7 +89,6 @@ import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import ActionConfirmation from '../../components/ActionConfirmation/ActionConfirmation';
 import GroupForum from '../../components/GroupForum/GroupForum';
 import { formatDateWithTime } from '../../utils/formatDateWithTime';
-import { showNotification } from '../../redux/actions/notificationActions';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -203,6 +202,7 @@ const GroupDetailsPage = (props) => {
         dispatch(getGroupInvitations());
         dispatch(getAllUsersInformation());
       } else {
+        setGroupNavIndex(1);
         dispatch(getPublicGroupDetails(groupId));
       }
     })();
@@ -577,27 +577,30 @@ const GroupDetailsPage = (props) => {
                         />
                       ))}
                   </AvatarGroup>
-                  {isUserLoggedIn &&
-                  group.groupCreator.userId !== loggedUser.userId ? (
-                    generateGroupActionBtn()
-                  ) : (
-                    <Button
-                      variant="contained"
-                      className={classes.groupActionBtn}
-                      onClick={() => {
-                        setGroupNavIndex(4);
-                        setGroupSettingsNavValue(1);
-                      }}
-                    >
-                      <AddCircleOutlineIcon sx={{ marginRight: '7px' }} />
-                      Dodaj członków
-                    </Button>
+                  {isUserLoggedIn && (
+                    <>
+                      {group.groupCreator.userId !== loggedUser.userId ? (
+                        generateGroupActionBtn()
+                      ) : (
+                        <Button
+                          variant="contained"
+                          className={classes.groupActionBtn}
+                          onClick={() => {
+                            setGroupNavIndex(4);
+                            setGroupSettingsNavValue(1);
+                          }}
+                        >
+                          <AddCircleOutlineIcon sx={{ marginRight: '7px' }} />
+                          Dodaj członków
+                        </Button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
             </div>
           </Paper>
-          {memberStatusOfUser !== 'NOT_MEMBER' && (
+          {isUserLoggedIn && memberStatusOfUser !== 'NOT_MEMBER' && (
             <Paper elevation={4} className={classes.groupNavContainer}>
               <Tabs
                 value={groupNavIndex}
