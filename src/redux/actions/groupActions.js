@@ -97,6 +97,32 @@ export const getGroupDetails = (groupId) => (dispatch) => {
     });
 };
 
+export const getPublicGroupDetails = (groupId) => (dispatch) => {
+  return groupService
+    .getPublicGroupDetails(groupId)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: groupTypes.FETCH_GROUP_DETAILS,
+            payload: {
+              groupDetails: data,
+            },
+          });
+          return data;
+        });
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Grupa jest prywatna'));
+        window.history.go(-1);
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const getGroups = () => (dispatch) => {
   return groupService
     .getGroups()

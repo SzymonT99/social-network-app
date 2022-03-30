@@ -45,7 +45,9 @@ const PostComment = (props) => {
     accessToManagement,
   } = props;
 
-  const userId = useSelector((state) => state.auth.user.userId);
+  const loggedUser = useSelector((state) => state.auth.user);
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
   const commentInputRef = useRef(null);
 
   const dispatch = useDispatch();
@@ -103,7 +105,12 @@ const PostComment = (props) => {
   };
 
   const commentReaction = () => {
-    if (!commentIsLiked(likes, userId)) {
+    if (!isUserLoggedIn) {
+      dispatch(showNotification('warning', 'Musisz być zalogowany'));
+      return;
+    }
+
+    if (loggedUser && !commentIsLiked(likes, loggedUser.userId)) {
       dispatch(likePostComment(postId, commentId, sharing));
     } else {
       dispatch(dislikePostComment(postId, commentId, sharing));
@@ -201,7 +208,9 @@ const PostComment = (props) => {
               variant="text"
               onClick={commentReaction}
             >
-              {commentIsLiked(likes, userId) ? 'Nie lubię tego' : 'Lubię to'}
+              {loggedUser && commentIsLiked(likes, loggedUser.userId)
+                ? 'Nie lubię tego'
+                : 'Lubię to'}
             </Button>
             {likes !== null && likes.length !== 0 && (
               <Typography
@@ -215,7 +224,8 @@ const PostComment = (props) => {
               </Typography>
             )}
           </div>
-          {(authorId === userId || accessToManagement === true) && (
+          {((loggedUser && authorId === loggedUser.userId) ||
+            accessToManagement === true) && (
             <div>
               <Button
                 className={classes.commentActionItem}

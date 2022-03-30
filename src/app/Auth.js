@@ -7,6 +7,7 @@ import ForgetPasswordPage from '../pages/ForgetPasswordPage/ForgetPasswordPage';
 import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
 import React from 'react';
 import Copyright from '../components/Copyright/Copyright';
+import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 
 const Auth = () => {
   return (
@@ -31,6 +32,7 @@ const Auth = () => {
             path="/auth/reset-password/:resetCode"
             component={ResetPasswordPage}
           />
+          <Route component={NotFoundPage} />
         </Switch>
       </AuthTemplate>
       <Copyright />

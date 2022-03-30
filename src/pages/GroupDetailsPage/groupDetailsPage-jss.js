@@ -108,7 +108,7 @@ const styles = (theme) => ({
     marginBottom: '15px',
   },
   groupInfoNewMemberBoxContent: {
-    padding: '0px 15px',
+    padding: '0px 15px 15px 15px',
     marginBottom: '15px',
   },
   groupBasicInfoItem: {

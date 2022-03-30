@@ -11,6 +11,10 @@ import GroupsPage from '../pages/GroupsPage/GroupsPage';
 import GroupDetailsPage from '../pages/GroupDetailsPage/GroupDetailsPage';
 import PostDetailsPage from '../pages/PostDetailsPage/PostDetailsPage';
 import ChatPage from '../pages/ChatPage/ChatPage';
+import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
+import React from 'react';
+import PublicPostsPageJss from '../pages/PublicPostsPage/publicPostsPage-jss';
+import PublicPostsPage from '../pages/PublicPostsPage/PublicPostsPage';
 
 const MainApplication = () => {
   return (
@@ -39,6 +43,8 @@ const MainApplication = () => {
         <Route exact path="/app/groups/:groupId" component={GroupDetailsPage} />
         <Route exact path="/app/posts/:postId" component={PostDetailsPage} />
         <Route exact path="/app/chat" component={ChatPage} />
+        <Route exact path="/app/public" component={PublicPostsPage} />
+        <Route component={NotFoundPage} />
       </Switch>
     </AppTemplate>
   );

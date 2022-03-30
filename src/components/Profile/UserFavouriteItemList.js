@@ -54,6 +54,7 @@ const UserFavouriteItemList = (props) => {
                   key={userFavourite.favouriteId}
                   disableGutters
                   secondaryAction={
+                    loggedUser &&
                     parseInt(selectedUserId) === loggedUser.userId && (
                       <>
                         <IconButton

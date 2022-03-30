@@ -67,6 +67,29 @@ export const getPostDetails = (postId) => (dispatch) => {
     });
 };
 
+export const getPublicPosts = (page, size) => (dispatch) => {
+  return postService
+    .getPublicPosts(page, size)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: postTypes.FETCH_PUBLIC_POSTS,
+            payload: {
+              posts: data.posts,
+            },
+          });
+          return data;
+        });
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const editPost = (postId, postFormData) => (dispatch, getState) => {
   return postService
     .editPost(postId, postFormData)

@@ -40,12 +40,17 @@ const getGroupDetails = (groupId) => {
   });
 };
 
+const getPublicGroupDetails = (groupId) => {
+  return fetch(endpoints.groupDetailsPublic.replace('{groupId}', groupId), {
+    method: 'GET',
+  });
+};
+
 const getGroups = () => {
   return fetch(endpoints.groups, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: authorization(),
     },
   });
 };
@@ -424,6 +429,7 @@ export default {
   getUserGroups,
   getInterestingGroups,
   getGroupDetails,
+  getPublicGroupDetails,
   inviteToGroup,
   respondToGroupInvitation,
   getGroupInvitations,

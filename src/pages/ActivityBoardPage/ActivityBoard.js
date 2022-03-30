@@ -80,11 +80,16 @@ const ActivityBoard = (props) => {
   }, []);
 
   const connect = () => {
+    let currentUser = JSON.parse(localStorage.getItem('state')).auth.user;
     const Stomp = require('stompjs');
     let SockJS = require('sockjs-client');
     SockJS = new SockJS('http://localhost:8080/chat');
     stompClient = Stomp.over(SockJS);
-    stompClient.connect({}, onConnected, onError);
+    stompClient.connect(
+      { Authorization: 'Bearer ' + currentUser.accessToken },
+      onConnected,
+      onError
+    );
     dispatch(setNotificationStomp(stompClient));
   };
 

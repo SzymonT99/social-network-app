@@ -2,6 +2,7 @@ import types from '../types/authTypes';
 import postTypes from '../types/postTypes';
 
 const initialState = {
+  isGuest: false,
   isLoggedIn: false,
   isTokenRefreshing: false,
   remember: false,
@@ -16,6 +17,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggedIn: true,
+        isGuest: false,
         user: action.payload,
       };
     case types.SET_TOKEN_REFRESHING:
@@ -54,6 +56,11 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggedIn: false,
+      };
+    case types.SET_GUEST_ACCESS:
+      return {
+        ...state,
+        isGuest: true,
       };
     default:
       return state;

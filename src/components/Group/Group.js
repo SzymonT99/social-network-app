@@ -28,7 +28,7 @@ const Group = (props) => {
     groupImage,
     invitation,
     invitationDate,
-    showInProfile,
+    asInformation,
     activityItem,
   } = props;
 
@@ -54,7 +54,8 @@ const Group = (props) => {
 
   const isUseGroupMember =
     members.filter(
-      (groupMember) => groupMember.user.userId === loggedUser.userId
+      (groupMember) =>
+        loggedUser && groupMember.user.userId === loggedUser.userId
     ).length !== 0;
 
   return (
@@ -62,9 +63,9 @@ const Group = (props) => {
       elevation={!activityItem ? 4 : 0}
       className={classNames(
         classes.groupContainer,
-        showInProfile && !activityItem && classes.groupContainerHover
+        asInformation && !activityItem && classes.groupContainerHover
       )}
-      onClick={() => showInProfile && history.push('/app/groups/' + groupId)}
+      onClick={() => asInformation && history.push('/app/groups/' + groupId)}
     >
       {invitation && (
         <div className={classes.invitationInfo}>
@@ -125,7 +126,7 @@ const Group = (props) => {
           </Typography>
         </div>
 
-        {!showInProfile && (
+        {!asInformation && (
           <div className={classes.groupBtnContainer}>
             {!invitation && (
               <Button
@@ -187,13 +188,13 @@ Group.propTypes = {
   groupImage: PropTypes.object,
   invitation: PropTypes.bool,
   invitationDate: PropTypes.string,
-  showInProfile: PropTypes.bool,
+  asInformation: PropTypes.bool,
   activityItem: PropTypes.bool,
 };
 
 Group.defaultProps = {
   invitation: false,
-  showInProfile: false,
+  asInformation: false,
   activityItem: false,
 };
 

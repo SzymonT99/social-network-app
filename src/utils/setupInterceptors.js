@@ -1,8 +1,4 @@
-import {
-  logoutUser,
-  setTokenRefreshing,
-  updateToken,
-} from '../redux/actions/authActions';
+import { logoutUser, updateToken } from '../redux/actions/authActions';
 import { showNotification } from '../redux/actions/notificationActions';
 import { endpoints } from '../services/endpoints/endpoints';
 
@@ -15,7 +11,10 @@ const setup = (store) => {
     let [resource, config] = args;
     let response;
 
-    if (!resource.includes('/auth/')) {
+    const isPublicAccess = JSON.parse(localStorage.getItem('state')).auth
+      .isGuest;
+
+    if (!resource.includes('/auth/') && !isPublicAccess) {
       const loggedUser = JSON.parse(localStorage.getItem('state')).auth.user;
       const isUserRemember = JSON.parse(localStorage.getItem('state')).auth
         .remember;
@@ -84,6 +83,14 @@ const setup = (store) => {
           );
           return Promise.reject(response);
         }
+        return response;
+      }
+    } else if (isPublicAccess) {
+      response = await originalFetch(resource, config);
+      if (response.status === 401) {
+        dispatch(showNotification('warning', 'Brak dostępu'));
+        return Promise.reject(response);
+      } else {
         return response;
       }
     } else {

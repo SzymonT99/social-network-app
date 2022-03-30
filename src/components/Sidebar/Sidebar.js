@@ -24,6 +24,7 @@ import { logoutUser } from '../../redux/actions/authActions';
 import CircularProgress from '@mui/material/CircularProgress';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { changeProfileNav } from '../../redux/actions/userProfileActions';
+import ChatIcon from '@mui/icons-material/Chat';
 
 const ListItem = withStyles((theme) => ({
   root: {
@@ -63,6 +64,7 @@ const Sidebar = (props) => {
   const { classes } = props;
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const loggedUser = useSelector((state) => state.auth.user);
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const [selectedItem, setSelectedItem] = useState(0);
 
@@ -76,7 +78,10 @@ const Sidebar = (props) => {
     if (index === 0) {
       history.push('/app');
     } else if (index === 1) {
-      history.push('/app/profile/' + loggedUserProfile.userProfileId);
+      history.push(
+        '/app/profile/' +
+          (isUserLoggedIn ? loggedUserProfile.userProfileId : '')
+      );
     } else if (index === 2) {
       dispatch(changeProfileNav(3));
       history.push('/app/friends');
@@ -90,6 +95,8 @@ const Sidebar = (props) => {
       history.push('/app/favourite-posts');
     } else if (index === 7) {
       history.push('/app/settings');
+    } else if (index === 8) {
+      history.push('/app/public');
     }
   };
 
@@ -99,7 +106,9 @@ const Sidebar = (props) => {
     if (pathDetails === '') {
       setSelectedItem(0);
     } else if (
-      pathDetails.includes('/profile/' + loggedUserProfile.userProfileId)
+      pathDetails.includes(
+        '/profile/' + (isUserLoggedIn ? loggedUserProfile.userProfileId : '')
+      )
     ) {
       setSelectedItem(1);
     } else if (pathDetails.includes('/friends')) {
@@ -114,6 +123,8 @@ const Sidebar = (props) => {
       setSelectedItem(6);
     } else if (pathDetails.includes('/settings')) {
       setSelectedItem(7);
+    } else if (pathDetails.includes('/public')) {
+      setSelectedItem(8);
     } else {
       setSelectedItem(null);
     }
@@ -126,20 +137,24 @@ const Sidebar = (props) => {
   return (
     <div className={classes.sidebarContainer}>
       <div className={classes.sidebarWrapper}>
-        {loggedUserProfile ? (
-          <Link
-            className={classes.userProfile}
-            to={'/app/profile/' + loggedUserProfile.userProfileId}
-          >
-            <img
-              src={
-                loggedUserProfile.profilePhoto !== null
-                  ? loggedUserProfile.profilePhoto.url
-                  : defaultUserPhoto
-              }
-              alt="Zdjęcie użytkownika"
-              className={classes.userPhoto}
-            />
+        <Link
+          className={classes.userProfile}
+          to={
+            loggedUserProfile
+              ? '/app/profile/' + loggedUserProfile.userProfileId
+              : '/app/public'
+          }
+        >
+          <img
+            src={
+              loggedUserProfile && loggedUserProfile.profilePhoto !== null
+                ? loggedUserProfile.profilePhoto.url
+                : defaultUserPhoto
+            }
+            alt="Zdjęcie użytkownika"
+            className={classes.userPhoto}
+          />
+          {loggedUserProfile && (
             <Typography
               variant="h4"
               textAlign="center"
@@ -147,78 +162,107 @@ const Sidebar = (props) => {
             >
               {loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName}
             </Typography>
-          </Link>
-        ) : (
-          <CircularProgress color="secondary" />
-        )}
+          )}
+        </Link>
+
         <Divider color="white" className={classes.divider} />
         <nav>
           <List>
-            <ListItem
-              disablePadding
-              style={{ margin: '10px 0' }}
-              selected={selectedItem === 0}
-              onClick={() => {
-                handleListItemClick(0);
-              }}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <HomeIcon fontSize="large" className={classes.iconItem} />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Tablica aktywności
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
-            <ListItem
-              disablePadding
-              style={{ margin: '10px 0' }}
-              selected={selectedItem === 1}
-              onClick={() => handleListItemClick(1)}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <AccountCircleIcon
-                    fontSize="large"
-                    className={classes.iconItem}
+            {isUserLoggedIn && (
+              <ListItem
+                disablePadding
+                style={{ margin: '10px 0' }}
+                selected={selectedItem === 0}
+                onClick={() => {
+                  handleListItemClick(0);
+                }}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <HomeIcon fontSize="large" className={classes.iconItem} />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography fontWeight="bold" variant="h6">
+                        Tablica aktywności
+                      </Typography>
+                    }
                   />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Profil użytkownika
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
-            <ListItem
-              disablePadding
-              style={{ margin: '10px 0' }}
-              selected={selectedItem === 2}
-              onClick={() => handleListItemClick(2)}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <PeopleIcon fontSize="large" className={classes.iconItem} />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Znajomi
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
+                </ListItemButton>
+              </ListItem>
+            )}
+            {!isUserLoggedIn && (
+              <ListItem
+                disablePadding
+                style={{ margin: '10px 0' }}
+                selected={selectedItem === 8}
+                onClick={() => {
+                  handleListItemClick(8);
+                }}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <ChatIcon fontSize="large" className={classes.iconItem} />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography fontWeight="bold" variant="h6">
+                        Publiczne posty
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
+            {isUserLoggedIn && (
+              <ListItem
+                disablePadding
+                style={{ margin: '10px 0' }}
+                selected={selectedItem === 1}
+                onClick={() => handleListItemClick(1)}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <AccountCircleIcon
+                      fontSize="large"
+                      className={classes.iconItem}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography fontWeight="bold" variant="h6">
+                        Profil użytkownika
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
+            {isUserLoggedIn && (
+              <ListItem
+                disablePadding
+                style={{ margin: '10px 0' }}
+                selected={selectedItem === 2}
+                onClick={() => handleListItemClick(2)}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <PeopleIcon fontSize="large" className={classes.iconItem} />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography fontWeight="bold" variant="h6">
+                        Znajomi
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
             <ListItem
               disablePadding
               style={{ margin: '10px 0' }}
@@ -239,29 +283,31 @@ const Sidebar = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem
-              disablePadding
-              style={{ margin: '10px 0' }}
-              selected={selectedItem === 4}
-              onClick={() => handleListItemClick(4)}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <ChatBubbleIcon
-                    fontSize="large"
-                    className={classes.iconItem}
+            {isUserLoggedIn && (
+              <ListItem
+                disablePadding
+                style={{ margin: '10px 0' }}
+                selected={selectedItem === 4}
+                onClick={() => handleListItemClick(4)}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <ChatBubbleIcon
+                      fontSize="large"
+                      className={classes.iconItem}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography fontWeight="bold" variant="h6">
+                        Czat
+                      </Typography>
+                    }
                   />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Czat
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
+                </ListItemButton>
+              </ListItem>
+            )}
             <ListItem
               disablePadding
               style={{ margin: '10px 0' }}
@@ -282,66 +328,78 @@ const Sidebar = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-            <ListItem
-              disablePadding
-              style={{ margin: '10px 0' }}
-              selected={selectedItem === 6}
-              onClick={() => handleListItemClick(6)}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <BookmarkIcon fontSize="large" className={classes.iconItem} />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Ulubione posty
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
-            <ListItem
-              disablePadding
-              style={{ margin: '10px 0' }}
-              selected={selectedItem === 7}
-              onClick={() => handleListItemClick(7)}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <SettingsIcon fontSize="large" className={classes.iconItem} />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Ustawienia konta
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding style={{ marginTop: '75px' }}>
-              <ListItemButton
-                onClick={() => {
-                  dispatch(logoutUser(loggedUser.userId));
-                  history.push('/auth/login');
-                }}
+            {isUserLoggedIn && (
+              <ListItem
+                disablePadding
+                style={{ margin: '10px 0' }}
+                selected={selectedItem === 6}
+                onClick={() => handleListItemClick(6)}
               >
-                <ListItemIcon>
-                  <LogoutIcon fontSize="large" className={classes.iconItem} />
-                </ListItemIcon>
-                <ListItemText
-                  disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Wyloguj się
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <BookmarkIcon
+                      fontSize="large"
+                      className={classes.iconItem}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography fontWeight="bold" variant="h6">
+                        Ulubione posty
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
+            {isUserLoggedIn && (
+              <ListItem
+                disablePadding
+                style={{ margin: '10px 0' }}
+                selected={selectedItem === 7}
+                onClick={() => handleListItemClick(7)}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <SettingsIcon
+                      fontSize="large"
+                      className={classes.iconItem}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography fontWeight="bold" variant="h6">
+                        Ustawienia konta
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
+            {isUserLoggedIn && (
+              <ListItem disablePadding style={{ marginTop: '75px' }}>
+                <ListItemButton
+                  onClick={() => {
+                    dispatch(logoutUser(loggedUser.userId));
+                    history.push('/auth/login');
+                  }}
+                >
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="large" className={classes.iconItem} />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography fontWeight="bold" variant="h6">
+                        Wyloguj się
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            )}
           </List>
         </nav>
       </div>

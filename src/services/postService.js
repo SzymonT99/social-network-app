@@ -2,7 +2,7 @@ import { endpoints } from './endpoints/endpoints';
 import authorization from './authorization';
 
 const createPost = (formData) => {
-  return fetch(endpoints.createPost, {
+  return fetch(endpoints.post, {
     method: 'POST',
     headers: {
       Authorization: authorization(),
@@ -18,6 +18,20 @@ const getPostDetails = (postId) => {
       Authorization: authorization(),
     },
   });
+};
+
+const getPublicPosts = (page, size) => {
+  return fetch(
+    endpoints.post +
+      '?' +
+      new URLSearchParams({
+        page: page,
+        size: size,
+      }),
+    {
+      method: 'GET',
+    }
+  );
 };
 
 const editPost = (postId, formData) => {
@@ -198,6 +212,7 @@ const getFavouritePosts = (userId) => {
 export default {
   createPost,
   getPostDetails,
+  getPublicPosts,
   editPost,
   deletePost,
   likePost,

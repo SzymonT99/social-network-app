@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import styles from './template-jss';
 import { withStyles } from '@mui/styles';
 import Sidebar from '../components/Sidebar/Sidebar';
@@ -6,15 +6,14 @@ import Rightbar from '../components/Rightbar/Rightbar';
 import Header from '../components/Header/Header';
 import { Redirect, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import Copyright from '../components/Copyright/Copyright';
 
 const AppTemplate = (props) => {
   const { classes, children } = props;
 
-  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { isLoggedIn, isGuest } = useSelector((state) => state.auth);
   const location = useLocation();
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn && !isGuest) {
     return <Redirect to="/" />;
   }
 
@@ -33,7 +32,6 @@ const AppTemplate = (props) => {
           >
             {children}
           </main>
-          {/*<Copyright />*/}
         </div>
         <Rightbar />
       </div>

@@ -4,10 +4,6 @@ import authorization from './authorization';
 const getUserProfile = (userId) => {
   return fetch(endpoints.userProfile.replace('{userId}', userId), {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
   });
 };
 
@@ -100,10 +96,6 @@ const deleteWorkPlaceInformation = (workId) => {
 const getUserFavourites = (userId) => {
   return fetch(endpoints.userFavouriteItems.replace('{userId}', userId), {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
   });
 };
 
@@ -148,20 +140,12 @@ const deleteUserFavourite = (favouriteId) => {
 const getPossibleInterests = () => {
   return fetch(endpoints.possibleInterest, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
   });
 };
 
 const getUserInterests = (userId) => {
   return fetch(endpoints.userInterests.replace('{userId}', userId), {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
   });
 };
 

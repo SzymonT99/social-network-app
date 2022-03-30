@@ -43,7 +43,6 @@ const PostDetailsPage = (props) => {
     <div className={classes.wrapper}>
       <PageHeader heading="Szczegóły posta" type="post" />
       <div className={classes.postContainer}>
-        {' '}
         {currentPost !== null && (
           <Post
             postId={currentPost.postId}

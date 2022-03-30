@@ -58,6 +58,7 @@ import {
   getGroupForumThreads,
   getGroupInvitations,
   getGroups,
+  getPublicGroupDetails,
   getUsersWantedJoinGroup,
   leaveGroup,
   requestToJoinGroup,
@@ -87,6 +88,7 @@ import ReceivedInvitation from '../../components/ReceivedInvitation/ReceivedInvi
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import ActionConfirmation from '../../components/ActionConfirmation/ActionConfirmation';
 import GroupForum from '../../components/GroupForum/GroupForum';
+import { formatDateWithTime } from '../../utils/formatDateWithTime';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -123,6 +125,7 @@ const GroupDetailsPage = (props) => {
   const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const isUserRemember = useSelector((state) => state.auth.remember);
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const group = useSelector((state) => state.groups.groupDetails);
   const threads = useSelector((state) => state.groups.groupForum.threads);
@@ -157,6 +160,7 @@ const GroupDetailsPage = (props) => {
   useEffect(() => {
     (async () => {
       if (
+        isUserLoggedIn &&
         isUserRemember &&
         new Date() > new Date(loggedUser.accessTokenExpirationDate)
       ) {
@@ -165,36 +169,42 @@ const GroupDetailsPage = (props) => {
           dispatch(setTokenRefreshing(false));
         });
       }
-      dispatch(getGroupDetails(groupId)).then((data) => {
-        const userMember = data.members.find(
-          (member) => member.user.userId === loggedUser.userId
-        );
+      if (isUserLoggedIn) {
+        dispatch(getGroupDetails(groupId)).then((data) => {
+          const userMember = data.members.find(
+            (member) => member.user.userId === loggedUser.userId
+          );
 
-        if (userMember) {
-          setMemberStatusOfUser(userMember.groupPermissionType);
-          dispatch(getGroupForumThreads(groupId));
-        } else {
-          setMemberStatusOfUser('NOT_MEMBER');
-        }
+          if (userMember) {
+            setMemberStatusOfUser(userMember.groupPermissionType);
+            dispatch(getGroupForumThreads(groupId));
+          } else {
+            setMemberStatusOfUser('NOT_MEMBER');
+          }
 
-        setFilteredMembers(
-          data.members.filter(
-            (member) => member.groupPermissionType === 'MEMBER'
-          )
-        );
-        const tableRows = data.members.map((member, index) => ({
-          id: member.groupMemberId,
-          orderNumber: index + 1,
-          firstName: member.user.firstName,
-          lastName: member.user.lastName,
-          joinDate: new Date(member.addedIn),
-          permission: groupPermissions[member.groupPermissionType],
-        }));
-        setMemberTableRows(tableRows);
-      });
-      dispatch(getUsersWantedJoinGroup(groupId));
-      dispatch(getGroupInvitations());
-      dispatch(getAllUsersInformation());
+          setFilteredMembers(
+            data.members.filter(
+              (member) => member.groupPermissionType === 'MEMBER'
+            )
+          );
+          const tableRows = data.members.map((member, index) => ({
+            id: member.groupMemberId,
+            orderNumber: index + 1,
+            firstName: member.user.firstName,
+            lastName: member.user.lastName,
+            joinDate: new Date(member.addedIn),
+            permission: groupPermissions[member.groupPermissionType],
+          }));
+          setMemberTableRows(tableRows);
+        });
+
+        dispatch(getUsersWantedJoinGroup(groupId));
+        dispatch(getGroupInvitations());
+        dispatch(getAllUsersInformation());
+      } else {
+        setGroupNavIndex(1);
+        dispatch(getPublicGroupDetails(groupId));
+      }
     })();
   }, [groupId]);
 
@@ -516,7 +526,11 @@ const GroupDetailsPage = (props) => {
               className={classes.groupImage}
             />
             <div className={classes.groupHeadingContent}>
-              <Typography variant="h3" fontWeight={400}>
+              <Typography
+                variant="h3"
+                fontWeight={400}
+                onClick={() => setGroupNavIndex(0)}
+              >
                 {group.name}
               </Typography>
               <Divider sx={{ margin: '10px 0px' }} />
@@ -563,27 +577,30 @@ const GroupDetailsPage = (props) => {
                         />
                       ))}
                   </AvatarGroup>
-                  {group.groupCreator &&
-                  group.groupCreator.userId !== loggedUser.userId ? (
-                    generateGroupActionBtn()
-                  ) : (
-                    <Button
-                      variant="contained"
-                      className={classes.groupActionBtn}
-                      onClick={() => {
-                        setGroupNavIndex(4);
-                        setGroupSettingsNavValue(1);
-                      }}
-                    >
-                      <AddCircleOutlineIcon sx={{ marginRight: '7px' }} />
-                      Dodaj członków
-                    </Button>
+                  {isUserLoggedIn && (
+                    <>
+                      {group.groupCreator.userId !== loggedUser.userId ? (
+                        generateGroupActionBtn()
+                      ) : (
+                        <Button
+                          variant="contained"
+                          className={classes.groupActionBtn}
+                          onClick={() => {
+                            setGroupNavIndex(4);
+                            setGroupSettingsNavValue(1);
+                          }}
+                        >
+                          <AddCircleOutlineIcon sx={{ marginRight: '7px' }} />
+                          Dodaj członków
+                        </Button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
             </div>
           </Paper>
-          {memberStatusOfUser !== 'NOT_MEMBER' && (
+          {isUserLoggedIn && memberStatusOfUser !== 'NOT_MEMBER' && (
             <Paper elevation={4} className={classes.groupNavContainer}>
               <Tabs
                 value={groupNavIndex}
@@ -740,7 +757,7 @@ const GroupDetailsPage = (props) => {
               </Paper>
               <Paper elevation={4} sx={{ borderRadius: '10px' }}>
                 <div className={classes.groupInfoBoxHeading}>
-                  <Typography variant="h6">Nowi członkowie</Typography>
+                  <Typography variant="h6">Członkowie</Typography>
                   <Link
                     component="button"
                     variant="subtitle1"
@@ -795,21 +812,16 @@ const GroupDetailsPage = (props) => {
                         </span>
                         <span className={classes.newMemberAddedDate}>
                           {'dołączył(a) do grupy: ' +
-                            new Date(newMember.addedIn)
-                              .toJSON()
-                              .slice(0, 10)
-                              .split('-')
-                              .reverse()
-                              .join('.') +
-                            ' o ' +
-                            new Date(newMember.addedIn)
-                              .toJSON()
-                              .slice(10, 16)
-                              .replace('T', ' ')}
+                            formatDateWithTime(newMember.addedIn)}
                         </span>
                       </Typography>
                     </div>
                   ))}
+                  {getNewMembers().length === 0 && (
+                    <Typography marginTop="10px" variant="subtitle2">
+                      Brak nowych członków
+                    </Typography>
+                  )}
                 </div>
               </Paper>
             </div>

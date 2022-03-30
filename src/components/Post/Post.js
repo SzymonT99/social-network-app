@@ -94,8 +94,9 @@ const Post = (props) => {
 
   const dispatch = useDispatch();
 
-  const userId = useSelector((state) => state.auth.user.userId);
+  const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const [postComments, setPostComments] = useState(comments);
   const [commentText, setCommentText] = useState('');
@@ -139,7 +140,12 @@ const Post = (props) => {
   }, [comments]);
 
   const postReaction = () => {
-    if (!postIsLiked(likes, userId)) {
+    if (!isUserLoggedIn) {
+      dispatch(showNotification('warning', 'Musisz być zalogowany'));
+      return;
+    }
+
+    if (!postIsLiked(likes, loggedUser.userId)) {
       dispatch(likePost(postId));
     } else {
       dispatch(dislikePost(postId));
@@ -151,6 +157,11 @@ const Post = (props) => {
   };
 
   const addComment = () => {
+    if (!isUserLoggedIn) {
+      dispatch(showNotification('warning', 'Musisz być zalogowany'));
+      return;
+    }
+
     if (commentText === '') {
       dispatch(showNotification('warning', 'Nie podano treści komentarza'));
     } else {
@@ -251,6 +262,10 @@ const Post = (props) => {
   };
 
   const handleSharePost = () => {
+    if (!isUserLoggedIn) {
+      dispatch(showNotification('warning', 'Musisz być zalogowany'));
+      return;
+    }
     setOpenSharePostPopup(true);
   };
 
@@ -309,7 +324,7 @@ const Post = (props) => {
         groupImage={groupImage}
       >
         <>
-          {!asSharing && !isFavourite ? (
+          {!asSharing && !isFavourite && isUserLoggedIn ? (
             <div>
               <IconButton onClick={handleClickPostOption}>
                 <MoreVertIcon />
@@ -339,7 +354,8 @@ const Post = (props) => {
                   className={classes.postMenuItem}
                   sx={{
                     borderBottom:
-                      (authorId === userId || accessToManagement === true) &&
+                      ((loggedUser && authorId === loggedUser.userId) ||
+                        accessToManagement === true) &&
                       '1px solid rgba(0, 0, 0, 0.12)',
                   }}
                 >
@@ -355,7 +371,8 @@ const Post = (props) => {
                     }
                   />
                 </MenuItem>
-                {(authorId === userId || accessToManagement === true) && (
+                {((loggedUser && authorId === loggedUser.userId) ||
+                  accessToManagement === true) && (
                   <div>
                     {!isChangeProfilePhotoPost && (
                       <MenuItem
@@ -518,7 +535,7 @@ const Post = (props) => {
             <Button
               onClick={postReaction}
               className={
-                postIsLiked(likes, userId)
+                loggedUser && postIsLiked(likes, loggedUser.userId)
                   ? classes.likedBtnClicked
                   : classes.postBtn
               }
@@ -527,7 +544,7 @@ const Post = (props) => {
                 variant="subtitle2"
                 className={classes.postReactionItem}
               >
-                {postIsLiked(likes, userId) ? (
+                {loggedUser && postIsLiked(likes, loggedUser.userId) ? (
                   <ThumbUpIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
                 ) : (
                   <ThumbUpAltOutlinedIcon

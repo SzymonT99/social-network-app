@@ -204,6 +204,17 @@ const styles = (theme) => ({
     alignItems: 'center',
     width: '90%',
   },
+  createAccountLink: {
+    marginRight: '50px',
+    textDecoration: 'none',
+    color: theme.palette.primary.main,
+    fontSize: '26px',
+    fontWeight: 'bold',
+    '&:hover': {
+      textDecoration: 'underline',
+      cursor: 'pointer',
+    },
+  },
 });
 
 export default styles;

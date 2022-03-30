@@ -131,6 +131,8 @@ const chatReducer = (state = initialState, action) => {
           addedImages: action.payload.chatImages,
         },
       };
+    case chatTypes.CLEAR_ALL:
+      return initialState;
     default:
       return state;
   }

@@ -49,6 +49,7 @@ const GroupsPage = (props) => {
 
   const loggedUser = useSelector((state) => state.auth.user);
   const isUserRemember = useSelector((state) => state.auth.remember);
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const [groupTabType, setGroupTabType] = useState('1');
   const [openGroupCreation, setOpenGroupCreation] = useState(false);
@@ -62,6 +63,7 @@ const GroupsPage = (props) => {
   useEffect(() => {
     (async () => {
       if (
+        isUserLoggedIn &&
         isUserRemember &&
         new Date() > new Date(loggedUser.accessTokenExpirationDate)
       ) {
@@ -73,9 +75,11 @@ const GroupsPage = (props) => {
       dispatch(getGroups()).then((data) => {
         setFilteredGroups(data);
       });
-      dispatch(getUserInterestingGroups());
-      dispatch(getGroupInvitations());
-      dispatch(getPossibleInterests());
+      if (isUserLoggedIn) {
+        dispatch(getUserInterestingGroups());
+        dispatch(getGroupInvitations());
+        dispatch(getPossibleInterests());
+      }
     })();
   }, []);
 
@@ -141,47 +145,49 @@ const GroupsPage = (props) => {
     <div className={classes.wrapper}>
       <PageHeader heading="Grupy tematyczne" type="groups" />
       <TabContext value={groupTabType}>
-        <Paper elevation={4} className={classes.groupsTopContainer}>
-          <TabList
-            onChange={handleChangeGroupTabType}
-            className={classes.tabsContainer}
-          >
-            <Tab
-              className={classes.tabItem}
-              label="Dostępne grupy"
-              value={'1'}
-            />
-            <Tab
-              className={classes.tabItem}
-              label="Propozycje grup"
-              value={'2'}
-            />
-            <Tab
-              className={classes.tabItem}
-              label="Zaproszenia do grup"
-              value={'3'}
-            />
-          </TabList>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.addGroupBtn}
-            onClick={() => setOpenGroupCreation(true)}
-          >
-            Utwórz nową grupę
-          </Button>
-          <Popup
-            open={openGroupCreation}
-            type="group"
-            title="Utwórz grupę"
-            onClose={handleCloseGroupCreation}
-          >
-            <GroupForm
-              closePopup={handleCloseGroupCreation}
-              updateGroups={updateGroups}
-            />
-          </Popup>
-        </Paper>
+        {isUserLoggedIn && (
+          <Paper elevation={4} className={classes.groupsTopContainer}>
+            <TabList
+              onChange={handleChangeGroupTabType}
+              className={classes.tabsContainer}
+            >
+              <Tab
+                className={classes.tabItem}
+                label="Dostępne grupy"
+                value={'1'}
+              />
+              <Tab
+                className={classes.tabItem}
+                label="Propozycje grup"
+                value={'2'}
+              />
+              <Tab
+                className={classes.tabItem}
+                label="Zaproszenia do grup"
+                value={'3'}
+              />
+            </TabList>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.addGroupBtn}
+              onClick={() => setOpenGroupCreation(true)}
+            >
+              Utwórz nową grupę
+            </Button>
+            <Popup
+              open={openGroupCreation}
+              type="group"
+              title="Utwórz grupę"
+              onClose={handleCloseGroupCreation}
+            >
+              <GroupForm
+                closePopup={handleCloseGroupCreation}
+                updateGroups={updateGroups}
+              />
+            </Popup>
+          </Paper>
+        )}
         {groupTabType === '1' && (
           <Paper elevation={4} className={classes.groupSearchbarContainer}>
             <TextField
@@ -239,6 +245,7 @@ const GroupsPage = (props) => {
                     members={group.members}
                     postsNumber={group.postsNumber}
                     groupImage={group.image}
+                    asInformation={!isUserLoggedIn}
                   />
                 ))
             ) : (

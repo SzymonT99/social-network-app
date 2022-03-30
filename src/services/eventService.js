@@ -33,10 +33,6 @@ const deleteEvent = (eventId) => {
 const getEventById = (eventId) => {
   return fetch(endpoints.eventDetails.replace('{eventId}', eventId), {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
   });
 };
 
@@ -45,7 +41,6 @@ const getEvents = () => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: authorization(),
     },
   });
 };

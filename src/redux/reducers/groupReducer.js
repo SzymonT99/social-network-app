@@ -1,5 +1,4 @@
 import groupTypes from '../types/groupTypes';
-import groupForum from '../../components/GroupForum/GroupForum';
 
 const initialState = {
   publicGroups: [],
@@ -64,6 +63,8 @@ const groupReducer = (state = initialState, action) => {
         ...state,
         groupDetails: [],
       };
+    case groupTypes.CLEAR_ALL:
+      return initialState;
     default:
       return state;
   }

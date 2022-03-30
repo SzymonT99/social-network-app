@@ -28,7 +28,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/Message';
 import { useDispatch, useSelector } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import { Logout, Settings } from '@mui/icons-material';
 import { logoutUser } from '../../redux/actions/authActions';
@@ -40,7 +40,10 @@ import {
   getReceivedFriendInvitations,
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
-import { getActivityNotification } from '../../redux/actions/userActivityActions';
+import {
+  getActivityNotification,
+  getAllUsersInformation,
+} from '../../redux/actions/userActivityActions';
 import { formatActivityDate } from '../../utils/formatActivityDate';
 import {
   getChatDetails,
@@ -72,6 +75,7 @@ const Header = (props) => {
   const loggedUserFriendInvitations = useSelector(
     (state) => state.friends.receivedFriendInvitations
   );
+  const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const activityNotifications = useSelector(
     (state) => state.activity.notifications
@@ -88,13 +92,26 @@ const Header = (props) => {
   const [anchorElChatNotif, setAnchorElChatNotif] = useState(null);
 
   useEffect(() => {
-    const isTokenExpired =
-      new Date() > new Date(loggedUser.accessTokenExpirationDate);
+    if (isUserLoggedIn) {
+      const isTokenExpired =
+        new Date() > new Date(loggedUser.accessTokenExpirationDate);
 
-    if (!isTokenExpired) {
-      dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
-      dispatch(getActivityNotification());
-      dispatch(getUserChats());
+      if (!isTokenExpired) {
+        dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
+        dispatch(getActivityNotification());
+        dispatch(getUserChats());
+        if (users) {
+          let usersArray = [];
+          users.forEach((user) =>
+            usersArray.push({
+              label: user.firstName + ' ' + user.lastName,
+              id: user.userId,
+            })
+          );
+          setOptions(usersArray);
+        }
+      }
+    } else {
       if (users) {
         let usersArray = [];
         users.forEach((user) =>
@@ -264,8 +281,14 @@ const Header = (props) => {
           />
         </div>
       </div>
-      <div className={classes.actionContainer}>
-        <div className={classes.actionIcons}>
+      <div
+        className={classes.actionContainer}
+        style={{ justifyContent: !isUserLoggedIn && 'flex-end' }}
+      >
+        <div
+          className={classes.actionIcons}
+          style={{ display: !isUserLoggedIn && 'none' }}
+        >
           <IconButton onClick={handleClickFriendNotification}>
             <Badge
               sx={{
@@ -691,18 +714,18 @@ const Header = (props) => {
             )}
           </Menu>
         </div>
-        <div className={classes.userInfoBox}>
+        <div
+          className={classes.userInfoBox}
+          style={{ display: !isUserLoggedIn && 'none' }}
+        >
           <Typography
             variant="h4"
             component="div"
             noWrap
             className={classes.nameAndSurname}
           >
-            {loggedUserProfile ? (
-              loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName
-            ) : (
-              <CircularProgress color="primary" />
-            )}
+            {loggedUserProfile &&
+              loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName}
           </Typography>
           <IconButton onClick={handleClickAccountMenu}>
             <Avatar
@@ -865,6 +888,16 @@ const Header = (props) => {
             </MenuItem>
           </Menu>
         </div>
+        {!isUserLoggedIn && (
+          <div>
+            <Link className={classes.createAccountLink} to="/auth/login">
+              Zaloguj się
+            </Link>
+            <Link className={classes.createAccountLink} to="/auth/register">
+              Załóż konto
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
