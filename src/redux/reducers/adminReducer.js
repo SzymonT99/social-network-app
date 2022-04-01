@@ -9,14 +9,17 @@ const adminReducer = (state = initialState, action) => {
     case adminTypes.FETCH_USER_ACCOUNTS:
       return {
         ...state,
-        accounts: action.payload.accounts,
+        accounts: [...action.payload.accounts],
       };
     case adminTypes.MANAGE_USER_ACCOUNT:
       return {
         ...state,
         accounts: state.accounts.map((account) =>
           account.id === action.payload.userId
-            ? action.payload.updatedAccount
+            ? {
+                id: action.payload.userId,
+                ...action.payload.updatedAccount,
+              }
             : account
         ),
       };

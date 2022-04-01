@@ -51,6 +51,7 @@ const styles = (theme) => ({
     width: '240px',
     height: '240px',
     borderRadius: '10px',
+    objectFit: 'cover',
   },
   profileHeadingInfo: {
     width: '100%',

@@ -29,6 +29,7 @@ const UserFavouriteItemList = (props) => {
   const dispatch = useDispatch();
 
   const loggedUser = useSelector((state) => state.auth.user);
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
 
   const [showEditFavouriteFormForId, setShowEditFavouriteFormForId] =
     useState(null);
@@ -55,7 +56,8 @@ const UserFavouriteItemList = (props) => {
                   disableGutters
                   secondaryAction={
                     loggedUser &&
-                    parseInt(selectedUserId) === loggedUser.userId && (
+                    (parseInt(selectedUserId) === loggedUser.userId ||
+                      isAdmin) && (
                       <>
                         <IconButton
                           onClick={() =>

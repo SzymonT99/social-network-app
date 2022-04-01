@@ -24,6 +24,7 @@ import {
 } from '../../redux/actions/chatAction';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import Popup from '../Popup/Popup';
+import { formatDateWithTime } from '../../utils/formatDateWithTime';
 
 const ChatMember = (props) => {
   const {
@@ -41,6 +42,8 @@ const ChatMember = (props) => {
   const history = useHistory();
 
   const loggedUser = useSelector((state) => state.auth.user);
+
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
@@ -89,14 +92,7 @@ const ChatMember = (props) => {
           {userMember.firstName + ' ' + userMember.lastName}
         </Typography>
         <Typography fontSize="12px" noWrap lineHeight={1.2}>
-          {'Dołączył(a): ' +
-            new Date(addedIn)
-              .toJSON()
-              .slice(0, 10)
-              .split('-')
-              .reverse()
-              .join('.') +
-            new Date(addedIn).toJSON().slice(10, 16).replace('T', ' ')}
+          {'Dołączył(a): ' + formatDateWithTime(addedIn)}
         </Typography>
         {!isPrivateChat && chatCreator && (
           <div>
@@ -113,7 +109,7 @@ const ChatMember = (props) => {
       {chatCreator &&
         userMember.userId !== chatCreator.userId &&
         !isPrivateChat &&
-        loggedUser.userId === chatCreator.userId && (
+        (loggedUser.userId === chatCreator.userId || isAdmin) && (
           <div className={classes.manageMemberBox}>
             <IconButton onClick={handleClickMemberManage}>
               <MoreVertIcon fontSize="small" />

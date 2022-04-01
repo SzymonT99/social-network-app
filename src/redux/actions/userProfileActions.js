@@ -4,6 +4,7 @@ import userProfileService from '../../services/userService';
 import { showNotification } from './notificationActions';
 import { getActivityBoard } from './userActivityActions';
 import groupTypes from '../types/groupTypes';
+import { getUserFriends } from './friendAction';
 
 export const getUserProfile =
   (userId, forLoggedIn = false) =>
@@ -61,12 +62,13 @@ export const getUserActivity = (userId) => (dispatch) => {
 };
 
 export const addSchoolInformation = (school) => (dispatch, getState) => {
-  console.log(school);
   return userProfileService
     .addSchoolInformation(school)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getUserProfile(getState().auth.user.userId));
+        dispatch(
+          getUserProfile(getState().selectedProfile.userProfile.userProfileId)
+        );
         dispatch(showNotification('success', 'Dodano szkołę'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
@@ -85,7 +87,9 @@ export const editSchoolInformation =
       .editSchoolInformation(schoolId, school)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getUserProfile(getState().auth.user.userId));
+          dispatch(
+            getUserProfile(getState().selectedProfile.userProfile.userProfileId)
+          );
           dispatch(
             showNotification('success', 'Zaaktualizowano informacje o szkole')
           );
@@ -107,7 +111,9 @@ export const deleteSchoolInformation = (schoolId) => (dispatch, getState) => {
     .deleteSchoolInformation(schoolId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getUserProfile(getState().auth.user.userId));
+        dispatch(
+          getUserProfile(getState().selectedProfile.userProfile.userProfileId)
+        );
         dispatch(showNotification('success', 'Usunięto szkołę'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -125,7 +131,9 @@ export const addWorkPlaceInformation = (workPlace) => (dispatch, getState) => {
     .addWorkPlaceInformation(workPlace)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getUserProfile(getState().auth.user.userId));
+        dispatch(
+          getUserProfile(getState().selectedProfile.userProfile.userProfileId)
+        );
         dispatch(showNotification('success', 'Dodano informacje o pracy'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
@@ -144,7 +152,9 @@ export const editWorkPlaceInformation =
       .editWorkPlaceInformation(workId, updatedWorkPlace)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getUserProfile(getState().auth.user.userId));
+          dispatch(
+            getUserProfile(getState().selectedProfile.userProfile.userProfileId)
+          );
           dispatch(
             showNotification(
               'success',
@@ -169,7 +179,9 @@ export const deleteWorkPlaceInformation = (workId) => (dispatch, getState) => {
     .deleteWorkPlaceInformation(workId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getUserProfile(getState().auth.user.userId));
+        dispatch(
+          getUserProfile(getState().selectedProfile.userProfile.userProfileId)
+        );
         dispatch(showNotification('success', 'Usunięto miejsce pracy'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -211,7 +223,11 @@ export const addFavouriteItem = (favouriteItem) => (dispatch, getState) => {
     .addUserFavourite(favouriteItem)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getUserFavouriteItems(getState().auth.user.userId));
+        dispatch(
+          getUserFavouriteItems(
+            getState().selectedProfile.userProfile.userProfileId
+          )
+        );
         dispatch(showNotification('success', 'Dodano element'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
@@ -230,7 +246,11 @@ export const editFavouriteItem =
       .editUserFavourite(favouriteId, favouriteItem)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getUserFavouriteItems(getState().auth.user.userId));
+          dispatch(
+            getUserFavouriteItems(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
           dispatch(showNotification('success', 'Zmieniono element'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -248,7 +268,11 @@ export const deleteFavouriteItem = (favouriteId) => (dispatch, getState) => {
     .deleteUserFavourite(favouriteId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getUserFavouriteItems(getState().auth.user.userId));
+        dispatch(
+          getUserFavouriteItems(
+            getState().selectedProfile.userProfile.userProfileId
+          )
+        );
         dispatch(showNotification('success', 'Usunięto element'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -313,51 +337,64 @@ export const getUserInterests = (userId) => (dispatch) => {
     });
 };
 
-export const addUserInterests = (interestId) => (dispatch, getState) => {
-  return userProfileService
-    .addUserInterests(interestId)
-    .then((response) => {
-      if (response.status === 201) {
-        dispatch(getUserInterests(getState().auth.user.userId));
-        dispatch(showNotification('success', 'Dodano zainteresowanie'));
-      } else if (response.status === 403) {
-        dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else if (response.status === 400) {
-        dispatch(showNotification('warning', 'Niepoprawne dane'));
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+export const addUserInterests =
+  (userId, interestId) => (dispatch, getState) => {
+    return userProfileService
+      .addUserInterests(userId, interestId)
+      .then((response) => {
+        if (response.status === 201) {
+          dispatch(
+            getUserInterests(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
+          dispatch(showNotification('success', 'Dodano zainteresowanie'));
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else if (response.status === 400) {
+          dispatch(showNotification('warning', 'Niepoprawne dane'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-export const deleteUserInterests = (interestId) => (dispatch, getState) => {
-  return userProfileService
-    .deleteUserInterests(interestId)
-    .then((response) => {
-      if (response.status === 200) {
-        dispatch(getUserInterests(getState().auth.user.userId));
-        dispatch(showNotification('success', 'Usunięto zainteresowanie'));
-      } else if (response.status === 403) {
-        dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+export const deleteUserInterests =
+  (userId, interestId) => (dispatch, getState) => {
+    return userProfileService
+      .deleteUserInterests(userId, interestId)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(
+            getUserInterests(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
+          dispatch(showNotification('success', 'Usunięto zainteresowanie'));
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-export const changeProfilePhoto = (userId, photo) => (dispatch) => {
+export const changeProfilePhoto = (userId, photo) => (dispatch, getState) => {
   return userProfileService
-    .addProfilePhoto(photo)
+    .addProfilePhoto(photo, userId)
     .then((response) => {
       if (response.status === 200) {
         dispatch(getUserProfile(userId));
-        dispatch(getUserProfile(userId, true));
+        if (getState().auth.user.userId === userId) {
+          dispatch(getUserProfile(userId, true));
+        }
+        dispatch(getUserFriends(getState().auth.user.userId, true));
         dispatch(getUserActivity(userId));
         dispatch(getUserImages(userId));
         dispatch(showNotification('success', 'Zmieniono zdjęcie profilowe'));
@@ -372,13 +409,16 @@ export const changeProfilePhoto = (userId, photo) => (dispatch) => {
     });
 };
 
-export const deleteProfilePhoto = (userId) => (dispatch) => {
+export const deleteProfilePhoto = (userId) => (dispatch, getState) => {
   return userProfileService
-    .deleteProfilePhoto()
+    .deleteProfilePhoto(userId)
     .then((response) => {
       if (response.status === 200) {
         dispatch(getUserProfile(userId));
-        dispatch(getUserProfile(userId, true));
+        if (getState().auth.user.userId === userId) {
+          dispatch(getUserProfile(userId, true));
+        }
+        dispatch(getUserFriends(getState().auth.user.userId, true));
         dispatch(getUserActivity(userId));
         dispatch(showNotification('success', 'Usunięto zdjęcie profilowe'));
       } else if (response.status === 403) {
@@ -417,13 +457,16 @@ export const getUserImages = (userId) => (dispatch) => {
 };
 
 export const editProfileInformation =
-  (updatedProfile, userId) => (dispatch) => {
+  (userId, updatedProfile) => (dispatch, getState) => {
     return userProfileService
-      .editProfileInformation(updatedProfile)
+      .editProfileInformation(userId, updatedProfile)
       .then((response) => {
         if (response.status === 200) {
           dispatch(getUserProfile(userId));
-          dispatch(getUserProfile(userId, true));
+          if (getState().auth.user.userId === userId) {
+            dispatch(getUserProfile(userId, true));
+          }
+          dispatch(getUserFriends(getState().auth.user.userId, true));
           dispatch(getUserActivity(userId));
           dispatch(
             showNotification('success', 'Zaaktualiowano dane profilowe')

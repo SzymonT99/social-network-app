@@ -29,6 +29,8 @@ const friendReducer = (state = initialState, action) => {
         ...state,
         sentFriendInvitations: action.payload.sentFriendInvitations,
       };
+    case friendTypes.CLEAR_ALL:
+      return initialState;
     default:
       return state;
   }

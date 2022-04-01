@@ -18,6 +18,21 @@ const styles = (theme) => ({
     height: '50px',
     borderRadius: '50px',
   },
+  friendChatImage: {
+    '&.MuiAvatar-root': {
+      width: '50px',
+      height: '50px',
+      borderRadius: '50px',
+    },
+  },
+  avatarBadge: {
+    '& .MuiBadge-badge': {
+      width: '12px',
+      height: '12px',
+      borderRadius: '50px',
+      border: `2px solid ${theme.palette.background.paper}`,
+    },
+  },
   contentContainer: {
     marginLeft: '10px',
     flex: 1,

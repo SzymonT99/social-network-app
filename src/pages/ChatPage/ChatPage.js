@@ -29,6 +29,7 @@ import Popup from '../../components/Popup/Popup';
 import ChatForm from '../../components/Forms/ChatForm';
 import {
   addTypingMessage,
+  clearSelectedChat,
   deleteChat,
   deleteMemberFromChat,
   getChatDetails,
@@ -36,6 +37,7 @@ import {
   getUserChats,
   setActiveChat,
   setChatMemberChatNotifications,
+  setSelectedUser,
   uploadChatImages,
 } from '../../redux/actions/chatAction';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -59,7 +61,6 @@ import SentInvitation from '../../components/SentInvitation/SentInvitation';
 import SearchIcon from '@mui/icons-material/Search';
 import chatTypes from '../../redux/types/chatTypes';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import CircularProgress from '@mui/material/CircularProgress';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import CloseIcon from '@mui/icons-material/Close';
 import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
@@ -79,11 +80,14 @@ const ChatPage = (props) => {
   const loggedUser = useSelector((state) => state.auth.user);
   const isUserRemember = useSelector((state) => state.auth.remember);
 
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
+
   const users = useSelector((state) => state.activity.users);
   const userChats = useSelector((state) => state.chats.userChats);
 
   const currentChat = useSelector((state) => state.chats.chatDetails);
   const activeChatId = useSelector((state) => state.chats.activeChat);
+  const selectedUserId = useSelector((state) => state.chats.selectedUserId);
 
   const [maxShowedMessages, setMaxShowedMessages] = useState(0);
   const [openChatCreationPopup, setOpenChatCreationPopup] = useState(false);
@@ -113,7 +117,9 @@ const ChatPage = (props) => {
           dispatch(setTokenRefreshing(false));
         });
       }
-      dispatch(getUserChats()).then((data) => {
+      dispatch(
+        getUserChats(selectedUserId ? selectedUserId : loggedUser.userId)
+      ).then((data) => {
         if (data.length !== 0 && !activeChatId) {
           dispatch(setActiveChat(data[0].chatId));
           dispatch(getChatDetails(data[0].chatId)).then((chat) => {
@@ -134,8 +140,9 @@ const ChatPage = (props) => {
     return () => {
       if (stompClient !== null) {
         stompClient.unsubscribe('chat', {});
-        dispatch(getChatDetails(activeChatId));
       }
+      dispatch(clearSelectedChat());
+      dispatch(setSelectedUser(undefined));
     };
   }, []);
 
@@ -196,7 +203,9 @@ const ChatPage = (props) => {
     ) {
       if (messageNotification.messageType !== 'MESSAGE_EDIT') {
         dispatch(getChatMessageById(messageNotification.messageId));
-        dispatch(getUserChats());
+        dispatch(
+          getUserChats(selectedUserId ? selectedUserId : loggedUser.userId)
+        );
       } else {
         setTimeout(() => {
           dispatch(getChatMessageById(messageNotification.messageId, true));
@@ -427,563 +436,589 @@ const ChatPage = (props) => {
 
   return (
     <div className={classes.wrapper}>
-      {currentChat && currentChat.messages && currentChat.addedImages ? (
-        <Paper elevation={4} className={classes.chatContainer}>
-          <div className={classes.conversationsContainer}>
-            <div className={classes.conversationsHeadingBox}>
-              <Typography variant="h4">Czaty</Typography>
-              <Tooltip title="Utwórz nowy czat" placement="top">
-                <IconButton
-                  className={classes.addNewChatBtn}
-                  onClick={() => setOpenChatCreationPopup(true)}
-                >
-                  <AddCircleOutlineIcon color="primary" />
-                </IconButton>
-              </Tooltip>
-              <Popup
-                open={openChatCreationPopup}
-                type="chat"
-                title="Utwórz czat"
-                onClose={handleCloseChatCreationPopup}
+      <Paper elevation={4} className={classes.chatContainer}>
+        <div className={classes.conversationsContainer}>
+          <div className={classes.conversationsHeadingBox}>
+            <Typography variant="h4">Czaty</Typography>
+            <Tooltip title="Utwórz nowy czat" placement="top">
+              <IconButton
+                className={classes.addNewChatBtn}
+                onClick={() => setOpenChatCreationPopup(true)}
               >
-                <ChatForm closePopup={handleCloseChatCreationPopup} />
-              </Popup>
-            </div>
-            {userChats && (
-              <div className={classes.conversationsContent}>
-                <Typography variant="h6" className={classes.conversationsTitle}>
-                  Znajomi
-                </Typography>
-                <Divider className={classes.divider} />
-                {userChats.map((chat) => {
-                  if (chat.isPrivate) {
-                    return (
-                      <ChatConversation
-                        key={chat.chatId}
-                        chatId={chat.chatId}
-                        chatName={chat.name}
-                        activityDate={chat.activityDate}
-                        lastMessage={chat.lastMessage}
-                        lastMessageAuthor={chat.lastMessageAuthor}
-                        newMessagesNumber={chat.newMessages}
-                        chatImage={chat.image}
-                        isPrivate
-                        friend={
-                          chat.members.find(
-                            (member) => member.user.userId !== loggedUser.userId
-                          ).user
-                        }
-                      />
-                    );
-                  }
-                })}
-                {userChats.filter((chat) => chat.isPrivate).length === 0 && (
-                  <Typography
-                    variant="subtitle2"
-                    className={classes.noConversationsInfo}
-                  >
-                    Brak konwersacji
-                  </Typography>
-                )}
-                <Typography variant="h6" className={classes.conversationsTitle}>
-                  Konwersacje grupowe
-                </Typography>
-                <Divider className={classes.divider} />
-                {userChats.map((chat) => {
-                  if (!chat.isPrivate) {
-                    return (
-                      <ChatConversation
-                        key={chat.chatId}
-                        chatId={chat.chatId}
-                        chatName={chat.name}
-                        activityDate={chat.activityDate}
-                        lastMessage={chat.lastMessage}
-                        lastMessageAuthor={chat.lastMessageAuthor}
-                        newMessagesNumber={chat.newMessages}
-                        chatImage={chat.image}
-                      />
-                    );
-                  }
-                })}
-                {userChats.filter((chat) => !chat.isPrivate).length === 0 && (
-                  <Typography
-                    variant="subtitle2"
-                    className={classes.noConversationsInfo}
-                  >
-                    Brak konwersacji
-                  </Typography>
-                )}
-              </div>
-            )}
+                <AddCircleOutlineIcon color="primary" />
+              </IconButton>
+            </Tooltip>
+            <Popup
+              open={openChatCreationPopup}
+              type="chat"
+              title="Utwórz czat"
+              onClose={handleCloseChatCreationPopup}
+            >
+              <ChatForm closePopup={handleCloseChatCreationPopup} />
+            </Popup>
           </div>
-          <div className={classes.chatMessagesContainer}>
-            <div id="scrollableDiv" className={classes.messagesContent}>
-              <InfiniteScroll
-                dataLength={maxShowedMessages}
-                next={showMoreMessage}
-                style={{ display: 'flex', flexDirection: 'column-reverse' }}
-                inverse={true}
-                hasMore={true}
-                loader={
-                  maxShowedMessages !== currentChat.messages.length && (
-                    <h4>Wczytywanie...</h4>
-                  )
+          {userChats && (
+            <div className={classes.conversationsContent}>
+              <Typography variant="h6" className={classes.conversationsTitle}>
+                Znajomi
+              </Typography>
+              <Divider className={classes.divider} />
+              {userChats.map((chat) => {
+                if (chat.isPrivate) {
+                  return (
+                    <ChatConversation
+                      key={chat.chatId}
+                      chatId={chat.chatId}
+                      chatName={chat.name}
+                      activityDate={chat.activityDate}
+                      lastMessage={chat.lastMessage}
+                      lastMessageAuthor={chat.lastMessageAuthor}
+                      newMessagesNumber={chat.newMessages}
+                      chatImage={chat.image}
+                      isPrivate
+                      friend={
+                        selectedUserId
+                          ? chat.members.find(
+                              (member) => member.user.userId !== selectedUserId
+                            ).user
+                          : chat.members.find(
+                              (member) =>
+                                member.user.userId !== loggedUser.userId
+                            ).user
+                      }
+                    />
+                  );
                 }
-                scrollableTarget="scrollableDiv"
-              >
-                {currentChat.messages &&
-                  currentChat.messages
-                    .slice(
-                      currentChat.messages.length < 12
-                        ? 0
-                        : currentChat.messages.length - maxShowedMessages
-                    )
-                    .reverse()
-                    .map((message, index) => (
-                      <ChatMessage
-                        key={index}
-                        messageId={message.messageId}
-                        chatId={currentChat.chatId}
-                        messageType={message.messageType}
-                        content={message.text ? message.text : ''}
-                        messageImage={message.image}
-                        author={message.author}
-                        isAuthorDeleted={
-                          currentChat.chatMembers.filter(
-                            (member) =>
-                              member.user.userId === message.author.userId
-                          ).length === 0
-                        }
-                        createdAt={message.createdAt}
-                        isEdited={message.isEdited}
-                        isDeleted={message.isDeleted}
-                        manageMessage={manageMessage}
-                      />
-                    ))}
-              </InfiniteScroll>
+              })}
+              {userChats.filter((chat) => chat.isPrivate).length === 0 && (
+                <Typography
+                  variant="subtitle2"
+                  className={classes.noConversationsInfo}
+                >
+                  Brak konwersacji
+                </Typography>
+              )}
+              <Typography variant="h6" className={classes.conversationsTitle}>
+                Konwersacje grupowe
+              </Typography>
+              <Divider className={classes.divider} />
+              {userChats.map((chat) => {
+                if (!chat.isPrivate) {
+                  return (
+                    <ChatConversation
+                      key={chat.chatId}
+                      chatId={chat.chatId}
+                      chatName={chat.name}
+                      activityDate={chat.activityDate}
+                      lastMessage={chat.lastMessage}
+                      lastMessageAuthor={chat.lastMessageAuthor}
+                      newMessagesNumber={chat.newMessages}
+                      chatImage={chat.image}
+                    />
+                  );
+                }
+              })}
+              {userChats.filter((chat) => !chat.isPrivate).length === 0 && (
+                <Typography
+                  variant="subtitle2"
+                  className={classes.noConversationsInfo}
+                >
+                  Brak konwersacji
+                </Typography>
+              )}
             </div>
-            <div className={classes.messageCreationContainer}>
-              <IconButton>
-                <SentimentSatisfiedAltIcon fontSize="medium" color="primary" />
-              </IconButton>
-              <IconButton onClick={() => imagesInputRef.current.click()}>
-                <ImageIcon fontSize="medium" color="primary" />
-              </IconButton>
-              <input
-                style={{ display: 'none' }}
-                type="file"
-                id="multi"
-                ref={imagesInputRef}
-                multiple
-                accept="image/*"
-                onChange={selectImages}
-              />
-              <TextField
-                fullWidth
-                placeholder="Napisz widaomość"
-                variant="outlined"
-                onChange={handleChangeMessageText}
-                value={text}
-                className={classes.messageInput}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    sendMessage(text);
-                    e.preventDefault();
+          )}
+        </div>
+        <div className={classes.chatMessagesContainer}>
+          {currentChat && currentChat.messages && currentChat.addedImages && (
+            <>
+              <div id="scrollableDiv" className={classes.messagesContent}>
+                <InfiniteScroll
+                  dataLength={maxShowedMessages}
+                  next={showMoreMessage}
+                  style={{ display: 'flex', flexDirection: 'column-reverse' }}
+                  inverse={true}
+                  hasMore={true}
+                  loader={
+                    maxShowedMessages !== currentChat.messages.length && (
+                      <h4>Wczytywanie...</h4>
+                    )
                   }
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton
-                      edge="end"
-                      onClick={() => setOpenImagesPopup(true)}
-                    >
-                      <Badge
-                        className={classes.messageImageBade}
-                        overlap="circular"
-                        badgeContent={uploadedImages.length}
-                      >
-                        <PhotoLibraryIcon fontSize="large" />
-                      </Badge>
-                    </IconButton>
-                  ),
-                }}
-              />
-              <Popup
-                open={openImagesPopup}
-                type="images"
-                title="Zdjęcia"
-                onClose={handleCloseImagesPopup}
-              >
-                {displayedImages.length > 0 ? (
-                  <ImageList
-                    cols={3}
-                    rowHeight={220}
-                    className={classes.messageImageList}
-                    gap={5}
-                    variant="quilted"
-                  >
-                    {displayedImages.map((img, index) => (
-                      <ImageListItem
-                        key={index}
-                        className={classes.uploadImageItem}
-                      >
-                        <img
+                  scrollableTarget="scrollableDiv"
+                >
+                  {currentChat.messages &&
+                    currentChat.messages
+                      .slice(
+                        currentChat.messages.length < 12
+                          ? 0
+                          : currentChat.messages.length - maxShowedMessages
+                      )
+                      .reverse()
+                      .map((message, index) => (
+                        <ChatMessage
                           key={index}
-                          src={img}
-                          srcSet={img}
-                          alt="Dodane zdjęcie"
-                          loading="lazy"
-                        />
-                        <Button
-                          className={classes.uploadImageDeleteBtn}
-                          onClick={() => deleteImage(img)}
-                        >
-                          <CloseIcon />
-                        </Button>
-                      </ImageListItem>
-                    ))}
-                  </ImageList>
-                ) : (
-                  <Typography variant="subtitle2" marginTop="5px">
-                    Nie dodano zdjęć
-                  </Typography>
-                )}
-              </Popup>
-              <Button
-                color="primary"
-                variant="contained"
-                sx={{ height: '55px' }}
-                onClick={() => sendMessage(text)}
-                className={classes.sendMessageBtn}
-              >
-                Wyślij
-                <SendIcon fontSize="medium" />
-              </Button>
-            </div>
-          </div>
-          <div className={classes.chatSettingsContainer}>
-            <div className={classes.chatInfoContainer}>
-              {!currentChat.isPrivate ? (
-                <img
-                  src={
-                    currentChat.image ? currentChat.image.url : defaultChatImage
-                  }
-                  className={classes.activeChatImage}
-                  alt="Zdjęcie czatu"
-                />
-              ) : (
-                <img
-                  src={
-                    currentChat.chatMembers.find(
-                      (member) => member.user.userId !== loggedUser.userId
-                    ).user.profilePhoto
-                      ? currentChat.chatMembers.find(
-                          (member) => member.user.userId !== loggedUser.userId
-                        ).user.profilePhoto.url
-                      : defaultUserPhoto
-                  }
-                  className={classes.activeChatImage}
-                  alt="Zdjęcie znajomego"
-                />
-              )}
-              {!currentChat.isPrivate ? (
-                <Typography variant="h5" className={classes.chatNameText}>
-                  {currentChat.name}
-                </Typography>
-              ) : (
-                <Typography variant="h5" className={classes.chatNameText}>
-                  {currentChat.chatMembers.find(
-                    (member) => member.user.userId !== loggedUser.userId
-                  ).user.firstName +
-                    ' ' +
-                    currentChat.chatMembers.find(
-                      (member) => member.user.userId !== loggedUser.userId
-                    ).user.lastName}
-                </Typography>
-              )}
-              {currentChat.isPrivate && (
-                <Link
-                  component="button"
-                  variant="body1"
-                  className={classes.friendProfileLink}
-                  onClick={() =>
-                    history.push(
-                      '/app/profile/' +
-                        currentChat.chatMembers.find(
-                          (member) => member.user.userId !== loggedUser.userId
-                        ).user.userId
-                    )
-                  }
-                >
-                  Zobacz profil
-                </Link>
-              )}
-              {!currentChat.isPrivate &&
-                currentChat.chatCreator &&
-                currentChat.chatCreator.userId === loggedUser.userId && (
-                  <div className={classes.chatManageBtnContainer}>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={handleClickChatEdit}
-                    >
-                      Edytuj
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleClickDeleteChat}
-                    >
-                      Usuń
-                    </Button>
-                    <Popup
-                      open={openChatEditionPopup}
-                      type="chat"
-                      title="Edytuj czat"
-                      onClose={handleCloseChatEditionPopup}
-                    >
-                      <ChatForm
-                        closePopup={handleCloseChatEditionPopup}
-                        edition
-                        chatId={currentChat.chatId}
-                        editedName={currentChat.name}
-                        editedImage={currentChat.image}
-                      />
-                    </Popup>
-                    <Popup
-                      open={openDeleteChatPopup}
-                      type="confirmation"
-                      title="Usuwanie czatu"
-                      onClose={handleCloseDeleteChatPopup}
-                    >
-                      <ActionConfirmation
-                        title="Czy napewno chcesz usunąć czat?"
-                        confirmationAction={deleteChatClick}
-                        rejectionAction={handleCloseDeleteChatPopup}
-                      />
-                    </Popup>
-                  </div>
-                )}
-              <Tooltip
-                title={chatMuted ? 'Odmutuj czat' : 'Mutuj czat'}
-                placement="bottom"
-              >
-                <IconButton
-                  onClick={handleClickNotificationManage}
-                  className={classNames(
-                    classes.notificationManageBtn,
-                    chatMuted && classes.notificationManageBtnClicked
-                  )}
-                >
-                  <NotificationsOffIcon fontSize="large" color="primary" />
-                </IconButton>
-              </Tooltip>
-            </div>
-            <div className={classes.chatSettingsContent}>
-              <Accordion className={classes.activeChatInfoBox} disableGutters>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  id="chat-info"
-                >
-                  <Typography variant="subtitle1">Informacje</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {!currentChat.isPrivate && (
-                    <Typography variant="body1" className={classes.chatInfoRow}>
-                      <ChatBubbleIcon />
-                      {'Nazwa: ' + currentChat.name}
-                    </Typography>
-                  )}
-                  <Typography variant="body1" className={classes.chatInfoRow}>
-                    <AddCircleIcon />
-                    {'Data utworzenia: ' +
-                      formatBaseDate(currentChat.createdAt)}
-                  </Typography>
-                  {!currentChat.isPrivate && currentChat.chatCreator && (
-                    <Typography variant="body1" className={classes.chatInfoRow}>
-                      <PersonIcon />
-                      {'Autor: '}
-                      <Tooltip title="Zobacz profil" placement="right">
-                        <span
-                          className={classes.activeChatAuthorLink}
-                          onClick={() =>
-                            history.push(
-                              '/app/profile/' + currentChat.chatCreator.userId
-                            )
+                          messageId={message.messageId}
+                          chatId={currentChat.chatId}
+                          messageType={message.messageType}
+                          content={message.text ? message.text : ''}
+                          messageImage={message.image}
+                          author={message.author}
+                          isAuthorDeleted={
+                            currentChat.chatMembers.filter(
+                              (member) =>
+                                member.user.userId === message.author.userId
+                            ).length === 0
                           }
-                        >
-                          {currentChat.chatCreator.firstName +
-                            ' ' +
-                            currentChat.chatCreator.lastName}
-                        </span>
-                      </Tooltip>
-                    </Typography>
-                  )}
-                  {!currentChat.isPrivate && (
-                    <Typography variant="body1" className={classes.chatInfoRow}>
-                      <GroupIcon />
-                      {'Liczba członków: ' + currentChat.chatMembers.length}
-                    </Typography>
-                  )}
-                  <Typography variant="body1" className={classes.chatInfoRow}>
-                    <MessageIcon />
-                    {'Liczba wiadomości: ' + currentChat.messages.length}
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-              <Accordion className={classes.activeChatInfoBox} disableGutters>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  id="chat-image"
-                >
-                  <Typography variant="subtitle1">Zdjęcia</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {currentChat.addedImages.length > 0 ? (
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(2, 1fr)',
-                        gridGap: '10px',
-                      }}
-                      className={classes.chatImageListContainer}
-                    >
-                      {currentChat.addedImages.map((img, index) => (
-                        <ModalImage
-                          className={classes.chatImageListItem}
-                          key={index}
-                          small={img.url}
-                          medium={img.url}
-                          large={img.url}
-                          hideZoom
+                          createdAt={message.createdAt}
+                          isEdited={message.isEdited}
+                          isDeleted={message.isDeleted}
+                          manageMessage={manageMessage}
                         />
                       ))}
-                    </div>
-                  ) : (
-                    <Typography
-                      variant="body1"
-                      marginTop="5px"
-                      fontWeight={300}
+                </InfiniteScroll>
+              </div>
+              <div className={classes.messageCreationContainer}>
+                <IconButton>
+                  <SentimentSatisfiedAltIcon
+                    fontSize="medium"
+                    color="primary"
+                  />
+                </IconButton>
+                <IconButton onClick={() => imagesInputRef.current.click()}>
+                  <ImageIcon fontSize="medium" color="primary" />
+                </IconButton>
+                <input
+                  style={{ display: 'none' }}
+                  type="file"
+                  id="multi"
+                  ref={imagesInputRef}
+                  multiple
+                  accept="image/*"
+                  onChange={selectImages}
+                />
+                <TextField
+                  fullWidth
+                  placeholder="Napisz widomość"
+                  variant="outlined"
+                  onChange={handleChangeMessageText}
+                  value={text}
+                  className={classes.messageInput}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      sendMessage(text);
+                      e.preventDefault();
+                    }
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <IconButton
+                        edge="end"
+                        onClick={() => setOpenImagesPopup(true)}
+                      >
+                        <Badge
+                          className={classes.messageImageBade}
+                          overlap="circular"
+                          badgeContent={uploadedImages.length}
+                        >
+                          <PhotoLibraryIcon fontSize="large" />
+                        </Badge>
+                      </IconButton>
+                    ),
+                  }}
+                />
+                <Popup
+                  open={openImagesPopup}
+                  type="images"
+                  title="Zdjęcia"
+                  onClose={handleCloseImagesPopup}
+                >
+                  {displayedImages.length > 0 ? (
+                    <ImageList
+                      cols={3}
+                      rowHeight={220}
+                      className={classes.messageImageList}
+                      gap={5}
+                      variant="quilted"
                     >
+                      {displayedImages.map((img, index) => (
+                        <ImageListItem
+                          key={index}
+                          className={classes.uploadImageItem}
+                        >
+                          <img
+                            key={index}
+                            src={img}
+                            srcSet={img}
+                            alt="Dodane zdjęcie"
+                            loading="lazy"
+                          />
+                          <Button
+                            className={classes.uploadImageDeleteBtn}
+                            onClick={() => deleteImage(img)}
+                          >
+                            <CloseIcon />
+                          </Button>
+                        </ImageListItem>
+                      ))}
+                    </ImageList>
+                  ) : (
+                    <Typography variant="subtitle2" marginTop="5px">
                       Nie dodano zdjęć
                     </Typography>
                   )}
-                </AccordionDetails>
-              </Accordion>
-              <Accordion className={classes.activeChatInfoBox} disableGutters>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  id="chat-members"
+                </Popup>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  sx={{ height: '55px' }}
+                  onClick={() => sendMessage(text)}
+                  className={classes.sendMessageBtn}
                 >
-                  <Typography variant="subtitle1">Członkowie</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {currentChat.chatMembers.map((member) => (
-                    <ChatMember
-                      key={member.chatMemberId}
-                      memberId={member.chatMemberId}
-                      chatId={currentChat.chatId}
-                      userMember={member.user}
-                      addedIn={member.addedIn}
-                      canAddOthers={member.canAddOthers}
-                      isPrivateChat={currentChat.isPrivate}
-                      chatCreator={currentChat.chatCreator}
-                    />
-                  ))}
-                  {currentChat.chatMembers.filter(
-                    (member) =>
-                      member.canAddOthers === true &&
-                      member.user.userId === loggedUser.userId
-                  ).length !== 0 && (
-                    <Button
-                      color="secondary"
-                      variant="text"
-                      onClick={() => setOpenChatInvitationsPopup(true)}
-                    >
-                      <AddCircleOutlineIcon />
-                      <Typography variant="subtitle1" marginLeft="10px">
-                        Dodaj użytkowników
+                  Wyślij
+                  <SendIcon fontSize="medium" />
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+        <div className={classes.chatSettingsContainer}>
+          {currentChat && currentChat.messages && currentChat.addedImages && (
+            <>
+              <div className={classes.chatInfoContainer}>
+                {!currentChat.isPrivate ? (
+                  <img
+                    src={
+                      currentChat.image
+                        ? currentChat.image.url
+                        : defaultChatImage
+                    }
+                    className={classes.activeChatImage}
+                    alt="Zdjęcie czatu"
+                  />
+                ) : (
+                  <img
+                    src={
+                      currentChat.chatMembers.find(
+                        (member) => member.user.userId !== loggedUser.userId
+                      ).user.profilePhoto
+                        ? currentChat.chatMembers.find(
+                            (member) => member.user.userId !== loggedUser.userId
+                          ).user.profilePhoto.url
+                        : defaultUserPhoto
+                    }
+                    className={classes.activeChatImage}
+                    alt="Zdjęcie znajomego"
+                  />
+                )}
+                {!currentChat.isPrivate ? (
+                  <Typography variant="h5" className={classes.chatNameText}>
+                    {currentChat.name}
+                  </Typography>
+                ) : (
+                  <Typography variant="h5" className={classes.chatNameText}>
+                    {currentChat.chatMembers.find(
+                      (member) => member.user.userId !== loggedUser.userId
+                    ).user.firstName +
+                      ' ' +
+                      currentChat.chatMembers.find(
+                        (member) => member.user.userId !== loggedUser.userId
+                      ).user.lastName}
+                  </Typography>
+                )}
+                {currentChat.isPrivate && (
+                  <Link
+                    component="button"
+                    variant="body1"
+                    className={classes.friendProfileLink}
+                    onClick={() =>
+                      history.push(
+                        '/app/profile/' +
+                          currentChat.chatMembers.find(
+                            (member) => member.user.userId !== loggedUser.userId
+                          ).user.userId
+                      )
+                    }
+                  >
+                    Zobacz profil
+                  </Link>
+                )}
+                {!currentChat.isPrivate &&
+                  currentChat.chatCreator &&
+                  (currentChat.chatCreator.userId === loggedUser.userId ||
+                    isAdmin) && (
+                    <div className={classes.chatManageBtnContainer}>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleClickChatEdit}
+                      >
+                        Edytuj
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleClickDeleteChat}
+                      >
+                        Usuń
+                      </Button>
+                      <Popup
+                        open={openChatEditionPopup}
+                        type="chat"
+                        title="Edytuj czat"
+                        onClose={handleCloseChatEditionPopup}
+                      >
+                        <ChatForm
+                          closePopup={handleCloseChatEditionPopup}
+                          edition
+                          chatId={currentChat.chatId}
+                          editedName={currentChat.name}
+                          editedImage={currentChat.image}
+                        />
+                      </Popup>
+                      <Popup
+                        open={openDeleteChatPopup}
+                        type="confirmation"
+                        title="Usuwanie czatu"
+                        onClose={handleCloseDeleteChatPopup}
+                      >
+                        <ActionConfirmation
+                          title="Czy napewno chcesz usunąć czat?"
+                          confirmationAction={deleteChatClick}
+                          rejectionAction={handleCloseDeleteChatPopup}
+                        />
+                      </Popup>
+                    </div>
+                  )}
+                <Tooltip
+                  title={chatMuted ? 'Odmutuj czat' : 'Mutuj czat'}
+                  placement="bottom"
+                >
+                  <IconButton
+                    onClick={handleClickNotificationManage}
+                    className={classNames(
+                      classes.notificationManageBtn,
+                      chatMuted && classes.notificationManageBtnClicked
+                    )}
+                  >
+                    <NotificationsOffIcon fontSize="large" color="primary" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+              <div className={classes.chatSettingsContent}>
+                <Accordion className={classes.activeChatInfoBox} disableGutters>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    id="chat-info"
+                  >
+                    <Typography variant="subtitle1">Informacje</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {!currentChat.isPrivate && (
+                      <Typography
+                        variant="body1"
+                        className={classes.chatInfoRow}
+                      >
+                        <ChatBubbleIcon />
+                        {'Nazwa: ' + currentChat.name}
                       </Typography>
+                    )}
+                    <Typography variant="body1" className={classes.chatInfoRow}>
+                      <AddCircleIcon />
+                      {'Data utworzenia: ' +
+                        formatBaseDate(currentChat.createdAt)}
+                    </Typography>
+                    {!currentChat.isPrivate && currentChat.chatCreator && (
+                      <Typography
+                        variant="body1"
+                        className={classes.chatInfoRow}
+                      >
+                        <PersonIcon />
+                        {'Autor: '}
+                        <Tooltip title="Zobacz profil" placement="right">
+                          <span
+                            className={classes.activeChatAuthorLink}
+                            onClick={() =>
+                              history.push(
+                                '/app/profile/' + currentChat.chatCreator.userId
+                              )
+                            }
+                          >
+                            {currentChat.chatCreator.firstName +
+                              ' ' +
+                              currentChat.chatCreator.lastName}
+                          </span>
+                        </Tooltip>
+                      </Typography>
+                    )}
+                    {!currentChat.isPrivate && (
+                      <Typography
+                        variant="body1"
+                        className={classes.chatInfoRow}
+                      >
+                        <GroupIcon />
+                        {'Liczba członków: ' + currentChat.chatMembers.length}
+                      </Typography>
+                    )}
+                    <Typography variant="body1" className={classes.chatInfoRow}>
+                      <MessageIcon />
+                      {'Liczba wiadomości: ' + currentChat.messages.length}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion className={classes.activeChatInfoBox} disableGutters>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    id="chat-image"
+                  >
+                    <Typography variant="subtitle1">Zdjęcia</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {currentChat.addedImages.length > 0 ? (
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gridGap: '10px',
+                        }}
+                        className={classes.chatImageListContainer}
+                      >
+                        {currentChat.addedImages.map((img, index) => (
+                          <ModalImage
+                            className={classes.chatImageListItem}
+                            key={index}
+                            small={img.url}
+                            medium={img.url}
+                            large={img.url}
+                            hideZoom
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <Typography
+                        variant="body1"
+                        marginTop="5px"
+                        fontWeight={300}
+                      >
+                        Nie dodano zdjęć
+                      </Typography>
+                    )}
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion className={classes.activeChatInfoBox} disableGutters>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    id="chat-members"
+                  >
+                    <Typography variant="subtitle1">Członkowie</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {currentChat.chatMembers.map((member) => (
+                      <ChatMember
+                        key={member.chatMemberId}
+                        memberId={member.chatMemberId}
+                        chatId={currentChat.chatId}
+                        userMember={member.user}
+                        addedIn={member.addedIn}
+                        canAddOthers={member.canAddOthers}
+                        isPrivateChat={currentChat.isPrivate}
+                        chatCreator={currentChat.chatCreator}
+                      />
+                    ))}
+                    {(currentChat.chatMembers.filter(
+                      (member) =>
+                        member.canAddOthers === true &&
+                        member.user.userId === loggedUser.userId
+                    ).length !== 0 ||
+                      isAdmin) && (
+                      <Button
+                        color="secondary"
+                        variant="text"
+                        onClick={() => setOpenChatInvitationsPopup(true)}
+                      >
+                        <AddCircleOutlineIcon />
+                        <Typography variant="subtitle1" marginLeft="10px">
+                          Dodaj użytkowników
+                        </Typography>
+                      </Button>
+                    )}
+                    <Popup
+                      open={openChatInvitationsPopup}
+                      type="chatInvitations"
+                      title="Dodaj do czatu"
+                      onClose={handleCloseChatInvitationsPopup}
+                    >
+                      <div className={classes.chatInvitationsContainer}>
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight={500}
+                          textAlign="center"
+                        >
+                          Wyszukaj oraz dodaj użytkowników do czatu
+                        </Typography>
+                        <TextField
+                          id="user-searchbar"
+                          fullWidth
+                          placeholder="Szukaj osób"
+                          value={searchedUserName}
+                          sx={{ marginTop: '15px' }}
+                          onChange={handleChangeSearchedUserName}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="start">
+                                <SearchIcon />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                        {searchedUsers.map((searchedUser) => (
+                          <SentInvitation
+                            key={searchedUser.userId}
+                            chatInvitation
+                            chatId={currentChat.chatId}
+                            userId={searchedUser.userId}
+                            name={
+                              searchedUser.firstName +
+                              ' ' +
+                              searchedUser.lastName
+                            }
+                            avatar={searchedUser.profilePhoto}
+                            addToChatNotification={addUserToChat}
+                          />
+                        ))}
+                      </div>
+                    </Popup>
+                  </AccordionDetails>
+                </Accordion>
+                {currentChat.chatCreator &&
+                  currentChat.chatCreator.userId !== loggedUser.userId &&
+                  !currentChat.isPrivate &&
+                  !isAdmin && (
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      className={classes.leaveChatBtn}
+                      onClick={() => setOpenLeaveChatPopup(true)}
+                    >
+                      <ExitToApp fontSize="medium" /> Opuść czat
                     </Button>
                   )}
-                  <Popup
-                    open={openChatInvitationsPopup}
-                    type="chatInvitations"
-                    title="Dodaj do czatu"
-                    onClose={handleCloseChatInvitationsPopup}
-                  >
-                    <div className={classes.chatInvitationsContainer}>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight={500}
-                        textAlign="center"
-                      >
-                        Wyszukaj oraz dodaj użytkowników do czatu
-                      </Typography>
-                      <TextField
-                        id="user-searchbar"
-                        fullWidth
-                        placeholder="Szukaj osób"
-                        value={searchedUserName}
-                        sx={{ marginTop: '15px' }}
-                        onChange={handleChangeSearchedUserName}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="start">
-                              <SearchIcon />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                      {searchedUsers.map((searchedUser) => (
-                        <SentInvitation
-                          key={searchedUser.userId}
-                          chatInvitation
-                          chatId={currentChat.chatId}
-                          userId={searchedUser.userId}
-                          name={
-                            searchedUser.firstName + ' ' + searchedUser.lastName
-                          }
-                          avatar={searchedUser.profilePhoto}
-                          addToChatNotification={addUserToChat}
-                        />
-                      ))}
-                    </div>
-                  </Popup>
-                </AccordionDetails>
-              </Accordion>
-              {currentChat.chatCreator &&
-                currentChat.chatCreator.userId !== loggedUser.userId &&
-                !currentChat.isPrivate && (
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    className={classes.leaveChatBtn}
-                    onClick={() => setOpenLeaveChatPopup(true)}
-                  >
-                    <ExitToApp fontSize="medium" /> Opuść czat
-                  </Button>
-                )}
-              <Popup
-                open={openLeaveChatPopup}
-                type="confirmation"
-                title="Usuwanie członka"
-                onClose={handleCloseLeaveChatPopup}
-              >
-                <ActionConfirmation
-                  title="Czy napewno chcesz usunąć członka?"
-                  confirmationAction={handleClickLeaveChat}
-                  rejectionAction={handleCloseLeaveChatPopup}
-                />
-              </Popup>
-            </div>
-          </div>
-        </Paper>
-      ) : (
-        <div className={classes.loadingContainer}>
-          <CircularProgress color="secondary" size="240px" />
+                <Popup
+                  open={openLeaveChatPopup}
+                  type="confirmation"
+                  title="Usuwanie członka"
+                  onClose={handleCloseLeaveChatPopup}
+                >
+                  <ActionConfirmation
+                    title="Czy napewno chcesz usunąć członka?"
+                    confirmationAction={handleClickLeaveChat}
+                    rejectionAction={handleCloseLeaveChatPopup}
+                  />
+                </Popup>
+              </div>
+            </>
+          )}
         </div>
-      )}
+      </Paper>
     </div>
   );
 };

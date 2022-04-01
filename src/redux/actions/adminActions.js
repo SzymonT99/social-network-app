@@ -2,18 +2,19 @@ import { showNotification } from './notificationActions';
 import userService from '../../services/userService';
 import adminTypes from '../types/adminTypes';
 
-export const getUserAccounts = () => (dispatch) => {
+export const getUserAccounts = (page, size) => (dispatch) => {
   return userService
-    .getAllUserAccounts()
+    .getAllUserAccounts(page, size)
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {
           dispatch({
             type: adminTypes.FETCH_USER_ACCOUNTS,
             payload: {
-              accounts: data,
+              accounts: data.userAccounts,
             },
           });
+          return data;
         });
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
@@ -36,8 +37,18 @@ export const manageUserAccount = (userId, userAccount) => (dispatch) => {
             updatedAccount: userAccount,
           },
         });
+        dispatch(showNotification('success', 'Zaaktualizowano konto'));
       } else if (response.status === 404) {
         dispatch(showNotification('warning', 'Nie znaleziono użytkownika'));
+      } else if (response.status === 400) {
+        return response.json().then((data) => {
+          const messageJson = JSON.stringify(data);
+          const formatMessage = messageJson.substring(
+            messageJson.indexOf(':') + 2,
+            messageJson.lastIndexOf('"')
+          );
+          dispatch(showNotification('warning', formatMessage));
+        });
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -58,6 +69,7 @@ export const deleteUserAccountByAdmin = (userId) => (dispatch) => {
             userId: userId,
           },
         });
+        dispatch(showNotification('success', 'Usunięto konto użytkownika'));
       } else if (response.status === 404) {
         dispatch(showNotification('warning', 'Nie znaleziono użytkownika'));
       } else {

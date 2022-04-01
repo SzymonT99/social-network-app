@@ -84,7 +84,7 @@ const Sidebar = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const isAdmin = loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
 
   const handleListItemClick = (index) => {
     setSelectedItem(index);
@@ -167,11 +167,11 @@ const Sidebar = (props) => {
             overlap="circular"
             className={classes.avatarBadge}
             sx={{
-              marginRight: '20px',
               '& .MuiBadge-badge': {
                 backgroundColor:
                   loggedUserProfile &&
                   activeStatus[loggedUserProfile.userStatus],
+                display: !isUserLoggedIn && 'none',
               },
             }}
           >

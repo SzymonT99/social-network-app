@@ -95,7 +95,7 @@ const Header = (props) => {
       if (!isTokenExpired) {
         dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
         dispatch(getActivityNotification());
-        dispatch(getUserChats());
+        dispatch(getUserChats(loggedUser.userId));
         if (users) {
           let usersArray = [];
           users.forEach((user) =>

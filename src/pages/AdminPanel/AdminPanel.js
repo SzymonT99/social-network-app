@@ -13,10 +13,39 @@ import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import {
   deleteUserAccountByAdmin,
   getUserAccounts,
+  manageUserAccount,
 } from '../../redux/actions/adminActions';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import { setSelectedUser } from '../../redux/actions/chatAction';
+
+const useQuery = (page, pageSize) => {
+  const dispatch = useDispatch();
+
+  const [rowCount, setRowCount] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    setIsLoading(true);
+    setRowCount(undefined);
+    dispatch(getUserAccounts(page, pageSize)).then((data) => {
+      if (!active) {
+        return;
+      }
+      setIsLoading(false);
+      setRowCount(data.totalItems);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [page, pageSize]);
+
+  return { isLoading, rowCount };
+};
 
 const AdminPanel = (props) => {
   const { classes } = props;
@@ -31,7 +60,20 @@ const AdminPanel = (props) => {
 
   const userAccounts = useSelector((state) => state.adminPanel.accounts);
 
-  const [pageSize, setPageSize] = useState(10);
+  const [rowsState, setRowsState] = useState({
+    page: 0,
+    pageSize: 5,
+  });
+
+  const { isLoading, rowCount } = useQuery(rowsState.page, rowsState.pageSize);
+
+  const [rowCountState, setRowCountState] = useState(rowCount || 0);
+
+  useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+      rowCount !== undefined ? rowCount : prevRowCountState
+    );
+  }, [rowCount, setRowCountState]);
 
   const handleClickDeleteUser = useCallback(
     (id) => () => {
@@ -39,12 +81,35 @@ const AdminPanel = (props) => {
         dispatch(deleteUserAccountByAdmin(id));
       });
     },
+    [userAccounts]
+  );
+
+  const handleClickShowUserChats = useCallback(
+    (id) => () => {
+      setTimeout(() => {
+        dispatch(setSelectedUser(id));
+        history.push('/app/chat');
+      });
+    },
     []
   );
 
-  const handleRowEditCommit = useCallback((params) => {
-    console.log(params);
-  }, []);
+  const handleCellEditCommit = useCallback(
+    (params, event) => {
+      const currentAccount = userAccounts.find(
+        (account) => account.id === params.id
+      );
+      let updatedAccount = {
+        ...currentAccount,
+        [params.field]: params.value,
+      };
+      if (JSON.stringify(currentAccount) !== JSON.stringify(updatedAccount)) {
+        delete updatedAccount.id;
+        dispatch(manageUserAccount(params.id, updatedAccount));
+      }
+    },
+    [userAccounts]
+  );
 
   const tableColumns = useMemo(
     () => [
@@ -114,6 +179,7 @@ const AdminPanel = (props) => {
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Usuń"
+            title="Usuń konto"
             onClick={handleClickDeleteUser(params.id)}
           />,
           <GridActionsCellItem
@@ -125,12 +191,13 @@ const AdminPanel = (props) => {
           <GridActionsCellItem
             icon={<ChatBubbleIcon />}
             label="Sprawdź konwersacje"
+            onClick={handleClickShowUserChats(params.id)}
             showInMenu
           />,
         ],
       },
     ],
-    [handleClickDeleteUser]
+    [handleClickDeleteUser, handleClickShowUserChats]
   );
 
   useEffect(() => {
@@ -144,7 +211,6 @@ const AdminPanel = (props) => {
           dispatch(setTokenRefreshing(false));
         });
       }
-      dispatch(getUserAccounts());
     })();
   }, []);
 
@@ -161,12 +227,18 @@ const AdminPanel = (props) => {
           <DataGrid
             columns={tableColumns}
             rows={userAccounts}
-            pageSize={pageSize}
-            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            rowCount={rowCountState}
+            loading={isLoading}
             rowsPerPageOptions={[5, 10, 15]}
             pagination
+            {...rowsState}
+            paginationMode="server"
+            onPageChange={(page) => setRowsState((prev) => ({ ...prev, page }))}
+            onPageSizeChange={(pageSize) =>
+              setRowsState((prev) => ({ ...prev, pageSize }))
+            }
             disableSelectionOnClick
-            onCellEditCommit={handleRowEditCommit}
+            onCellEditCommit={handleCellEditCommit}
           />
         </div>
       </Paper>

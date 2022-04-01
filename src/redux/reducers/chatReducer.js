@@ -4,6 +4,7 @@ const initialState = {
   userChats: [],
   chatDetails: {},
   activeChat: undefined,
+  selectedUserId: undefined,
 };
 
 const chatReducer = (state = initialState, action) => {
@@ -88,6 +89,11 @@ const chatReducer = (state = initialState, action) => {
         ...state,
         activeChat: action.payload.chatId,
       };
+    case chatTypes.SET_USER_SHOWED_CHATS:
+      return {
+        ...state,
+        selectedUserId: action.payload.selectedUserId,
+      };
     case chatTypes.ADD_TYPING_MESSAGE:
       return {
         ...state,
@@ -132,6 +138,8 @@ const chatReducer = (state = initialState, action) => {
         },
       };
     case chatTypes.CLEAR_ALL:
+      return initialState;
+    case chatTypes.CLEAR_CHAT:
       return initialState;
     default:
       return state;

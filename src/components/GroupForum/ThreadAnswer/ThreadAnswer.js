@@ -142,8 +142,12 @@ const ThreadAnswer = (props) => {
                 name="answer-rating"
                 precision={0.2}
                 value={averageRating}
+                sx={{ '&.Mui-disabled': { opacity: 1 } }}
                 onChange={(event, newValue) =>
                   handleChangeRating(event, newValue)
+                }
+                disabled={
+                  authorId !== loggedUser.userId && accessToManagement === false
                 }
               />
             </div>

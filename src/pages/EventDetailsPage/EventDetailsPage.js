@@ -57,6 +57,8 @@ const EventsPageDetails = (props) => {
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const loggedUserFriends = useSelector((state) => state.friends.userFriends);
 
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
+
   const [openEventEditionPopup, setOpenEventEditionPopup] = useState(false);
   const [openDeleteEventPopup, setOpenDeleteEventPopup] = useState(false);
   const [openEventInvitationsPopup, setOpenEventInvitationsPopup] =
@@ -198,38 +200,40 @@ const EventsPageDetails = (props) => {
                       .toLocaleTimeString()
                       .substring(0, 5)}
                 </Typography>
-                {loggedUser && event.eventAuthor.userId === loggedUser.userId && (
-                  <div className={classes.eventManageBtnContainer}>
-                    <Button
-                      variant="contained"
-                      className={classes.eventManageActionBtn}
-                      onClick={() => setOpenEventEditionPopup(true)}
-                    >
-                      <EditIcon sx={{ marginRight: '5px' }} />
-                      Edytuj wydarzenie
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={classes.eventManageActionBtn}
-                      onClick={() => setOpenDeleteEventPopup(true)}
-                    >
-                      <DeleteIcon sx={{ marginRight: '5px' }} />
-                      Usuń wydarzenie
-                    </Button>
-                    <Popup
-                      open={openDeleteEventPopup}
-                      type="confirmation"
-                      title="Usuwanie wydarzenia"
-                      onClose={handleCloseDeleteEventPopup}
-                    >
-                      <ActionConfirmation
-                        title="Czy napewno chcesz usunąć to wydarzenie?"
-                        confirmationAction={handleClickDeleteEvent}
-                        rejectionAction={handleCloseDeleteEventPopup}
-                      />
-                    </Popup>
-                  </div>
-                )}
+                {loggedUser &&
+                  (event.eventAuthor.userId === loggedUser.userId ||
+                    isAdmin) && (
+                    <div className={classes.eventManageBtnContainer}>
+                      <Button
+                        variant="contained"
+                        className={classes.eventManageActionBtn}
+                        onClick={() => setOpenEventEditionPopup(true)}
+                      >
+                        <EditIcon sx={{ marginRight: '5px' }} />
+                        Edytuj wydarzenie
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className={classes.eventManageActionBtn}
+                        onClick={() => setOpenDeleteEventPopup(true)}
+                      >
+                        <DeleteIcon sx={{ marginRight: '5px' }} />
+                        Usuń wydarzenie
+                      </Button>
+                      <Popup
+                        open={openDeleteEventPopup}
+                        type="confirmation"
+                        title="Usuwanie wydarzenia"
+                        onClose={handleCloseDeleteEventPopup}
+                      >
+                        <ActionConfirmation
+                          title="Czy napewno chcesz usunąć to wydarzenie?"
+                          confirmationAction={handleClickDeleteEvent}
+                          rejectionAction={handleCloseDeleteEventPopup}
+                        />
+                      </Popup>
+                    </div>
+                  )}
                 <Popup
                   open={openEventEditionPopup}
                   type="event"

@@ -8,6 +8,7 @@ import { getUserProfile } from './userProfileActions';
 import { getUserFriends } from './friendAction';
 import { getAllUsersInformation } from './userActivityActions';
 import eventTypes from '../types/eventTypes';
+import { useSelector } from 'react-redux';
 
 export const createGroup = (groupFormData) => (dispatch) => {
   return groupService
@@ -123,9 +124,11 @@ export const getPublicGroupDetails = (groupId) => (dispatch) => {
     });
 };
 
-export const getGroups = () => (dispatch) => {
+export const getGroups = () => (dispatch, getState) => {
+  const loggedUser = getState().auth.user;
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
   return groupService
-    .getGroups()
+    .getGroups(!isAdmin)
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {
@@ -233,6 +236,8 @@ export const respondToGroupInvitation =
       .then((response) => {
         if (response.status === 200) {
           dispatch(getGroups());
+          dispatch(getGroupDetails(groupId));
+          dispatch(getGroupInvitations());
           if (isInvitationAccepted) {
             dispatch(showNotification('success', 'Dołączono do grupy'));
           } else {
@@ -306,6 +311,10 @@ export const requestToJoinGroup = (groupId) => (dispatch, getState) => {
         dispatch(
           getUsersWantedJoinGroup(getState().groups.groupDetails.groupId)
         );
+      } else if (response.status === 200) {
+        dispatch(showNotification('success', 'Zaakceptowano zaproszenie'));
+        dispatch(getUsersWantedJoinGroup(groupId));
+        dispatch(getGroupDetails(groupId));
       } else if (response.status === 409) {
         dispatch(
           showNotification(

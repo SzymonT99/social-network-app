@@ -44,13 +44,20 @@ const editPost = (postId, formData) => {
   });
 };
 
-const deletePost = (postId) => {
-  return fetch(endpoints.managePost.replace('{postId}', postId) + '/archive', {
-    method: 'DELETE',
-    headers: {
-      Authorization: authorization(),
-    },
-  });
+const deletePost = (postId, archive) => {
+  return fetch(
+    endpoints.managePost.replace('{postId}', postId) +
+      +'?' +
+      new URLSearchParams({
+        archive: archive,
+      }),
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: authorization(),
+      },
+    }
+  );
 };
 
 const likePost = (postId) => {

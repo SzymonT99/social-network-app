@@ -65,12 +65,14 @@ const SharedPost = (props) => {
     activityAuthorName,
     activityAuthorPhoto,
     activityDate,
+    accessToManagement,
   } = props;
 
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.auth.user.userId);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
+  const loggedUser = useSelector((state) => state.auth.user);
 
   const [postComments, setPostComments] = useState(comments);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -234,7 +236,7 @@ const SharedPost = (props) => {
         activityTitle=" udostępnił(a) post"
         userStatus={userStatus}
       >
-        {sharingAuthorId === userId ? (
+        {sharingAuthorId === userId || accessToManagement ? (
           <div>
             <IconButton onClick={handleClickPostOption}>
               <MoreVertIcon />
@@ -431,6 +433,7 @@ const SharedPost = (props) => {
           likes={highlightComment.userLikes}
           isEdited={highlightComment.isEdited}
           authorProfilePhoto={highlightComment.commentAuthor.profilePhoto}
+          accessToManagement={loggedUser.roles.includes('ROLE_ADMIN')}
         />
       )}
       {commentsDisplayed &&
@@ -537,11 +540,13 @@ SharedPost.propTypes = {
   activityAuthorName: PropTypes.string,
   activityAuthorPhoto: PropTypes.object,
   activityDate: PropTypes.string,
+  accessToManagement: PropTypes.bool,
 };
 
 SharedPost.defaultProps = {
   highlightCommentById: null,
   isActivity: false,
+  accessToManagement: false,
 };
 
 export default withStyles(styles)(SharedPost);

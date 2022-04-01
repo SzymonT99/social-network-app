@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './form-jss';
 import { PropTypes } from 'prop-types';
-import { Button, Grid, TextField } from '@mui/material';
+import { Button, Divider, Grid, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
@@ -21,6 +21,7 @@ const AddressForm = (props) => {
     editedCity,
     editedStreet,
     editedZipCode,
+    userId,
   } = props;
 
   const dispatch = useDispatch();
@@ -46,9 +47,9 @@ const AddressForm = (props) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       if (!edition) {
-        dispatch(addUserAddress(values, loggedUser.userId));
+        dispatch(addUserAddress(values, userId));
       } else {
-        dispatch(editUserAddress(addressId, values, loggedUser.userId));
+        dispatch(editUserAddress(addressId, values, userId));
       }
       closePopup();
     },
@@ -117,6 +118,7 @@ const AddressForm = (props) => {
           />
         </Grid>
       </Grid>
+      <Divider />
       <Button
         style={{ marginTop: '20px' }}
         color="secondary"
@@ -134,6 +136,7 @@ const AddressForm = (props) => {
 AddressForm.propTypes = {
   classes: PropTypes.object.isRequired,
   closePopup: PropTypes.func.isRequired,
+  userId: PropTypes.number,
   edition: PropTypes.bool,
   addressId: PropTypes.number,
   editedCountry: PropTypes.string,

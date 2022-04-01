@@ -8,8 +8,6 @@ import {
   Button,
   Divider,
   IconButton,
-  ImageList,
-  ImageListItem,
   Link,
   ListItemIcon,
   ListItemText,
@@ -97,6 +95,8 @@ const Post = (props) => {
   const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
 
   const [postComments, setPostComments] = useState(comments);
   const [commentText, setCommentText] = useState('');
@@ -221,7 +221,7 @@ const Post = (props) => {
 
   const handleDeletePost = () => {
     if (!isGroupPost) {
-      dispatch(deletePost(postId));
+      dispatch(deletePost(postId, !isAdmin));
     } else {
       dispatch(deleteGroupPost(groupId, postId));
     }
@@ -603,6 +603,7 @@ const Post = (props) => {
               likes={highlightComment.userLikes}
               isEdited={highlightComment.isEdited}
               authorProfilePhoto={highlightComment.commentAuthor.profilePhoto}
+              accessToManagement={loggedUser.roles.includes('ROLE_ADMIN')}
             />
           )}
           {commentsDisplayed &&
@@ -630,7 +631,10 @@ const Post = (props) => {
                     likes={comment.userLikes}
                     isEdited={comment.isEdited}
                     authorProfilePhoto={comment.commentAuthor.profilePhoto}
-                    accessToManagement={accessToManagement}
+                    accessToManagement={
+                      accessToManagement ||
+                      loggedUser.roles.includes('ROLE_ADMIN')
+                    }
                   />
                 );
               }

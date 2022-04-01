@@ -133,6 +133,9 @@ const ProfilePage = (props) => {
   const loggedUser = useSelector((state) => state.auth.user);
   const isLoggedUserRemember = useSelector((state) => state.auth.remember);
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  const isAdmin = loggedUser.roles.includes('ROLE_ADMIN');
+
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
     (state) => state.selectedProfile.userActivity
@@ -289,7 +292,7 @@ const ProfilePage = (props) => {
   };
 
   const handleClickDeleteUserInterest = (interestId) => {
-    dispatch(deleteUserInterests(interestId));
+    dispatch(deleteUserInterests(parseInt(selectedUserId), interestId));
   };
 
   const handleClickChangeProfilePhoto = (event) => {
@@ -297,12 +300,12 @@ const ProfilePage = (props) => {
       let file = event.target.files[0];
       const form = new FormData();
       form.append('photo', file);
-      dispatch(changeProfilePhoto(loggedUser.userId, form));
+      dispatch(changeProfilePhoto(parseInt(selectedUserId), form));
     }
   };
 
   const handleClickDeleteProfilePhoto = () => {
-    dispatch(deleteProfilePhoto(loggedUser.userId));
+    dispatch(deleteProfilePhoto(parseInt(selectedUserId)));
   };
 
   const handleChangeImagesPageNumber = (event, value) => {
@@ -481,31 +484,33 @@ const ProfilePage = (props) => {
                   alt="Zdjęcie użytkownika"
                   className={classes.userPhoto}
                 />
-                {loggedUser && parseInt(selectedUserId) === loggedUser.userId && (
-                  <label
-                    htmlFor="icon-button-file"
-                    className={classes.uploadCoverImageBtn}
-                  >
-                    <Input
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      id="icon-button-file"
-                      type="file"
-                      onChange={handleClickChangeProfilePhoto}
-                    />
-                    <Tooltip title="Zmień zdjęcie profilowe" placement="left">
-                      <IconButton
-                        aria-label="upload picture"
-                        component="span"
-                        size="large"
-                      >
-                        <PhotoCamera fontSize="medium" />
-                      </IconButton>
-                    </Tooltip>
-                  </label>
-                )}
                 {loggedUser &&
-                  parseInt(selectedUserId) === loggedUser.userId &&
+                  (parseInt(selectedUserId) === loggedUser.userId ||
+                    isAdmin) && (
+                    <label
+                      htmlFor="icon-button-file"
+                      className={classes.uploadCoverImageBtn}
+                    >
+                      <Input
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        id="icon-button-file"
+                        type="file"
+                        onChange={handleClickChangeProfilePhoto}
+                      />
+                      <Tooltip title="Zmień zdjęcie profilowe" placement="left">
+                        <IconButton
+                          aria-label="upload picture"
+                          component="span"
+                          size="large"
+                        >
+                          <PhotoCamera fontSize="medium" />
+                        </IconButton>
+                      </Tooltip>
+                    </label>
+                  )}
+                {loggedUser &&
+                  (parseInt(selectedUserId) === loggedUser.userId || isAdmin) &&
                   userProfile &&
                   userProfile.profilePhoto && (
                     <div className={classes.deleteProfileImageBtn}>
@@ -978,6 +983,9 @@ const ProfilePage = (props) => {
                             isPublic={post.isPublic}
                             isCommentingBlocked={post.isCommentingBlocked}
                             editionDate={post.editedAt}
+                            accessToManagement={loggedUser.roles.includes(
+                              'ROLE_ADMIN'
+                            )}
                           />
                         );
                       }
@@ -1026,6 +1034,9 @@ const ProfilePage = (props) => {
                             isPublic={post.isPublic}
                             isCommentingBlocked={post.isCommentingBlocked}
                             editionDate={post.editedAt}
+                            accessToManagement={loggedUser.roles.includes(
+                              'ROLE_ADMIN'
+                            )}
                           />
                         );
                       }
@@ -1069,6 +1080,9 @@ const ProfilePage = (props) => {
                             isCommentingBlocked={item.isCommentingBlocked}
                             likes={item.sharingLikes}
                             comments={item.sharingComments}
+                            accessToManagement={loggedUser.roles.includes(
+                              'ROLE_ADMIN'
+                            )}
                           />
                         );
                       }
@@ -1134,6 +1148,9 @@ const ProfilePage = (props) => {
                                 comment.commentedPost.isCommentingBlocked
                               }
                               editionDate={comment.commentedPost.editedAt}
+                              accessToManagement={loggedUser.roles.includes(
+                                'ROLE_ADMIN'
+                              )}
                             />
                           );
                         } else {
@@ -1181,6 +1198,9 @@ const ProfilePage = (props) => {
                               comments={
                                 comment.commentedSharedPost.sharingComments
                               }
+                              accessToManagement={loggedUser.roles.includes(
+                                'ROLE_ADMIN'
+                              )}
                             />
                           );
                         }
@@ -1240,7 +1260,8 @@ const ProfilePage = (props) => {
                           Podstawowe informacje
                         </Typography>
                         {loggedUser &&
-                          parseInt(selectedUserId) === loggedUser.userId && (
+                          (parseInt(selectedUserId) === loggedUser.userId ||
+                            isAdmin) && (
                             <Tooltip title="Edytuj informacje" placement="left">
                               <IconButton
                                 className={classes.editBaseInformationBtn}
@@ -1259,6 +1280,7 @@ const ProfilePage = (props) => {
                           <ProfileEditionForm
                             closePopup={handleCloseProfileEditionForm}
                             editedFirstName={userProfile.firstName}
+                            userId={parseInt(selectedUserId)}
                             editedLastName={userProfile.lastName}
                             editedAccess={userProfile.isPublic}
                             editedGender={userProfile.gender}
@@ -1397,7 +1419,8 @@ const ProfilePage = (props) => {
                       >
                         <Typography variant="h5">Adres zamieszkania</Typography>
                         {loggedUser &&
-                          parseInt(selectedUserId) === loggedUser.userId &&
+                          (parseInt(selectedUserId) === loggedUser.userId ||
+                            isAdmin) &&
                           (userProfile.address !== null ? (
                             <Tooltip title="Edytuj Adres" placement="left">
                               <IconButton
@@ -1461,6 +1484,7 @@ const ProfilePage = (props) => {
                             onClose={handleCloseEditAddressFormPopup}
                           >
                             <AddressForm
+                              userId={parseInt(selectedUserId)}
                               edition
                               addressId={userProfile.address.addressId}
                               editedCountry={userProfile.address.country}
@@ -1479,6 +1503,7 @@ const ProfilePage = (props) => {
                         onClose={handleCloseAddAddressFormPopup}
                       >
                         <AddressForm
+                          userId={parseInt(selectedUserId)}
                           closePopup={handleCloseAddAddressFormPopup}
                         />
                       </Popup>
@@ -1511,7 +1536,8 @@ const ProfilePage = (props) => {
                             graduationDate={school.graduationDate}
                             manage={
                               loggedUser &&
-                              parseInt(selectedUserId) === loggedUser.userId
+                              (parseInt(selectedUserId) === loggedUser.userId ||
+                                isAdmin)
                             }
                           />
                         ))}
@@ -1545,7 +1571,8 @@ const ProfilePage = (props) => {
                           endDate={work.endDate}
                           manage={
                             loggedUser &&
-                            parseInt(selectedUserId) === loggedUser.userId
+                            (parseInt(selectedUserId) === loggedUser.userId ||
+                              isAdmin)
                           }
                         />
                       ))}
@@ -1606,8 +1633,9 @@ const ProfilePage = (props) => {
                                 disableGutters
                                 secondaryAction={
                                   loggedUser &&
-                                  parseInt(selectedUserId) ===
-                                    loggedUser.userId && (
+                                  (parseInt(selectedUserId) ===
+                                    loggedUser.userId ||
+                                    isAdmin) && (
                                     <IconButton
                                       onClick={() =>
                                         handleClickDeleteUserInterest(

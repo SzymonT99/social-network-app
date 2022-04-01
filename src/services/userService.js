@@ -149,9 +149,11 @@ const getUserInterests = (userId) => {
   });
 };
 
-const addUserInterests = (interestId) => {
+const addUserInterests = (userId, interestId) => {
   return fetch(
-    endpoints.manageUserInterests.replace('{interestId}', interestId),
+    endpoints.manageUserInterests
+      .replace('{userId}', userId)
+      .replace('{interestId}', interestId),
     {
       method: 'POST',
       headers: {
@@ -162,9 +164,11 @@ const addUserInterests = (interestId) => {
   );
 };
 
-const deleteUserInterests = (interestId) => {
+const deleteUserInterests = (userId, interestId) => {
   return fetch(
-    endpoints.manageUserInterests.replace('{interestId}', interestId),
+    endpoints.manageUserInterests
+      .replace('{userId}', userId)
+      .replace('{interestId}', interestId),
     {
       method: 'DELETE',
       headers: {
@@ -175,8 +179,8 @@ const deleteUserInterests = (interestId) => {
   );
 };
 
-const addProfilePhoto = (photo) => {
-  return fetch(endpoints.manageProfilePhoto, {
+const addProfilePhoto = (photo, userId) => {
+  return fetch(endpoints.manageProfilePhoto.replace('{userId}', userId), {
     method: 'PUT',
     headers: {
       Authorization: authorization(),
@@ -185,8 +189,8 @@ const addProfilePhoto = (photo) => {
   });
 };
 
-const deleteProfilePhoto = () => {
-  return fetch(endpoints.manageProfilePhoto, {
+const deleteProfilePhoto = (userId) => {
+  return fetch(endpoints.manageProfilePhoto.replace('{userId}', userId), {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
@@ -205,8 +209,8 @@ const getUserImages = (userId) => {
   });
 };
 
-const editProfileInformation = (updatedProfile) => {
-  return fetch(endpoints.profileInformation, {
+const editProfileInformation = (userId, updatedProfile) => {
+  return fetch(endpoints.profileInformation.replace('{userId}', userId), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -255,14 +259,22 @@ const changeUserStatus = (status) => {
   );
 };
 
-const getAllUserAccounts = () => {
-  return fetch(endpoints.userAccountsForAdmin, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: authorization(),
-    },
-  });
+const getAllUserAccounts = (page, size) => {
+  return fetch(
+    endpoints.userAccountsForAdmin +
+      '?' +
+      new URLSearchParams({
+        page: page,
+        size: size,
+      }),
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
 };
 
 const manageUserAccountByAdmin = (userId, userAccount) => {
