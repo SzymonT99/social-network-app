@@ -181,7 +181,7 @@ const ProfileEditionForm = (props) => {
         </Grid>
         <Grid item xs={6}>
           <TextField
-            sx={{ width: '100%' }}
+            fullWidth
             variant="outlined"
             name="relationship"
             id="relationship"

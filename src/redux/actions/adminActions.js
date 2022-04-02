@@ -80,3 +80,48 @@ export const deleteUserAccountByAdmin = (userId) => (dispatch) => {
       console.log(error);
     });
 };
+
+export const getUserReports = () => (dispatch) => {
+  return userService
+    .getUserReports()
+    .then((response) => {
+      if (response.status === 200) {
+        return response.json().then((data) => {
+          dispatch({
+            type: adminTypes.FETCH_REPORTS,
+            payload: {
+              reports: data,
+            },
+          });
+          return data;
+        });
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const manageUserReport = (reportId, confirmation) => (dispatch) => {
+  return userService
+    .decideAboutUserReport(reportId, confirmation)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getUserReports());
+        if (confirmation) {
+          dispatch(showNotification('success', 'Zaakceptowano zgłoszenie'));
+        } else {
+          dispatch(showNotification('success', 'Odrzucono zgłoszenie'));
+        }
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie znaleziono zgłoszenia'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './adminPanel-jss';
 import { PropTypes } from 'prop-types';
-import { Divider, Paper, Typography } from '@mui/material';
+import { Badge, Divider, IconButton, Paper, Typography } from '@mui/material';
 import {
   refreshUserToken,
   setTokenRefreshing,
@@ -13,12 +13,16 @@ import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import {
   deleteUserAccountByAdmin,
   getUserAccounts,
+  getUserReports,
   manageUserAccount,
 } from '../../redux/actions/adminActions';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import ReportIcon from '@mui/icons-material/Report';
 import { setSelectedUser } from '../../redux/actions/chatAction';
+import Popup from '../../components/Popup/Popup';
+import UserReport from '../../components/UserReport/UserReport';
 
 const useQuery = (page, pageSize) => {
   const dispatch = useDispatch();
@@ -59,11 +63,14 @@ const AdminPanel = (props) => {
   const isAdmin = loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
 
   const userAccounts = useSelector((state) => state.adminPanel.accounts);
+  const reports = useSelector((state) => state.adminPanel.reports);
 
   const [rowsState, setRowsState] = useState({
     page: 0,
     pageSize: 5,
   });
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [openUserReportsPopup, setOpenUserReportsPopup] = useState(false);
 
   const { isLoading, rowCount } = useQuery(rowsState.page, rowsState.pageSize);
 
@@ -174,6 +181,7 @@ const AdminPanel = (props) => {
       {
         field: 'action',
         headerName: 'Akcje',
+        width: 80,
         type: 'actions',
         getActions: (params) => [
           <GridActionsCellItem
@@ -196,8 +204,41 @@ const AdminPanel = (props) => {
           />,
         ],
       },
+      {
+        field: 'reports',
+        headerName: 'Zgłoszenia',
+        width: 80,
+        type: 'actions',
+        renderCell: (params) => (
+          <div className={classes.reportCellContainer}>
+            <IconButton
+              onClick={() => {
+                setSelectedUserId(params.id);
+                setOpenUserReportsPopup(true);
+              }}
+            >
+              <Badge
+                variant="dot"
+                overlap="circular"
+                color="secondary"
+                badgeContent={
+                  reports.filter(
+                    (report) =>
+                      report.suspectUser.userId === params.id &&
+                      report.isConfirmed === null
+                  ).length > 0
+                    ? 1
+                    : 0
+                }
+              >
+                <ReportIcon className={classes.reportIcon} />
+              </Badge>
+            </IconButton>
+          </div>
+        ),
+      },
     ],
-    [handleClickDeleteUser, handleClickShowUserChats]
+    [reports, handleClickDeleteUser, handleClickShowUserChats]
   );
 
   useEffect(() => {
@@ -211,6 +252,7 @@ const AdminPanel = (props) => {
           dispatch(setTokenRefreshing(false));
         });
       }
+      dispatch(getUserReports());
     })();
   }, []);
 
@@ -218,10 +260,16 @@ const AdminPanel = (props) => {
     return <Redirect to="/app" />;
   }
 
+  const handleCloseUserReportsPopup = () => {
+    setOpenUserReportsPopup(false);
+  };
+
   return (
     <div className={classes.wrapper}>
       <Paper elevation={4} className={classes.adminPanelContainer}>
-        <Typography variant="h5">Zarządzanie kontem użytkowników</Typography>
+        <Typography variant="h5">
+          Zarządzanie kontem użytkowników &#x1F600;
+        </Typography>
         <Divider className={classes.divider} />
         <div className={classes.usersTableContainer}>
           <DataGrid
@@ -242,6 +290,33 @@ const AdminPanel = (props) => {
           />
         </div>
       </Paper>
+      <Popup
+        open={openUserReportsPopup}
+        type="reports"
+        title="Zgłoszenia użytkownika"
+        onClose={handleCloseUserReportsPopup}
+      >
+        <>
+          {reports
+            .filter((report) => report.suspectUser.userId === selectedUserId)
+            .map((report) => (
+              <UserReport
+                key={report.reportId}
+                reportId={report.reportId}
+                reportType={report.reportType}
+                description={report.description}
+                createdAt={report.createdAt}
+                isConfirmed={report.isConfirmed}
+                senderUser={report.senderUser}
+              />
+            ))}
+          {reports.filter(
+            (report) => report.suspectUser.userId === selectedUserId
+          ).length === 0 && (
+            <Typography variant="subtitle2">Brak zgłoszeń</Typography>
+          )}
+        </>
+      </Popup>
     </div>
   );
 };

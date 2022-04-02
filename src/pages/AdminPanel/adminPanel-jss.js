@@ -18,6 +18,16 @@ const styles = (theme) => ({
     width: '100%',
     height: 750,
   },
+  reportCellContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  reportIcon: {
+    '&.MuiSvgIcon-root': {
+      color: 'rgba(0, 0, 0, 0.54)',
+    },
+  },
 });
 
 export default styles;

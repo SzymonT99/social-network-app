@@ -298,6 +298,44 @@ const deleteUserByAdmin = (userId) => {
   });
 };
 
+const reportUser = (report) => {
+  return fetch(endpoints.reportUser, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+    body: JSON.stringify(report),
+  });
+};
+
+const getUserReports = (userId) => {
+  return fetch(endpoints.reportUser, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authorization(),
+    },
+  });
+};
+
+const decideAboutUserReport = (reportId, confirmation) => {
+  return fetch(
+    endpoints.manageUserReport.replace('{reportId}', reportId) +
+      '?' +
+      new URLSearchParams({
+        confirmation: confirmation,
+      }),
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authorization(),
+      },
+    }
+  );
+};
+
 export default {
   getUserProfile,
   getUserActivity,
@@ -325,4 +363,7 @@ export default {
   getAllUserAccounts,
   manageUserAccountByAdmin,
   deleteUserByAdmin,
+  reportUser,
+  getUserReports,
+  decideAboutUserReport,
 };

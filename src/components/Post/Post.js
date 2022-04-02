@@ -43,9 +43,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import CommentIcon from '@mui/icons-material/Comment';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import Popup from '../Popup/Popup';
 import PostForm from '../Forms/PostForm';
+import ReportForm from '../Forms/ReportForm';
 import SharePostForm from '../Forms/SharePostForm';
 import ActivityHeading from '../ActivityHeading/ActivityHeading';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
@@ -108,6 +110,7 @@ const Post = (props) => {
   const [openSharePostPopup, setOpenSharePostPopup] = useState(false);
   const [highlightComment, setHighlightComment] = useState(null);
   const [openDeletePostPopup, setOpenDeletePostPopup] = useState(false);
+  const [openReportPopup, setOpenReportPopup] = useState(false);
 
   const handleClickPostOption = (event) => {
     setAnchorEl(event.currentTarget);
@@ -269,6 +272,10 @@ const Post = (props) => {
     setOpenSharePostPopup(true);
   };
 
+  const handleCloseReportPopup = () => {
+    setOpenReportPopup(false);
+  };
+
   return (
     <Paper
       elevation={!asSharing ? 4 : 0}
@@ -352,12 +359,6 @@ const Post = (props) => {
                 <MenuItem
                   onClick={handleClickAddFavouritePost}
                   className={classes.postMenuItem}
-                  sx={{
-                    borderBottom:
-                      ((loggedUser && authorId === loggedUser.userId) ||
-                        accessToManagement === true) &&
-                      '1px solid rgba(0, 0, 0, 0.12)',
-                  }}
                 >
                   <ListItemIcon>
                     <FavoriteIcon fontSize="medium" />
@@ -368,6 +369,26 @@ const Post = (props) => {
                       <Typography variant="subtitle2">
                         Dodaj do ulubionych
                       </Typography>
+                    }
+                  />
+                </MenuItem>
+                <MenuItem
+                  onClick={() => setOpenReportPopup(true)}
+                  className={classes.postMenuItem}
+                  sx={{
+                    borderBottom:
+                      ((loggedUser && authorId === loggedUser.userId) ||
+                        accessToManagement === true) &&
+                      '1px solid rgba(0, 0, 0, 0.12)',
+                  }}
+                >
+                  <ListItemIcon>
+                    <ReportProblemIcon fontSize="medium" />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography variant="subtitle2">Zgłoś post</Typography>
                     }
                   />
                 </MenuItem>
@@ -720,6 +741,14 @@ const Post = (props) => {
           postAuthorId={authorId}
           basePostId={postId}
         />
+      </Popup>
+      <Popup
+        open={openReportPopup}
+        type="report"
+        title="Wyślij zgłoszenie"
+        onClose={handleCloseReportPopup}
+      >
+        <ReportForm suspectId={authorId} closePopup={handleCloseReportPopup} />
       </Popup>
     </Paper>
   );

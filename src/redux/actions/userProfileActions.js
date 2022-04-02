@@ -5,6 +5,8 @@ import { showNotification } from './notificationActions';
 import { getActivityBoard } from './userActivityActions';
 import groupTypes from '../types/groupTypes';
 import { getUserFriends } from './friendAction';
+import userService from '../../services/userService';
+import adminTypes from '../types/adminTypes';
 
 export const getUserProfile =
   (userId, forLoggedIn = false) =>
@@ -533,6 +535,23 @@ export const changeUserStatus = (status) => (dispatch, getState) => {
         dispatch(showNotification('success', 'Zmieniono status'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Niepoprawne dane'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const reportUser = (report) => (dispatch) => {
+  return userService
+    .reportUser(report)
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(showNotification('success', 'Wysłano zgłoszenie'));
+      } else if (response.status === 404) {
+        dispatch(showNotification('warning', 'Nie znaleziono użytkownika'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }

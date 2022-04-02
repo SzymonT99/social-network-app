@@ -477,6 +477,19 @@ const styles = (theme) => ({
       opacity: 0.7,
     },
   },
+  reportUserLink: {
+    '&.MuiLink-root': {
+      position: 'absolute',
+      textDecoration: 'none',
+      color: theme.palette.secondary.dark,
+      bottom: '60px',
+      left: '100px',
+      '&:hover': {
+        cursor: 'pointer',
+        textDecoration: 'underline',
+      },
+    },
+  },
 });
 
 export default styles;

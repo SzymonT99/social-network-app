@@ -23,6 +23,7 @@ const Popup = (props) => {
     profileForm: '60%',
     addressForm: '35%',
     resendAccountLink: '30%',
+    reports: '40%',
   };
 
   return (

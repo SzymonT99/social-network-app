@@ -104,4 +104,6 @@ export const endpoints = {
   chatImages: baseUrl + '/api/chats/{chatId}/images',
   userAccountsForAdmin: baseUrl + '/api/users/accounts',
   manageUserAccountByAdmin: baseUrl + '/api/users/{userId}/accounts',
+  reportUser: baseUrl + '/api/users/reports',
+  manageUserReport: baseUrl + '/api/users/reports/{reportId}',
 };

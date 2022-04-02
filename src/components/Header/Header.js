@@ -383,6 +383,7 @@ const Header = (props) => {
                 <ListItemText
                   primary={
                     <Typography
+                      noWrap
                       className={classes.activityAuthorName}
                       variant="subtitle2"
                       onClick={() =>
@@ -502,13 +503,21 @@ const Header = (props) => {
                         'ADDED_TO_GROUP' &&
                       activityNotification.notificationType !==
                         'INVITATION_TO_GROUP' ? (
-                        <Typography variant="subtitle2" fontWeight="bold">
+                        <Typography
+                          noWrap
+                          variant="subtitle2"
+                          fontWeight="bold"
+                        >
                           {activityNotification.activityInitiator.firstName +
                             ' ' +
                             activityNotification.activityInitiator.lastName}
                         </Typography>
                       ) : (
-                        <Typography variant="subtitle2" fontWeight="bold">
+                        <Typography
+                          noWrap
+                          variant="subtitle2"
+                          fontWeight="bold"
+                        >
                           {activityNotification.details.name}
                         </Typography>
                       )

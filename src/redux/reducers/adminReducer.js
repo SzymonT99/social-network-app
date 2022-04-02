@@ -2,6 +2,7 @@ import adminTypes from '../types/adminTypes';
 
 const initialState = {
   accounts: [],
+  reports: [],
 };
 
 const adminReducer = (state = initialState, action) => {
@@ -10,6 +11,11 @@ const adminReducer = (state = initialState, action) => {
       return {
         ...state,
         accounts: [...action.payload.accounts],
+      };
+    case adminTypes.FETCH_REPORTS:
+      return {
+        ...state,
+        reports: action.payload.reports,
       };
     case adminTypes.MANAGE_USER_ACCOUNT:
       return {

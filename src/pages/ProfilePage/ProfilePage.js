@@ -100,6 +100,7 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { getPrivateChat, setActiveChat } from '../../redux/actions/chatAction';
 import ModalImage from 'react-modal-image-responsive';
 import { showNotification } from '../../redux/actions/notificationActions';
+import ReportForm from '../../components/Forms/ReportForm';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -187,6 +188,7 @@ const ProfilePage = (props) => {
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [friendsPageNumber, setFriendsPageNumber] = useState(1);
   const [groupsPageNumber, setGroupsPageNumber] = useState(1);
+  const [openReportPopup, setOpenReportPopup] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -463,6 +465,10 @@ const ProfilePage = (props) => {
     });
   };
 
+  const handleCloseReportPopup = () => {
+    setOpenReportPopup(false);
+  };
+
   return (
     <>
       {!isLoading ? (
@@ -474,56 +480,73 @@ const ProfilePage = (props) => {
           >
             <div className={classes.profileCoverBackground} />
             <div className={classes.profileInfoBox}>
-              <div className={classes.userProfilePhotoBox}>
-                <img
-                  src={
-                    userProfile && userProfile.profilePhoto !== null
-                      ? userProfile.profilePhoto.url
-                      : defaultUserPhoto
-                  }
-                  alt="Zdjęcie użytkownika"
-                  className={classes.userPhoto}
-                />
-                {loggedUser &&
-                  (parseInt(selectedUserId) === loggedUser.userId ||
-                    isAdmin) && (
-                    <label
-                      htmlFor="icon-button-file"
-                      className={classes.uploadCoverImageBtn}
-                    >
-                      <Input
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        id="icon-button-file"
-                        type="file"
-                        onChange={handleClickChangeProfilePhoto}
-                      />
-                      <Tooltip title="Zmień zdjęcie profilowe" placement="left">
-                        <IconButton
-                          aria-label="upload picture"
-                          component="span"
-                          size="large"
+              <div>
+                <div className={classes.userProfilePhotoBox}>
+                  <img
+                    src={
+                      userProfile && userProfile.profilePhoto !== null
+                        ? userProfile.profilePhoto.url
+                        : defaultUserPhoto
+                    }
+                    alt="Zdjęcie użytkownika"
+                    className={classes.userPhoto}
+                  />
+                  {loggedUser &&
+                    (parseInt(selectedUserId) === loggedUser.userId ||
+                      isAdmin) && (
+                      <label
+                        htmlFor="icon-button-file"
+                        className={classes.uploadCoverImageBtn}
+                      >
+                        <Input
+                          accept="image/*"
+                          style={{ display: 'none' }}
+                          id="icon-button-file"
+                          type="file"
+                          onChange={handleClickChangeProfilePhoto}
+                        />
+                        <Tooltip
+                          title="Zmień zdjęcie profilowe"
+                          placement="left"
                         >
-                          <PhotoCamera fontSize="medium" />
-                        </IconButton>
-                      </Tooltip>
-                    </label>
-                  )}
-                {loggedUser &&
-                  (parseInt(selectedUserId) === loggedUser.userId || isAdmin) &&
-                  userProfile &&
-                  userProfile.profilePhoto && (
-                    <div className={classes.deleteProfileImageBtn}>
-                      <Tooltip title="Usuń zdjęcie profilowe" placement="left">
-                        <IconButton
-                          size="small"
-                          onClick={handleClickDeleteProfilePhoto}
+                          <IconButton
+                            aria-label="upload picture"
+                            component="span"
+                            size="large"
+                          >
+                            <PhotoCamera fontSize="medium" />
+                          </IconButton>
+                        </Tooltip>
+                      </label>
+                    )}
+                  {loggedUser &&
+                    (parseInt(selectedUserId) === loggedUser.userId ||
+                      isAdmin) &&
+                    userProfile &&
+                    userProfile.profilePhoto && (
+                      <div className={classes.deleteProfileImageBtn}>
+                        <Tooltip
+                          title="Usuń zdjęcie profilowe"
+                          placement="left"
                         >
-                          <ClearIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                  )}
+                          <IconButton
+                            size="small"
+                            onClick={handleClickDeleteProfilePhoto}
+                          >
+                            <ClearIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </div>
+                    )}
+                </div>
+                <Link
+                  component="button"
+                  variant="body1"
+                  className={classes.reportUserLink}
+                  onClick={() => setOpenReportPopup(true)}
+                >
+                  Zgłoś użytkownika
+                </Link>
               </div>
               <div className={classes.profileHeadingInfo}>
                 {userProfile && (
@@ -544,6 +567,17 @@ const ProfilePage = (props) => {
                         {userProfile.email}
                       </Typography>
                     </div>
+                    <Popup
+                      open={openReportPopup}
+                      type="report"
+                      title="Wyślij zgłoszenie"
+                      onClose={handleCloseReportPopup}
+                    >
+                      <ReportForm
+                        suspectId={parseInt(selectedUserId)}
+                        closePopup={handleCloseReportPopup}
+                      />
+                    </Popup>
                     {loggedUser &&
                       parseInt(selectedUserId) !== loggedUser.userId && (
                         <div

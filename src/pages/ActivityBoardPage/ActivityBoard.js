@@ -242,6 +242,7 @@ const ActivityBoard = (props) => {
                       activityDate={item.activityDate}
                       activityAuthorName={
                         item.activityAuthor.firstName +
+                        ' ' +
                         item.activityAuthor.lastName
                       }
                       activityAuthorPhoto={item.activityAuthor.profilePhoto}
