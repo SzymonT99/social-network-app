@@ -102,6 +102,7 @@ const ActivityBoard = (props) => {
   };
 
   const onMessageReceived = (msg) => {
+    let currentUser = JSON.parse(localStorage.getItem('state')).auth.user;
     const notification = JSON.parse(msg.body);
     if (notification.actionType === 'ACTIVITY_BOARD') {
       dispatch(getActivityNotification());
@@ -110,7 +111,7 @@ const ActivityBoard = (props) => {
     } else if (notification.actionType === 'FRIENDS_STATUS') {
       dispatch(getUserFriends(loggedUser.userId, true));
     } else if (notification.actionType === 'CHAT') {
-      dispatch(getUserChats());
+      dispatch(getUserChats(currentUser.userId));
     }
   };
 
@@ -196,6 +197,9 @@ const ActivityBoard = (props) => {
                       isPublic={item.activity.isPublic}
                       isCommentingBlocked={item.activity.isCommentingBlocked}
                       editionDate={item.activity.editedAt}
+                      accessToManagement={loggedUser.roles.includes(
+                        'ROLE_ADMIN'
+                      )}
                     />
                   );
                 } else if (
@@ -236,11 +240,16 @@ const ActivityBoard = (props) => {
                       isActivity
                       activityType={item.activityType}
                       activityDate={item.activityDate}
+                      activityAuthorId={item.activityAuthor.userId}
                       activityAuthorName={
                         item.activityAuthor.firstName +
+                        ' ' +
                         item.activityAuthor.lastName
                       }
                       activityAuthorPhoto={item.activityAuthor.profilePhoto}
+                      accessToManagement={loggedUser.roles.includes(
+                        'ROLE_ADMIN'
+                      )}
                     />
                   );
                 } else if (
@@ -284,12 +293,16 @@ const ActivityBoard = (props) => {
                       isActivity
                       activityType={item.activityType}
                       activityDate={item.activityDate}
+                      activityAuthorId={item.activityAuthor.userId}
                       activityAuthorName={
                         item.activityAuthor.firstName +
                         ' ' +
                         item.activityAuthor.lastName
                       }
                       activityAuthorPhoto={item.activityAuthor.profilePhoto}
+                      accessToManagement={loggedUser.roles.includes(
+                        'ROLE_ADMIN'
+                      )}
                     />
                   );
                 } else if (item.activityType === 'SHARE_POST') {
@@ -316,6 +329,9 @@ const ActivityBoard = (props) => {
                       isCommentingBlocked={item.activity.isCommentingBlocked}
                       likes={item.activity.sharingLikes}
                       comments={item.activity.sharingComments}
+                      accessToManagement={loggedUser.roles.includes(
+                        'ROLE_ADMIN'
+                      )}
                     />
                   );
                 } else if (item.activityType === 'CREATE_GROUP_POST') {
@@ -347,6 +363,9 @@ const ActivityBoard = (props) => {
                       groupId={item.activity.group.groupId}
                       groupName={item.activity.group.name}
                       groupImage={item.activity.group.image}
+                      accessToManagement={loggedUser.roles.includes(
+                        'ROLE_ADMIN'
+                      )}
                     />
                   );
                 } else if (item.activityType === 'CHANGE_PROFILE_PHOTO') {
@@ -381,6 +400,9 @@ const ActivityBoard = (props) => {
                       }
                       editionDate={item.activity.changePhotoPost.editedAt}
                       isChangeProfilePhotoPost
+                      accessToManagement={loggedUser.roles.includes(
+                        'ROLE_ADMIN'
+                      )}
                     />
                   );
                 } else if (

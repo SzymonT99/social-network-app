@@ -36,7 +36,11 @@ const Notification = () => {
         <Alert
           onClose={handleClose}
           severity={variant}
-          sx={{ width: '100%', fontSize: '20px', alignItems: 'center' }}
+          sx={{
+            width: '100%',
+            fontSize: '20px',
+            alignItems: 'center',
+          }}
         >
           {message}
         </Alert>

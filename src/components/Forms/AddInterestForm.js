@@ -19,7 +19,8 @@ import {
 import { addGroupInterest } from '../../redux/actions/groupActions';
 
 const AddInterestForm = (props) => {
-  const { classes, onCloseForm, forGroup, groupId, currentInterests } = props;
+  const { classes, userId, onCloseForm, forGroup, groupId, currentInterests } =
+    props;
 
   const dispatch = useDispatch();
 
@@ -44,7 +45,7 @@ const AddInterestForm = (props) => {
       ).length > 0
     ) {
       if (!forGroup) {
-        dispatch(addUserInterests(interestValue));
+        dispatch(addUserInterests(userId, interestValue));
       } else {
         dispatch(addGroupInterest(groupId, interestValue));
       }
@@ -110,6 +111,7 @@ AddInterestForm.propTypes = {
   onCloseForm: PropTypes.func.isRequired,
   currentInterests: PropTypes.array.isRequired,
   forGroup: PropTypes.bool,
+  userId: PropTypes.number,
   groupId: PropTypes.number,
 };
 

@@ -6,12 +6,16 @@ const styles = (theme) => ({
     height: 'calc(100vh - 80px)',
     top: '80px',
     color: theme.palette.primary.contrastText,
-    overflow: 'none',
+    overflowY: 'scroll',
+    scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': {
+      width: '0px',
+    },
   },
   sidebarWrapper: {
-    padding: '15px',
+    padding: '15px 15px 0px 15px',
   },
-  userProfile: {
+  userProfileBox: {
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
@@ -21,19 +25,40 @@ const styles = (theme) => ({
     color: 'white',
     textDecoration: 'none',
   },
+  adminInfo: {
+    '&.MuiTypography-root': {
+      textAlign: 'center',
+      display: 'flex',
+      alignItems: 'center',
+      color: theme.palette.secondary.dark,
+      fontWeight: 'bold',
+      '& .MuiSvgIcon-root': {
+        marginRight: '7px',
+      },
+    },
+  },
   userPhoto: {
-    display: 'block',
-    width: '100px',
-    height: '100px',
-    borderRadius: '60px',
-    cursor: 'pointer',
-    marginBottom: '10px',
+    '&.MuiAvatar-root': {
+      width: '100px',
+      height: '100px',
+      borderRadius: '60px',
+      cursor: 'pointer',
+      marginBottom: '10px',
+    },
   },
   divider: {
     backgroundColor: theme.palette.primary.contrastText,
   },
   iconItem: {
     color: 'white',
+  },
+  avatarBadge: {
+    '& .MuiBadge-badge': {
+      width: '22px',
+      height: '22px',
+      borderRadius: '50px',
+      border: `3px solid ${theme.palette.primary.main}`,
+    },
   },
 });
 

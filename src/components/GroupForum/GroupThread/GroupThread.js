@@ -29,6 +29,8 @@ import {
 import Popup from '../../Popup/Popup';
 import ActionConfirmation from '../../ActionConfirmation/ActionConfirmation';
 import GroupThreadForm from '../../Forms/GroupThreadForm';
+import { formatDateWithTime } from '../../../utils/formatDateWithTime';
+import ModalImage from 'react-modal-image-responsive';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -131,15 +133,7 @@ const GroupThread = (props) => {
             >
               {memberName}
             </span>
-            {' opublikował(a) dnia ' +
-              new Date(createdDate)
-                .toJSON()
-                .slice(0, 10)
-                .split('-')
-                .reverse()
-                .join('.') +
-              ' o godz. ' +
-              new Date(createdDate).toJSON().slice(10, 16).replace('T', ' ')}
+            {' opublikował(a) dnia ' + formatDateWithTime(createdDate)}
             {isEdited && <span style={{ fontWeight: 400 }}> (edytowano)</span>}
           </Typography>
         </div>
@@ -200,10 +194,12 @@ const GroupThread = (props) => {
         <Divider />
         <div className={classes.threadDetailsContent}>
           <Typography variant="subtitle2">{content}</Typography>
-          <img
-            src={threadImage ? threadImage.url : defaultImg}
-            alt="Zdjęcie wątku"
+          <ModalImage
             className={classes.threadImage}
+            small={threadImage ? threadImage.url : defaultImg}
+            medium={threadImage ? threadImage.url : defaultImg}
+            large={threadImage ? threadImage.url : defaultImg}
+            hideZoom
           />
         </div>
         <Typography variant="subtitle2" className={classes.answersNumberText}>

@@ -22,18 +22,22 @@ const AppTemplate = (props) => {
       <Header />
       <div className={classes.appContainer}>
         <Sidebar />
-        <div className={classes.contentContainer}>
+        <div
+          className={classes.contentContainer}
+          style={{ flex: location.pathname === '/app/admin' && 10 }}
+        >
           <main
             className={
-              location.pathname !== '/app/chat'
+              location.pathname !== '/app/chat' &&
+              location.pathname !== '/app/admin'
                 ? classes.contentApp
-                : classes.contentChatApp
+                : classes.extendsContentApp
             }
           >
             {children}
           </main>
         </div>
-        <Rightbar />
+        {location.pathname !== '/app/admin' && <Rightbar />}
       </div>
     </>
   );

@@ -22,6 +22,7 @@ import {
   editEvent,
   getEvents,
 } from '../../redux/actions/eventActions';
+import { useHistory } from 'react-router-dom';
 
 const EventForm = (props) => {
   const {
@@ -42,6 +43,7 @@ const EventForm = (props) => {
   } = props;
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [displayedImage, setDisplayedImage] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -145,9 +147,10 @@ const EventForm = (props) => {
       );
 
       if (!edition) {
-        dispatch(createEvent(formData)).then(() =>
+        dispatch(createEvent(formData)).then((event) =>
           dispatch(getEvents()).then((data) => {
             updateEvents(data);
+            history.push('/app/event/' + event.eventId);
           })
         );
       } else {

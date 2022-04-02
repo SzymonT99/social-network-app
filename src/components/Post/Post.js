@@ -8,8 +8,6 @@ import {
   Button,
   Divider,
   IconButton,
-  ImageList,
-  ImageListItem,
   Link,
   ListItemIcon,
   ListItemText,
@@ -45,15 +43,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import CommentIcon from '@mui/icons-material/Comment';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import CommentsDisabledIcon from '@mui/icons-material/CommentsDisabled';
 import Popup from '../Popup/Popup';
 import PostForm from '../Forms/PostForm';
+import ReportForm from '../Forms/ReportForm';
 import SharePostForm from '../Forms/SharePostForm';
 import ActivityHeading from '../ActivityHeading/ActivityHeading';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { deleteGroupPost } from '../../redux/actions/groupActions';
 import { formatActivityDate } from '../../utils/formatActivityDate';
 import ModalImage from 'react-modal-image-responsive';
+import { useHistory } from 'react-router-dom';
 
 const Post = (props) => {
   const {
@@ -86,6 +87,7 @@ const Post = (props) => {
     groupImage,
     isActivity,
     activityType,
+    activityAuthorId,
     activityAuthorName,
     activityAuthorPhoto,
     activityDate,
@@ -93,10 +95,13 @@ const Post = (props) => {
   } = props;
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
 
   const [postComments, setPostComments] = useState(comments);
   const [commentText, setCommentText] = useState('');
@@ -108,6 +113,7 @@ const Post = (props) => {
   const [openSharePostPopup, setOpenSharePostPopup] = useState(false);
   const [highlightComment, setHighlightComment] = useState(null);
   const [openDeletePostPopup, setOpenDeletePostPopup] = useState(false);
+  const [openReportPopup, setOpenReportPopup] = useState(false);
 
   const handleClickPostOption = (event) => {
     setAnchorEl(event.currentTarget);
@@ -221,7 +227,7 @@ const Post = (props) => {
 
   const handleDeletePost = () => {
     if (!isGroupPost) {
-      dispatch(deletePost(postId));
+      dispatch(deletePost(postId, !isAdmin));
     } else {
       dispatch(deleteGroupPost(groupId, postId));
     }
@@ -269,6 +275,10 @@ const Post = (props) => {
     setOpenSharePostPopup(true);
   };
 
+  const handleCloseReportPopup = () => {
+    setOpenReportPopup(false);
+  };
+
   return (
     <Paper
       elevation={!asSharing ? 4 : 0}
@@ -291,7 +301,12 @@ const Post = (props) => {
               variant="body1"
               className={classes.activityUserNameText}
             >
-              {activityAuthorName}
+              <span
+                onClick={() => history.push('/app/profile/' + activityAuthorId)}
+                className={classes.activityAuthorNameLink}
+              >
+                {activityAuthorName}
+              </span>
               <span className={classes.activityActionDescription}>
                 {activityType === 'LIKE_POST'
                   ? ' polubił(a) post'
@@ -352,12 +367,6 @@ const Post = (props) => {
                 <MenuItem
                   onClick={handleClickAddFavouritePost}
                   className={classes.postMenuItem}
-                  sx={{
-                    borderBottom:
-                      ((loggedUser && authorId === loggedUser.userId) ||
-                        accessToManagement === true) &&
-                      '1px solid rgba(0, 0, 0, 0.12)',
-                  }}
                 >
                   <ListItemIcon>
                     <FavoriteIcon fontSize="medium" />
@@ -368,6 +377,26 @@ const Post = (props) => {
                       <Typography variant="subtitle2">
                         Dodaj do ulubionych
                       </Typography>
+                    }
+                  />
+                </MenuItem>
+                <MenuItem
+                  onClick={() => setOpenReportPopup(true)}
+                  className={classes.postMenuItem}
+                  sx={{
+                    borderBottom:
+                      ((loggedUser && authorId === loggedUser.userId) ||
+                        accessToManagement === true) &&
+                      '1px solid rgba(0, 0, 0, 0.12)',
+                  }}
+                >
+                  <ListItemIcon>
+                    <ReportProblemIcon fontSize="medium" />
+                  </ListItemIcon>
+                  <ListItemText
+                    disableTypography
+                    primary={
+                      <Typography variant="subtitle2">Zgłoś post</Typography>
                     }
                   />
                 </MenuItem>
@@ -603,6 +632,7 @@ const Post = (props) => {
               likes={highlightComment.userLikes}
               isEdited={highlightComment.isEdited}
               authorProfilePhoto={highlightComment.commentAuthor.profilePhoto}
+              accessToManagement={loggedUser.roles.includes('ROLE_ADMIN')}
             />
           )}
           {commentsDisplayed &&
@@ -630,7 +660,10 @@ const Post = (props) => {
                     likes={comment.userLikes}
                     isEdited={comment.isEdited}
                     authorProfilePhoto={comment.commentAuthor.profilePhoto}
-                    accessToManagement={accessToManagement}
+                    accessToManagement={
+                      accessToManagement ||
+                      loggedUser.roles.includes('ROLE_ADMIN')
+                    }
                   />
                 );
               }
@@ -717,6 +750,14 @@ const Post = (props) => {
           basePostId={postId}
         />
       </Popup>
+      <Popup
+        open={openReportPopup}
+        type="report"
+        title="Wyślij zgłoszenie"
+        onClose={handleCloseReportPopup}
+      >
+        <ReportForm suspectId={authorId} closePopup={handleCloseReportPopup} />
+      </Popup>
     </Paper>
   );
 };
@@ -750,6 +791,7 @@ Post.propTypes = {
   groupImage: PropTypes.object,
   isActivity: PropTypes.bool,
   activityType: PropTypes.string,
+  activityAuthorId: PropTypes.number,
   activityAuthorName: PropTypes.string,
   activityAuthorPhoto: PropTypes.object,
   activityDate: PropTypes.string,

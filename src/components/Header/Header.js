@@ -27,7 +27,6 @@ import PersonIcon from '@mui/icons-material/Person';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MessageIcon from '@mui/icons-material/Message';
 import { useDispatch, useSelector } from 'react-redux';
-import CircularProgress from '@mui/material/CircularProgress';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import { Logout, Settings } from '@mui/icons-material';
@@ -40,10 +39,7 @@ import {
   getReceivedFriendInvitations,
   respondToFriendInvitation,
 } from '../../redux/actions/friendAction';
-import {
-  getActivityNotification,
-  getAllUsersInformation,
-} from '../../redux/actions/userActivityActions';
+import { getActivityNotification } from '../../redux/actions/userActivityActions';
 import { formatActivityDate } from '../../utils/formatActivityDate';
 import {
   getChatDetails,
@@ -99,7 +95,7 @@ const Header = (props) => {
       if (!isTokenExpired) {
         dispatch(getReceivedFriendInvitations(loggedUser.userId, true));
         dispatch(getActivityNotification());
-        dispatch(getUserChats());
+        dispatch(getUserChats(loggedUser.userId));
         if (users) {
           let usersArray = [];
           users.forEach((user) =>
@@ -387,6 +383,7 @@ const Header = (props) => {
                 <ListItemText
                   primary={
                     <Typography
+                      noWrap
                       className={classes.activityAuthorName}
                       variant="subtitle2"
                       onClick={() =>
@@ -506,13 +503,21 @@ const Header = (props) => {
                         'ADDED_TO_GROUP' &&
                       activityNotification.notificationType !==
                         'INVITATION_TO_GROUP' ? (
-                        <Typography variant="subtitle2" fontWeight="bold">
+                        <Typography
+                          noWrap
+                          variant="subtitle2"
+                          fontWeight="bold"
+                        >
                           {activityNotification.activityInitiator.firstName +
                             ' ' +
                             activityNotification.activityInitiator.lastName}
                         </Typography>
                       ) : (
-                        <Typography variant="subtitle2" fontWeight="bold">
+                        <Typography
+                          noWrap
+                          variant="subtitle2"
+                          fontWeight="bold"
+                        >
                           {activityNotification.details.name}
                         </Typography>
                       )

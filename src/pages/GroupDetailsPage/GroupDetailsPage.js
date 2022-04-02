@@ -127,6 +127,8 @@ const GroupDetailsPage = (props) => {
   const isUserRemember = useSelector((state) => state.auth.remember);
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
+  const isAppAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
+
   const group = useSelector((state) => state.groups.groupDetails);
   const threads = useSelector((state) => state.groups.groupForum.threads);
   const userGroupJoinRequests = useSelector(
@@ -175,7 +177,9 @@ const GroupDetailsPage = (props) => {
             (member) => member.user.userId === loggedUser.userId
           );
 
-          if (userMember) {
+          if (isAppAdmin) {
+            setMemberStatusOfUser('ADMINISTRATOR');
+          } else if (userMember) {
             setMemberStatusOfUser(userMember.groupPermissionType);
             dispatch(getGroupForumThreads(groupId));
           } else {
@@ -241,6 +245,7 @@ const GroupDetailsPage = (props) => {
       },
       {
         field: 'permission',
+        headerName: 'Uprawnienie',
         width: 130,
         editable: memberStatusOfUser !== 'ASSISTANT',
         type: 'singleSelect',
@@ -255,7 +260,7 @@ const GroupDetailsPage = (props) => {
                   fontWeight: 'bold',
                 }}
               >
-                {'Uprawnienie'}
+                Uprawnienie
                 <EditIcon sx={{ fontSize: '20px', marginLeft: '12px' }} />
               </div>
             );
@@ -290,7 +295,7 @@ const GroupDetailsPage = (props) => {
         ],
       },
     ],
-    [handleClickDeleteGroupMember, memberStatusOfUser]
+    [group.members, handleClickDeleteGroupMember, memberStatusOfUser]
   );
 
   const handleRowEditCommit = React.useCallback((params) => {
@@ -307,6 +312,31 @@ const GroupDetailsPage = (props) => {
 
   const generateGroupActionBtn = () => {
     if (
+      groupInvitations.filter(
+        (groupInvitation) => groupInvitation.groupId === parseInt(groupId)
+      ).length !== 0
+    ) {
+      return (
+        <Button
+          variant="contained"
+          className={classes.groupActionBtn}
+          onClick={() => dispatch(respondToGroupInvitation(groupId, true))}
+        >
+          <CheckCircleOutlineIcon sx={{ marginRight: '7px' }} />
+          Akceptuj zaproszenie
+        </Button>
+      );
+    } else if (
+      userGroupJoinRequests.filter(
+        (requestingUser) => requestingUser.userId === loggedUser.userId
+      ).length !== 0
+    ) {
+      return (
+        <Button variant="contained" className={classes.groupActionBtn} disabled>
+          Wysłano prośbę o dodanie
+        </Button>
+      );
+    } else if (
       group.members.filter((member) => member.user.userId === loggedUser.userId)
         .length === 0 &&
       userGroupJoinRequests.filter(
@@ -321,31 +351,6 @@ const GroupDetailsPage = (props) => {
         >
           <AddCircleOutlineIcon sx={{ marginRight: '7px' }} />
           Dołącz do grupy
-        </Button>
-      );
-    } else if (
-      userGroupJoinRequests.filter(
-        (requestingUser) => requestingUser.userId === loggedUser.userId
-      ).length !== 0
-    ) {
-      return (
-        <Button variant="contained" className={classes.groupActionBtn} disabled>
-          Wysłano prośbę o dodanie
-        </Button>
-      );
-    } else if (
-      groupInvitations.filter(
-        (groupInvitation) => groupInvitation.groupId === parseInt(groupId)
-      ).length !== 0
-    ) {
-      return (
-        <Button
-          variant="contained"
-          className={classes.groupActionBtn}
-          onClick={() => dispatch(respondToGroupInvitation(groupId, true))}
-        >
-          <CheckCircleOutlineIcon sx={{ marginRight: '7px' }} />
-          Akceptuj zaproszenie
         </Button>
       );
     } else {
@@ -528,7 +533,7 @@ const GroupDetailsPage = (props) => {
             <div className={classes.groupHeadingContent}>
               <Typography
                 variant="h3"
-                fontWeight={400}
+                className={classes.groupNameText}
                 onClick={() => setGroupNavIndex(0)}
               >
                 {group.name}
@@ -1714,8 +1719,8 @@ const GroupDetailsPage = (props) => {
                     <DataGrid
                       columns={tableColumns}
                       rows={memberTableRows}
-                      pageSize={5}
-                      rowsPerPageOptions={[5]}
+                      rowsPerPageOptions={[10, 15, 20]}
+                      pagination
                       disableSelectionOnClick
                       onCellEditCommit={handleRowEditCommit}
                     />

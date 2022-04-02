@@ -4,6 +4,7 @@ import styles from './form-jss';
 import { PropTypes } from 'prop-types';
 import {
   Button,
+  Divider,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -22,6 +23,7 @@ const ProfileEditionForm = (props) => {
   const {
     classes,
     closePopup,
+    userId,
     editedAboutUser,
     editedJob,
     editedRelationship,
@@ -34,8 +36,6 @@ const ProfileEditionForm = (props) => {
   } = props;
 
   const dispatch = useDispatch();
-
-  const loggedUser = useSelector((state) => state.auth.user);
 
   const [gender, setGender] = useState(editedGender);
   const [access, setAccess] = useState(editedAccess);
@@ -77,7 +77,7 @@ const ProfileEditionForm = (props) => {
         relationshipStatus: values.relationship,
         skills: values.skills,
       };
-      dispatch(editProfileInformation(updatedProfile, loggedUser.userId));
+      dispatch(editProfileInformation(userId, updatedProfile));
       closePopup();
     },
   });
@@ -181,7 +181,7 @@ const ProfileEditionForm = (props) => {
         </Grid>
         <Grid item xs={6}>
           <TextField
-            sx={{ width: '100%' }}
+            fullWidth
             variant="outlined"
             name="relationship"
             id="relationship"
@@ -243,6 +243,7 @@ const ProfileEditionForm = (props) => {
           </FormControl>
         </Grid>
       </Grid>
+      <Divider />
       <Button
         style={{ marginTop: '30px' }}
         color="secondary"
@@ -260,6 +261,7 @@ const ProfileEditionForm = (props) => {
 ProfileEditionForm.propTypes = {
   classes: PropTypes.object.isRequired,
   closePopup: PropTypes.func.isRequired,
+  userId: PropTypes.number.isRequired,
   editedFirstName: PropTypes.string,
   editedLastName: PropTypes.string,
   editedDateOfBirth: PropTypes.string,

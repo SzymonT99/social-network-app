@@ -51,6 +51,7 @@ const styles = (theme) => ({
     width: '240px',
     height: '240px',
     borderRadius: '10px',
+    objectFit: 'cover',
   },
   profileHeadingInfo: {
     width: '100%',
@@ -474,6 +475,19 @@ const styles = (theme) => ({
     '&:hover': {
       cursor: 'pointer',
       opacity: 0.7,
+    },
+  },
+  reportUserLink: {
+    '&.MuiLink-root': {
+      position: 'absolute',
+      textDecoration: 'none',
+      color: theme.palette.secondary.dark,
+      bottom: '60px',
+      left: '100px',
+      '&:hover': {
+        cursor: 'pointer',
+        textDecoration: 'underline',
+      },
     },
   },
 });

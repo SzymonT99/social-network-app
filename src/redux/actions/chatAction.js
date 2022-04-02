@@ -2,12 +2,17 @@ import { showNotification } from './notificationActions';
 import chatService from '../../services/chatService';
 import chatTypes from '../types/chatTypes';
 
-export const createChat = (chatFormData) => (dispatch) => {
+export const createChat = (chatFormData) => (dispatch, getState) => {
   return chatService
     .createChat(chatFormData)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getUserChats());
+        const currentUserId = getState().chats.selectedUserId;
+        dispatch(
+          getUserChats(
+            currentUserId ? currentUserId : getState().auth.user.userId
+          )
+        );
         dispatch(showNotification('success', 'Utworzono czat'));
       } else if (response.status === 400) {
         dispatch(showNotification('warning', 'Błędny format danych'));
@@ -40,13 +45,18 @@ export const getPrivateChat = (userFriendId) => (dispatch) => {
     });
 };
 
-export const editChat = (chatId, chatFormData) => (dispatch) => {
+export const editChat = (chatId, chatFormData) => (dispatch, getState) => {
   return chatService
     .editChat(chatId, chatFormData)
     .then((response) => {
       if (response.status === 200) {
         dispatch(getChatDetails(chatId));
-        dispatch(getUserChats());
+        const currentUserId = getState().chats.selectedUserId;
+        dispatch(
+          getUserChats(
+            currentUserId ? currentUserId : getState().auth.user.userId
+          )
+        );
         dispatch(showNotification('success', 'Edytowano czat'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));
@@ -61,12 +71,17 @@ export const editChat = (chatId, chatFormData) => (dispatch) => {
     });
 };
 
-export const deleteChat = (chatId) => (dispatch) => {
+export const deleteChat = (chatId) => (dispatch, getState) => {
   return chatService
     .deleteChat(chatId)
     .then((response) => {
       if (response.status === 200) {
-        dispatch(getUserChats());
+        const currentUserId = getState().chats.selectedUserId;
+        dispatch(
+          getUserChats(
+            currentUserId ? currentUserId : getState().auth.user.userId
+          )
+        );
         dispatch(setActiveChat(undefined));
         window.location.reload();
         dispatch(showNotification('success', 'Usunięto czat'));
@@ -83,9 +98,9 @@ export const deleteChat = (chatId) => (dispatch) => {
     });
 };
 
-export const getUserChats = () => (dispatch, getState) => {
+export const getUserChats = (userId) => (dispatch) => {
   return chatService
-    .getUserChats(getState().auth.user.userId)
+    .getUserChats(userId)
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {
@@ -106,13 +121,18 @@ export const getUserChats = () => (dispatch, getState) => {
     });
 };
 
-export const getChatDetails = (chatId) => (dispatch) => {
+export const getChatDetails = (chatId) => (dispatch, getState) => {
   return chatService
     .getChatDetails(chatId)
     .then((response) => {
       if (response.status === 200) {
         return response.json().then((data) => {
-          dispatch(getUserChats());
+          const currentUserId = getState().chats.selectedUserId;
+          dispatch(
+            getUserChats(
+              currentUserId ? currentUserId : getState().auth.user.userId
+            )
+          );
           dispatch(getChatImages(chatId));
           dispatch({
             type: chatTypes.FETCH_CHAT_DETAILS,
@@ -240,12 +260,17 @@ export const deleteChatMessage = (messageId) => (dispatch) => {
     });
 };
 
-export const addUserToChat = (chatId, userId) => (dispatch) => {
+export const addUserToChat = (chatId, userId) => (dispatch, getState) => {
   return chatService
     .addUserToChat(chatId, userId)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getUserChats());
+        const currentUserId = getState().chats.selectedUserId;
+        dispatch(
+          getUserChats(
+            currentUserId ? currentUserId : getState().auth.user.userId
+          )
+        );
         dispatch(getChatDetails(chatId));
         dispatch(showNotification('success', 'Dodano do czatu'));
       } else if (response.status === 403) {
@@ -262,12 +287,17 @@ export const addUserToChat = (chatId, userId) => (dispatch) => {
 };
 
 export const setChatMemberPermission =
-  (chatId, chatMemberId, canAddMembers) => (dispatch) => {
+  (chatId, chatMemberId, canAddMembers) => (dispatch, getState) => {
     return chatService
       .setChatMemberPermission(chatId, chatMemberId, canAddMembers)
       .then((response) => {
         if (response.status === 200) {
-          dispatch(getUserChats());
+          const currentUserId = getState().chats.selectedUserId;
+          dispatch(
+            getUserChats(
+              currentUserId ? currentUserId : getState().auth.user.userId
+            )
+          );
           dispatch(getChatDetails(chatId));
           dispatch({
             type: chatTypes.CHANGE_MEMBER_PERMISSION,
@@ -289,7 +319,7 @@ export const setChatMemberPermission =
   };
 
 export const deleteMemberFromChat =
-  (chatMemberId, isDeletedByAdmin) => (dispatch) => {
+  (chatMemberId, isDeletedByAdmin) => (dispatch, getState) => {
     return chatService
       .deleteMemberFromChat(chatMemberId)
       .then((response) => {
@@ -304,7 +334,12 @@ export const deleteMemberFromChat =
             dispatch(showNotification('success', 'Usunięto członka czatu'));
           } else {
             dispatch(showNotification('success', 'Opuszczono czat'));
-            dispatch(getUserChats()).then((data) => {
+            const currentUserId = getState().chats.selectedUserId;
+            dispatch(
+              getUserChats(
+                currentUserId ? currentUserId : getState().auth.user.userId
+              )
+            ).then((data) => {
               dispatch(getChatDetails(data[0].chatId));
             });
           }
@@ -390,6 +425,17 @@ export const setActiveChat = (chatId) => ({
   payload: {
     chatId,
   },
+});
+
+export const setSelectedUser = (userId) => ({
+  type: chatTypes.SET_USER_SHOWED_CHATS,
+  payload: {
+    selectedUserId: userId,
+  },
+});
+
+export const clearSelectedChat = () => ({
+  type: chatTypes.CLEAR_CHAT,
 });
 
 export const addTypingMessage = (typingMessage) => (dispatch, getState) => {

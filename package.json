@@ -15,6 +15,7 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "classnames": "^2.3.1",
+    "emoji-picker-react": "^3.5.1",
     "formik": "^2.2.9",
     "jss": "^10.9.0",
     "lodash": "^4.17.21",
@@ -43,7 +44,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
+  "eslintConfirg": {
     "extends": [
       "react-app",
       "react-app/jest"

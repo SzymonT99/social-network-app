@@ -4,11 +4,19 @@ import styles from './chatConversation-jss';
 import { PropTypes } from 'prop-types';
 import defaultChatImage from '../../assets/default-chat-image.png';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-import { Typography } from '@mui/material';
+import { Badge, Typography } from '@mui/material';
 import { formatActivityDate } from '../../utils/formatActivityDate';
 import { setActiveChat } from '../../redux/actions/chatAction';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
+import Avatar from '@mui/material/Avatar';
+
+const activeStatus = {
+  ONLINE: '#1CCD16',
+  BE_RIGHT_BACK: '#f59c11',
+  BUSY: '#67207c',
+  OFFLINE: '#FF1C00',
+};
 
 const ChatConversation = (props) => {
   const {
@@ -44,11 +52,25 @@ const ChatConversation = (props) => {
           alt="Zdjęcie czatu"
         />
       ) : (
-        <img
-          src={friend.profilePhoto ? friend.profilePhoto.url : defaultUserPhoto}
-          className={classes.chatImage}
-          alt="Zdjęcie czatu"
-        />
+        <Badge
+          variant="dot"
+          overlap="circular"
+          className={classes.avatarBadge}
+          sx={{
+            '& .MuiBadge-badge': {
+              border: `1px solid #FFF`,
+              backgroundColor: activeStatus[friend.activityStatus],
+            },
+          }}
+        >
+          <Avatar
+            src={
+              friend.profilePhoto ? friend.profilePhoto.url : defaultUserPhoto
+            }
+            className={classes.friendChatImage}
+            alt="Zdjęcie znajomego"
+          />
+        </Badge>
       )}
       <div className={classes.contentContainer}>
         <Typography

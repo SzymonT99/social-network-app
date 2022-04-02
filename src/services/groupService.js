@@ -46,13 +46,20 @@ const getPublicGroupDetails = (groupId) => {
   });
 };
 
-const getGroups = () => {
-  return fetch(endpoints.groups, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+const getGroups = (arePublic) => {
+  return fetch(
+    endpoints.groups +
+      '?' +
+      new URLSearchParams({
+        arePublic: arePublic,
+      }),
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
 };
 
 const getUserGroups = (userId) => {

@@ -308,7 +308,7 @@ const RegisterPage = (props) => {
                     label="Mężczyzna"
                   />
                   <FormControlLabel
-                    value="OTHER"
+                    value="UNSPECIFIED"
                     control={<Radio />}
                     label="Inna"
                   />

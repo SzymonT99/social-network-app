@@ -15,6 +15,7 @@ import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 import React from 'react';
 import PublicPostsPageJss from '../pages/PublicPostsPage/publicPostsPage-jss';
 import PublicPostsPage from '../pages/PublicPostsPage/PublicPostsPage';
+import AdminPanel from '../pages/AdminPanel/AdminPanel';
 
 const MainApplication = () => {
   return (
@@ -44,6 +45,7 @@ const MainApplication = () => {
         <Route exact path="/app/posts/:postId" component={PostDetailsPage} />
         <Route exact path="/app/chat" component={ChatPage} />
         <Route exact path="/app/public" component={PublicPostsPage} />
+        <Route exact path="/app/admin" component={AdminPanel} />
         <Route component={NotFoundPage} />
       </Switch>
     </AppTemplate>

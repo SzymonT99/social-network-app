@@ -66,6 +66,7 @@ const PostDetailsPage = (props) => {
             isPublic={currentPost.isPublic}
             isCommentingBlocked={currentPost.isCommentingBlocked}
             editionDate={currentPost.editedAt}
+            accessToManagement={loggedUser.roles.includes('ROLE_ADMIN')}
           />
         )}
       </div>

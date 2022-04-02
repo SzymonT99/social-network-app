@@ -35,6 +35,14 @@ const styles = (theme) => ({
   groupHeadingContent: {
     padding: '20px',
   },
+  groupNameText: {
+    '&.MuiTypography-root': {
+      fontWeight: 400,
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
+  },
   alignCenterRowInfo: {
     display: 'flex',
     alignItems: 'center',

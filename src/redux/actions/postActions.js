@@ -103,7 +103,12 @@ export const editPost = (postId, postFormData) => (dispatch, getState) => {
               updatedPost: data,
             },
           });
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (getState().selectedProfile.userProfile)
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
           if (getState().activity.postDetails) dispatch(getPostDetails(postId));
           dispatch(showNotification('success', 'Edytowano post'));
         });
@@ -120,30 +125,37 @@ export const editPost = (postId, postFormData) => (dispatch, getState) => {
     });
 };
 
-export const deletePost = (postId) => (dispatch, getState) => {
-  return postService
-    .deletePost(postId)
-    .then((response) => {
-      if (response.status === 200) {
-        dispatch({
-          type: postTypes.DELETE_POST,
-          payload: {
-            postId: postId,
-          },
-        });
-        dispatch(getUserActivity(getState().auth.user.userId));
-        if (getState().activity.postDetails) dispatch(getPostDetails(postId));
-        dispatch(showNotification('success', 'Usunięto post'));
-      } else if (response.status === 403) {
-        dispatch(showNotification('warning', 'Zabroniona akcja'));
-      } else {
-        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+export const deletePost =
+  (postId, archive = true) =>
+  (dispatch, getState) => {
+    return postService
+      .deletePost(postId, archive)
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch({
+            type: postTypes.DELETE_POST,
+            payload: {
+              postId: postId,
+            },
+          });
+          if (getState().selectedProfile.userProfile)
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
+          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
+          dispatch(showNotification('success', 'Usunięto post'));
+        } else if (response.status === 403) {
+          dispatch(showNotification('warning', 'Zabroniona akcja'));
+        } else {
+          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
 export const likePost =
   (postId, isSharing = false) =>
@@ -603,7 +615,12 @@ export const manageAccess =
           }
 
           if (getState().activity.postDetails) dispatch(getPostDetails(postId));
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (getState().selectedProfile.userProfile)
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -653,7 +670,12 @@ export const managePostCommentsAccess =
           }
 
           if (getState().activity.postDetails) dispatch(getPostDetails(postId));
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (getState().selectedProfile.userProfile)
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
         }
@@ -752,7 +774,12 @@ export const deleteSharedPost =
               sharedPostId: sharedPostId,
             },
           });
-          dispatch(getUserActivity(getState().auth.user.userId));
+          if (getState().selectedProfile.userProfile)
+            dispatch(
+              getUserActivity(
+                getState().selectedProfile.userProfile.userProfileId
+              )
+            );
           dispatch(showNotification('success', 'Usunięto udostępnienie'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));

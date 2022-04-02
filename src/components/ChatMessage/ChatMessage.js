@@ -30,6 +30,7 @@ import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import classNames from 'classnames';
 import { formatBaseDate } from '../../utils/formatBaseDate';
 import { formatDateWithTime } from '../../utils/formatDateWithTime';
+import ModalImage from 'react-modal-image-responsive';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -63,6 +64,8 @@ const ChatMessage = (props) => {
   const dispatch = useDispatch();
 
   const loggedUser = useSelector((state) => state.auth.user);
+
+  const isAdmin = loggedUser && loggedUser.roles.indexOf('ROLE_ADMIN') > -1;
 
   const messageRef = useRef(null);
 
@@ -243,21 +246,29 @@ const ChatMessage = (props) => {
             </Typography>
           )}
           {messageImage && (
-            <img
-              src={messageImage.url}
-              alt="Zdjęcie czatu"
+            <ModalImage
               className={classes.sentImage}
+              small={messageImage.url}
+              medium={messageImage.url}
+              large={messageImage.url}
+              hideZoom
             />
           )}
           {!messageImage && (
             <div
               className={
-                loggedUser.userId === author.userId
+                loggedUser.userId === author.userId || isAdmin
                   ? classes.messageDetailsContent
                   : null
               }
+              style={{
+                flexDirection:
+                  isAdmin &&
+                  loggedUser.userId !== author.userId &&
+                  'row-reverse',
+              }}
             >
-              {loggedUser.userId === author.userId && !isDeleted && (
+              {(loggedUser.userId === author.userId || isAdmin) && !isDeleted && (
                 <div className={classes.manageMessageBox}>
                   <IconButton onClick={handleClickMessageManage}>
                     <MoreVertIcon fontSize="small" />

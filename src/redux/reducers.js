@@ -7,6 +7,7 @@ import eventReducer from './reducers/eventReducer';
 import friendReducer from './reducers/friendReducer';
 import groupReducer from './reducers/groupReducer';
 import chatReducer from './reducers/chatReducer';
+import adminReducer from './reducers/adminReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   friends: friendReducer,
   groups: groupReducer,
   chats: chatReducer,
+  adminPanel: adminReducer,
 });
 
 export default rootReducer;

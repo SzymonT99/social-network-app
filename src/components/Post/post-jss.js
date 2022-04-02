@@ -164,6 +164,12 @@ const styles = (theme) => ({
     height: '400px',
     objectFit: 'cover',
   },
+  activityAuthorNameLink: {
+    '&:hover': {
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    },
+  },
 });
 
 export default styles;

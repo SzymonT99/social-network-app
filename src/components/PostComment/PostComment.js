@@ -19,6 +19,7 @@ import UsersListPopup from '../UsersListPopup/UsersListPopup';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { useHistory } from 'react-router-dom';
 import { formatActivityDate } from '../../utils/formatActivityDate';
+import ReportForm from '../Forms/ReportForm';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -58,6 +59,7 @@ const PostComment = (props) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
   const [openLikesPopup, setOpenLikesPopup] = useState(false);
+  const [openReportPopup, setOpenReportPopup] = useState(false);
 
   const handleCommentChange = (event) => {
     setCommentText(event.target.value);
@@ -122,6 +124,10 @@ const PostComment = (props) => {
       commentInputRef.current.focus();
     }
   }, [isDisabled]);
+
+  const handleCloseReportPopup = () => {
+    setOpenReportPopup(false);
+  };
 
   return (
     <div className={classes.commentContainer}>
@@ -224,26 +230,35 @@ const PostComment = (props) => {
               </Typography>
             )}
           </div>
-          {((loggedUser && authorId === loggedUser.userId) ||
-            accessToManagement === true) && (
-            <div>
-              <Button
-                className={classes.commentActionItem}
-                style={{ marginRight: '20px' }}
-                variant="text"
-                onClick={editCommentClick}
-              >
-                Edytuj
-              </Button>
-              <Button
-                className={classes.commentActionItem}
-                variant="text"
-                onClick={() => setOpenDeletePopup(true)}
-              >
-                Usuń
-              </Button>
-            </div>
-          )}
+          <div>
+            <Button
+              className={classes.commentActionItem}
+              variant="text"
+              onClick={() => setOpenReportPopup(true)}
+            >
+              Zgłoś
+            </Button>
+            {((loggedUser && authorId === loggedUser.userId) ||
+              accessToManagement === true) && (
+              <>
+                <Button
+                  className={classes.commentActionItem}
+                  style={{ margin: '0px 20px' }}
+                  variant="text"
+                  onClick={editCommentClick}
+                >
+                  Edytuj
+                </Button>
+                <Button
+                  className={classes.commentActionItem}
+                  variant="text"
+                  onClick={() => setOpenDeletePopup(true)}
+                >
+                  Usuń
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </div>
       <Popup
@@ -264,6 +279,14 @@ const PostComment = (props) => {
         users={likes}
         onClose={handleCloseLikesPopup}
       />
+      <Popup
+        open={openReportPopup}
+        type="report"
+        title="Wyślij zgłoszenie"
+        onClose={handleCloseReportPopup}
+      >
+        <ReportForm suspectId={authorId} closePopup={handleCloseReportPopup} />
+      </Popup>
     </div>
   );
 };

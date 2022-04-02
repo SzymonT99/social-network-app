@@ -29,6 +29,7 @@ import {
   editGroup,
   getGroups,
 } from '../../redux/actions/groupActions';
+import { useHistory } from 'react-router-dom';
 
 function getStyles(interestId, groupInterests, theme) {
   return {
@@ -57,6 +58,7 @@ const GroupForm = (props) => {
 
   const dispatch = useDispatch();
   const theme = useTheme();
+  const history = useHistory();
 
   const possibleInterests = useSelector(
     (state) => state.groups.possibleInterests
@@ -125,9 +127,10 @@ const GroupForm = (props) => {
       );
 
       if (!edition) {
-        dispatch(createGroup(formData)).then(() =>
+        dispatch(createGroup(formData)).then((group) =>
           dispatch(getGroups()).then((data) => {
             updateGroups(data);
+            history.push('/app/group/' + group.groupId);
           })
         );
       } else {
