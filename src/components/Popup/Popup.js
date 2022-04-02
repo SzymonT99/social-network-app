@@ -24,6 +24,7 @@ const Popup = (props) => {
     addressForm: '35%',
     resendAccountLink: '30%',
     reports: '40%',
+    emojiPicker: '30%',
   };
 
   return (

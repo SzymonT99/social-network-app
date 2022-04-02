@@ -54,6 +54,7 @@ import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { deleteGroupPost } from '../../redux/actions/groupActions';
 import { formatActivityDate } from '../../utils/formatActivityDate';
 import ModalImage from 'react-modal-image-responsive';
+import { useHistory } from 'react-router-dom';
 
 const Post = (props) => {
   const {
@@ -86,6 +87,7 @@ const Post = (props) => {
     groupImage,
     isActivity,
     activityType,
+    activityAuthorId,
     activityAuthorName,
     activityAuthorPhoto,
     activityDate,
@@ -93,6 +95,7 @@ const Post = (props) => {
   } = props;
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const loggedUser = useSelector((state) => state.auth.user);
   const loggedUserProfile = useSelector((state) => state.auth.userProfile);
@@ -298,7 +301,12 @@ const Post = (props) => {
               variant="body1"
               className={classes.activityUserNameText}
             >
-              {activityAuthorName}
+              <span
+                onClick={() => history.push('/app/profile/' + activityAuthorId)}
+                className={classes.activityAuthorNameLink}
+              >
+                {activityAuthorName}
+              </span>
               <span className={classes.activityActionDescription}>
                 {activityType === 'LIKE_POST'
                   ? ' polubił(a) post'
@@ -783,6 +791,7 @@ Post.propTypes = {
   groupImage: PropTypes.object,
   isActivity: PropTypes.bool,
   activityType: PropTypes.string,
+  activityAuthorId: PropTypes.number,
   activityAuthorName: PropTypes.string,
   activityAuthorPhoto: PropTypes.object,
   activityDate: PropTypes.string,

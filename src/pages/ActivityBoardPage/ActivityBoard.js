@@ -240,6 +240,7 @@ const ActivityBoard = (props) => {
                       isActivity
                       activityType={item.activityType}
                       activityDate={item.activityDate}
+                      activityAuthorId={item.activityAuthor.userId}
                       activityAuthorName={
                         item.activityAuthor.firstName +
                         ' ' +
@@ -292,6 +293,7 @@ const ActivityBoard = (props) => {
                       isActivity
                       activityType={item.activityType}
                       activityDate={item.activityDate}
+                      activityAuthorId={item.activityAuthor.userId}
                       activityAuthorName={
                         item.activityAuthor.firstName +
                         ' ' +

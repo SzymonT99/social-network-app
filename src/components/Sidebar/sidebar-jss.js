@@ -8,9 +8,12 @@ const styles = (theme) => ({
     color: theme.palette.primary.contrastText,
     overflowY: 'scroll',
     scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': {
+      width: '0px',
+    },
   },
   sidebarWrapper: {
-    padding: '15px',
+    padding: '15px 15px 0px 15px',
   },
   userProfileBox: {
     width: '100%',

@@ -67,6 +67,7 @@ import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
 import classNames from 'classnames';
 import ModalImage from 'react-modal-image-responsive';
 import { formatBaseDate } from '../../utils/formatBaseDate';
+import Picker from 'emoji-picker-react';
 
 let stompClient = null;
 
@@ -103,6 +104,7 @@ const ChatPage = (props) => {
   const [displayedImages, setDisplayedImages] = useState([]);
   const [openImagesPopup, setOpenImagesPopup] = useState(false);
   const [chatMuted, setChatMuted] = useState(false);
+  const [openEmojiPickerPopup, setOpenEmojiPickerPopup] = useState(false);
 
   const imagesInputRef = useRef(null);
 
@@ -434,6 +436,10 @@ const ChatPage = (props) => {
     setChatMuted(!chatMuted);
   };
 
+  const onEmojiClick = (event, emojiObject) => {
+    setText((prevText) => prevText + emojiObject.emoji);
+  };
+
   return (
     <div className={classes.wrapper}>
       <Paper elevation={4} className={classes.chatContainer}>
@@ -578,7 +584,20 @@ const ChatPage = (props) => {
                 </InfiniteScroll>
               </div>
               <div className={classes.messageCreationContainer}>
-                <IconButton>
+                <Popup
+                  open={openEmojiPickerPopup}
+                  type="emojiPicker"
+                  title="Wybierz emotikon"
+                  onClose={() => setOpenEmojiPickerPopup(false)}
+                >
+                  <Picker
+                    onEmojiClick={onEmojiClick}
+                    disableAutoFocus={true}
+                    groupNames={{ smileys_people: 'PEOPLE' }}
+                    pickerStyle={{ width: '100%', height: '400px' }}
+                  />
+                </Popup>
+                <IconButton onClick={() => setOpenEmojiPickerPopup(true)}>
                   <SentimentSatisfiedAltIcon
                     fontSize="medium"
                     color="primary"

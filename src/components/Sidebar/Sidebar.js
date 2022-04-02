@@ -202,7 +202,7 @@ const Sidebar = (props) => {
 
         <Divider color="white" className={classes.divider} />
         <nav>
-          <List>
+          <List sx={{ padding: 0 }}>
             {isUserLoggedIn && isAdmin && (
               <ListItem
                 disablePadding
