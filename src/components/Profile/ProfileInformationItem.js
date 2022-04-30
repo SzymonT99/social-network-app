@@ -18,7 +18,6 @@ const ProfileInformationItem = (props) => {
       </Typography>
       <Typography
         variant="subtitle1"
-        noWrap
         className={classes.profileInformationItemContent}
       >
         {content}

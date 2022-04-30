@@ -83,13 +83,14 @@ const getChatMessageById = (messageId) => {
   });
 };
 
-const editChatMessage = (messageId, formData) => {
+const editChatMessage = (messageId, message) => {
   return fetch(endpoints.chatMessage.replace('{messageId}', messageId), {
     method: 'PUT',
     headers: {
+      'Content-Type': 'application/json',
       Authorization: authorization(),
     },
-    body: formData,
+    body: JSON.stringify(message),
   });
 };
 

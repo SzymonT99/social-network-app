@@ -195,82 +195,84 @@ const ChatForm = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={12}>
-          <div className={classes.addChatMembersContainer}>
-            <div className={classes.membersSearchContainer}>
-              <Typography variant="h6" marginBottom="10px">
-                Dodaj członków czatu
-              </Typography>
-              <TextField
-                id="user-searchbar"
-                fullWidth
-                placeholder="Szukaj osób"
-                value={searchedUserName}
-                onChange={handleChangeSearchedUserName}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              {searchedUsers.map((searchedUser) => (
-                <div
-                  className={classes.invitationContainer}
-                  key={searchedUser.userId}
-                >
-                  <Avatar
-                    src={
-                      searchedUser.profilePhoto
-                        ? searchedUser.profilePhoto.url
-                        : defaultUserPhoto
-                    }
-                    alt={searchedUser.firstName + ' ' + searchedUser.lastName}
-                    onClick={() =>
-                      history.push('/app/profile/' + searchedUser.userId)
-                    }
-                    className={classes.chatMemberPhoto}
-                  />
-                  <Typography
-                    variant="subtitle1"
-                    noWrap
-                    className={classes.searchedUserName}
-                    onClick={() =>
-                      history.push('/app/profile/' + searchedUser.userId)
-                    }
-                  >
-                    {searchedUser.firstName + ' ' + searchedUser.lastName}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    className={classes.addChatMemberBtn}
-                    onClick={() => handleClickAddChatMember(searchedUser)}
-                  >
-                    Dodaj
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <div className={classes.addedMemberContainer}>
-              <Typography variant="h6" marginBottom="10px">
-                Dodani użytkownicy
-              </Typography>
-              {addedUsers.map((addedUser) => (
-                <Typography
-                  variant="subtitle2"
-                  className={classes.addedChatMember}
-                  onClick={() =>
-                    history.push('/app/profile/' + addedUser.userId)
-                  }
-                >
-                  <FiberManualRecordIcon fontSize="10px" />
-                  {addedUser.firstName + ' ' + addedUser.lastName}
+        {!edition && (
+          <Grid item xs={12}>
+            <div className={classes.addChatMembersContainer}>
+              <div className={classes.membersSearchContainer}>
+                <Typography variant="h6" marginBottom="10px">
+                  Dodaj członków czatu
                 </Typography>
-              ))}
+                <TextField
+                  id="user-searchbar"
+                  fullWidth
+                  placeholder="Szukaj osób"
+                  value={searchedUserName}
+                  onChange={handleChangeSearchedUserName}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                {searchedUsers.map((searchedUser) => (
+                  <div
+                    className={classes.invitationContainer}
+                    key={searchedUser.userId}
+                  >
+                    <Avatar
+                      src={
+                        searchedUser.profilePhoto
+                          ? searchedUser.profilePhoto.url
+                          : defaultUserPhoto
+                      }
+                      alt={searchedUser.firstName + ' ' + searchedUser.lastName}
+                      onClick={() =>
+                        history.push('/app/profile/' + searchedUser.userId)
+                      }
+                      className={classes.chatMemberPhoto}
+                    />
+                    <Typography
+                      variant="subtitle1"
+                      noWrap
+                      className={classes.searchedUserName}
+                      onClick={() =>
+                        history.push('/app/profile/' + searchedUser.userId)
+                      }
+                    >
+                      {searchedUser.firstName + ' ' + searchedUser.lastName}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      className={classes.addChatMemberBtn}
+                      onClick={() => handleClickAddChatMember(searchedUser)}
+                    >
+                      Dodaj
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <div className={classes.addedMemberContainer}>
+                <Typography variant="h6" marginBottom="10px">
+                  Dodani użytkownicy
+                </Typography>
+                {addedUsers.map((addedUser) => (
+                  <Typography
+                    variant="subtitle2"
+                    className={classes.addedChatMember}
+                    onClick={() =>
+                      history.push('/app/profile/' + addedUser.userId)
+                    }
+                  >
+                    <FiberManualRecordIcon fontSize="10px" />
+                    {addedUser.firstName + ' ' + addedUser.lastName}
+                  </Typography>
+                ))}
+              </div>
             </div>
-          </div>
-        </Grid>
+          </Grid>
+        )}
       </Grid>
       <Divider />
       <Button

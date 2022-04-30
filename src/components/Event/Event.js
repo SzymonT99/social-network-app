@@ -99,8 +99,7 @@ const Event = (props) => {
             {address.country +
               ', ' +
               address.city +
-              ', ' +
-              address.street +
+              (address.street !== '' ? ', ' + address.street : '') +
               ', ' +
               address.zipCode}
           </Typography>

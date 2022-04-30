@@ -67,6 +67,7 @@ const Friend = (props) => {
         <div className={classes.friendInformationBox}>
           <Typography
             variant="h6"
+            noWrap
             fontWeight="bold"
             className={classes.friendNameLink}
             onClick={() => history.push('/app/profile/' + userId)}

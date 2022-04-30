@@ -194,13 +194,15 @@ const GroupThread = (props) => {
         <Divider />
         <div className={classes.threadDetailsContent}>
           <Typography variant="subtitle2">{content}</Typography>
-          <ModalImage
-            className={classes.threadImage}
-            small={threadImage ? threadImage.url : defaultImg}
-            medium={threadImage ? threadImage.url : defaultImg}
-            large={threadImage ? threadImage.url : defaultImg}
-            hideZoom
-          />
+          {threadImage && (
+            <ModalImage
+              className={classes.threadImage}
+              small={threadImage.url}
+              medium={threadImage.url}
+              large={threadImage.url}
+              hideZoom
+            />
+          )}
         </div>
         <Typography variant="subtitle2" className={classes.answersNumberText}>
           {answers.length + ' odpowiedzi'}

@@ -169,21 +169,21 @@ const Header = (props) => {
 
   const generateActivityName = (type) => {
     if (type === 'INVITATION_TO_FRIENDS') {
-      return 'Wysłał Ci zaproszenie do znajomych';
+      return 'Wysłał(a) Ci zaproszenie do znajomych';
     } else if (type === 'ACCEPTANCE_INVITATION_TO_FRIENDS') {
-      return 'Zaakceptował zaproszenie do znajomych';
+      return 'Zaakceptował(a) zaproszenie do znajomych';
     } else if (type === 'INVITATION_TO_EVENT') {
-      return 'Zaprosił Cię na wydarzenie';
+      return 'Zaprosił(a) Cię na wydarzenie';
     } else if (type === 'LIKE_USER_POST') {
-      return 'Polubił Twój post';
+      return 'Polubił(a) Twój post';
     } else if (type === 'COMMENT_USER_POST') {
-      return 'Skomentował Twój post';
+      return 'Skomentował(a) Twój post';
     } else if (type === 'SHARE_USER_POST') {
-      return 'Udostępnił Twój post';
+      return 'Udostępnił(a) Twój post';
     } else if (type === 'INVITATION_TO_GROUP') {
-      return 'Zaproszono Cię do grupy';
+      return 'Zaproszono(a) Cię do grupy';
     } else if (type === 'POST_IN_GROUP') {
-      return 'Dodał post na grupie';
+      return 'Dodał(a) post na grupie';
     } else if (type === 'ADDED_TO_GROUP') {
       return 'Dodano Cię do grupy';
     }
@@ -258,7 +258,7 @@ const Header = (props) => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                placeholder="Szukaj znajomych"
+                placeholder="Szukaj użytkowników"
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
@@ -564,7 +564,7 @@ const Header = (props) => {
               }}
               overlap="circular"
               badgeContent={
-                location.pathname !== '/app/chat'
+                location.pathname !== '/app/chat' && userChats.length > 0
                   ? userChats.filter(
                       (chat) =>
                         chat.newMessages > 0 &&
@@ -592,122 +592,125 @@ const Header = (props) => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            {userChats.map((chat, index) => {
-              if (chat.lastMessage && chat.lastMessageAuthor) {
-                return (
-                  <ListItem
-                    key={chat.chatId}
-                    className={classes.activityNotificationItem}
-                    sx={{
-                      borderBottom:
-                        index + 1 < userChats.length &&
-                        '1px solid rgba(0, 0, 0, 0.4)',
-                    }}
-                    onClick={() => handleClickChat(chat.chatId)}
-                  >
-                    <div className={classes.chatInformationContainer}>
-                      <ListItemAvatar>
-                        {chat.isPrivate ? (
-                          <Avatar
-                            src={
-                              chat.members.find(
-                                (member) =>
-                                  member.user.userId !== loggedUser.userId
-                              ).user.profilePhoto !== null
-                                ? chat.members.find(
-                                    (member) =>
-                                      member.user.userId !== loggedUser.userId
-                                  ).user.profilePhoto.url
-                                : defaultUserPhoto
-                            }
-                            alt={
-                              loggedUserProfile
-                                ? chat.members.find(
+            {userChats.length > 0 &&
+              userChats.map((chat, index) => {
+                if (chat.lastMessage && chat.lastMessageAuthor) {
+                  return (
+                    <ListItem
+                      key={chat.chatId}
+                      className={classes.activityNotificationItem}
+                      sx={{
+                        borderBottom:
+                          index + 1 < userChats.length &&
+                          '1px solid rgba(0, 0, 0, 0.4)',
+                      }}
+                      onClick={() => handleClickChat(chat.chatId)}
+                    >
+                      <div className={classes.chatInformationContainer}>
+                        <ListItemAvatar>
+                          {chat.isPrivate ? (
+                            <Avatar
+                              src={
+                                chat.members.find(
+                                  (member) =>
+                                    member.user.userId !== loggedUser.userId
+                                ).user.profilePhoto !== null
+                                  ? chat.members.find(
+                                      (member) =>
+                                        member.user.userId !== loggedUser.userId
+                                    ).user.profilePhoto.url
+                                  : defaultUserPhoto
+                              }
+                              alt={
+                                loggedUserProfile
+                                  ? chat.members.find(
+                                      (member) =>
+                                        member.user.userId !== loggedUser.userId
+                                    ).user.firstName +
+                                    ' ' +
+                                    chat.members.find(
+                                      (member) =>
+                                        member.user.userId !== loggedUser.userId
+                                    ).user.lastName
+                                  : 'Nazwa użytkownika'
+                              }
+                              className={classes.userPhoto}
+                              sx={{ marginRight: '20px' }}
+                            />
+                          ) : (
+                            <img
+                              src={
+                                chat.image ? chat.image.url : defaultChatImage
+                              }
+                              alt="Zdjęcie czatu"
+                              className={classes.chatImage}
+                            />
+                          )}
+                        </ListItemAvatar>
+                        <div style={{ width: '80%' }}>
+                          <ListItemText
+                            primary={
+                              chat.isPrivate ? (
+                                <Typography
+                                  variant="subtitle2"
+                                  fontWeight="bold"
+                                  noWrap
+                                >
+                                  {chat.members.find(
                                     (member) =>
                                       member.user.userId !== loggedUser.userId
                                   ).user.firstName +
-                                  ' ' +
-                                  chat.members.find(
-                                    (member) =>
-                                      member.user.userId !== loggedUser.userId
-                                  ).user.lastName
-                                : 'Nazwa użytkownika'
+                                    ' ' +
+                                    chat.members.find(
+                                      (member) =>
+                                        member.user.userId !== loggedUser.userId
+                                    ).user.lastName}
+                                </Typography>
+                              ) : (
+                                <Typography
+                                  variant="subtitle2"
+                                  fontWeight="bold"
+                                  noWrap
+                                >
+                                  {chat.name}
+                                </Typography>
+                              )
                             }
-                            className={classes.userPhoto}
-                            sx={{ marginRight: '20px' }}
+                            secondary={
+                              chat.isPrivate ? (
+                                <Typography variant="body1" noWrap>
+                                  {(chat.lastMessageAuthor.userId ===
+                                  loggedUser.userId
+                                    ? 'Ty: '
+                                    : '') + chat.lastMessage}
+                                </Typography>
+                              ) : (
+                                <Typography variant="body1" noWrap>
+                                  {chat.lastMessageAuthor.firstName +
+                                    ' ' +
+                                    chat.lastMessageAuthor.lastName +
+                                    ': ' +
+                                    chat.lastMessage}
+                                </Typography>
+                              )
+                            }
                           />
-                        ) : (
-                          <img
-                            src={chat.image ? chat.image.url : defaultChatImage}
-                            alt="Zdjęcie czatu"
-                            className={classes.chatImage}
-                          />
-                        )}
-                      </ListItemAvatar>
-                      <div style={{ width: '80%' }}>
-                        <ListItemText
-                          primary={
-                            chat.isPrivate ? (
-                              <Typography
-                                variant="subtitle2"
-                                fontWeight="bold"
-                                noWrap
-                              >
-                                {chat.members.find(
-                                  (member) =>
-                                    member.user.userId !== loggedUser.userId
-                                ).user.firstName +
-                                  ' ' +
-                                  chat.members.find(
-                                    (member) =>
-                                      member.user.userId !== loggedUser.userId
-                                  ).user.lastName}
-                              </Typography>
-                            ) : (
-                              <Typography
-                                variant="subtitle2"
-                                fontWeight="bold"
-                                noWrap
-                              >
-                                {chat.name}
-                              </Typography>
-                            )
-                          }
-                          secondary={
-                            chat.isPrivate ? (
-                              <Typography variant="body1" noWrap>
-                                {(chat.lastMessageAuthor.userId ===
-                                loggedUser.userId
-                                  ? 'Ty: '
-                                  : '') + chat.lastMessage}
-                              </Typography>
-                            ) : (
-                              <Typography variant="body1" noWrap>
-                                {chat.lastMessageAuthor.firstName +
-                                  ' ' +
-                                  chat.lastMessageAuthor.lastName +
-                                  ': ' +
-                                  chat.lastMessage}
-                              </Typography>
-                            )
-                          }
-                        />
-                        <Typography fontSize="11px">
-                          {formatActivityDate(new Date(chat.activityDate))}
-                        </Typography>
+                          <Typography fontSize="11px">
+                            {formatActivityDate(new Date(chat.activityDate))}
+                          </Typography>
+                        </div>
                       </div>
-                    </div>
-                    {chat.newMessages > 0 && (
-                      <div style={{ width: '10%', textAlign: 'right' }}>
-                        <span className={classes.notificationNumber}>
-                          {chat.newMessages}
-                        </span>
-                      </div>
-                    )}
-                  </ListItem>
-                );
-              }
-            })}
+                      {chat.newMessages > 0 && (
+                        <div style={{ width: '10%', textAlign: 'right' }}>
+                          <span className={classes.notificationNumber}>
+                            {chat.newMessages}
+                          </span>
+                        </div>
+                      )}
+                    </ListItem>
+                  );
+                }
+              })}
             {userChats.length === 0 && (
               <Typography
                 margin="10px 0px"

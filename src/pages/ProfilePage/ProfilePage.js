@@ -539,14 +539,16 @@ const ProfilePage = (props) => {
                       </div>
                     )}
                 </div>
-                <Link
-                  component="button"
-                  variant="body1"
-                  className={classes.reportUserLink}
-                  onClick={() => setOpenReportPopup(true)}
-                >
-                  Zgłoś użytkownika
-                </Link>
+                {parseInt(selectedUserId) !== loggedUser.userId && (
+                  <Link
+                    component="button"
+                    variant="body1"
+                    className={classes.reportUserLink}
+                    onClick={() => setOpenReportPopup(true)}
+                  >
+                    Zgłoś użytkownika
+                  </Link>
+                )}
               </div>
               <div className={classes.profileHeadingInfo}>
                 {userProfile && (
@@ -2005,14 +2007,14 @@ const ProfilePage = (props) => {
                   />
                 </Paper>
               )}
-              {userGroups.length === 0 && (
-                <div className={classes.noContent}>
-                  <Typography variant="h6" fontWeight="bold">
-                    Brak grup
-                  </Typography>
-                </div>
-              )}
             </div>
+            {userGroups.length === 0 && (
+              <div className={classes.noContent}>
+                <Typography variant="h6" fontWeight="bold">
+                  Brak grup
+                </Typography>
+              </div>
+            )}
           </TabPanel>
         </div>
       ) : (

@@ -460,6 +460,7 @@ export const getUserImages = (userId) => (dispatch) => {
 
 export const editProfileInformation =
   (userId, updatedProfile) => (dispatch, getState) => {
+    alert(JSON.stringify(updatedProfile));
     return userProfileService
       .editProfileInformation(userId, updatedProfile)
       .then((response) => {

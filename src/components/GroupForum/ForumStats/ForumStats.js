@@ -36,43 +36,45 @@ const ForumStats = (props) => {
       <Typography variant="h6" className={classes.statsHeading}>
         {heading}
       </Typography>
-      {membersRanking.map((rankingItem, index) => {
-        if (index < 3)
-          return (
-            <div className={classes.statsItem} key={index}>
-              <Typography variant="h6">{index + 1 + '.'}</Typography>
-              <div className={classes.memberInformation}>
-                <Avatar
-                  src={
-                    rankingItem.memberPhoto
-                      ? rankingItem.memberPhoto.url
-                      : defaultUserPhoto
-                  }
-                  alt={rankingItem.memberName}
-                  className={classes.memberPhoto}
-                  onClick={() =>
-                    history.push('/app/profile/' + rankingItem.userMemberId)
-                  }
-                />
-                <Typography
-                  variant="subtitle2"
-                  noWrap
-                  className={classes.memberNameText}
-                  onClick={() =>
-                    history.push('/app/profile/' + rankingItem.userMemberId)
-                  }
-                >
-                  {rankingItem.memberName}
+      {membersRanking
+        .sort((x, y) => y.statsValue - x.statsValue)
+        .map((rankingItem, index) => {
+          if (index < 3)
+            return (
+              <div className={classes.statsItem} key={index}>
+                <Typography variant="h6">{index + 1 + '.'}</Typography>
+                <div className={classes.memberInformation}>
+                  <Avatar
+                    src={
+                      rankingItem.memberPhoto
+                        ? rankingItem.memberPhoto.url
+                        : defaultUserPhoto
+                    }
+                    alt={rankingItem.memberName}
+                    className={classes.memberPhoto}
+                    onClick={() =>
+                      history.push('/app/profile/' + rankingItem.userMemberId)
+                    }
+                  />
+                  <Typography
+                    variant="subtitle2"
+                    noWrap
+                    className={classes.memberNameText}
+                    onClick={() =>
+                      history.push('/app/profile/' + rankingItem.userMemberId)
+                    }
+                  >
+                    {rankingItem.memberName}
+                  </Typography>
+                </div>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {statsType === 'average_answer_ratings'
+                    ? Math.round(rankingItem.statsValue * 100) / 100
+                    : rankingItem.statsValue}
                 </Typography>
               </div>
-              <Typography variant="subtitle1" fontWeight="bold">
-                {statsType === 'average_answer_ratings'
-                  ? Math.round(rankingItem.statsValue * 100) / 100
-                  : rankingItem.statsValue}
-              </Typography>
-            </div>
-          );
-      })}
+            );
+        })}
       {membersRanking.length === 0 && (
         <Typography marginTop="10px" variant="subtitle2">
           Brak aktywności

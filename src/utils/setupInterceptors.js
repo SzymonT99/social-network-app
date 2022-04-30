@@ -85,7 +85,7 @@ const setup = (store) => {
         }
         return response;
       }
-    } else if (isPublicAccess) {
+    } else if (isPublicAccess && !resource.includes('/auth/')) {
       response = await originalFetch(resource, config);
       if (response.status === 401) {
         dispatch(showNotification('warning', 'Brak dostępu'));

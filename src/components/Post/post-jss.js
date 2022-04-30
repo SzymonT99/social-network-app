@@ -170,6 +170,21 @@ const styles = (theme) => ({
       textDecoration: 'underline',
     },
   },
+  avatarGroup: {
+    '&.MuiAvatarGroup-root': {
+      '& .MuiAvatarGroup-avatar': {
+        width: '30px',
+        height: '30px',
+        fontSize: '14px',
+      },
+    },
+  },
+  postActionIcon: {
+    '&.MuiSvgIcon-root': {
+      fontSize: '35px',
+      marginRight: '6px',
+    },
+  },
 });
 
 export default styles;

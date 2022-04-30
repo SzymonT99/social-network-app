@@ -456,6 +456,7 @@ const styles = (theme) => ({
     },
   },
   noContent: {
+    width: '100%',
     marginTop: '30px',
     display: 'flex',
     alignItems: 'center',

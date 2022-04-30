@@ -117,7 +117,7 @@ const AddWorkPlaceForm = (props) => {
           />
           <TextField
             id="graduation-date"
-            label="Data ukończenia"
+            label="Data zakończenia"
             type="date"
             sx={{ width: '45%' }}
             value={endDate}

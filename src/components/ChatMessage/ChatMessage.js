@@ -11,7 +11,6 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  TextField,
   Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,6 +23,7 @@ import { showNotification } from '../../redux/actions/notificationActions';
 import {
   deleteChatMessage,
   editChatMessage,
+  getChatDetails,
 } from '../../redux/actions/chatAction';
 import Popup from '../Popup/Popup';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
@@ -38,10 +38,6 @@ const activeStatus = {
   BUSY: '#67207c',
   OFFLINE: '#FF1C00',
 };
-
-const FONT_SIZE = 14;
-const DEFAULT_MESSAGE_WIDTH = 60;
-const MAX_MESSAGE_WIDTH = 350;
 
 const ChatMessage = (props) => {
   const {
@@ -69,12 +65,9 @@ const ChatMessage = (props) => {
 
   const messageRef = useRef(null);
 
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isEditable, setIsEditable] = useState(false);
   const [messageText, setMessageText] = useState(
     !isDeleted ? content : 'Usunięto wiadomość'
-  );
-  const [messageFieldWidth, setMessageFieldWidth] = useState(
-    DEFAULT_MESSAGE_WIDTH
   );
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
@@ -84,24 +77,10 @@ const ChatMessage = (props) => {
   }, [isDeleted, content]);
 
   useEffect(() => {
-    if (!isDisabled) {
+    if (isEditable) {
       messageRef.current.focus();
     }
-  }, [isDisabled]);
-
-  useEffect(() => {
-    if (messageText == null) return;
-    if (
-      messageText.length * FONT_SIZE > DEFAULT_MESSAGE_WIDTH &&
-      messageText.length * FONT_SIZE < MAX_MESSAGE_WIDTH
-    ) {
-      setMessageFieldWidth(messageText.length * (FONT_SIZE - 2));
-    } else if (messageText.length * FONT_SIZE > MAX_MESSAGE_WIDTH) {
-      setMessageFieldWidth(MAX_MESSAGE_WIDTH);
-    } else {
-      setMessageFieldWidth(DEFAULT_MESSAGE_WIDTH);
-    }
-  }, [messageText, content]);
+  }, [isEditable]);
 
   const generatePublicationDate = (messageDate) => {
     if (
@@ -131,10 +110,6 @@ const ChatMessage = (props) => {
     </div>
   );
 
-  const handleMessageChange = (event) => {
-    setMessageText(event.target.value);
-  };
-
   const handleCloseMessageManage = () => {
     setAnchorEl(null);
   };
@@ -145,7 +120,7 @@ const ChatMessage = (props) => {
 
   const handleClickEditMessage = () => {
     handleCloseMessageManage();
-    setIsDisabled(false);
+    setIsEditable(true);
   };
 
   const editMessage = () => {
@@ -154,27 +129,22 @@ const ChatMessage = (props) => {
         showNotification('warning', 'Nie można pozostawić pustej treści')
       );
     } else {
-      const formData = new FormData();
-
-      formData.append('image', null);
-
       const message = {
         chatId: chatId,
         userId: author.userId,
-        message: messageText,
+        message: document.getElementById('message').textContent,
         messageType: messageType,
       };
 
-      formData.append(
-        'message',
-        new Blob([JSON.stringify(message)], {
-          type: 'application/json',
-        })
-      );
-      dispatch(editChatMessage(messageId, formData));
+      dispatch(editChatMessage(messageId, message));
       manageMessage('MESSAGE_EDIT', chatId, author.userId, messageId);
-      setIsDisabled(true);
+      setIsEditable(false);
     }
+  };
+
+  const cancelEdit = () => {
+    setIsEditable(false);
+    dispatch(getChatDetails(chatId));
   };
 
   const handleClickDeleteMessage = () => {
@@ -328,24 +298,21 @@ const ChatMessage = (props) => {
                   </Popup>
                 </div>
               )}
-              <TextField
-                multiline
-                disabled={isDisabled}
-                inputRef={messageRef}
+              <div
+                id="message"
+                contentEditable={isEditable}
+                ref={messageRef}
                 className={
                   loggedUser.userId !== author.userId
                     ? classes.otherMessageField
                     : classes.userMessageField
                 }
-                value={messageText}
-                sx={{
-                  width: `${messageFieldWidth}px`,
-                }}
-                onChange={handleMessageChange}
-              />
+              >
+                {messageText}
+              </div>
             </div>
           )}
-          {!isDisabled && (
+          {isEditable && (
             <div>
               <Link
                 component="button"
@@ -358,7 +325,7 @@ const ChatMessage = (props) => {
               <Link
                 component="button"
                 className={classes.messageEditBtn}
-                onClick={() => setIsDisabled(true)}
+                onClick={cancelEdit}
               >
                 Anuluj
               </Link>
@@ -393,9 +360,6 @@ const ChatMessage = (props) => {
         >
           <Typography variant="subtitle2" fontWeight={500} marginBottom="3px">
             {author.firstName + ' ' + author.lastName}
-            <span className={classes.authorIsNotMemberText}>
-              {isAuthorDeleted ? ' (Nie należy już do czatu)' : ''}
-            </span>
           </Typography>
           <Typing isAuthor={loggedUser.userId === author.userId} />
         </div>

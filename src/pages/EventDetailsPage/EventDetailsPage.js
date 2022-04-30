@@ -163,7 +163,7 @@ const EventsPageDetails = (props) => {
                   <Typography variant="body1" fontWeight="bold">
                     Dzień
                   </Typography>
-                  {new Date(event.eventDate).getDay()}
+                  {new Date(event.eventDate).getDate()}
                 </div>
                 <div className={classes.dateItem}>
                   <Typography variant="body1" fontWeight="bold">
@@ -465,7 +465,9 @@ const EventsPageDetails = (props) => {
                     <span className={classes.detailsItemTitle}>
                       {'Ulica: '}
                     </span>
-                    {event.eventAddress.city ? event.eventAddress.city : '-'}
+                    {event.eventAddress.street
+                      ? event.eventAddress.street
+                      : '-'}
                   </Typography>
                 </div>
                 <div style={{ display: 'flex', marginTop: '14px' }}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './chatPage-jss';
@@ -29,7 +29,6 @@ import Popup from '../../components/Popup/Popup';
 import ChatForm from '../../components/Forms/ChatForm';
 import {
   addTypingMessage,
-  clearSelectedChat,
   deleteChat,
   deleteMemberFromChat,
   getChatDetails,
@@ -43,9 +42,6 @@ import {
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ChatConversation from '../../components/ChatConversation/ChatConversation';
 import ChatMessage from '../../components/ChatMessage/ChatMessage';
-import ImageIcon from '@mui/icons-material/Image';
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
-import SendIcon from '@mui/icons-material/Send';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import PersonIcon from '@mui/icons-material/Person';
@@ -61,13 +57,11 @@ import SentInvitation from '../../components/SentInvitation/SentInvitation';
 import SearchIcon from '@mui/icons-material/Search';
 import chatTypes from '../../redux/types/chatTypes';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
-import CloseIcon from '@mui/icons-material/Close';
 import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
 import classNames from 'classnames';
 import ModalImage from 'react-modal-image-responsive';
 import { formatBaseDate } from '../../utils/formatBaseDate';
-import Picker from 'emoji-picker-react';
+import ChatInput from '../../components/ChatInput/ChatInput';
 
 let stompClient = null;
 
@@ -97,16 +91,10 @@ const ChatPage = (props) => {
   const [openLeaveChatPopup, setOpenLeaveChatPopup] = useState(false);
   const [openChatInvitationsPopup, setOpenChatInvitationsPopup] =
     useState(false);
-  const [text, setText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const [searchedUserName, setSearchedUserName] = useState('');
   const [searchedUsers, setSearchedUsers] = useState([]);
-  const [uploadedImages, setUploadedImages] = useState([]);
-  const [displayedImages, setDisplayedImages] = useState([]);
-  const [openImagesPopup, setOpenImagesPopup] = useState(false);
   const [chatMuted, setChatMuted] = useState(false);
-  const [openEmojiPickerPopup, setOpenEmojiPickerPopup] = useState(false);
-
-  const imagesInputRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -143,7 +131,7 @@ const ChatPage = (props) => {
       if (stompClient !== null) {
         stompClient.unsubscribe('chat', {});
       }
-      dispatch(clearSelectedChat());
+      //  dispatch(clearSelectedChat());
       dispatch(setSelectedUser(undefined));
     };
   }, []);
@@ -238,7 +226,7 @@ const ChatPage = (props) => {
     }
   };
 
-  const sendMessage = (text) => {
+  const sendMessage = (text, uploadedImages) => {
     if (stompClient) {
       if (uploadedImages.length > 0) {
         const formData = new FormData();
@@ -248,8 +236,6 @@ const ChatPage = (props) => {
         formData.append('senderId', loggedUser.userId);
 
         dispatch(uploadChatImages(currentChat.chatId, formData));
-        setDisplayedImages([]);
-        setUploadedImages([]);
       }
 
       if (text !== '') {
@@ -265,7 +251,8 @@ const ChatPage = (props) => {
           { Authorization: 'Bearer ' + loggedUser.accessToken },
           JSON.stringify(message)
         );
-        setText('');
+
+        setIsTyping(false);
       }
     }
   };
@@ -282,19 +269,21 @@ const ChatPage = (props) => {
     setOpenChatEditionPopup(false);
   };
 
-  const handleChangeMessageText = (event) => {
-    let typingMessage = event.target.value;
-    setText(typingMessage);
-    stompClient.send(
-      '/app/chat/' + activeChatId + '/messages',
-      { Authorization: 'Bearer ' + loggedUser.accessToken },
-      JSON.stringify({
-        chatId: activeChatId,
-        userId: loggedUser.userId,
-        messageType: 'TYPING',
-        message: typingMessage,
-      })
-    );
+  const sendTypingMessage = (currentText) => {
+    if ((!isTyping && currentText !== '') || currentText === '') {
+      if (currentText === '') setIsTyping(false);
+      else setIsTyping(true);
+      stompClient.send(
+        '/app/chat/' + activeChatId + '/messages',
+        { Authorization: 'Bearer ' + loggedUser.accessToken },
+        JSON.stringify({
+          chatId: activeChatId,
+          userId: loggedUser.userId,
+          messageType: 'TYPING',
+          message: currentText,
+        })
+      );
+    }
   };
 
   const handleClickDeleteChat = () => {
@@ -328,6 +317,19 @@ const ChatPage = (props) => {
         userId: loggedUser.userId,
         messageType: 'LEAVE',
         message: 'opuścił(a) czat',
+      })
+    );
+  };
+
+  const deleteUserFromChat = (userId) => {
+    stompClient.send(
+      '/app/chat/' + activeChatId + '/messages',
+      { Authorization: 'Bearer ' + loggedUser.accessToken },
+      JSON.stringify({
+        chatId: activeChatId,
+        userId: userId,
+        messageType: 'LEAVE',
+        message: 'usunięto z czatu',
       })
     );
   };
@@ -395,49 +397,12 @@ const ChatPage = (props) => {
     }
   };
 
-  const selectImages = (event) => {
-    let images = [];
-
-    for (let i = 0; i < event.target.files.length; i++) {
-      images.push(URL.createObjectURL(event.target.files[i]));
-    }
-
-    setDisplayedImages(images);
-    setUploadedImages(event.target.files);
-  };
-
-  const deleteImage = (deletedImg) => {
-    if (displayedImages.length > 1) {
-      let index = displayedImages.indexOf(deletedImg);
-      setDisplayedImages((prevState) =>
-        prevState.filter((image) => image !== deletedImg)
-      );
-      const fileListArray = Array.from(uploadedImages);
-      fileListArray.splice(index, 1);
-      setUploadedImages(fileListArray);
-      setUploadedImages((prevState) =>
-        prevState.filter((image) => image !== deletedImg)
-      );
-    } else {
-      setDisplayedImages([]);
-      setUploadedImages([]);
-    }
-  };
-
-  const handleCloseImagesPopup = () => {
-    setOpenImagesPopup(false);
-  };
-
   const handleClickNotificationManage = () => {
     let chatMemberId = currentChat.chatMembers.find(
       (member) => member.user.userId === loggedUser.userId
     ).chatMemberId;
     dispatch(setChatMemberChatNotifications(chatMemberId, !chatMuted));
     setChatMuted(!chatMuted);
-  };
-
-  const onEmojiClick = (event, emojiObject) => {
-    setText((prevText) => prevText + emojiObject.emoji);
   };
 
   return (
@@ -583,120 +548,10 @@ const ChatPage = (props) => {
                       ))}
                 </InfiniteScroll>
               </div>
-              <div className={classes.messageCreationContainer}>
-                <Popup
-                  open={openEmojiPickerPopup}
-                  type="emojiPicker"
-                  title="Wybierz emotikon"
-                  onClose={() => setOpenEmojiPickerPopup(false)}
-                >
-                  <Picker
-                    onEmojiClick={onEmojiClick}
-                    disableAutoFocus={true}
-                    groupNames={{ smileys_people: 'PEOPLE' }}
-                    pickerStyle={{ width: '100%', height: '400px' }}
-                  />
-                </Popup>
-                <IconButton onClick={() => setOpenEmojiPickerPopup(true)}>
-                  <SentimentSatisfiedAltIcon
-                    fontSize="medium"
-                    color="primary"
-                  />
-                </IconButton>
-                <IconButton onClick={() => imagesInputRef.current.click()}>
-                  <ImageIcon fontSize="medium" color="primary" />
-                </IconButton>
-                <input
-                  style={{ display: 'none' }}
-                  type="file"
-                  id="multi"
-                  ref={imagesInputRef}
-                  multiple
-                  accept="image/*"
-                  onChange={selectImages}
-                />
-                <TextField
-                  fullWidth
-                  placeholder="Napisz widomość"
-                  variant="outlined"
-                  onChange={handleChangeMessageText}
-                  value={text}
-                  className={classes.messageInput}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      sendMessage(text);
-                      e.preventDefault();
-                    }
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton
-                        edge="end"
-                        onClick={() => setOpenImagesPopup(true)}
-                      >
-                        <Badge
-                          className={classes.messageImageBade}
-                          overlap="circular"
-                          badgeContent={uploadedImages.length}
-                        >
-                          <PhotoLibraryIcon fontSize="large" />
-                        </Badge>
-                      </IconButton>
-                    ),
-                  }}
-                />
-                <Popup
-                  open={openImagesPopup}
-                  type="images"
-                  title="Zdjęcia"
-                  onClose={handleCloseImagesPopup}
-                >
-                  {displayedImages.length > 0 ? (
-                    <ImageList
-                      cols={3}
-                      rowHeight={220}
-                      className={classes.messageImageList}
-                      gap={5}
-                      variant="quilted"
-                    >
-                      {displayedImages.map((img, index) => (
-                        <ImageListItem
-                          key={index}
-                          className={classes.uploadImageItem}
-                        >
-                          <img
-                            key={index}
-                            src={img}
-                            srcSet={img}
-                            alt="Dodane zdjęcie"
-                            loading="lazy"
-                          />
-                          <Button
-                            className={classes.uploadImageDeleteBtn}
-                            onClick={() => deleteImage(img)}
-                          >
-                            <CloseIcon />
-                          </Button>
-                        </ImageListItem>
-                      ))}
-                    </ImageList>
-                  ) : (
-                    <Typography variant="subtitle2" marginTop="5px">
-                      Nie dodano zdjęć
-                    </Typography>
-                  )}
-                </Popup>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  sx={{ height: '55px' }}
-                  onClick={() => sendMessage(text)}
-                  className={classes.sendMessageBtn}
-                >
-                  Wyślij
-                  <SendIcon fontSize="medium" />
-                </Button>
-              </div>
+              <ChatInput
+                sendTypingMessage={sendTypingMessage}
+                sendMessage={sendMessage}
+              />
             </>
           )}
         </div>
@@ -941,6 +796,7 @@ const ChatPage = (props) => {
                         canAddOthers={member.canAddOthers}
                         isPrivateChat={currentChat.isPrivate}
                         chatCreator={currentChat.chatCreator}
+                        deleteUserFromChat={deleteUserFromChat}
                       />
                     ))}
                     {(currentChat.chatMembers.filter(
@@ -1002,6 +858,10 @@ const ChatPage = (props) => {
                             }
                             avatar={searchedUser.profilePhoto}
                             addToChatNotification={addUserToChat}
+                            clearSearchedUserName={() => {
+                              setSearchedUserName('');
+                              setSearchedUsers([]);
+                            }}
                           />
                         ))}
                       </div>

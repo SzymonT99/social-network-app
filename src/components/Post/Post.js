@@ -202,12 +202,9 @@ const Post = (props) => {
     if (likes.length === 1) {
       names = names.substring(0, names.length - 2) + ' lubi post';
     } else if (likes.length > 1) {
+      names = names.substring(0, names.length - 2);
       if (otherUsersNumber !== 0) {
-        names =
-          names.substring(0, names.length - 2) +
-          'oraz ' +
-          otherUsersNumber +
-          ' innych użytkowników';
+        names = names + ' oraz ' + otherUsersNumber + ' innych użytkowników';
       }
       names += ' lubią post';
     } else {
@@ -535,7 +532,7 @@ const Post = (props) => {
             className={classes.likesContainer}
             onClick={() => setOpenLikesPopup(true)}
           >
-            <AvatarGroup max={4}>
+            <AvatarGroup max={4} className={classes.avatarGroup}>
               {likes.map((like) => (
                 <Avatar
                   key={like.likedUser.userId}
@@ -574,11 +571,9 @@ const Post = (props) => {
                 className={classes.postReactionItem}
               >
                 {loggedUser && postIsLiked(likes, loggedUser.userId) ? (
-                  <ThumbUpIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
+                  <ThumbUpIcon className={classes.postActionIcon} />
                 ) : (
-                  <ThumbUpAltOutlinedIcon
-                    sx={{ fontSize: '35px', marginRight: '6px' }}
-                  />
+                  <ThumbUpAltOutlinedIcon className={classes.postActionIcon} />
                 )}
                 {'Lubię to | ' + likesNumber}
               </Typography>
@@ -593,7 +588,7 @@ const Post = (props) => {
                   className={classes.postReactionItem}
                 >
                   <ChatBubbleOutlineOutlinedIcon
-                    sx={{ fontSize: '35px', marginRight: '6px' }}
+                    className={classes.postActionIcon}
                   />
                   {'Komentarze | ' + commentsNumber}
                 </Typography>
@@ -605,9 +600,7 @@ const Post = (props) => {
                   variant="subtitle2"
                   className={classes.postReactionItem}
                 >
-                  <ShareOutlinedIcon
-                    sx={{ fontSize: '35px', marginRight: '6px' }}
-                  />
+                  <ShareOutlinedIcon className={classes.postActionIcon} />
                   {'Udostępnij | ' + sharesNumber}
                 </Typography>
               </Button>
@@ -694,7 +687,7 @@ const Post = (props) => {
                     : defaultUserPhoto
                 }
                 alt={
-                  loggedUserProfile && loggedUserProfile.profilePhoto
+                  loggedUserProfile
                     ? loggedUserProfile.firstName +
                       ' ' +
                       loggedUserProfile.lastName

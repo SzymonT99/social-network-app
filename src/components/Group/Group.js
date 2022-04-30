@@ -90,13 +90,13 @@ const Group = (props) => {
         <Typography variant="subtitle2">Tematyka grupy:</Typography>
         <div className={classes.groupInterestsBox}>
           {interests.length !== 0 ? (
-            interests.map((interest) => (
+            interests.map((interest, index) => (
               <Typography
                 key={interest.interestId}
                 variant="body1"
                 component="span"
               >
-                {interest.name + ', '}
+                {interest.name + (index + 1 < interests.length ? ', ' : '')}
               </Typography>
             ))
           ) : (

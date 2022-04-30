@@ -92,8 +92,7 @@ const LoginPage = (props) => {
           </Typography>
           <Typography variant="h4" className={classes.appDescription}>
             Serwis społecznościowy wykonany w ramach pracy inżynierskiej na
-            Państwowej Wyższej Szkole Zawodowej w Tarnowie na kierunku
-            Informatyka.
+            Akademii Nauk Stosowanych w Tarnowie na kierunku Informatyka.
           </Typography>
           <div className={classes.btnContainer}>
             <Button

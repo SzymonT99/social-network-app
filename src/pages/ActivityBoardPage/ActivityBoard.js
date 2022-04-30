@@ -55,11 +55,11 @@ const ActivityBoard = (props) => {
     (state) => state.friends.receivedFriendInvitations
   );
 
-  const [openPostCreation, setOpenPostCreation] = useState(false);
+  const [openPostCreationPopup, setOpenPostCreationPopup] = useState(false);
   const [numberItemsShown, setNumberItemsShown] = useState(5);
 
   const handleClosePostCreation = () => {
-    setOpenPostCreation(false);
+    setOpenPostCreationPopup(false);
   };
 
   useEffect(() => {
@@ -151,7 +151,7 @@ const ActivityBoard = (props) => {
                   multiline
                   rows={2}
                   className={classes.postInput}
-                  onClick={() => setOpenPostCreation(true)}
+                  onClick={() => setOpenPostCreationPopup(true)}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -163,7 +163,7 @@ const ActivityBoard = (props) => {
               </div>
             </Paper>
             <Popup
-              open={openPostCreation}
+              open={openPostCreationPopup}
               type="post"
               title="Utwórz post"
               onClose={handleClosePostCreation}
@@ -175,7 +175,7 @@ const ActivityBoard = (props) => {
                 if (item.activityType === 'CREATE_POST') {
                   return (
                     <Post
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -208,7 +208,7 @@ const ActivityBoard = (props) => {
                 ) {
                   return (
                     <Post
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activity.post.postAuthor.userId}
                       authorName={
                         item.activity.post.postAuthor.firstName +
@@ -258,7 +258,7 @@ const ActivityBoard = (props) => {
                 ) {
                   return (
                     <SharedPost
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activity.sharedPost.authorOfSharing.userId}
                       sharedPostId={item.activity.sharedPost.sharedPostId}
                       sharedPost={item.activity.sharedPost.sharedPost}
@@ -308,7 +308,7 @@ const ActivityBoard = (props) => {
                 } else if (item.activityType === 'SHARE_POST') {
                   return (
                     <SharedPost
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       sharedPostId={item.activity.sharedPostId}
                       sharedPost={item.activity.sharedPost}
@@ -337,7 +337,7 @@ const ActivityBoard = (props) => {
                 } else if (item.activityType === 'CREATE_GROUP_POST') {
                   return (
                     <Post
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -371,7 +371,7 @@ const ActivityBoard = (props) => {
                 } else if (item.activityType === 'CHANGE_PROFILE_PHOTO') {
                   return (
                     <Post
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -411,7 +411,7 @@ const ActivityBoard = (props) => {
                 ) {
                   return (
                     <ActivityBoardItem
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -443,7 +443,7 @@ const ActivityBoard = (props) => {
                 } else if (item.activityType === 'JOIN_TO_GROUP') {
                   return (
                     <ActivityBoardItem
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +

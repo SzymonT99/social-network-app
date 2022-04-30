@@ -1,7 +1,7 @@
 const styles = (theme) => ({
   wrapper: {
     width: '60vw',
-    padding: '90px',
+    padding: '60px',
   },
   link: {
     marginTop: '20px',

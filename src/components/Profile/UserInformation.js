@@ -155,7 +155,7 @@ const UserInformation = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <CheckCircleOutlineIcon sx={{ marginRight: '7px' }} /> Akceptuj
+          <CheckCircleOutlineIcon sx={{ paddingRight: '7px' }} /> Akceptuj
         </Typography>
       );
     } else if (!isUserFriend && !isInvitedToFriend) {
@@ -199,9 +199,10 @@ const UserInformation = (props) => {
         onClick={() => history.push('/app/profile/' + userId)}
       />
       <div className={classes.userInfoContent}>
-        <div>
+        <div className={classes.userInformationBox}>
           <Typography
             variant="h6"
+            noWrap
             className={classes.userNameLink}
             onClick={() => history.push('/app/profile/' + userId)}
           >

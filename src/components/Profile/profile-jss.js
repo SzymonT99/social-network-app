@@ -96,11 +96,12 @@ const styles = (theme) => ({
   },
   friendManageBtn: {
     '&.MuiButton-root': {
-      marginRight: '10px',
+      width: '120px',
     },
   },
   friendDeleteBtn: {
     '&.MuiButton-root': {
+      width: '120px',
       '&:hover': {
         backgroundColor: '#FF1C00',
       },
@@ -112,6 +113,9 @@ const styles = (theme) => ({
       alignItems: 'center',
       fontWeight: 'bold',
     },
+  },
+  userInformationBox: {
+    width: '180px',
   },
 });
 

@@ -18,7 +18,7 @@ import { showNotification } from '../../redux/actions/notificationActions';
 import { useDispatch } from 'react-redux';
 
 const favouriteTypes = {
-  BOOK: 'Ksiązka',
+  BOOK: 'Książka',
   FILM: 'Film',
   ACTOR: 'Aktor',
   MUSIC: 'Utwór muzyczny',

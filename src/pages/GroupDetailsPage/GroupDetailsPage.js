@@ -230,12 +230,12 @@ const GroupDetailsPage = (props) => {
       {
         field: 'firstName',
         headerName: 'Imię',
-        width: 140,
+        width: 130,
       },
       {
         field: 'lastName',
         headerName: 'Nazwisko',
-        width: 140,
+        width: 130,
       },
       {
         field: 'joinDate',
@@ -295,7 +295,7 @@ const GroupDetailsPage = (props) => {
         ],
       },
     ],
-    [group.members, handleClickDeleteGroupMember, memberStatusOfUser]
+    [group && group.members, handleClickDeleteGroupMember, memberStatusOfUser]
   );
 
   const handleRowEditCommit = React.useCallback((params) => {
@@ -402,7 +402,7 @@ const GroupDetailsPage = (props) => {
       names += ' oraz ' + groupMembersNumber;
     }
 
-    names += ' należy do grupy';
+    names += ' innych użytkowników należy do grupy';
 
     return names;
   };
@@ -578,7 +578,10 @@ const GroupDetailsPage = (props) => {
                             ' ' +
                             groupMember.user.lastName
                           }
-                          src={groupMember.user.profilePhoto.url}
+                          src={
+                            groupMember.user.profilePhoto &&
+                            groupMember.user.profilePhoto.url
+                          }
                         />
                       ))}
                   </AvatarGroup>
@@ -1084,7 +1087,10 @@ const GroupDetailsPage = (props) => {
                           ' ' +
                           groupMember.user.lastName
                         }
-                        src={groupMember.user.profilePhoto.url}
+                        src={
+                          groupMember.user.profilePhoto &&
+                          groupMember.user.profilePhoto.url
+                        }
                       />
                     ))}
                 </AvatarGroup>
@@ -1716,14 +1722,16 @@ const GroupDetailsPage = (props) => {
                     Zarządzanie członkami grupy
                   </Typography>
                   <div style={{ height: 400, width: '100%' }}>
-                    <DataGrid
-                      columns={tableColumns}
-                      rows={memberTableRows}
-                      rowsPerPageOptions={[10, 15, 20]}
-                      pagination
-                      disableSelectionOnClick
-                      onCellEditCommit={handleRowEditCommit}
-                    />
+                    {
+                      <DataGrid
+                        columns={tableColumns}
+                        rows={memberTableRows}
+                        rowsPerPageOptions={[10, 15, 20]}
+                        pagination
+                        disableSelectionOnClick
+                        onCellEditCommit={handleRowEditCommit}
+                      />
+                    }
                   </div>
                 </TabPanel>
                 <TabPanel value={groupSettingsNavValue} index={4}>

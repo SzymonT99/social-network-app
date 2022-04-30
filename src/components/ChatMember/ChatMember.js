@@ -36,6 +36,7 @@ const ChatMember = (props) => {
     canAddOthers,
     chatCreator,
     isPrivateChat,
+    deleteUserFromChat,
   } = props;
 
   const dispatch = useDispatch();
@@ -73,6 +74,7 @@ const ChatMember = (props) => {
   const deleteChatMemberClick = () => {
     handleCloseDeletePopup();
     dispatch(deleteMemberFromChat(memberId, true));
+    deleteUserFromChat(userMember.userId);
   };
 
   return (
@@ -196,6 +198,7 @@ ChatMember.propTypes = {
   canAddOthers: PropTypes.bool,
   chatCreator: PropTypes.object,
   isPrivateChat: PropTypes.bool,
+  deleteUserFromChat: PropTypes.func,
 };
 
 export default withStyles(styles)(ChatMember);

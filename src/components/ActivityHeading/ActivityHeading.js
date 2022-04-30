@@ -91,7 +91,7 @@ const ActivityHeading = (props) => {
             <Typography
               variant="subtitle1"
               className={classes.groupNameText}
-              onClick={() => history.push('/app/group/' + groupId)}
+              onClick={() => history.push('/app/groups/' + groupId)}
             >
               {groupName}
             </Typography>

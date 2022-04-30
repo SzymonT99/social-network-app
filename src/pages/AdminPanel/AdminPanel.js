@@ -155,28 +155,28 @@ const AdminPanel = (props) => {
         field: 'incorrectLoginCounter',
         headerName: 'Nieudane logowania',
         editable: true,
-        width: 150,
+        width: 140,
       },
       {
         field: 'activateAccount',
         headerName: 'Konto aktywne',
         editable: true,
         type: 'boolean',
-        width: 120,
+        width: 110,
       },
       {
         field: 'isBlocked',
         headerName: 'Zablokowane',
         editable: true,
         type: 'boolean',
-        width: 120,
+        width: 110,
       },
       {
         field: 'isBanned',
         headerName: 'Zbanowane',
         editable: true,
         type: 'boolean',
-        width: 120,
+        width: 110,
       },
       {
         field: 'action',
@@ -207,7 +207,7 @@ const AdminPanel = (props) => {
       {
         field: 'reports',
         headerName: 'Zgłoszenia',
-        width: 80,
+        width: 110,
         type: 'actions',
         renderCell: (params) => (
           <div className={classes.reportCellContainer}>
@@ -267,9 +267,7 @@ const AdminPanel = (props) => {
   return (
     <div className={classes.wrapper}>
       <Paper elevation={4} className={classes.adminPanelContainer}>
-        <Typography variant="h5">
-          Zarządzanie kontem użytkowników &#x1F600;
-        </Typography>
+        <Typography variant="h5">Zarządzanie kontem użytkowników</Typography>
         <Divider className={classes.divider} />
         <div className={classes.usersTableContainer}>
           <DataGrid
