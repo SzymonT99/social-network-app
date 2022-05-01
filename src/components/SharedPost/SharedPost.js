@@ -195,11 +195,7 @@ const SharedPost = (props) => {
   };
 
   return (
-    <Paper
-      elevation={4}
-      sx={{ borderRadius: '10px' }}
-      className={classes.sharedPostContainer}
-    >
+    <Paper elevation={4} className={classes.sharedPostContainer}>
       {isActivity && (
         <div>
           <div className={classes.activityInformationContainer}>
@@ -388,11 +384,9 @@ const SharedPost = (props) => {
         >
           <Typography variant="subtitle2" className={classes.postReactionItem}>
             {sharedPostIsLiked(likes, userId) ? (
-              <ThumbUpIcon sx={{ fontSize: '35px', marginRight: '6px' }} />
+              <ThumbUpIcon className={classes.postActionIcon} />
             ) : (
-              <ThumbUpAltOutlinedIcon
-                sx={{ fontSize: '35px', marginRight: '6px' }}
-              />
+              <ThumbUpAltOutlinedIcon className={classes.postActionIcon} />
             )}
             {'Lubię to | ' + likes.length}
           </Typography>
@@ -407,7 +401,7 @@ const SharedPost = (props) => {
               className={classes.postReactionItem}
             >
               <ChatBubbleOutlineOutlinedIcon
-                sx={{ fontSize: '35px', marginRight: '6px' }}
+                className={classes.postActionIcon}
               />
               {'Komentarze | ' + comments.length}
             </Typography>
@@ -481,7 +475,7 @@ const SharedPost = (props) => {
           </div>
         )}
       {postComments.length !== 0 && commentsDisplayed && (
-        <Divider className={classes.divider} style={{ marginTop: '15px' }} />
+        <Divider sx={{ marginTop: '15px' }} />
       )}
       {!isCommentingBlocked && (
         <div className={classes.addCommentContainer}>

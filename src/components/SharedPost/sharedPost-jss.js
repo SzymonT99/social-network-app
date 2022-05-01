@@ -1,7 +1,10 @@
 const styles = (theme) => ({
   sharedPostContainer: {
-    padding: '15px',
-    marginBottom: '15px',
+    '&.MuiPaper-root': {
+      padding: '15px',
+      marginBottom: '15px',
+      borderRadius: '10px',
+    },
   },
   postMenuItem: {
     '&.MuiMenuItem-root': {
@@ -151,6 +154,12 @@ const styles = (theme) => ({
     '&.MuiTypography-root': {
       lineHeight: 0,
       marginLeft: '3px',
+    },
+  },
+  postActionIcon: {
+    '&.MuiSvgIcon-root': {
+      fontSize: '35px',
+      marginRight: '6px',
     },
   },
 });

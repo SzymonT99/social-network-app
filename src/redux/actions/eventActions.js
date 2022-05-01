@@ -216,10 +216,10 @@ export const shareEvent = (eventId) => (dispatch, getState) => {
     .shareEvent(eventId)
     .then((response) => {
       if (response.status === 201) {
-        dispatch(getEventById(getState().events.eventDetails.eventId));
         dispatch(showNotification('success', 'Udostępniono wydarzenie'));
+        dispatch(getEventById(getState().events.eventDetails.eventId));
       } else if (response.status === 403) {
-        dispatch(showNotification('error', 'Już udostępniłeś to wydarzenie'));
+        dispatch(showNotification('warning', 'Już udostępniłeś to wydarzenie'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }

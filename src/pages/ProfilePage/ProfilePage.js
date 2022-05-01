@@ -6,7 +6,6 @@ import styles from './profilePage-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
 import {
-  Avatar,
   Button,
   Divider,
   FormControl,
@@ -32,7 +31,6 @@ import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import { PhotoCamera } from '@mui/icons-material';
 import { TabContext, TabList } from '@mui/lab';
 import TabPanelMUI from '@mui/lab/TabPanel';
-import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
 import PostForm from '../../components/Forms/PostForm';
 import {
@@ -101,6 +99,8 @@ import { getPrivateChat, setActiveChat } from '../../redux/actions/chatAction';
 import ModalImage from 'react-modal-image-responsive';
 import { showNotification } from '../../redux/actions/notificationActions';
 import ReportForm from '../../components/Forms/ReportForm';
+import ExpandListButton from '../../components/ExpandListButton/ExpandListButton';
+import PostCreationBox from '../../components/PostCreationBox/PostCreationBox';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -135,7 +135,7 @@ const ProfilePage = (props) => {
   const isLoggedUserRemember = useSelector((state) => state.auth.remember);
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  const isAdmin = loggedUser.roles.includes('ROLE_ADMIN');
+  const isAdmin = loggedUser && loggedUser.roles.includes('ROLE_ADMIN');
 
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
@@ -164,7 +164,6 @@ const ProfilePage = (props) => {
 
   const [activityValue, setActivityValue] = useState('a1');
   const [profileInfoNav, setProfileInfoNav] = useState('i1');
-  const [openPostCreation, setOpenPostCreation] = useState(false);
   const [numberItemsShown, setNumberItemsShown] = useState({
     posts: 5,
     sharedPosts: 5,
@@ -280,10 +279,6 @@ const ProfilePage = (props) => {
 
   const handleChangeProfileInfoNav = (event, newValue) => {
     setProfileInfoNav(newValue);
-  };
-
-  const handleClosePostCreation = () => {
-    setOpenPostCreation(false);
   };
 
   const updateShownItems = (type) => {
@@ -473,11 +468,7 @@ const ProfilePage = (props) => {
     <>
       {!isLoading ? (
         <div className={classes.wrapper}>
-          <Paper
-            elevation={4}
-            sx={{ borderRadius: '10px' }}
-            className={classes.profileHeadingContainer}
-          >
+          <Paper elevation={4} className={classes.profileHeadingContainer}>
             <div className={classes.profileCoverBackground} />
             <div className={classes.profileInfoBox}>
               <div>
@@ -539,7 +530,7 @@ const ProfilePage = (props) => {
                       </div>
                     )}
                 </div>
-                {parseInt(selectedUserId) !== loggedUser.userId && (
+                {loggedUser && parseInt(selectedUserId) !== loggedUser.userId && (
                   <Link
                     component="button"
                     variant="body1"
@@ -942,57 +933,13 @@ const ProfilePage = (props) => {
                     className={classes.tabPanelActivityContainer}
                   >
                     {parseInt(selectedUserId) === loggedUser.userId && (
-                      <Paper
-                        elevation={4}
-                        sx={{ borderRadius: '10px' }}
-                        className={classes.postCreateBox}
-                      >
-                        <Typography fontWeight="bold" variant="h6">
-                          Utwórz post
-                        </Typography>
-                        <Divider className={classes.divider} />
-                        <div className={classes.postCreateContent}>
-                          <Avatar
-                            src={
-                              userProfile && userProfile.profilePhoto !== null
-                                ? userProfile.profilePhoto.url
-                                : defaultUserPhoto
-                            }
-                            alt={
-                              userProfile
-                                ? userProfile.firstName +
-                                  ' ' +
-                                  userProfile.lastName
-                                : 'Zalogowany użytkownik'
-                            }
-                            className={classes.postCreationUserPhoto}
-                          />
-                          <TextField
-                            fullWidth
-                            placeholder="Napisz coś tutaj..."
-                            multiline
-                            rows={2}
-                            className={classes.postInput}
-                            onClick={() => setOpenPostCreation(true)}
-                            InputProps={{
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <PhotoIcon className={classes.photoIcon} />
-                                </InputAdornment>
-                              ),
-                            }}
-                          />
-                        </div>
-                      </Paper>
+                      <PostCreationBox
+                        profilePhoto={userProfile.profilePhoto}
+                        userNameAndSurname={
+                          userProfile.firstName + ' ' + userProfile.lastName
+                        }
+                      />
                     )}
-                    <Popup
-                      open={openPostCreation}
-                      type="post"
-                      title="Utwórz post"
-                      onClose={handleClosePostCreation}
-                    >
-                      <PostForm closePopup={handleClosePostCreation} />
-                    </Popup>
                     {userActivity.createdPosts.map((post, index) => {
                       if (index < numberItemsShown.posts) {
                         return (
@@ -1028,16 +975,9 @@ const ProfilePage = (props) => {
                     })}
                     {numberItemsShown.posts <
                       userActivity.createdPosts.length && (
-                      <div className={classes.moreItemsContainer}>
-                        <Link
-                          component="button"
-                          variant="subtitle2"
-                          onClick={() => updateShownItems('posts')}
-                          className={classes.moreContentLink}
-                        >
-                          Zobacz więcej
-                        </Link>
-                      </div>
+                      <ExpandListButton
+                        fetchMore={() => updateShownItems('posts')}
+                      />
                     )}
                   </TabPanelMUI>
                   <TabPanelMUI
@@ -1078,16 +1018,9 @@ const ProfilePage = (props) => {
                       }
                     })}
                     {numberItemsShown.likePosts < userActivity.likes.length && (
-                      <div className={classes.moreItemsContainer}>
-                        <Link
-                          component="button"
-                          variant="subtitle2"
-                          onClick={() => updateShownItems('likePosts')}
-                          className={classes.moreContentLink}
-                        >
-                          Zobacz więcej
-                        </Link>
-                      </div>
+                      <ExpandListButton
+                        fetchMore={() => updateShownItems('likePosts')}
+                      />
                     )}
                   </TabPanelMUI>
                   <TabPanelMUI
@@ -1125,16 +1058,9 @@ const ProfilePage = (props) => {
                     })}
                     {numberItemsShown.sharedPosts <
                       userActivity.sharedPosts.length && (
-                      <div className={classes.moreItemsContainer}>
-                        <Link
-                          component="button"
-                          variant="subtitle2"
-                          onClick={() => updateShownItems('sharedPosts')}
-                          className={classes.moreContentLink}
-                        >
-                          Zobacz więcej
-                        </Link>
-                      </div>
+                      <ExpandListButton
+                        fetchMore={() => updateShownItems('sharedPosts')}
+                      />
                     )}
                   </TabPanelMUI>
                   <TabPanelMUI
@@ -1244,16 +1170,9 @@ const ProfilePage = (props) => {
                     })}
                     {numberItemsShown.sharedPosts <
                       userActivity.sharedPosts.length && (
-                      <div className={classes.moreItemsContainer}>
-                        <Link
-                          component="button"
-                          variant="subtitle2"
-                          onClick={() => updateShownItems('comments')}
-                          className={classes.moreContentLink}
-                        >
-                          Zobacz więcej
-                        </Link>
-                      </div>
+                      <ExpandListButton
+                        fetchMore={() => updateShownItems('comments')}
+                      />
                     )}
                   </TabPanelMUI>
                 </TabContext>

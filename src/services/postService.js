@@ -47,7 +47,7 @@ const editPost = (postId, formData) => {
 const deletePost = (postId, archive) => {
   return fetch(
     endpoints.managePost.replace('{postId}', postId) +
-      +'?' +
+      '?' +
       new URLSearchParams({
         archive: archive,
       }),

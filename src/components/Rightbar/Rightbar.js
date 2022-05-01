@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './rightbar-jss';
 import { PropTypes } from 'prop-types';

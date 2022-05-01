@@ -12,12 +12,9 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Badge,
   Button,
   Divider,
   IconButton,
-  ImageList,
-  ImageListItem,
   InputAdornment,
   Link,
   Paper,
@@ -29,6 +26,7 @@ import Popup from '../../components/Popup/Popup';
 import ChatForm from '../../components/Forms/ChatForm';
 import {
   addTypingMessage,
+  clearSelectedChat,
   deleteChat,
   deleteMemberFromChat,
   getChatDetails,
@@ -131,7 +129,7 @@ const ChatPage = (props) => {
       if (stompClient !== null) {
         stompClient.unsubscribe('chat', {});
       }
-      //  dispatch(clearSelectedChat());
+      dispatch(clearSelectedChat());
       dispatch(setSelectedUser(undefined));
     };
   }, []);
@@ -191,7 +189,15 @@ const ChatPage = (props) => {
       messageNotification.messageType !== 'TYPING' &&
       messageNotification.messageType !== 'MESSAGE_DELETE'
     ) {
-      if (messageNotification.messageType !== 'MESSAGE_EDIT') {
+      if (
+        messageNotification.messageType === 'JOIN' ||
+        messageNotification.messageType === 'LEAVE'
+      ) {
+        dispatch(getChatDetails(activeChatId));
+        dispatch(
+          getUserChats(selectedUserId ? selectedUserId : loggedUser.userId)
+        );
+      } else if (messageNotification.messageType !== 'MESSAGE_EDIT') {
         dispatch(getChatMessageById(messageNotification.messageId));
         dispatch(
           getUserChats(selectedUserId ? selectedUserId : loggedUser.userId)
@@ -748,14 +754,7 @@ const ChatPage = (props) => {
                   </AccordionSummary>
                   <AccordionDetails>
                     {currentChat.addedImages.length > 0 ? (
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(2, 1fr)',
-                          gridGap: '10px',
-                        }}
-                        className={classes.chatImageListContainer}
-                      >
+                      <div className={classes.chatImageListContainer}>
                         {currentChat.addedImages.map((img, index) => (
                           <ModalImage
                             className={classes.chatImageListItem}

@@ -178,6 +178,11 @@ const Post = (props) => {
   };
 
   const specifyCommentsVisibility = () => {
+    if (!isUserLoggedIn) {
+      dispatch(showNotification('warning', 'Musisz być zalogowany'));
+      return;
+    }
+
     if (commentsDisplayed) {
       setCommentsDisplayed(false);
     } else {
@@ -377,26 +382,28 @@ const Post = (props) => {
                     }
                   />
                 </MenuItem>
-                <MenuItem
-                  onClick={() => setOpenReportPopup(true)}
-                  className={classes.postMenuItem}
-                  sx={{
-                    borderBottom:
-                      ((loggedUser && authorId === loggedUser.userId) ||
-                        accessToManagement === true) &&
-                      '1px solid rgba(0, 0, 0, 0.12)',
-                  }}
-                >
-                  <ListItemIcon>
-                    <ReportProblemIcon fontSize="medium" />
-                  </ListItemIcon>
-                  <ListItemText
-                    disableTypography
-                    primary={
-                      <Typography variant="subtitle2">Zgłoś post</Typography>
-                    }
-                  />
-                </MenuItem>
+                {loggedUser && authorId !== loggedUser.userId && (
+                  <MenuItem
+                    onClick={() => setOpenReportPopup(true)}
+                    className={classes.postMenuItem}
+                    sx={{
+                      borderBottom:
+                        ((loggedUser && authorId === loggedUser.userId) ||
+                          accessToManagement === true) &&
+                        '1px solid rgba(0, 0, 0, 0.12)',
+                    }}
+                  >
+                    <ListItemIcon>
+                      <ReportProblemIcon fontSize="medium" />
+                    </ListItemIcon>
+                    <ListItemText
+                      disableTypography
+                      primary={
+                        <Typography variant="subtitle2">Zgłoś post</Typography>
+                      }
+                    />
+                  </MenuItem>
+                )}
                 {((loggedUser && authorId === loggedUser.userId) ||
                   accessToManagement === true) && (
                   <div>

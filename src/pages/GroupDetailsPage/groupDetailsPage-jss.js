@@ -163,33 +163,6 @@ const styles = (theme) => ({
       },
     },
   },
-  moreItemsContainer: {
-    marginBottom: '15px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: '15px',
-    backgroundColor: theme.palette.primary.main,
-    padding: '5px',
-    borderRadius: '10px',
-    fontWeight: 'bold',
-    '&:hover': {
-      cursor: 'pointer',
-      '& .MuiLink-root': {
-        textDecoration: 'underline',
-      },
-    },
-  },
-  moreContentLink: {
-    '&.MuiLink-root': {
-      textDecoration: 'none',
-      alignSelf: 'center',
-      color: 'white',
-      '&:hover': {
-        textDecoration: 'underline',
-      },
-    },
-  },
   userPhotoSmall: {
     '&.MuiAvatar-root': {
       width: '50px',

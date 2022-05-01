@@ -51,8 +51,8 @@ const RegisterPage = (props) => {
       .required('Email jest wymagany'),
     username: yup
       .string()
-      .min(6, 'Nazwa użytkownika powinna mieć minimum 8 znaków')
-      .max(20, 'Nazwa użytkownika powinna mieć minimum 20 znaków')
+      .min(6, 'Nazwa użytkownika powinna mieć minimum 6 znaków')
+      .max(20, 'Nazwa użytkownika powinna mieć maksymalnie 20 znaków')
       .required('Nazwa użytkownika jest wymagana'),
     phoneNumber: yup
       .string()
@@ -113,18 +113,14 @@ const RegisterPage = (props) => {
 
   return (
     <>
-      <Paper
-        className={classes.wrapper}
-        elevation={4}
-        sx={{ borderRadius: '20px' }}
-      >
+      <Paper className={classes.registerContainer} elevation={4}>
         <Typography variant="h3" align="center" marginBottom="40px">
           Tworzenie konta
         </Typography>
         <form
           noValidate
           onSubmit={formik.handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column' }}
+          className={classes.registerForm}
           data-testid="register-form"
         >
           <Grid container columnSpacing={{ xs: 2 }}>
@@ -339,7 +335,6 @@ const RegisterPage = (props) => {
           </Grid>
           <Button
             name="submit"
-            style={{ marginTop: '30px' }}
             color="secondary"
             className={classes.registerBtn}
             variant="contained"

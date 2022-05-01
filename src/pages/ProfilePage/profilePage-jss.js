@@ -3,8 +3,11 @@ const styles = (theme) => ({
     padding: '20px 0px',
   },
   profileHeadingContainer: {
-    width: '100%',
-    marginBottom: '15px',
+    '&.MuiPaper-root': {
+      width: '100%',
+      marginBottom: '15px',
+      borderRadius: '10px',
+    },
   },
   profileCoverBackground: {
     borderRadius: '10px 10px 0px 0px',
@@ -139,33 +142,6 @@ const styles = (theme) => ({
       },
     },
   },
-  postCreateBox: {
-    padding: '15px',
-    marginBottom: '15px',
-  },
-  postCreateContent: {
-    display: 'flex',
-    paddingTop: '15px',
-  },
-  postInput: {
-    '& .MuiInputBase-root': {
-      backgroundColor: '#ECEEF1',
-      borderRadius: '15px',
-      fontSize: '17px',
-      border: 'none',
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderWidth: 0,
-      },
-    },
-  },
-  postCreationUserPhoto: {
-    '&.MuiAvatar-root': {
-      display: 'block',
-      width: '50px',
-      height: '50px',
-      marginRight: '15px',
-    },
-  },
   profileInfoBoxHeading: {
     display: 'flex',
     alignItems: 'center',
@@ -215,26 +191,6 @@ const styles = (theme) => ({
     alignItems: 'center',
     height: '100%',
     width: '100%',
-  },
-  moreItemsContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: '15px',
-    backgroundColor: theme.palette.primary.main,
-    padding: '5px',
-    borderRadius: '10px',
-    fontWeight: 'bold',
-  },
-  moreContentLink: {
-    '&.MuiLink-root': {
-      textDecoration: 'none',
-      alignSelf: 'center',
-      color: 'white',
-      '&:hover': {
-        textDecoration: 'underline',
-      },
-    },
   },
   profileInformationContainer: {
     '&.MuiPaper-root': {

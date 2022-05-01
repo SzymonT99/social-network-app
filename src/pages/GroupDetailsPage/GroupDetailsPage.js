@@ -89,6 +89,8 @@ import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import ActionConfirmation from '../../components/ActionConfirmation/ActionConfirmation';
 import GroupForum from '../../components/GroupForum/GroupForum';
 import { formatDateWithTime } from '../../utils/formatDateWithTime';
+import ExpandListButton from '../../components/ExpandListButton/ExpandListButton';
+import PostCreationBox from '../../components/PostCreationBox/PostCreationBox';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -140,8 +142,6 @@ const GroupDetailsPage = (props) => {
   const users = useSelector((state) => state.activity.users);
 
   const [groupNavIndex, setGroupNavIndex] = useState(0);
-  const [openGroupPostCreationPopup, setOpenGroupPostCreationPopup] =
-    useState(false);
   const [numberPostsShown, setNumberPostsShown] = useState(5);
   const [searchedMember, setSearchedMember] = useState('');
   const [membersOrder, setMembersOrder] = useState(1);
@@ -380,10 +380,6 @@ const GroupDetailsPage = (props) => {
 
   const handleChangeGroupNav = (event, newValue) => {
     setGroupNavIndex(newValue);
-  };
-
-  const handleCloseGroupPostCreationPopup = () => {
-    setOpenGroupPostCreationPopup(false);
   };
 
   const generateGroupMemberNames = () => {
@@ -835,62 +831,16 @@ const GroupDetailsPage = (props) => {
             </div>
             <div className={classes.rightActivityContent}>
               {memberStatusOfUser !== 'NOT_MEMBER' && (
-                <Paper
-                  elevation={4}
-                  sx={{ borderRadius: '10px' }}
-                  className={classes.postCreateBox}
-                >
-                  <Typography fontWeight="bold" variant="h6">
-                    Utwórz post
-                  </Typography>
-                  <Divider className={classes.divider} />
-                  <div className={classes.postCreateContent}>
-                    <Avatar
-                      src={
-                        loggedUserProfile &&
-                        loggedUserProfile.profilePhoto !== null
-                          ? loggedUserProfile.profilePhoto.url
-                          : defaultUserPhoto
-                      }
-                      alt={
-                        loggedUserProfile
-                          ? loggedUserProfile.firstName +
-                            ' ' +
-                            loggedUserProfile.lastName
-                          : 'Zalogowany użytkownik'
-                      }
-                      className={classes.postCreationUserPhoto}
-                    />
-                    <TextField
-                      fullWidth
-                      placeholder="Napisz coś tutaj..."
-                      multiline
-                      rows={2}
-                      className={classes.postInput}
-                      onClick={() => setOpenGroupPostCreationPopup(true)}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <PhotoIcon className={classes.photoIcon} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </div>
-                </Paper>
-              )}
-              <Popup
-                open={openGroupPostCreationPopup}
-                type="post"
-                title="Utwórz post w grupie"
-                onClose={handleCloseGroupPostCreationPopup}
-              >
-                <PostForm
-                  closePopup={handleCloseGroupPostCreationPopup}
-                  groupPost
+                <PostCreationBox
+                  profilePhoto={loggedUserProfile.profilePhoto}
+                  userNameAndSurname={
+                    loggedUserProfile.firstName +
+                    ' ' +
+                    loggedUserProfile.lastName
+                  }
                   groupId={parseInt(groupId)}
                 />
-              </Popup>
+              )}
               {group.posts.map((post, index) => {
                 if (index < numberPostsShown) {
                   return (
@@ -933,18 +883,9 @@ const GroupDetailsPage = (props) => {
                 }
               })}
               {numberPostsShown < group.posts.length && (
-                <div
-                  className={classes.moreItemsContainer}
-                  onClick={() => setNumberPostsShown(numberPostsShown + 5)}
-                >
-                  <Link
-                    component="button"
-                    variant="subtitle2"
-                    className={classes.moreCommentsLink}
-                  >
-                    Zobacz więcej
-                  </Link>
-                </div>
+                <ExpandListButton
+                  fetchMore={() => setNumberPostsShown(numberPostsShown + 5)}
+                />
               )}
               {group.posts.length === 0 && (
                 <div className={classes.noContent}>

@@ -7,8 +7,9 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import { getPublicPosts } from '../../redux/actions/postActions';
 import postTypes from '../../redux/types/postTypes';
 import Post from '../../components/Post/Post';
-import { Link } from '@mui/material';
 import { getAllUsersInformation } from '../../redux/actions/userActivityActions';
+import { changeProfileNav } from '../../redux/actions/userProfileActions';
+import ExpandListButton from '../../components/ExpandListButton/ExpandListButton';
 
 const PublicPostsPage = (props) => {
   const { classes } = props;
@@ -31,6 +32,9 @@ const PublicPostsPage = (props) => {
         setAreMorePosts(false);
       }
     });
+    return () => {
+      dispatch(changeProfileNav(0));
+    };
   }, []);
 
   const fetchMorePosts = () => {
@@ -73,17 +77,7 @@ const PublicPostsPage = (props) => {
             actionsBlocked
           />
         ))}
-        {areMorePosts && (
-          <div className={classes.moreItemsContainer} onClick={fetchMorePosts}>
-            <Link
-              component="button"
-              variant="subtitle2"
-              className={classes.moreCommentsLink}
-            >
-              Zobacz więcej
-            </Link>
-          </div>
-        )}
+        {areMorePosts && <ExpandListButton fetchMore={fetchMorePosts} />}
       </div>
     </div>
   );

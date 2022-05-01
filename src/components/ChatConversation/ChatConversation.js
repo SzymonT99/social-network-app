@@ -37,6 +37,20 @@ const ChatConversation = (props) => {
 
   const dispatch = useDispatch();
 
+  const generateChatActivityInformation = () => {
+    if (lastMessage && lastMessageAuthor) {
+      if (lastMessageAuthor.userId === loggedUser.userId) {
+        return 'Ty: ' + lastMessage;
+      } else if (isPrivate) {
+        return lastMessage;
+      } else {
+        return lastMessageAuthor.firstName + ': ' + lastMessage;
+      }
+    } else {
+      return 'Brak wiadomości';
+    }
+  };
+
   return (
     <div
       className={classNames(
@@ -85,11 +99,7 @@ const ChatConversation = (props) => {
           noWrap
           className={classes.conversationLastMessageText}
         >
-          {lastMessage && lastMessageAuthor
-            ? lastMessageAuthor.userId === loggedUser.userId
-              ? 'Ty: ' + lastMessage
-              : lastMessageAuthor.firstName + ': ' + lastMessage
-            : 'Brak wiadomości'}
+          {generateChatActivityInformation()}
         </Typography>
         {activityDate && (
           <Typography fontSize="10px" fontWeight={300} lineHeight={1}>

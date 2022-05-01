@@ -78,7 +78,7 @@ const setup = (store) => {
           dispatch(
             showNotification(
               'error',
-              'Usunięto token odświżania - wylogowano się z innej przeglądarki'
+              'Nie można odświeżyć tokenu - zalogowano się z innej przeglądarki'
             )
           );
           return Promise.reject(response);
