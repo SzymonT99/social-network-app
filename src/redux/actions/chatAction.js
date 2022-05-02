@@ -219,23 +219,22 @@ export const getChatMessageById =
       });
   };
 
-export const editChatMessage =
-  (messageId, formData) => (dispatch, getState) => {
-    return chatService
-      .editChatMessage(messageId, formData)
-      .then((response) => {
-        if (response.status === 200) {
-          dispatch(getChatDetails(getState().chats.chatDetails.chatId));
-        } else if (response.status === 403) {
-          dispatch(showNotification('warning', 'Zabroniona akcja'));
-        } else {
-          dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+export const editChatMessage = (messageId, message) => (dispatch, getState) => {
+  return chatService
+    .editChatMessage(messageId, message)
+    .then((response) => {
+      if (response.status === 200) {
+        dispatch(getChatDetails(getState().chats.chatDetails.chatId));
+      } else if (response.status === 403) {
+        dispatch(showNotification('warning', 'Zabroniona akcja'));
+      } else {
+        dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 export const deleteChatMessage = (messageId) => (dispatch) => {
   return chatService

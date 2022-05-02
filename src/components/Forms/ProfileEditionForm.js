@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from './form-jss';
 import { PropTypes } from 'prop-types';
@@ -83,10 +83,7 @@ const ProfileEditionForm = (props) => {
   });
 
   return (
-    <form
-      onSubmit={formik.handleSubmit}
-      style={{ display: 'flex', flexDirection: 'column' }}
-    >
+    <form onSubmit={formik.handleSubmit} className={classes.formContainer}>
       <Grid container columnSpacing={{ xs: 2 }} rowSpacing={{ xs: 3 }}>
         <Grid item xs={6}>
           <TextField

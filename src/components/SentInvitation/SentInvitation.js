@@ -63,6 +63,7 @@ const SentInvitation = (props) => {
     avatar,
     disabled,
     addToChatNotification,
+    clearSearchedUserName,
   } = props;
 
   const classes = useStyles();
@@ -84,6 +85,7 @@ const SentInvitation = (props) => {
     if (chatInvitation) {
       dispatch(addUserToChat(chatId, userId));
       addToChatNotification(chatId, userId);
+      clearSearchedUserName();
     }
   };
 
@@ -127,6 +129,7 @@ SentInvitation.propTypes = {
   avatar: PropTypes.object,
   disabled: PropTypes.bool,
   addToChatNotification: PropTypes.func,
+  clearSearchedUserName: PropTypes.func,
 };
 
 SentInvitation.defaultProps = {

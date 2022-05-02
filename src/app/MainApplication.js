@@ -13,7 +13,6 @@ import PostDetailsPage from '../pages/PostDetailsPage/PostDetailsPage';
 import ChatPage from '../pages/ChatPage/ChatPage';
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 import React from 'react';
-import PublicPostsPageJss from '../pages/PublicPostsPage/publicPostsPage-jss';
 import PublicPostsPage from '../pages/PublicPostsPage/PublicPostsPage';
 import AdminPanel from '../pages/AdminPanel/AdminPanel';
 

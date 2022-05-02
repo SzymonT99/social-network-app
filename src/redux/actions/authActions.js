@@ -69,9 +69,6 @@ export const authenticate = (login, password, remember) => (dispatch) => {
       } else if (response.status === 409) {
         dispatch({ type: authTypes.LOGIN_FAIL });
         dispatch(showNotification('error', 'Nie aktywowano konta'));
-      } else if (response.status === 423) {
-        dispatch({ type: authTypes.LOGIN_FAIL });
-        dispatch(showNotification('error', 'Konto jest zarchiwizowane'));
       } else {
         dispatch({ type: authTypes.LOGIN_FAIL });
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));

@@ -49,6 +49,11 @@ const styles = (theme) => ({
     flexWrap: 'wrap',
     margin: '10px -5px 10px -5px',
   },
+  noContent: {
+    width: '100%',
+    textAlign: 'center',
+    marginTop: '15px',
+  },
 });
 
 export default styles;

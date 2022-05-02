@@ -732,6 +732,10 @@ export const sharePost = (basePostId, outerPost) => (dispatch, getState) => {
             );
           }
 
+          if (getState().groups.groupDetails) {
+            dispatch(getGroupDetails(getState().groups.groupDetails.groupId));
+          }
+
           if (
             getState().auth.favouritePosts.filter(
               (post) => post.postId === basePostId

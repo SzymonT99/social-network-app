@@ -18,7 +18,7 @@ import { showNotification } from '../../redux/actions/notificationActions';
 import { useDispatch } from 'react-redux';
 
 const favouriteTypes = {
-  BOOK: 'Ksiązka',
+  BOOK: 'Książka',
   FILM: 'Film',
   ACTOR: 'Aktor',
   MUSIC: 'Utwór muzyczny',
@@ -85,9 +85,7 @@ const AddUserFavouriteForm = (props) => {
   return (
     <form noValidate style={{ margin: '15px 0' }}>
       <div className={classes.userFavouriteItemFormContainer}>
-        <FormControl
-          sx={{ width: '35%', paddingRight: '15px', marginBottom: 0 }}
-        >
+        <FormControl className={classes.favouriteSelect}>
           <InputLabel id="favourite-type-select-label">Rodzaj</InputLabel>
           <Select
             labelId="favourite-type-select-label"

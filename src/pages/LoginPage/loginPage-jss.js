@@ -3,7 +3,7 @@ const styles = (theme) => ({
     width: '90%',
     display: 'flex',
   },
-  loginColumn: {
+  contentColumn: {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
@@ -12,6 +12,7 @@ const styles = (theme) => ({
   },
   loginForm: {
     '&.MuiPaper-root': {
+      borderRadius: '20px',
       width: '80%',
       alignSelf: 'flex-end',
       padding: '60px 70px',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from '../form-jss';
 import { PropTypes } from 'prop-types';
@@ -21,7 +21,7 @@ const ChangeUsernameForm = (props) => {
     oldUsername: yup.string().required('Wymagane'),
     newUsername: yup
       .string()
-      .min(6, 'Nazwa użytkownika powinna mieć minimum 8 znaków')
+      .min(6, 'Nazwa użytkownika powinna mieć minimum 6 znaków')
       .max(20, 'Nazwa użytkownika powinna mieć minimum 20 znaków')
       .required('Wymagane'),
     password: yup.string().required('Wymagane'),
@@ -40,6 +40,10 @@ const ChangeUsernameForm = (props) => {
       ).then((status) => status === 200 && resetForm());
     },
   });
+
+  useEffect(() => {
+    formik.setFieldValue('oldUsername', currentUsername);
+  }, [currentUsername]);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);

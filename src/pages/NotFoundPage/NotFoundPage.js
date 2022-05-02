@@ -1,6 +1,5 @@
 import React from 'react';
-import { makeStyles, withStyles } from '@mui/styles';
-import { PropTypes } from 'prop-types';
+import { makeStyles } from '@mui/styles';
 import Typography from '@mui/material/Typography';
 import logoWhite from '../../assets/logo-white.png';
 import { useHistory, useLocation } from 'react-router-dom';

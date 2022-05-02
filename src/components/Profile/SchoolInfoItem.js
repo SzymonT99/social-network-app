@@ -19,6 +19,7 @@ import AddSchoolForm from '../Forms/AddSchoolForm';
 import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { useDispatch } from 'react-redux';
 import { deleteSchoolInformation } from '../../redux/actions/userProfileActions';
+import { formatBaseDate } from '../../utils/formatBaseDate';
 
 const schoolTypes = {
   PRIMARY_SCHOOL: 'Szkoła Podstawowa',
@@ -79,8 +80,11 @@ const SchoolInfoItem = (props) => {
             {name}
           </Typography>
           <Typography variant="body2" noWrap>
-            {'Uczęszczał(a) od ' + startDate}
-            <span>{graduationDate !== null && ' do ' + graduationDate}</span>
+            {'Uczęszczał(a) od ' + formatBaseDate(startDate)}
+            <span>
+              {graduationDate !== null &&
+                ' do ' + formatBaseDate(graduationDate)}
+            </span>
           </Typography>
         </div>
         {manage && (

@@ -58,55 +58,38 @@ const styles = (theme) => ({
     },
   },
   otherMessageField: {
-    '&.MuiFormControl-root': {
-      marginTop: '3px',
-      marginBottom: 0,
-      '& .MuiInputBase-root': {
-        borderRadius: '10px',
-        backgroundColor: '#ECEEF1',
-        padding: '10px',
-        fontSize: '14px',
-        margin: 0,
-        '&.Mui-focused': {
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderWidth: 0,
-          },
-        },
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderWidth: 0,
-        },
-        '& .Mui-disabled': {
-          WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)',
-        },
-      },
+    display: 'inline-block',
+    fontFamily: ['Roboto', 'sans-serif'].join(','),
+    marginTop: '3px',
+    textAlign: 'left',
+    borderRadius: '10px',
+    backgroundColor: '#ECEEF1',
+    padding: '10px',
+    fontSize: '14px',
+    color: 'rgba(0, 0, 0, 0.87)',
+    borderWidth: 0,
+    wordWrap: 'break-word',
+    maxWidth: '100%',
+    '&:focus': {
+      border: 'none',
     },
   },
   userMessageField: {
-    '&.MuiFormControl-root': {
-      marginTop: '3px',
-      marginBottom: 0,
-      '& .MuiOutlinedInput-input': {
-        textAlign: 'right',
-      },
-      '& .MuiInputBase-root': {
-        borderRadius: '10px',
-        backgroundColor: theme.palette.secondary.light,
-        textAlign: 'right',
-        padding: '10px',
-        fontSize: '14px',
-        margin: 0,
-        '&.Mui-focused': {
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderWidth: 0,
-          },
-        },
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderWidth: 0,
-        },
-        '& .Mui-disabled': {
-          WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)',
-        },
-      },
+    display: 'inline-block',
+    fontFamily: ['Roboto', 'sans-serif'].join(','),
+    marginTop: '3px',
+    borderRadius: '10px',
+    backgroundColor: theme.palette.secondary.light,
+    padding: '10px',
+    fontSize: '14px',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: '100%',
+    wordWrap: 'break-word',
+    '&:focus': {
+      border: 'none',
+    },
+    '&.MuiTypography-root': {
+      textDecoration: 'ltr',
     },
   },
   messageEditBtn: {
@@ -178,6 +161,7 @@ const styles = (theme) => ({
     height: '200px',
     borderRadius: '10px',
     marginTop: '5px',
+    objectFit: 'cover',
   },
 });
 

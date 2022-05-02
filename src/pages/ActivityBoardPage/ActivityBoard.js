@@ -5,19 +5,8 @@ import { withStyles } from '@mui/styles';
 import styles from './activityBoard-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import {
-  Avatar,
-  Divider,
-  InputAdornment,
-  Link,
-  TextField,
-} from '@mui/material';
-import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-import PhotoIcon from '@mui/icons-material/Photo';
 import ReceivedInvitation from '../../components/ReceivedInvitation/ReceivedInvitation';
 import Post from '../../components/Post/Post';
-import Popup from '../../components/Popup/Popup';
-import PostForm from '../../components/Forms/PostForm';
 import {
   getActivityBoard,
   getActivityNotification,
@@ -38,6 +27,8 @@ import {
   getUserFriends,
 } from '../../redux/actions/friendAction';
 import { getUserChats } from '../../redux/actions/chatAction';
+import ExpandListButton from '../../components/ExpandListButton/ExpandListButton';
+import PostCreationBox from '../../components/PostCreationBox/PostCreationBox';
 
 let stompClient = null;
 
@@ -55,12 +46,7 @@ const ActivityBoard = (props) => {
     (state) => state.friends.receivedFriendInvitations
   );
 
-  const [openPostCreation, setOpenPostCreation] = useState(false);
   const [numberItemsShown, setNumberItemsShown] = useState(5);
-
-  const handleClosePostCreation = () => {
-    setOpenPostCreation(false);
-  };
 
   useEffect(() => {
     (async () => {
@@ -124,58 +110,18 @@ const ActivityBoard = (props) => {
       {!isLoading ? (
         <div className={classes.boardContainer}>
           <div className={classes.activityContent}>
-            <Paper elevation={4} className={classes.postCreateBox}>
-              <Typography fontWeight="bold" variant="h6">
-                Utwórz post
-              </Typography>
-              <Divider className={classes.divider} />
-              <div className={classes.postCreateContent}>
-                <Avatar
-                  src={
-                    loggedUserProfile && loggedUserProfile.profilePhoto
-                      ? loggedUserProfile.profilePhoto.url
-                      : defaultUserPhoto
-                  }
-                  alt={
-                    loggedUserProfile
-                      ? loggedUserProfile.firstName +
-                        ' ' +
-                        loggedUserProfile.lastName
-                      : 'Zalogowany użytkownik'
-                  }
-                  className={classes.userPhoto}
-                />
-                <TextField
-                  fullWidth
-                  placeholder="Napisz coś tutaj..."
-                  multiline
-                  rows={2}
-                  className={classes.postInput}
-                  onClick={() => setOpenPostCreation(true)}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <PhotoIcon className={classes.photoIcon} />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </div>
-            </Paper>
-            <Popup
-              open={openPostCreation}
-              type="post"
-              title="Utwórz post"
-              onClose={handleClosePostCreation}
-            >
-              <PostForm closePopup={handleClosePostCreation} />
-            </Popup>
+            <PostCreationBox
+              profilePhoto={loggedUserProfile.profilePhoto}
+              userNameAndSurname={
+                loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName
+              }
+            />
             {activityBoard.map((item, index) => {
               if (index < numberItemsShown) {
                 if (item.activityType === 'CREATE_POST') {
                   return (
                     <Post
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -196,7 +142,7 @@ const ActivityBoard = (props) => {
                       isEdited={item.activity.isEdited}
                       isPublic={item.activity.isPublic}
                       isCommentingBlocked={item.activity.isCommentingBlocked}
-                      editionDate={item.activity.editedAt}
+                      editionDate={new Date(item.activity.editedAt)}
                       accessToManagement={loggedUser.roles.includes(
                         'ROLE_ADMIN'
                       )}
@@ -208,7 +154,7 @@ const ActivityBoard = (props) => {
                 ) {
                   return (
                     <Post
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activity.post.postAuthor.userId}
                       authorName={
                         item.activity.post.postAuthor.firstName +
@@ -231,7 +177,7 @@ const ActivityBoard = (props) => {
                       isCommentingBlocked={
                         item.activity.post.isCommentingBlocked
                       }
-                      editionDate={item.activity.post.editedAt}
+                      editionDate={new Date(item.activity.post.editedAt)}
                       highlightCommentById={
                         item.activityType === 'COMMENT_POST'
                           ? item.activity.commentId
@@ -258,7 +204,7 @@ const ActivityBoard = (props) => {
                 ) {
                   return (
                     <SharedPost
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activity.sharedPost.authorOfSharing.userId}
                       sharedPostId={item.activity.sharedPost.sharedPostId}
                       sharedPost={item.activity.sharedPost.sharedPost}
@@ -308,7 +254,7 @@ const ActivityBoard = (props) => {
                 } else if (item.activityType === 'SHARE_POST') {
                   return (
                     <SharedPost
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       sharedPostId={item.activity.sharedPostId}
                       sharedPost={item.activity.sharedPost}
@@ -337,7 +283,7 @@ const ActivityBoard = (props) => {
                 } else if (item.activityType === 'CREATE_GROUP_POST') {
                   return (
                     <Post
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -358,7 +304,7 @@ const ActivityBoard = (props) => {
                       isEdited={item.activity.isEdited}
                       isPublic={item.activity.isPublic}
                       isCommentingBlocked={item.activity.isCommentingBlocked}
-                      editionDate={item.activity.editedAt}
+                      editionDate={new Date(item.activity.editedAt)}
                       isGroupPostActivity
                       groupId={item.activity.group.groupId}
                       groupName={item.activity.group.name}
@@ -371,7 +317,7 @@ const ActivityBoard = (props) => {
                 } else if (item.activityType === 'CHANGE_PROFILE_PHOTO') {
                   return (
                     <Post
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -398,7 +344,9 @@ const ActivityBoard = (props) => {
                       isCommentingBlocked={
                         item.activity.changePhotoPost.isCommentingBlocked
                       }
-                      editionDate={item.activity.changePhotoPost.editedAt}
+                      editionDate={
+                        new Date(item.activity.changePhotoPost.editedAt)
+                      }
                       isChangeProfilePhotoPost
                       accessToManagement={loggedUser.roles.includes(
                         'ROLE_ADMIN'
@@ -411,7 +359,7 @@ const ActivityBoard = (props) => {
                 ) {
                   return (
                     <ActivityBoardItem
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -443,7 +391,7 @@ const ActivityBoard = (props) => {
                 } else if (item.activityType === 'JOIN_TO_GROUP') {
                   return (
                     <ActivityBoardItem
-                      key={index}
+                      key={item.activityDate}
                       authorId={item.activityAuthor.userId}
                       authorName={
                         item.activityAuthor.firstName +
@@ -472,18 +420,9 @@ const ActivityBoard = (props) => {
               }
             })}
             {numberItemsShown < activityBoard.length && (
-              <div
-                className={classes.moreItemsContainer}
-                onClick={() => setNumberItemsShown(numberItemsShown + 5)}
-              >
-                <Link
-                  component="button"
-                  variant="subtitle2"
-                  className={classes.moreCommentsLink}
-                >
-                  Zobacz więcej
-                </Link>
-              </div>
+              <ExpandListButton
+                fetchMore={() => setNumberItemsShown(numberItemsShown + 5)}
+              />
             )}
           </div>
           <div className={classes.infoContent}>

@@ -6,14 +6,10 @@ import styles from './profilePage-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
 import {
-  Avatar,
   Button,
   Divider,
   FormControl,
   IconButton,
-  ImageList,
-  ImageListItem,
-  ImageListItemBar,
   Input,
   InputAdornment,
   Link,
@@ -32,9 +28,7 @@ import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import { PhotoCamera } from '@mui/icons-material';
 import { TabContext, TabList } from '@mui/lab';
 import TabPanelMUI from '@mui/lab/TabPanel';
-import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
-import PostForm from '../../components/Forms/PostForm';
 import {
   changeProfileNav,
   changeProfilePhoto,
@@ -82,14 +76,6 @@ import { setLoading } from '../../redux/actions/userActivityActions';
 import UserInformation from '../../components/Profile/UserInformation';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import SearchIcon from '@mui/icons-material/Search';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import LockIcon from '@mui/icons-material/Lock';
-import PublicIcon from '@mui/icons-material/Public';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import CakeIcon from '@mui/icons-material/Cake';
-import WorkIcon from '@mui/icons-material/Work';
-import PeopleIcon from '@mui/icons-material/People';
-import SchoolIcon from '@mui/icons-material/School';
 import {
   refreshUserToken,
   setTokenRefreshing,
@@ -101,6 +87,11 @@ import { getPrivateChat, setActiveChat } from '../../redux/actions/chatAction';
 import ModalImage from 'react-modal-image-responsive';
 import { showNotification } from '../../redux/actions/notificationActions';
 import ReportForm from '../../components/Forms/ReportForm';
+import ExpandListButton from '../../components/ExpandListButton/ExpandListButton';
+import PostCreationBox from '../../components/PostCreationBox/PostCreationBox';
+import BasicInformationBox from '../../components/Profile/BasicInformationBox';
+import UserFriendsBox from '../../components/Profile/UserFriendsBox';
+import UserImagesBox from '../../components/Profile/UserImagesBox';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -135,7 +126,7 @@ const ProfilePage = (props) => {
   const isLoggedUserRemember = useSelector((state) => state.auth.remember);
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  const isAdmin = loggedUser.roles.includes('ROLE_ADMIN');
+  const isAdmin = loggedUser && loggedUser.roles.includes('ROLE_ADMIN');
 
   const userProfile = useSelector((state) => state.selectedProfile.userProfile);
   const userActivity = useSelector(
@@ -164,7 +155,6 @@ const ProfilePage = (props) => {
 
   const [activityValue, setActivityValue] = useState('a1');
   const [profileInfoNav, setProfileInfoNav] = useState('i1');
-  const [openPostCreation, setOpenPostCreation] = useState(false);
   const [numberItemsShown, setNumberItemsShown] = useState({
     posts: 5,
     sharedPosts: 5,
@@ -176,7 +166,7 @@ const ProfilePage = (props) => {
   const [showFavouriteForm, setShowFavouriteForm] = useState(false);
   const [showInterestForm, setShowInterestForm] = useState(false);
   const [imagesPageNumber, setImagesPageNumber] = useState(1);
-  const [openProfileEdition, setOpenProfileEdition] = useState(false);
+  const [openProfileEditionPopup, setOpenProfileEditionPopup] = useState(false);
   const [openAddAddressFormPopup, setOpenAddAddressFormPopup] = useState(false);
   const [openEditAddressFormPopup, setOpenEditAddressFormPopup] =
     useState(false);
@@ -282,10 +272,6 @@ const ProfilePage = (props) => {
     setProfileInfoNav(newValue);
   };
 
-  const handleClosePostCreation = () => {
-    setOpenPostCreation(false);
-  };
-
   const updateShownItems = (type) => {
     setNumberItemsShown((prevState) => ({
       ...prevState,
@@ -315,7 +301,7 @@ const ProfilePage = (props) => {
   };
 
   const handleCloseProfileEditionForm = () => {
-    setOpenProfileEdition(false);
+    setOpenProfileEditionPopup(false);
   };
 
   const handleCloseAddAddressFormPopup = () => {
@@ -367,8 +353,7 @@ const ProfilePage = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <CheckCircleOutlineIcon sx={{ marginRight: '7px' }} /> Akceptuj
-          zaproszenie
+          <CheckCircleOutlineIcon /> Akceptuj zaproszenie
         </Typography>
       );
     } else if (!isUserFriend && !isInvitedToFriend) {
@@ -377,7 +362,7 @@ const ProfilePage = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <PersonAddIcon sx={{ marginRight: '7px' }} /> Dodaj do znajomych
+          <PersonAddIcon /> Dodaj do znajomych
         </Typography>
       );
     } else if (!isUserFriend && isInvitedToFriend) {
@@ -386,7 +371,7 @@ const ProfilePage = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <DoNotDisturbIcon sx={{ marginRight: '7px' }} />
+          <DoNotDisturbIcon />
           Anuluj zaproszenie
         </Typography>
       );
@@ -396,7 +381,7 @@ const ProfilePage = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <PersonIcon sx={{ marginRight: '7px' }} />
+          <PersonIcon />
           Znajomy
         </Typography>
       );
@@ -442,8 +427,8 @@ const ProfilePage = (props) => {
       });
     } else if (friendOrderType === 4) {
       filteredFriends.sort((a, b) => {
-        let x = a.address.city.toUpperCase();
-        let y = b.address.city.toUpperCase();
+        let x = a.address ? a.address.city.toUpperCase() : '';
+        let y = b.address ? b.address.city.toUpperCase() : '';
         return x === y ? 0 : x > y ? 1 : -1;
       });
     }
@@ -473,11 +458,7 @@ const ProfilePage = (props) => {
     <>
       {!isLoading ? (
         <div className={classes.wrapper}>
-          <Paper
-            elevation={4}
-            sx={{ borderRadius: '10px' }}
-            className={classes.profileHeadingContainer}
-          >
+          <Paper elevation={4} className={classes.profileHeadingContainer}>
             <div className={classes.profileCoverBackground} />
             <div className={classes.profileInfoBox}>
               <div>
@@ -500,7 +481,7 @@ const ProfilePage = (props) => {
                       >
                         <Input
                           accept="image/*"
-                          style={{ display: 'none' }}
+                          sx={{ display: 'none' }}
                           id="icon-button-file"
                           type="file"
                           onChange={handleClickChangeProfilePhoto}
@@ -539,14 +520,16 @@ const ProfilePage = (props) => {
                       </div>
                     )}
                 </div>
-                <Link
-                  component="button"
-                  variant="body1"
-                  className={classes.reportUserLink}
-                  onClick={() => setOpenReportPopup(true)}
-                >
-                  Zgłoś użytkownika
-                </Link>
+                {loggedUser && parseInt(selectedUserId) !== loggedUser.userId && (
+                  <Link
+                    component="button"
+                    variant="body1"
+                    className={classes.reportUserLink}
+                    onClick={() => setOpenReportPopup(true)}
+                  >
+                    Zgłoś użytkownika
+                  </Link>
+                )}
               </div>
               <div className={classes.profileHeadingInfo}>
                 {userProfile && (
@@ -580,13 +563,7 @@ const ProfilePage = (props) => {
                     </Popup>
                     {loggedUser &&
                       parseInt(selectedUserId) !== loggedUser.userId && (
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            minWidth: '250px',
-                          }}
-                        >
+                        <div className={classes.userActionBtnContainer}>
                           <Button
                             onMouseOver={() => setFriendBtnHover(true)}
                             onMouseOut={() => setFriendBtnHover(false)}
@@ -606,7 +583,7 @@ const ProfilePage = (props) => {
                                 variant="subtitle1"
                                 className={classes.friendManageBtnContent}
                               >
-                                <PersonRemoveIcon sx={{ marginRight: '7px' }} />
+                                <PersonRemoveIcon />
                                 Usuń ze znajomych
                               </Typography>
                             ) : (
@@ -620,10 +597,7 @@ const ProfilePage = (props) => {
                               className={classes.friendChatBtn}
                               onClick={handleClickChatWithFriend}
                             >
-                              <ChatBubbleIcon
-                                fontSize="small"
-                                sx={{ marginRight: '7px' }}
-                              />
+                              <ChatBubbleIcon fontSize="small" />
                               Wyślij wiadomość
                             </Button>
                           )}
@@ -632,10 +606,7 @@ const ProfilePage = (props) => {
                   </div>
                 )}
                 {isUserLoggedIn && (
-                  <List
-                    className={classes.profileInfoList}
-                    style={{ borderLeft: '1px solid black' }}
-                  >
+                  <List className={classes.profileInfoList}>
                     <ListItem className={classes.profileInfoListItem}>
                       <Typography variant="subtitle2">
                         {'Znajomi: ' +
@@ -707,202 +678,17 @@ const ProfilePage = (props) => {
           )}
           <TabPanel classes={classes} value={profileNavIndex} index={0}>
             <div className={classes.leftActivityContent}>
-              <Paper elevation={4} sx={{ borderRadius: '10px' }}>
-                <div className={classes.profileInfoBoxHeading}>
-                  <Typography variant="h6">Informacje</Typography>
-                  <Link
-                    component="button"
-                    variant="subtitle1"
-                    onClick={() => {
-                      dispatch(changeProfileNav(1));
-                    }}
-                  >
-                    Zobacz więcej
-                  </Link>
-                </div>
-                {userProfile && userFriends && (
-                  <div style={{ padding: '10px 15px', marginBottom: '15px' }}>
-                    {userProfile.isPublic ? (
-                      <Typography
-                        variant="subtitle1"
-                        className={classes.profileBasicInfoItem}
-                      >
-                        <PublicIcon /> Profil publiczny
-                      </Typography>
-                    ) : (
-                      <Typography
-                        variant="subtitle1"
-                        className={classes.profileBasicInfoItem}
-                      >
-                        <LockIcon /> Profil prywatny
-                      </Typography>
-                    )}
-                    {userProfile.address && (
-                      <Typography
-                        variant="subtitle1"
-                        className={classes.profileBasicInfoItem}
-                      >
-                        <LocationOnIcon />
-                        {userProfile.address.country +
-                          ', ' +
-                          userProfile.address.city}
-                      </Typography>
-                    )}
-                    <Typography
-                      variant="subtitle1"
-                      className={classes.profileBasicInfoItem}
-                    >
-                      <CakeIcon />
-                      {userProfile.dateOfBirth}
-                    </Typography>
-                    {userProfile.job !== null && (
-                      <Typography
-                        variant="subtitle1"
-                        className={classes.profileBasicInfoItem}
-                      >
-                        <WorkIcon />
-                        {userProfile.job}
-                      </Typography>
-                    )}
-                    {userProfile.schools.length > 0 && (
-                      <Typography
-                        variant="subtitle1"
-                        className={classes.profileBasicInfoItem}
-                      >
-                        <SchoolIcon />{' '}
-                        {'Uczęszczał(a) do ' +
-                          userProfile.schools[userProfile.schools.length - 1]
-                            .name}
-                      </Typography>
-                    )}
-                    {userProfile.relationshipStatus !== null && (
-                      <Typography
-                        variant="subtitle1"
-                        className={classes.profileBasicInfoItem}
-                      >
-                        <FavoriteIcon />
-                        {
-                          relationshipStatusTypes[
-                            userProfile.relationshipStatus
-                          ]
-                        }
-                      </Typography>
-                    )}
-                    <Typography
-                      variant="subtitle1"
-                      className={classes.profileBasicInfoItem}
-                    >
-                      <PeopleIcon /> {'Liczba znajomych: ' + userFriends.length}
-                    </Typography>
-                  </div>
-                )}
-              </Paper>
+              {userProfile && userFriends && (
+                <BasicInformationBox
+                  userProfile={userProfile}
+                  friendsNumber={userFriends.length}
+                />
+              )}
               {userFriends.length > 0 && (
-                <Paper elevation={4} sx={{ borderRadius: '10px' }}>
-                  <div className={classes.profileInfoBoxHeading}>
-                    <Typography variant="h6">Znajomi użytkownika</Typography>
-                    <Link
-                      component="button"
-                      variant="subtitle1"
-                      onClick={() => {
-                        dispatch(changeProfileNav(3));
-                      }}
-                    >
-                      Zobacz więcej
-                    </Link>
-                  </div>
-                  <div className={classes.profileInfoBoxContent}>
-                    <ImageList
-                      cols={3}
-                      rowHeight={120}
-                      sx={{ margin: 0, paddingBottom: '50px' }}
-                      gap={3}
-                      variant="quilted"
-                    >
-                      {userFriends &&
-                        userFriends.map((friend, index) => {
-                          if (index < 9) {
-                            return (
-                              <ImageListItem
-                                key={friend.friendId}
-                                className={classes.imageListItemBox}
-                                onClick={() =>
-                                  history.push(
-                                    '/app/profile/' + friend.user.userId
-                                  )
-                                }
-                              >
-                                <img
-                                  src={
-                                    friend.user.profilePhoto !== null
-                                      ? friend.user.profilePhoto.url
-                                      : defaultUserPhoto
-                                  }
-                                  alt={
-                                    friend.user.firstName + friend.user.lastName
-                                  }
-                                  loading="lazy"
-                                />
-                                <ImageListItemBar
-                                  title={
-                                    <Typography
-                                      variant="body1"
-                                      className={classes.imageListItemTitle}
-                                    >
-                                      {friend.user.firstName}
-                                      <br />
-                                      {friend.user.lastName}
-                                    </Typography>
-                                  }
-                                  position="below"
-                                />
-                              </ImageListItem>
-                            );
-                          }
-                        })}
-                    </ImageList>
-                  </div>
-                </Paper>
+                <UserFriendsBox userFriends={userFriends} />
               )}
               {userImages.length > 0 && (
-                <Paper elevation={4} sx={{ borderRadius: '10px' }}>
-                  <div className={classes.profileInfoBoxHeading}>
-                    <Typography variant="h6">Dodane zdjęcia</Typography>
-                    <Link
-                      component="button"
-                      variant="subtitle1"
-                      onClick={() => {
-                        dispatch(changeProfileNav(2));
-                      }}
-                    >
-                      Zobacz więcej
-                    </Link>
-                  </div>
-                  <div className={classes.profileInfoBoxContent}>
-                    <ImageList
-                      cols={3}
-                      rowHeight={120}
-                      sx={{ margin: 0 }}
-                      gap={6}
-                      variant="quilted"
-                    >
-                      {userImages &&
-                        userImages.map((item, index) => {
-                          if (index < 9) {
-                            return (
-                              <ImageListItem key={item.url}>
-                                <img
-                                  src={item.url}
-                                  alt={item.filename}
-                                  loading="lazy"
-                                />
-                              </ImageListItem>
-                            );
-                          }
-                        })}
-                    </ImageList>
-                  </div>
-                </Paper>
+                <UserImagesBox userImages={userImages} />
               )}
             </div>
             <div className={classes.rightActivityContent}>
@@ -910,7 +696,7 @@ const ProfilePage = (props) => {
                 <TabContext value={activityValue}>
                   <Paper
                     elevation={4}
-                    sx={{ borderRadius: '10px', padding: '0px 15px' }}
+                    className={classes.profileActivityNavigation}
                   >
                     <TabList onChange={handleChangeActivityValue}>
                       <Tab
@@ -940,57 +726,13 @@ const ProfilePage = (props) => {
                     className={classes.tabPanelActivityContainer}
                   >
                     {parseInt(selectedUserId) === loggedUser.userId && (
-                      <Paper
-                        elevation={4}
-                        sx={{ borderRadius: '10px' }}
-                        className={classes.postCreateBox}
-                      >
-                        <Typography fontWeight="bold" variant="h6">
-                          Utwórz post
-                        </Typography>
-                        <Divider className={classes.divider} />
-                        <div className={classes.postCreateContent}>
-                          <Avatar
-                            src={
-                              userProfile && userProfile.profilePhoto !== null
-                                ? userProfile.profilePhoto.url
-                                : defaultUserPhoto
-                            }
-                            alt={
-                              userProfile
-                                ? userProfile.firstName +
-                                  ' ' +
-                                  userProfile.lastName
-                                : 'Zalogowany użytkownik'
-                            }
-                            className={classes.postCreationUserPhoto}
-                          />
-                          <TextField
-                            fullWidth
-                            placeholder="Napisz coś tutaj..."
-                            multiline
-                            rows={2}
-                            className={classes.postInput}
-                            onClick={() => setOpenPostCreation(true)}
-                            InputProps={{
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  <PhotoIcon className={classes.photoIcon} />
-                                </InputAdornment>
-                              ),
-                            }}
-                          />
-                        </div>
-                      </Paper>
+                      <PostCreationBox
+                        profilePhoto={userProfile.profilePhoto}
+                        userNameAndSurname={
+                          userProfile.firstName + ' ' + userProfile.lastName
+                        }
+                      />
                     )}
-                    <Popup
-                      open={openPostCreation}
-                      type="post"
-                      title="Utwórz post"
-                      onClose={handleClosePostCreation}
-                    >
-                      <PostForm closePopup={handleClosePostCreation} />
-                    </Popup>
                     {userActivity.createdPosts.map((post, index) => {
                       if (index < numberItemsShown.posts) {
                         return (
@@ -1026,16 +768,9 @@ const ProfilePage = (props) => {
                     })}
                     {numberItemsShown.posts <
                       userActivity.createdPosts.length && (
-                      <div className={classes.moreItemsContainer}>
-                        <Link
-                          component="button"
-                          variant="subtitle2"
-                          onClick={() => updateShownItems('posts')}
-                          className={classes.moreContentLink}
-                        >
-                          Zobacz więcej
-                        </Link>
-                      </div>
+                      <ExpandListButton
+                        fetchMore={() => updateShownItems('posts')}
+                      />
                     )}
                   </TabPanelMUI>
                   <TabPanelMUI
@@ -1076,16 +811,9 @@ const ProfilePage = (props) => {
                       }
                     })}
                     {numberItemsShown.likePosts < userActivity.likes.length && (
-                      <div className={classes.moreItemsContainer}>
-                        <Link
-                          component="button"
-                          variant="subtitle2"
-                          onClick={() => updateShownItems('likePosts')}
-                          className={classes.moreContentLink}
-                        >
-                          Zobacz więcej
-                        </Link>
-                      </div>
+                      <ExpandListButton
+                        fetchMore={() => updateShownItems('likePosts')}
+                      />
                     )}
                   </TabPanelMUI>
                   <TabPanelMUI
@@ -1123,16 +851,9 @@ const ProfilePage = (props) => {
                     })}
                     {numberItemsShown.sharedPosts <
                       userActivity.sharedPosts.length && (
-                      <div className={classes.moreItemsContainer}>
-                        <Link
-                          component="button"
-                          variant="subtitle2"
-                          onClick={() => updateShownItems('sharedPosts')}
-                          className={classes.moreContentLink}
-                        >
-                          Zobacz więcej
-                        </Link>
-                      </div>
+                      <ExpandListButton
+                        fetchMore={() => updateShownItems('sharedPosts')}
+                      />
                     )}
                   </TabPanelMUI>
                   <TabPanelMUI
@@ -1242,16 +963,9 @@ const ProfilePage = (props) => {
                     })}
                     {numberItemsShown.sharedPosts <
                       userActivity.sharedPosts.length && (
-                      <div className={classes.moreItemsContainer}>
-                        <Link
-                          component="button"
-                          variant="subtitle2"
-                          onClick={() => updateShownItems('comments')}
-                          className={classes.moreContentLink}
-                        >
-                          Zobacz więcej
-                        </Link>
-                      </div>
+                      <ExpandListButton
+                        fetchMore={() => updateShownItems('comments')}
+                      />
                     )}
                   </TabPanelMUI>
                 </TabContext>
@@ -1299,14 +1013,14 @@ const ProfilePage = (props) => {
                             <Tooltip title="Edytuj informacje" placement="left">
                               <IconButton
                                 className={classes.editBaseInformationBtn}
-                                onClick={() => setOpenProfileEdition(true)}
+                                onClick={() => setOpenProfileEditionPopup(true)}
                               >
                                 <EditIcon color="primary" />
                               </IconButton>
                             </Tooltip>
                           )}
                         <Popup
-                          open={openProfileEdition}
+                          open={openProfileEditionPopup}
                           type="profileForm"
                           title="Zaaktualizuj informacje"
                           onClose={handleCloseProfileEditionForm}
@@ -1831,14 +1545,7 @@ const ProfilePage = (props) => {
                 </Typography>
                 <Divider />
               </div>
-              <div
-                style={{
-                  padding: '20px',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gridGap: '15px',
-                }}
-              >
+              <div className={classes.imagesList}>
                 {userImages &&
                   userImages
                     .slice((imagesPageNumber - 1) * 10, imagesPageNumber * 10)
@@ -1946,13 +1653,7 @@ const ProfilePage = (props) => {
                       />
                     ))}
                 {userFriends.length === 0 && (
-                  <Typography
-                    variant="h6"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="10px"
-                    textAlign="center"
-                  >
+                  <Typography variant="h6" className={classes.noFriendsText}>
                     Brak znajomych
                   </Typography>
                 )}
@@ -2005,14 +1706,14 @@ const ProfilePage = (props) => {
                   />
                 </Paper>
               )}
-              {userGroups.length === 0 && (
-                <div className={classes.noContent}>
-                  <Typography variant="h6" fontWeight="bold">
-                    Brak grup
-                  </Typography>
-                </div>
-              )}
             </div>
+            {userGroups.length === 0 && (
+              <div className={classes.noContent}>
+                <Typography variant="h6" fontWeight="bold">
+                  Brak grup
+                </Typography>
+              </div>
+            )}
           </TabPanel>
         </div>
       ) : (

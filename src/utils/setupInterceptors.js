@@ -78,14 +78,14 @@ const setup = (store) => {
           dispatch(
             showNotification(
               'error',
-              'Usunięto token odświżania - wylogowano się z innej przeglądarki'
+              'Nie można odświeżyć tokenu - zalogowano się z innej przeglądarki'
             )
           );
           return Promise.reject(response);
         }
         return response;
       }
-    } else if (isPublicAccess) {
+    } else if (isPublicAccess && !resource.includes('/auth/')) {
       response = await originalFetch(resource, config);
       if (response.status === 401) {
         dispatch(showNotification('warning', 'Brak dostępu'));

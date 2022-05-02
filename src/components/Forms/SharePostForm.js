@@ -59,9 +59,13 @@ const SharePostForm = (props) => {
     <div className={classes.postFormContainer}>
       <div className={classes.postFormContent}>
         <Avatar
-          src={userProfile ? userProfile.profilePhoto.url : defaultUserPhoto}
+          src={
+            userProfile.profilePhoto
+              ? userProfile.profilePhoto.url
+              : defaultUserPhoto
+          }
           alt={
-            userProfile
+            userProfile.profilePhoto
               ? userProfile.firstName + ' ' + userProfile.lastName
               : 'Zalogowany użytkownik'
           }

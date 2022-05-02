@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './groupDetailsPage-jss';
 import { PropTypes } from 'prop-types';
-
 import { useHistory, useParams } from 'react-router-dom';
 import defaultImgLandscape from '../../assets/default-image-landscape.png';
 import {
@@ -89,6 +88,8 @@ import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import ActionConfirmation from '../../components/ActionConfirmation/ActionConfirmation';
 import GroupForum from '../../components/GroupForum/GroupForum';
 import { formatDateWithTime } from '../../utils/formatDateWithTime';
+import ExpandListButton from '../../components/ExpandListButton/ExpandListButton';
+import PostCreationBox from '../../components/PostCreationBox/PostCreationBox';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -140,8 +141,6 @@ const GroupDetailsPage = (props) => {
   const users = useSelector((state) => state.activity.users);
 
   const [groupNavIndex, setGroupNavIndex] = useState(0);
-  const [openGroupPostCreationPopup, setOpenGroupPostCreationPopup] =
-    useState(false);
   const [numberPostsShown, setNumberPostsShown] = useState(5);
   const [searchedMember, setSearchedMember] = useState('');
   const [membersOrder, setMembersOrder] = useState(1);
@@ -230,12 +229,12 @@ const GroupDetailsPage = (props) => {
       {
         field: 'firstName',
         headerName: 'Imię',
-        width: 140,
+        width: 130,
       },
       {
         field: 'lastName',
         headerName: 'Nazwisko',
-        width: 140,
+        width: 130,
       },
       {
         field: 'joinDate',
@@ -295,7 +294,7 @@ const GroupDetailsPage = (props) => {
         ],
       },
     ],
-    [group.members, handleClickDeleteGroupMember, memberStatusOfUser]
+    [group && group.members, handleClickDeleteGroupMember, memberStatusOfUser]
   );
 
   const handleRowEditCommit = React.useCallback((params) => {
@@ -322,7 +321,7 @@ const GroupDetailsPage = (props) => {
           className={classes.groupActionBtn}
           onClick={() => dispatch(respondToGroupInvitation(groupId, true))}
         >
-          <CheckCircleOutlineIcon sx={{ marginRight: '7px' }} />
+          <CheckCircleOutlineIcon />
           Akceptuj zaproszenie
         </Button>
       );
@@ -349,7 +348,7 @@ const GroupDetailsPage = (props) => {
           className={classes.groupActionBtn}
           onClick={() => dispatch(requestToJoinGroup(groupId))}
         >
-          <AddCircleOutlineIcon sx={{ marginRight: '7px' }} />
+          <AddCircleOutlineIcon />
           Dołącz do grupy
         </Button>
       );
@@ -360,7 +359,7 @@ const GroupDetailsPage = (props) => {
           className={classes.groupActionBtn}
           onClick={() => dispatch(leaveGroup(groupId))}
         >
-          <HighlightOffIcon sx={{ marginRight: '7px' }} />
+          <HighlightOffIcon />
           Opuść grupę
         </Button>
       );
@@ -382,10 +381,6 @@ const GroupDetailsPage = (props) => {
     setGroupNavIndex(newValue);
   };
 
-  const handleCloseGroupPostCreationPopup = () => {
-    setOpenGroupPostCreationPopup(false);
-  };
-
   const generateGroupMemberNames = () => {
     let names = '';
     let groupMembersNumber = group.members.length;
@@ -402,7 +397,7 @@ const GroupDetailsPage = (props) => {
       names += ' oraz ' + groupMembersNumber;
     }
 
-    names += ' należy do grupy';
+    names += ' innych użytkowników należy do grupy';
 
     return names;
   };
@@ -438,8 +433,8 @@ const GroupDetailsPage = (props) => {
       filteredMembers.sort((x, y) => new Date(y.addedIn) - new Date(x.addedIn));
     } else if (memberOrderType === 3) {
       filteredMembers.sort((a, b) => {
-        let x = a.address.city.toUpperCase();
-        let y = b.address.city.toUpperCase();
+        let x = a.address ? a.address.city.toUpperCase() : '';
+        let y = b.address ? b.address.city.toUpperCase() : '';
         return x === y ? 0 : x > y ? 1 : -1;
       });
     }
@@ -522,7 +517,7 @@ const GroupDetailsPage = (props) => {
               className={classes.backToGroupsBtn}
               onClick={() => history.push('/app/groups')}
             >
-              <ArrowBackIcon sx={{ marginRight: '5px' }} />
+              <ArrowBackIcon />
               Wróć do listy grup
             </Button>
             <img
@@ -544,12 +539,11 @@ const GroupDetailsPage = (props) => {
                   <Typography variant="h6" marginTop="5px">
                     {group.isPublic ? (
                       <span className={classes.alignCenterRowInfo}>
-                        <PublicIcon sx={{ marginRight: '8px' }} /> Grupa
-                        publiczna
+                        <PublicIcon /> Grupa publiczna
                       </span>
                     ) : (
                       <span className={classes.alignCenterRowInfo}>
-                        <LockIcon sx={{ marginRight: '8px' }} /> Grupa prywatna
+                        <LockIcon /> Grupa prywatna
                       </span>
                     )}
                   </Typography>
@@ -558,7 +552,7 @@ const GroupDetailsPage = (props) => {
                     marginTop="5px"
                     className={classes.alignCenterRowInfo}
                   >
-                    <PeopleIcon sx={{ marginRight: '8px' }} />{' '}
+                    <PeopleIcon />{' '}
                     {group.members &&
                       'Liczba członków: ' + group.members.length}
                   </Typography>
@@ -578,7 +572,10 @@ const GroupDetailsPage = (props) => {
                             ' ' +
                             groupMember.user.lastName
                           }
-                          src={groupMember.user.profilePhoto.url}
+                          src={
+                            groupMember.user.profilePhoto &&
+                            groupMember.user.profilePhoto.url
+                          }
                         />
                       ))}
                   </AvatarGroup>
@@ -595,7 +592,7 @@ const GroupDetailsPage = (props) => {
                             setGroupSettingsNavValue(1);
                           }}
                         >
-                          <AddCircleOutlineIcon sx={{ marginRight: '7px' }} />
+                          <AddCircleOutlineIcon />
                           Dodaj członków
                         </Button>
                       )}
@@ -668,14 +665,13 @@ const GroupDetailsPage = (props) => {
                       <Typography
                         variant="subtitle1"
                         className={classes.groupBasicInfoItem}
-                        style={{ margin: '5px 0px 0px 0px' }}
+                        sx={{ marginTop: '5px' }}
                       >
                         <PublicIcon fontSize="medium" /> Grupa puliczna
                       </Typography>
                       <Typography
                         variant="body1"
-                        marginLeft="32px"
-                        fontWeight={300}
+                        className={classes.groupInfoDescription}
                       >
                         Każda użytkownik może sprawdzić posty grupy, a także
                         podstawowe informacje oraz członków grupy.
@@ -686,14 +682,13 @@ const GroupDetailsPage = (props) => {
                       <Typography
                         variant="subtitle1"
                         className={classes.groupBasicInfoItem}
-                        style={{ margin: '5px 0px 0px 0px' }}
+                        sx={{ marginTop: '5px' }}
                       >
                         <LockIcon fontSize="medium" /> Grupa prywatna
                       </Typography>
                       <Typography
                         variant="body1"
-                        marginLeft="32px"
-                        fontWeight={300}
+                        className={classes.groupInfoDescription}
                       >
                         Dostęp do zawartości grupy jest ograniczony
                       </Typography>
@@ -738,7 +733,7 @@ const GroupDetailsPage = (props) => {
                     <Typography
                       variant="subtitle1"
                       className={classes.groupBasicInfoItem}
-                      style={{ margin: '5px 0px 0px 0px' }}
+                      marginTop="5px"
                     >
                       <InfoIcon fontSize="medium" /> Tematyka grupy:
                     </Typography>
@@ -746,8 +741,7 @@ const GroupDetailsPage = (props) => {
                       <Typography
                         key={interest.interestId}
                         variant="body1"
-                        marginLeft="32px"
-                        fontWeight={300}
+                        className={classes.groupInfoDescription}
                       >
                         {'• ' + interest.name}
                       </Typography>
@@ -832,62 +826,16 @@ const GroupDetailsPage = (props) => {
             </div>
             <div className={classes.rightActivityContent}>
               {memberStatusOfUser !== 'NOT_MEMBER' && (
-                <Paper
-                  elevation={4}
-                  sx={{ borderRadius: '10px' }}
-                  className={classes.postCreateBox}
-                >
-                  <Typography fontWeight="bold" variant="h6">
-                    Utwórz post
-                  </Typography>
-                  <Divider className={classes.divider} />
-                  <div className={classes.postCreateContent}>
-                    <Avatar
-                      src={
-                        loggedUserProfile &&
-                        loggedUserProfile.profilePhoto !== null
-                          ? loggedUserProfile.profilePhoto.url
-                          : defaultUserPhoto
-                      }
-                      alt={
-                        loggedUserProfile
-                          ? loggedUserProfile.firstName +
-                            ' ' +
-                            loggedUserProfile.lastName
-                          : 'Zalogowany użytkownik'
-                      }
-                      className={classes.postCreationUserPhoto}
-                    />
-                    <TextField
-                      fullWidth
-                      placeholder="Napisz coś tutaj..."
-                      multiline
-                      rows={2}
-                      className={classes.postInput}
-                      onClick={() => setOpenGroupPostCreationPopup(true)}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <PhotoIcon className={classes.photoIcon} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </div>
-                </Paper>
-              )}
-              <Popup
-                open={openGroupPostCreationPopup}
-                type="post"
-                title="Utwórz post w grupie"
-                onClose={handleCloseGroupPostCreationPopup}
-              >
-                <PostForm
-                  closePopup={handleCloseGroupPostCreationPopup}
-                  groupPost
+                <PostCreationBox
+                  profilePhoto={loggedUserProfile.profilePhoto}
+                  userNameAndSurname={
+                    loggedUserProfile.firstName +
+                    ' ' +
+                    loggedUserProfile.lastName
+                  }
                   groupId={parseInt(groupId)}
                 />
-              </Popup>
+              )}
               {group.posts.map((post, index) => {
                 if (index < numberPostsShown) {
                   return (
@@ -930,18 +878,9 @@ const GroupDetailsPage = (props) => {
                 }
               })}
               {numberPostsShown < group.posts.length && (
-                <div
-                  className={classes.moreItemsContainer}
-                  onClick={() => setNumberPostsShown(numberPostsShown + 5)}
-                >
-                  <Link
-                    component="button"
-                    variant="subtitle2"
-                    className={classes.moreCommentsLink}
-                  >
-                    Zobacz więcej
-                  </Link>
-                </div>
+                <ExpandListButton
+                  fetchMore={() => setNumberPostsShown(numberPostsShown + 5)}
+                />
               )}
               {group.posts.length === 0 && (
                 <div className={classes.noContent}>
@@ -964,14 +903,13 @@ const GroupDetailsPage = (props) => {
                     <Typography
                       variant="subtitle1"
                       className={classes.groupBasicInfoItem}
-                      style={{ margin: '5px 0px 0px 0px' }}
+                      sx={{ marginTop: '5px' }}
                     >
-                      <PublicIcon fontSize="medium" /> Grupa puliczna
+                      <PublicIcon fontSize="medium" /> Grupa publiczna
                     </Typography>
                     <Typography
                       variant="body1"
-                      marginLeft="32px"
-                      fontWeight={300}
+                      className={classes.groupInfoDescription}
                     >
                       Każda użytkownik może sprawdzić posty grupy, a także
                       podstawowe informacje oraz członków grupy.
@@ -982,14 +920,13 @@ const GroupDetailsPage = (props) => {
                     <Typography
                       variant="subtitle1"
                       className={classes.groupBasicInfoItem}
-                      style={{ margin: '5px 0px 0px 0px' }}
+                      sx={{ marginTop: '5px' }}
                     >
                       <LockIcon fontSize="medium" /> Grupa prywatna
                     </Typography>
                     <Typography
                       variant="body1"
-                      marginLeft="32px"
-                      fontWeight={300}
+                      className={classes.groupInfoDescription}
                     >
                       Dostęp do zawartości grupy jest ograniczony
                     </Typography>
@@ -1034,7 +971,7 @@ const GroupDetailsPage = (props) => {
                   <Typography
                     variant="subtitle1"
                     className={classes.groupBasicInfoItem}
-                    style={{ margin: '5px 0px 0px 0px' }}
+                    sx={{ marginTop: '5px' }}
                   >
                     <InfoIcon fontSize="medium" /> Tematyka grupy:
                   </Typography>
@@ -1042,8 +979,7 @@ const GroupDetailsPage = (props) => {
                     <Typography
                       key={interest.interestId}
                       variant="body1"
-                      marginLeft="32px"
-                      fontWeight={300}
+                      className={classes.groupInfoDescription}
                     >
                       {'• ' + interest.name}
                     </Typography>
@@ -1084,7 +1020,10 @@ const GroupDetailsPage = (props) => {
                           ' ' +
                           groupMember.user.lastName
                         }
-                        src={groupMember.user.profilePhoto.url}
+                        src={
+                          groupMember.user.profilePhoto &&
+                          groupMember.user.profilePhoto.url
+                        }
                       />
                     ))}
                 </AvatarGroup>
@@ -1373,13 +1312,7 @@ const GroupDetailsPage = (props) => {
                 {group.members.filter(
                   (member) => member.groupPermissionType === 'MEMBER'
                 ).length === 0 && (
-                  <Typography
-                    variant="h6"
-                    width="100%"
-                    marginTop="10px"
-                    marginBottom="10px"
-                    textAlign="center"
-                  >
+                  <Typography variant="h6" className={classes.noGroupMembers}>
                     Brak innych członków
                   </Typography>
                 )}
@@ -1488,7 +1421,7 @@ const GroupDetailsPage = (props) => {
                   />
                   <Typography
                     variant="h5"
-                    sx={{ marginTop: '15px' }}
+                    marginTop="15px"
                     className={classes.settingsInformationHeading}
                   >
                     Tematyka grupy
@@ -1554,12 +1487,12 @@ const GroupDetailsPage = (props) => {
                   )}
                   <Typography
                     variant="h5"
-                    sx={{ marginTop: '10px' }}
+                    marginTop="10px"
                     className={classes.settingsInformationHeadingWithAction}
                   >
                     Regulamin grupy
                   </Typography>
-                  <div style={{ margin: '20px 0px' }}>
+                  <div className={classes.rulesContainer}>
                     {group.rules.map((rule, index) => (
                       <Accordion key={rule.ruleId}>
                         <AccordionSummary
@@ -1716,14 +1649,16 @@ const GroupDetailsPage = (props) => {
                     Zarządzanie członkami grupy
                   </Typography>
                   <div style={{ height: 400, width: '100%' }}>
-                    <DataGrid
-                      columns={tableColumns}
-                      rows={memberTableRows}
-                      rowsPerPageOptions={[10, 15, 20]}
-                      pagination
-                      disableSelectionOnClick
-                      onCellEditCommit={handleRowEditCommit}
-                    />
+                    {
+                      <DataGrid
+                        columns={tableColumns}
+                        rows={memberTableRows}
+                        rowsPerPageOptions={[10, 15, 20]}
+                        pagination
+                        disableSelectionOnClick
+                        onCellEditCommit={handleRowEditCommit}
+                      />
+                    }
                   </div>
                 </TabPanel>
                 <TabPanel value={groupSettingsNavValue} index={4}>

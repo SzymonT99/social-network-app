@@ -146,9 +146,6 @@ const ThreadAnswer = (props) => {
                 onChange={(event, newValue) =>
                   handleChangeRating(event, newValue)
                 }
-                disabled={
-                  authorId !== loggedUser.userId && accessToManagement === false
-                }
               />
             </div>
             <TextField

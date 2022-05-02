@@ -19,6 +19,7 @@ import ActionConfirmation from '../ActionConfirmation/ActionConfirmation';
 import { useDispatch } from 'react-redux';
 import { deleteWorkPlaceInformation } from '../../redux/actions/userProfileActions';
 import AddWorkPlaceForm from '../Forms/AddWorkPlaceForm';
+import { formatBaseDate } from '../../utils/formatBaseDate';
 
 const WorkPlaceInfoItem = (props) => {
   const { classes, workId, company, position, startDate, endDate, manage } =
@@ -73,8 +74,8 @@ const WorkPlaceInfoItem = (props) => {
             {'Pozycja: ' + position}
           </Typography>
           <Typography variant="body2" noWrap>
-            {'Pracował(a) od ' + startDate}
-            <span>{endDate !== null && ' do ' + endDate}</span>
+            {'Pracował(a) od ' + formatBaseDate(startDate)}
+            <span>{endDate !== null && ' do ' + formatBaseDate(endDate)}</span>
           </Typography>
         </div>
         {manage && (

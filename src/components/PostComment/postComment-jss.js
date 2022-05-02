@@ -46,7 +46,6 @@ const styles = (theme) => ({
     '&.MuiButton-root': {
       textTransform: 'none',
       padding: 0,
-      margin: 0,
       minWidth: 0,
       fontSize: '15px',
       color: 'rgba(0, 0, 0, 0.87)',

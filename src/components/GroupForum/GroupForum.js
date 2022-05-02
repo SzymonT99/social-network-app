@@ -148,10 +148,10 @@ const GroupForum = (props) => {
                     }
                   />
                 ))}
-            {threads.length > 6 && (
+            {threads.length > 5 && (
               <Pagination
                 className={classes.threadsPagination}
-                count={threads && Math.ceil(threads.length / 6)}
+                count={threads && Math.ceil(threads.length / 5)}
                 color="secondary"
                 size="large"
                 showFirstButton

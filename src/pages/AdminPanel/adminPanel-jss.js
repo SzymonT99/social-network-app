@@ -16,7 +16,7 @@ const styles = (theme) => ({
   },
   usersTableContainer: {
     width: '100%',
-    height: 750,
+    height: 650,
   },
   reportCellContainer: {
     width: '100%',

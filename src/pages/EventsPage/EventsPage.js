@@ -12,11 +12,10 @@ import {
   Pagination,
   Select,
   Tab,
+  Tabs,
   TextField,
   Typography,
 } from '@mui/material';
-import { TabContext, TabList } from '@mui/lab';
-import TabPanelMUI from '@mui/lab/TabPanel';
 import SearchIcon from '@mui/icons-material/Search';
 import Event from '../../components/Event/Event';
 import {
@@ -32,6 +31,20 @@ import {
 } from '../../redux/actions/authActions';
 import PageHeader from '../../components/PageHeader/PageHeader';
 
+const TabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      {...other}
+    >
+      {value === index && <div>{children}</div>}
+    </div>
+  );
+};
+
 const EventsPage = (props) => {
   const { classes } = props;
 
@@ -45,7 +58,7 @@ const EventsPage = (props) => {
   const isUserRemember = useSelector((state) => state.auth.remember);
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  const [eventTabType, setEventTabType] = useState('1');
+  const [eventTabType, setEventTabType] = useState(0);
   const [eventsOrder, setEventsOrder] = useState(1);
   const [openEventCreation, setOpenEventCreation] = useState(false);
   const [searchedEventText, setSearchedEventText] = useState('');
@@ -138,162 +151,161 @@ const EventsPage = (props) => {
   return (
     <div className={classes.wrapper}>
       <PageHeader heading="Wydarzenia" type="events" />
-      <TabContext value={eventTabType}>
-        {isUserLoggedIn && (
-          <Paper elevation={4} className={classes.eventsTopContainer}>
-            <TabList
-              onChange={handleChangeEventTabType}
-              className={classes.tabsContainer}
-            >
-              <Tab
-                className={classes.tabItem}
-                label="Wszystkie wydarzenia"
-                value={'1'}
-              />
-              <Tab
-                className={classes.tabItem}
-                label="Zaproszenia na wydarzenie"
-                value={'2'}
-              />
-            </TabList>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.addEventBtn}
-              onClick={() => setOpenEventCreation(true)}
-            >
-              Utwórz nowe wydarzenie
-            </Button>
-            <Popup
-              open={openEventCreation}
-              type="event"
-              title="Utwórz wydarzenie"
-              onClose={handleCloseEventCreation}
-            >
-              <EventForm
-                closePopup={handleCloseEventCreation}
-                updateEvents={updateEvents}
-              />
-            </Popup>
-          </Paper>
-        )}
-        {eventTabType !== '2' && (
-          <Paper elevation={4} className={classes.eventSearchbarContainer}>
-            <TextField
-              id="event-searchbar"
-              placeholder="Szukaj wydarzenia"
-              className={classes.eventSearchbar}
-              value={searchedEventText}
-              onChange={handleChangeSearchedEvent}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
+      {isUserLoggedIn && (
+        <Paper elevation={4} className={classes.eventsTopContainer}>
+          <Tabs
+            value={eventTabType}
+            onChange={handleChangeEventTabType}
+            className={classes.tabsContainer}
+          >
+            <Tab
+              className={classes.tabItem}
+              label="Wszystkie wydarzenia"
+              id="events"
             />
-            <div className={classes.eventsOrderBox}>
-              <Typography
-                component="p"
-                variant="subtitle1"
-                fontWeight="bold"
-                marginRight="10px"
+            <Tab
+              className={classes.tabItem}
+              label="Zaproszenia na wydarzenie"
+              id="event-invitations"
+            />
+          </Tabs>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.addEventBtn}
+            onClick={() => setOpenEventCreation(true)}
+          >
+            Utwórz nowe wydarzenie
+          </Button>
+          <Popup
+            open={openEventCreation}
+            type="event"
+            title="Utwórz wydarzenie"
+            onClose={handleCloseEventCreation}
+          >
+            <EventForm
+              closePopup={handleCloseEventCreation}
+              updateEvents={updateEvents}
+            />
+          </Popup>
+        </Paper>
+      )}
+      {eventTabType !== 1 && (
+        <Paper elevation={4} className={classes.eventSearchbarContainer}>
+          <TextField
+            id="event-searchbar"
+            placeholder="Szukaj wydarzenia"
+            className={classes.eventSearchbar}
+            value={searchedEventText}
+            onChange={handleChangeSearchedEvent}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <div className={classes.eventsOrderBox}>
+            <Typography
+              component="p"
+              variant="subtitle1"
+              fontWeight="bold"
+              marginRight="10px"
+            >
+              Sortuj według:
+            </Typography>
+            <FormControl>
+              <Select
+                className={classes.eventOrderSelect}
+                value={eventsOrder}
+                onChange={handleChangeEventsOrder}
+                MenuProps={{ disableScrollLock: true }}
               >
-                Sortuj według:
-              </Typography>
-              <FormControl>
-                <Select
-                  className={classes.eventOrderSelect}
-                  value={eventsOrder}
-                  onChange={handleChangeEventsOrder}
-                  MenuProps={{ disableScrollLock: true }}
-                >
-                  <MenuItem value={1}>Daty utworzenia</MenuItem>
-                  <MenuItem value={2}>Ilości uczestników</MenuItem>
-                  <MenuItem value={3}>Kolejności alfabetycznej</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-          </Paper>
-        )}
-        <TabPanelMUI value="1" sx={{ padding: 0 }}>
-          <div className={classes.eventsListContainer}>
-            {events ? (
-              sortEvents(eventsOrder)
-                .slice((eventsPageNumber - 1) * 6, eventsPageNumber * 6)
-                .map((event) => (
-                  <Event
-                    key={event.eventId}
-                    eventId={event.eventId}
-                    updateEvents={updateEvents}
-                    title={event.title}
-                    date={event.eventDate}
-                    eventImage={event.image}
-                    address={event.eventAddress}
-                    members={event.members}
-                  />
-                ))
-            ) : (
-              <div className={classes.loadingContainer}>
-                <CircularProgress color="secondary" size="150px" />
-              </div>
-            )}
+                <MenuItem value={1}>Daty utworzenia</MenuItem>
+                <MenuItem value={2}>Ilości uczestników</MenuItem>
+                <MenuItem value={3}>Kolejności alfabetycznej</MenuItem>
+              </Select>
+            </FormControl>
           </div>
-          {filteredEvents.length > 6 && (
-            <Paper elevation={4} className={classes.paginationContainer}>
-              <Pagination
-                className={classes.eventsPagination}
-                count={events && Math.ceil(events.length / 6)}
-                color="secondary"
-                size="large"
-                showFirstButton
-                showLastButton
-                page={eventsPageNumber}
-                onChange={handleChangeEventsPageNumber}
-              />
-            </Paper>
-          )}
-          {filteredEvents.length === 0 && (
-            <div className={classes.noContent}>
-              <Typography variant="h6" fontWeight="bold">
-                Brak wydarzeń
-              </Typography>
-            </div>
-          )}
-        </TabPanelMUI>
-        <TabPanelMUI value="2" sx={{ padding: 0 }}>
-          <div className={classes.eventsListContainer}>
-            {eventInvitations ? (
-              eventInvitations.map((invitation) => (
+        </Paper>
+      )}
+      <TabPanel value={eventTabType} index={0}>
+        <div className={classes.eventsListContainer}>
+          {events ? (
+            sortEvents(eventsOrder)
+              .slice((eventsPageNumber - 1) * 6, eventsPageNumber * 6)
+              .map((event) => (
                 <Event
-                  key={invitation.eventId}
-                  invitation
-                  invitationDate={invitation.invitationDate}
-                  eventId={invitation.eventId}
+                  key={event.eventId}
+                  eventId={event.eventId}
                   updateEvents={updateEvents}
-                  title={invitation.title}
-                  date={invitation.eventDate}
-                  eventImage={invitation.image}
-                  address={invitation.eventAddress}
-                  members={invitation.eventMembers}
+                  title={event.title}
+                  date={event.eventDate}
+                  eventImage={event.image}
+                  address={event.eventAddress}
+                  members={event.members}
                 />
               ))
-            ) : (
-              <div className={classes.loadingContainer}>
-                <CircularProgress color="secondary" size="150px" />
-              </div>
-            )}
-          </div>
-          {eventInvitations.length === 0 && (
-            <div className={classes.noContent}>
-              <Typography variant="h6" fontWeight="bold">
-                Brak zaproszeń
-              </Typography>
+          ) : (
+            <div className={classes.loadingContainer}>
+              <CircularProgress color="secondary" size="150px" />
             </div>
           )}
-        </TabPanelMUI>
-      </TabContext>
+        </div>
+        {filteredEvents.length > 6 && (
+          <Paper elevation={4} className={classes.paginationContainer}>
+            <Pagination
+              className={classes.eventsPagination}
+              count={events && Math.ceil(events.length / 6)}
+              color="secondary"
+              size="large"
+              showFirstButton
+              showLastButton
+              page={eventsPageNumber}
+              onChange={handleChangeEventsPageNumber}
+            />
+          </Paper>
+        )}
+        {filteredEvents.length === 0 && (
+          <div className={classes.noContent}>
+            <Typography variant="h6" fontWeight="bold">
+              Brak wydarzeń
+            </Typography>
+          </div>
+        )}
+      </TabPanel>
+      <TabPanel value={eventTabType} index={1}>
+        <div className={classes.eventsListContainer}>
+          {eventInvitations ? (
+            eventInvitations.map((invitation) => (
+              <Event
+                key={invitation.eventId}
+                invitation
+                invitationDate={invitation.invitationDate}
+                eventId={invitation.eventId}
+                updateEvents={updateEvents}
+                title={invitation.title}
+                date={invitation.eventDate}
+                eventImage={invitation.image}
+                address={invitation.eventAddress}
+                members={invitation.eventMembers}
+              />
+            ))
+          ) : (
+            <div className={classes.loadingContainer}>
+              <CircularProgress color="secondary" size="150px" />
+            </div>
+          )}
+        </div>
+        {eventInvitations.length === 0 && (
+          <div className={classes.noContent}>
+            <Typography variant="h6" fontWeight="bold">
+              Brak zaproszeń
+            </Typography>
+          </div>
+        )}
+      </TabPanel>
     </div>
   );
 };

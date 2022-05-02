@@ -143,7 +143,7 @@ const EventsPageDetails = (props) => {
               className={classes.backToEventsBtn}
               onClick={() => history.push('/app/events')}
             >
-              <ArrowBackIcon sx={{ marginRight: '5px' }} />
+              <ArrowBackIcon />
               Wróć do listy wydarzeń
             </Button>
             <img
@@ -163,7 +163,7 @@ const EventsPageDetails = (props) => {
                   <Typography variant="body1" fontWeight="bold">
                     Dzień
                   </Typography>
-                  {new Date(event.eventDate).getDay()}
+                  {new Date(event.eventDate).getDate()}
                 </div>
                 <div className={classes.dateItem}>
                   <Typography variant="body1" fontWeight="bold">
@@ -179,10 +179,7 @@ const EventsPageDetails = (props) => {
                   </Typography>
                   {new Date(event.eventDate).getFullYear()}
                 </div>
-                <div
-                  className={classes.dateItem}
-                  style={{ marginRight: '40px' }}
-                >
+                <div className={classes.dateItem}>
                   <Typography variant="body1" fontWeight="bold">
                     Dzień tygodnia
                   </Typography>
@@ -192,8 +189,7 @@ const EventsPageDetails = (props) => {
                 </div>
                 <Typography
                   variant="subtitle1"
-                  fontWeight="bold"
-                  color="#FF1C00"
+                  className={classes.eventTimeText}
                 >
                   {'o godz. ' +
                     new Date(event.eventDate)
@@ -209,7 +205,7 @@ const EventsPageDetails = (props) => {
                         className={classes.eventManageActionBtn}
                         onClick={() => setOpenEventEditionPopup(true)}
                       >
-                        <EditIcon sx={{ marginRight: '5px' }} />
+                        <EditIcon />
                         Edytuj wydarzenie
                       </Button>
                       <Button
@@ -217,7 +213,7 @@ const EventsPageDetails = (props) => {
                         className={classes.eventManageActionBtn}
                         onClick={() => setOpenDeleteEventPopup(true)}
                       >
-                        <DeleteIcon sx={{ marginRight: '5px' }} />
+                        <DeleteIcon />
                         Usuń wydarzenie
                       </Button>
                       <Popup
@@ -274,7 +270,7 @@ const EventsPageDetails = (props) => {
                     ).length > 0
                   }
                 >
-                  <CheckCircleIcon sx={{ marginRight: '5px' }} />
+                  <CheckCircleIcon />
                   Weź udział
                 </Button>
                 <Button
@@ -290,7 +286,7 @@ const EventsPageDetails = (props) => {
                     ).length > 0
                   }
                 >
-                  <GradeIcon sx={{ marginRight: '5px' }} />
+                  <GradeIcon />
                   Interesuje mnie
                 </Button>
                 <Button
@@ -299,7 +295,7 @@ const EventsPageDetails = (props) => {
                   className={classes.eventActionBtn}
                   onClick={() => setOpenEventInvitationsPopup(true)}
                 >
-                  <PersonAddAlt1Icon sx={{ marginRight: '5px' }} />
+                  <PersonAddAlt1Icon />
                   Zaproś na wydarzenie
                 </Button>
                 <Popup
@@ -345,7 +341,7 @@ const EventsPageDetails = (props) => {
                   className={classes.eventActionBtn}
                   onClick={handleClickShareEvent}
                 >
-                  <ShareIcon sx={{ marginRight: '5px' }} />
+                  <ShareIcon />
                   Udostępnij
                 </Button>
               </div>
@@ -465,10 +461,15 @@ const EventsPageDetails = (props) => {
                     <span className={classes.detailsItemTitle}>
                       {'Ulica: '}
                     </span>
-                    {event.eventAddress.city ? event.eventAddress.city : '-'}
+                    {event.eventAddress.street
+                      ? event.eventAddress.street
+                      : '-'}
                   </Typography>
                 </div>
-                <div style={{ display: 'flex', marginTop: '14px' }}>
+                <div
+                  className={classes.eventDetailsItem}
+                  style={{ marginBottom: '0px' }}
+                >
                   <MarkAsUnreadIcon fontSize="medium" />
                   <Typography
                     variant="subtitle2"

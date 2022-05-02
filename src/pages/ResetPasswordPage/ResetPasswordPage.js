@@ -21,7 +21,7 @@ const validationSchema = yup.object({
   login: yup.string().required('Wymagane'),
   newPassword: yup
     .string()
-    .min(10, 'Hasło powinno mieć minimum 8 znaków')
+    .min(10, 'Hasło powinno mieć minimum 10 znaków')
     .max(100, 'Hasło powinno mieć maksymalnie 100 znaków')
     .required('Wymagane'),
   repeatedNewPassword: yup.string().required('Wymagane'),

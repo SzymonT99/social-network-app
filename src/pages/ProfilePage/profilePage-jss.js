@@ -1,10 +1,13 @@
 const styles = (theme) => ({
   wrapper: {
-    padding: '20px 0px',
+    margin: '20px 0px',
   },
   profileHeadingContainer: {
-    width: '100%',
-    marginBottom: '15px',
+    '&.MuiPaper-root': {
+      width: '100%',
+      marginBottom: '15px',
+      borderRadius: '10px',
+    },
   },
   profileCoverBackground: {
     borderRadius: '10px 10px 0px 0px',
@@ -47,6 +50,11 @@ const styles = (theme) => ({
       },
     },
   },
+  userActionBtnContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: '250px',
+  },
   userPhoto: {
     width: '240px',
     height: '240px',
@@ -74,6 +82,7 @@ const styles = (theme) => ({
   },
   profileInfoList: {
     '&.MuiList-root': {
+      borderLeft: '1px solid black',
       display: 'flex',
       flexDirection: 'row',
       marginBottom: '34px',
@@ -139,70 +148,11 @@ const styles = (theme) => ({
       },
     },
   },
-  postCreateBox: {
-    padding: '15px',
-    marginBottom: '15px',
-  },
-  postCreateContent: {
-    display: 'flex',
-    paddingTop: '15px',
-  },
-  postInput: {
-    '& .MuiInputBase-root': {
-      backgroundColor: '#ECEEF1',
-      borderRadius: '15px',
-      fontSize: '17px',
-      border: 'none',
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderWidth: 0,
-      },
+  profileActivityNavigation: {
+    '&.MuiPaper-root': {
+      borderRadius: '10px',
+      padding: '0px 15px',
     },
-  },
-  postCreationUserPhoto: {
-    '&.MuiAvatar-root': {
-      display: 'block',
-      width: '50px',
-      height: '50px',
-      marginRight: '15px',
-    },
-  },
-  profileInfoBoxHeading: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '15px',
-    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-  },
-  profileInfoBoxContent: {
-    padding: '15px',
-    marginBottom: '15px',
-  },
-  imageListItemBox: {
-    '&.MuiImageListItem-root': {
-      border: '1px solid rgba(0, 0, 0, 0.47)',
-      borderBottom: 'none',
-      '& .MuiImageListItemBar-root': {
-        border: '1px solid rgba(0, 0, 0, 0.47)',
-        borderTop: 'none',
-        width: '100%',
-        '& .MuiTypography-root': {
-          width: '100%',
-        },
-        '& .MuiImageListItemBar-titleWrap': {
-          padding: 0,
-          margin: 0,
-        },
-      },
-      '&:hover': {
-        cursor: 'pointer',
-      },
-    },
-  },
-  imageListItemTitle: {
-    textAlign: 'center',
-    width: '120px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
   },
   tabPanelActivityContainer: {
     '&.MuiTabPanel-root': {
@@ -215,26 +165,6 @@ const styles = (theme) => ({
     alignItems: 'center',
     height: '100%',
     width: '100%',
-  },
-  moreItemsContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: '15px',
-    backgroundColor: theme.palette.primary.main,
-    padding: '5px',
-    borderRadius: '10px',
-    fontWeight: 'bold',
-  },
-  moreContentLink: {
-    '&.MuiLink-root': {
-      textDecoration: 'none',
-      alignSelf: 'center',
-      color: 'white',
-      '&:hover': {
-        textDecoration: 'underline',
-      },
-    },
   },
   profileInformationContainer: {
     '&.MuiPaper-root': {
@@ -355,6 +285,9 @@ const styles = (theme) => ({
       display: ' flex',
       alignItems: 'center',
       fontWeight: 'bold',
+      '& .MuiSvgIcon-root': {
+        marginRight: '7px',
+      },
     },
   },
   profileNavHeadingBox: {
@@ -416,16 +349,6 @@ const styles = (theme) => ({
       },
     },
   },
-  profileBasicInfoItem: {
-    '&.MuiTypography-root': {
-      margin: '5px 0px',
-      display: 'flex',
-      alignItems: 'center',
-      '& .MuiSvgIcon-root': {
-        marginRight: '7px',
-      },
-    },
-  },
   friendInformationContainer: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -456,6 +379,7 @@ const styles = (theme) => ({
     },
   },
   noContent: {
+    width: '100%',
     marginTop: '30px',
     display: 'flex',
     alignItems: 'center',
@@ -466,6 +390,9 @@ const styles = (theme) => ({
       fontSize: '17px',
       marginTop: '10px',
       padding: '6px 20px',
+      '& .MuiSvgIcon-root': {
+        marginRight: '7px',
+      },
     },
   },
   addedImageListItem: {
@@ -488,6 +415,19 @@ const styles = (theme) => ({
         cursor: 'pointer',
         textDecoration: 'underline',
       },
+    },
+  },
+  imagesList: {
+    padding: '20px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridGap: '15px',
+  },
+  noFriendsText: {
+    '&.MuiTypography-root': {
+      width: '100%',
+      margin: '10px 0px',
+      textAlign: 'center',
     },
   },
 });

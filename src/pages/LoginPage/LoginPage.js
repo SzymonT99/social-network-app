@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './loginPage-jss';
 import { withStyles } from '@mui/styles';
 import Paper from '@mui/material/Paper';
@@ -23,14 +23,8 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import authTypes from '../../redux/types/authTypes';
 
 const validationSchema = yup.object({
-  login: yup
-    .string('Wprowadź email lub nazwę użytkownika')
-    .required('Email/nazwa użytkownika jest wymagane'),
-  password: yup
-    .string('Wprowadź hasło')
-    .min(10, 'Hasło powinno mieć długość minimum 8 znaków')
-    .max(100, 'Hasło powinno mieć długość maksymalnie 100 znaków')
-    .required('Hasło jest wymagane'),
+  login: yup.string().required('Email/nazwa użytkownika jest wymagana'),
+  password: yup.string().required('Hasło jest wymagane'),
 });
 
 const LoginPage = (props) => {
@@ -85,15 +79,14 @@ const LoginPage = (props) => {
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.loginColumn}>
+        <div className={classes.contentColumn}>
           <Typography variant="h1" gutterBottom className={classes.appName}>
             <img src={logoWhite} className={classes.logo} alt="Logo" />
             Social Network
           </Typography>
           <Typography variant="h4" className={classes.appDescription}>
             Serwis społecznościowy wykonany w ramach pracy inżynierskiej na
-            Państwowej Wyższej Szkole Zawodowej w Tarnowie na kierunku
-            Informatyka.
+            Akademii Nauk Stosowanych w Tarnowie na kierunku Informatyka.
           </Typography>
           <div className={classes.btnContainer}>
             <Button
@@ -112,12 +105,8 @@ const LoginPage = (props) => {
             </Button>
           </div>
         </div>
-        <div className={classes.loginColumn}>
-          <Paper
-            className={classes.loginForm}
-            elevation={4}
-            sx={{ borderRadius: '20px' }}
-          >
+        <div className={classes.contentColumn}>
+          <Paper className={classes.loginForm} elevation={4}>
             <Typography variant="h3" align="center" marginBottom="50px">
               Logowanie
             </Typography>

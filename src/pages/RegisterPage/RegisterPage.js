@@ -8,7 +8,6 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 import { useHistory } from 'react-router-dom';
-import { endpoints } from '../../services/endpoints/endpoints';
 import { useFormik } from 'formik';
 import {
   FormControl,
@@ -52,8 +51,8 @@ const RegisterPage = (props) => {
       .required('Email jest wymagany'),
     username: yup
       .string()
-      .min(6, 'Nazwa użytkownika powinna mieć minimum 8 znaków')
-      .max(20, 'Nazwa użytkownika powinna mieć minimum 20 znaków')
+      .min(6, 'Nazwa użytkownika powinna mieć minimum 6 znaków')
+      .max(20, 'Nazwa użytkownika powinna mieć maksymalnie 20 znaków')
       .required('Nazwa użytkownika jest wymagana'),
     phoneNumber: yup
       .string()
@@ -62,7 +61,7 @@ const RegisterPage = (props) => {
       .max(9, 'Błędny numer telefonu'),
     password: yup
       .string()
-      .min(10, 'Hasło powinno mieć minimum 8 znaków')
+      .min(10, 'Hasło powinno mieć minimum 10 znaków')
       .max(100, 'Hasło powinno mieć maksymalnie 100 znaków')
       .required('Hasło jest wymagane'),
     repeatedPassword: yup.string().required('Hasło jest wymagane'),
@@ -114,18 +113,15 @@ const RegisterPage = (props) => {
 
   return (
     <>
-      <Paper
-        className={classes.wrapper}
-        elevation={4}
-        sx={{ borderRadius: '20px' }}
-      >
+      <Paper className={classes.registerContainer} elevation={4}>
         <Typography variant="h3" align="center" marginBottom="40px">
           Tworzenie konta
         </Typography>
         <form
           noValidate
           onSubmit={formik.handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column' }}
+          className={classes.registerForm}
+          data-testid="register-form"
         >
           <Grid container columnSpacing={{ xs: 2 }}>
             <Grid item xs={6}>
@@ -338,7 +334,7 @@ const RegisterPage = (props) => {
             </Grid>
           </Grid>
           <Button
-            style={{ marginTop: '30px' }}
+            name="submit"
             color="secondary"
             className={classes.registerBtn}
             variant="contained"

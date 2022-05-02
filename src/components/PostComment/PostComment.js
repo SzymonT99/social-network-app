@@ -3,7 +3,7 @@ import { withStyles } from '@mui/styles';
 import styles from './postComment-jss';
 import { PropTypes } from 'prop-types';
 import Typography from '@mui/material/Typography';
-import { Avatar, Badge, Button, Divider, TextField } from '@mui/material';
+import { Avatar, Badge, Button, TextField } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
 import { useDispatch, useSelector } from 'react-redux';
 import { showNotification } from '../../redux/actions/notificationActions';
@@ -89,7 +89,7 @@ const PostComment = (props) => {
   };
 
   const deleteCommentClick = () => {
-    dispatch(deletePostComment(postId, commentId, sharing));
+    dispatch(deletePostComment(postId, commentId, authorId, sharing));
     setOpenDeletePopup(false);
   };
 
@@ -231,19 +231,21 @@ const PostComment = (props) => {
             )}
           </div>
           <div>
-            <Button
-              className={classes.commentActionItem}
-              variant="text"
-              onClick={() => setOpenReportPopup(true)}
-            >
-              Zgłoś
-            </Button>
+            {loggedUser && authorId !== loggedUser.userId && (
+              <Button
+                className={classes.commentActionItem}
+                variant="text"
+                onClick={() => setOpenReportPopup(true)}
+              >
+                Zgłoś
+              </Button>
+            )}
             {((loggedUser && authorId === loggedUser.userId) ||
               accessToManagement === true) && (
               <>
                 <Button
                   className={classes.commentActionItem}
-                  style={{ margin: '0px 20px' }}
+                  sx={{ margin: '0px 20px' }}
                   variant="text"
                   onClick={editCommentClick}
                 >
@@ -304,6 +306,7 @@ PostComment.propTypes = {
   isEdited: PropTypes.bool.isRequired,
   authorProfilePhoto: PropTypes.object,
   accessToManagement: PropTypes.bool,
+  sharing: PropTypes.bool,
 };
 
 PostComment.defaultProps = {

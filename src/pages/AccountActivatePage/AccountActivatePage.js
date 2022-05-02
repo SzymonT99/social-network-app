@@ -29,7 +29,6 @@ const AccountActivatePage = (props) => {
   useEffect(() => {
     dispatch(activateAccount(token)).then((response) => {
       return response.json().then((json) => {
-        console.log(json);
         if (response.status === 200) {
           setMessage('Konto użytkownika zostało pomyślnie aktywowane');
           setAccountInfo(json);
