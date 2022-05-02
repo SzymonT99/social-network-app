@@ -112,10 +112,64 @@ const styles = (theme) => ({
       display: 'flex',
       alignItems: 'center',
       fontWeight: 'bold',
+      '& .MuiSvgIcon-root': {
+        marginRight: '7px',
+      },
     },
   },
   userInformationBox: {
     width: '180px',
+  },
+  profileInfoBoxHeading: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '15px',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+  },
+  profileInfoBoxContent: {
+    padding: '15px',
+    marginBottom: '15px',
+  },
+  profileBasicInfoItem: {
+    '&.MuiTypography-root': {
+      margin: '5px 0px',
+      display: 'flex',
+      alignItems: 'center',
+      '& .MuiSvgIcon-root': {
+        marginRight: '7px',
+      },
+    },
+  },
+  imageList: {
+    '&.MuiImageList-root': {
+      margin: 0,
+      padding: 0,
+    },
+  },
+  imageListItem: {
+    '&.MuiImageListItem-root': {
+      '& .MuiImageListItemBar-root': {
+        border: '1px solid rgba(0, 0, 0, 0.17)',
+        width: '100%',
+        '& .MuiTypography-root': {
+          width: '100%',
+        },
+        '& .MuiImageListItemBar-titleWrap': {
+          padding: 0,
+          margin: 0,
+        },
+      },
+      '&:hover': {
+        cursor: 'pointer',
+      },
+    },
+  },
+  imageListItemTitle: {
+    textAlign: 'center',
+    width: '120px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 });
 

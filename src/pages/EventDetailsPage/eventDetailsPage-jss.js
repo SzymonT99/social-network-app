@@ -20,6 +20,9 @@ const styles = (theme) => ({
       '&:hover': {
         backgroundColor: '#949494',
       },
+      '& .MuiSvgIcon-root': {
+        marginRight: '7px',
+      },
     },
   },
   eventImage: {
@@ -58,6 +61,9 @@ const styles = (theme) => ({
       marginLeft: '20px',
       display: 'flex',
       alignItems: 'center',
+      '& .MuiSvgIcon-root': {
+        marginRight: '5px',
+      },
     },
   },
   eventManageBtnContainer: {
@@ -76,6 +82,9 @@ const styles = (theme) => ({
       display: 'flex',
       alignItems: 'center',
       marginLeft: '20px',
+      '& .MuiSvgIcon-root': {
+        marginRight: '5px',
+      },
     },
   },
   eventInvitationsList: {
@@ -139,6 +148,13 @@ const styles = (theme) => ({
     '&:hover': {
       cursor: 'pointer',
       textDecoration: 'underline',
+    },
+  },
+  eventTimeText: {
+    '&.MuiTypography-root': {
+      fontWeight: 'bold',
+      marginLeft: '40px',
+      color: '#FF1C00',
     },
   },
 });

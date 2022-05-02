@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from '../form-jss';
 import { PropTypes } from 'prop-types';
@@ -36,6 +36,10 @@ const ChangeEmailForm = (props) => {
       ).then((status) => status === 200 && resetForm());
     },
   });
+
+  useEffect(() => {
+    formik.setFieldValue('oldEmail', currentEmail);
+  }, [currentEmail]);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);

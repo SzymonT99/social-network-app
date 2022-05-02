@@ -53,10 +53,7 @@ const GroupRuleForm = (props) => {
   });
 
   return (
-    <form
-      onSubmit={formik.handleSubmit}
-      style={{ display: 'flex', flexDirection: 'column' }}
-    >
+    <form onSubmit={formik.handleSubmit} className={classes.formContainer}>
       <Grid container columnSpacing={{ xs: 2 }}>
         <Grid item xs={12}>
           <TextField

@@ -10,7 +10,7 @@ const ActionConfirmation = (props) => {
 
   return (
     <>
-      <Typography variant="h6" style={{ marginBottom: '15px' }}>
+      <Typography variant="h6" marginBottom="15px">
         {title}
       </Typography>
       <Divider />
@@ -19,7 +19,7 @@ const ActionConfirmation = (props) => {
           variant="contained"
           color="secondary"
           className={classes.dialogActionBtn}
-          style={{ marginRight: '20px' }}
+          sx={{ marginRight: '20px' }}
           onClick={confirmationAction}
         >
           Potwierdź

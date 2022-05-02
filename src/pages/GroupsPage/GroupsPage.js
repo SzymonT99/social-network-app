@@ -8,7 +8,6 @@ import {
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
 import PageHeader from '../../components/PageHeader/PageHeader';
-import { TabContext, TabList } from '@mui/lab';
 import Paper from '@mui/material/Paper';
 import {
   Button,
@@ -18,10 +17,10 @@ import {
   Pagination,
   Select,
   Tab,
+  Tabs,
   TextField,
   Typography,
 } from '@mui/material';
-import TabPanelMUI from '@mui/lab/TabPanel';
 import SearchIcon from '@mui/icons-material/Search';
 import {
   getGroupInvitations,
@@ -33,6 +32,20 @@ import Group from '../../components/Group/Group';
 import Popup from '../../components/Popup/Popup';
 import GroupForm from '../../components/Forms/GroupForm';
 import { getPossibleInterests } from '../../redux/actions/userProfileActions';
+
+const TabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      {...other}
+    >
+      {value === index && <div>{children}</div>}
+    </div>
+  );
+};
 
 const GroupsPage = (props) => {
   const { classes } = props;
@@ -51,7 +64,7 @@ const GroupsPage = (props) => {
   const isUserRemember = useSelector((state) => state.auth.remember);
   const isUserLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  const [groupTabType, setGroupTabType] = useState('1');
+  const [groupTabType, setGroupTabType] = useState(0);
   const [openGroupCreation, setOpenGroupCreation] = useState(false);
   const [searchedGroupText, setSearchedGroupText] = useState('');
   const [groupsOrder, setGroupsOrder] = useState(1);
@@ -144,222 +157,221 @@ const GroupsPage = (props) => {
   return (
     <div className={classes.wrapper}>
       <PageHeader heading="Grupy tematyczne" type="groups" />
-      <TabContext value={groupTabType}>
-        {isUserLoggedIn && (
-          <Paper elevation={4} className={classes.groupsTopContainer}>
-            <TabList
-              onChange={handleChangeGroupTabType}
-              className={classes.tabsContainer}
-            >
-              <Tab
-                className={classes.tabItem}
-                label="Dostępne grupy"
-                value={'1'}
-              />
-              <Tab
-                className={classes.tabItem}
-                label="Propozycje grup"
-                value={'2'}
-              />
-              <Tab
-                className={classes.tabItem}
-                label="Zaproszenia do grup"
-                value={'3'}
-              />
-            </TabList>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.addGroupBtn}
-              onClick={() => setOpenGroupCreation(true)}
-            >
-              Utwórz nową grupę
-            </Button>
-            <Popup
-              open={openGroupCreation}
-              type="group"
-              title="Utwórz grupę"
-              onClose={handleCloseGroupCreation}
-            >
-              <GroupForm
-                closePopup={handleCloseGroupCreation}
-                updateGroups={updateGroups}
-              />
-            </Popup>
-          </Paper>
-        )}
-        {groupTabType === '1' && (
-          <Paper elevation={4} className={classes.groupSearchbarContainer}>
-            <TextField
-              id="group-searchbar"
-              placeholder="Szukaj grupy"
-              className={classes.groupSearchbar}
-              value={searchedGroupText}
-              onChange={handleChangeSearchedGroup}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
+      {isUserLoggedIn && (
+        <Paper elevation={4} className={classes.groupsTopContainer}>
+          <Tabs
+            value={groupTabType}
+            onChange={handleChangeGroupTabType}
+            className={classes.tabsContainer}
+          >
+            <Tab
+              className={classes.tabItem}
+              label="Dostępne grupy"
+              id="tab-public-groups"
             />
-            <div className={classes.groupOrderBox}>
-              <Typography
-                component="p"
-                variant="subtitle1"
-                fontWeight="bold"
-                marginRight="10px"
+            <Tab
+              className={classes.tabItem}
+              label="Propozycje grup"
+              id="tab-proposal-groups"
+            />
+            <Tab
+              className={classes.tabItem}
+              label="Zaproszenia do grup"
+              id="tab-group-invitations"
+            />
+          </Tabs>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.addGroupBtn}
+            onClick={() => setOpenGroupCreation(true)}
+          >
+            Utwórz nową grupę
+          </Button>
+          <Popup
+            open={openGroupCreation}
+            type="group"
+            title="Utwórz grupę"
+            onClose={handleCloseGroupCreation}
+          >
+            <GroupForm
+              closePopup={handleCloseGroupCreation}
+              updateGroups={updateGroups}
+            />
+          </Popup>
+        </Paper>
+      )}
+      {groupTabType === 0 && (
+        <Paper elevation={4} className={classes.groupSearchbarContainer}>
+          <TextField
+            id="group-searchbar"
+            placeholder="Szukaj grupy"
+            className={classes.groupSearchbar}
+            value={searchedGroupText}
+            onChange={handleChangeSearchedGroup}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <div className={classes.groupOrderBox}>
+            <Typography
+              component="p"
+              variant="subtitle1"
+              fontWeight="bold"
+              marginRight="10px"
+            >
+              Sortuj według:
+            </Typography>
+            <FormControl>
+              <Select
+                className={classes.groupOrderSelect}
+                value={groupsOrder}
+                onChange={handleChangeGroupsOrder}
+                MenuProps={{ disableScrollLock: true }}
               >
-                Sortuj według:
-              </Typography>
-              <FormControl>
-                <Select
-                  className={classes.groupOrderSelect}
-                  value={groupsOrder}
-                  onChange={handleChangeGroupsOrder}
-                  MenuProps={{ disableScrollLock: true }}
-                >
-                  <MenuItem value={1}>Daty założenia</MenuItem>
-                  <MenuItem value={2}>Ilości członków</MenuItem>
-                  <MenuItem value={3}>Aktywności</MenuItem>
-                  <MenuItem value={4}>Kolejności alfabetycznej</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-          </Paper>
-        )}
-        <TabPanelMUI value="1" sx={{ padding: 0 }}>
-          <div className={classes.groupsListContainer}>
-            {groups ? (
-              sortGroups(groupsOrder)
-                .slice((groupsPageNumber - 1) * 6, groupsPageNumber * 6)
-                .map((group) => (
-                  <Group
-                    key={group.groupId}
-                    groupId={group.groupId}
-                    name={group.name}
-                    interests={group.interests}
-                    groupCreationDate={group.createdAt}
-                    membersNumber={group.members.length}
-                    members={group.members}
-                    postsNumber={group.postsNumber}
-                    groupImage={group.image}
-                    asInformation={!isUserLoggedIn}
-                  />
-                ))
-            ) : (
-              <div className={classes.loadingContainer}>
-                <CircularProgress color="secondary" size="150px" />
-              </div>
-            )}
+                <MenuItem value={1}>Daty założenia</MenuItem>
+                <MenuItem value={2}>Ilości członków</MenuItem>
+                <MenuItem value={3}>Aktywności</MenuItem>
+                <MenuItem value={4}>Kolejności alfabetycznej</MenuItem>
+              </Select>
+            </FormControl>
           </div>
-          {filteredGroups.length > 6 && (
-            <Paper elevation={4} className={classes.paginationContainer}>
-              <Pagination
-                className={classes.groupsPagination}
-                count={groups && Math.ceil(groups.length / 6)}
-                color="secondary"
-                size="large"
-                showFirstButton
-                showLastButton
-                page={groupsPageNumber}
-                onChange={handleChangeGroupsPageNumber}
-              />
-            </Paper>
-          )}
-          {filteredGroups.length === 0 && (
-            <div className={classes.noContent}>
-              <Typography variant="h6" fontWeight="bold">
-                Brak grup
-              </Typography>
-            </div>
-          )}
-        </TabPanelMUI>
-        <TabPanelMUI value="2" sx={{ padding: 0 }}>
-          <div className={classes.groupsListContainer}>
-            {interestingGroups ? (
-              interestingGroups
-                .slice(
-                  (interestingGroupsPageNumber - 1) * 6,
-                  interestingGroupsPageNumber * 6
-                )
-                .map((interestingGroup) => (
-                  <Group
-                    key={interestingGroup.groupId}
-                    groupId={interestingGroup.groupId}
-                    name={interestingGroup.name}
-                    interests={interestingGroup.interests}
-                    groupCreationDate={interestingGroup.createdAt}
-                    membersNumber={interestingGroup.members.length}
-                    members={interestingGroup.members}
-                    postsNumber={interestingGroup.postsNumber}
-                    groupImage={interestingGroup.image}
-                  />
-                ))
-            ) : (
-              <div className={classes.loadingContainer}>
-                <CircularProgress color="secondary" size="150px" />
-              </div>
-            )}
-          </div>
-          {interestingGroups.length > 6 && (
-            <Paper elevation={4} className={classes.paginationContainer}>
-              <Pagination
-                className={classes.groupsPagination}
-                count={
-                  interestingGroups && Math.ceil(interestingGroups.length / 6)
-                }
-                color="secondary"
-                size="large"
-                showFirstButton
-                showLastButton
-                page={interestingGroupsPageNumber}
-                onChange={handleChangeInterestingGroupsPageNumber}
-              />
-            </Paper>
-          )}
-          {interestingGroups.length === 0 && (
-            <div className={classes.noContent}>
-              <Typography variant="h6" fontWeight="bold">
-                Brak grup o podobnej dziedzinie zainteresowań
-              </Typography>
-            </div>
-          )}
-        </TabPanelMUI>
-        <TabPanelMUI value="3" sx={{ padding: 0 }}>
-          <div className={classes.groupsListContainer}>
-            {groupInvitations ? (
-              groupInvitations.map((groupInvitation) => (
+        </Paper>
+      )}
+      <TabPanel value={groupTabType} index={0}>
+        <div className={classes.groupsListContainer}>
+          {groups ? (
+            sortGroups(groupsOrder)
+              .slice((groupsPageNumber - 1) * 6, groupsPageNumber * 6)
+              .map((group) => (
                 <Group
-                  key={groupInvitation.groupId}
-                  groupId={groupInvitation.groupId}
-                  name={groupInvitation.groupName}
-                  interests={groupInvitation.groupInterests}
-                  groupCreationDate={groupInvitation.groupCreatedAt}
-                  membersNumber={groupInvitation.groupMembers.length}
-                  members={groupInvitation.groupMembers}
-                  postsNumber={groupInvitation.groupPostsNumber}
-                  groupImage={groupInvitation.groupImage}
-                  invitation
-                  invitationDate={groupInvitation.invitationDate}
+                  key={group.groupId}
+                  groupId={group.groupId}
+                  name={group.name}
+                  interests={group.interests}
+                  groupCreationDate={group.createdAt}
+                  membersNumber={group.members.length}
+                  members={group.members}
+                  postsNumber={group.postsNumber}
+                  groupImage={group.image}
+                  asInformation={!isUserLoggedIn}
                 />
               ))
-            ) : (
-              <div className={classes.loadingContainer}>
-                <CircularProgress color="secondary" size="150px" />
-              </div>
-            )}
-          </div>
-          {groupInvitations.length === 0 && (
-            <div className={classes.noContent}>
-              <Typography variant="h6" fontWeight="bold">
-                Brak zaproszeń
-              </Typography>
+          ) : (
+            <div className={classes.loadingContainer}>
+              <CircularProgress color="secondary" size="150px" />
             </div>
           )}
-        </TabPanelMUI>
-      </TabContext>
+        </div>
+        {filteredGroups.length > 6 && (
+          <Paper elevation={4} className={classes.paginationContainer}>
+            <Pagination
+              className={classes.groupsPagination}
+              count={groups && Math.ceil(groups.length / 6)}
+              color="secondary"
+              size="large"
+              showFirstButton
+              showLastButton
+              page={groupsPageNumber}
+              onChange={handleChangeGroupsPageNumber}
+            />
+          </Paper>
+        )}
+        {filteredGroups.length === 0 && (
+          <div className={classes.noContent}>
+            <Typography variant="h6" fontWeight="bold">
+              Brak grup
+            </Typography>
+          </div>
+        )}
+      </TabPanel>
+      <TabPanel value={groupTabType} index={1}>
+        <div className={classes.groupsListContainer}>
+          {interestingGroups ? (
+            interestingGroups
+              .slice(
+                (interestingGroupsPageNumber - 1) * 6,
+                interestingGroupsPageNumber * 6
+              )
+              .map((interestingGroup) => (
+                <Group
+                  key={interestingGroup.groupId}
+                  groupId={interestingGroup.groupId}
+                  name={interestingGroup.name}
+                  interests={interestingGroup.interests}
+                  groupCreationDate={interestingGroup.createdAt}
+                  membersNumber={interestingGroup.members.length}
+                  members={interestingGroup.members}
+                  postsNumber={interestingGroup.postsNumber}
+                  groupImage={interestingGroup.image}
+                />
+              ))
+          ) : (
+            <div className={classes.loadingContainer}>
+              <CircularProgress color="secondary" size="150px" />
+            </div>
+          )}
+        </div>
+        {interestingGroups.length > 6 && (
+          <Paper elevation={4} className={classes.paginationContainer}>
+            <Pagination
+              className={classes.groupsPagination}
+              count={
+                interestingGroups && Math.ceil(interestingGroups.length / 6)
+              }
+              color="secondary"
+              size="large"
+              showFirstButton
+              showLastButton
+              page={interestingGroupsPageNumber}
+              onChange={handleChangeInterestingGroupsPageNumber}
+            />
+          </Paper>
+        )}
+        {interestingGroups.length === 0 && (
+          <div className={classes.noContent}>
+            <Typography variant="h6" fontWeight="bold">
+              Brak grup o podobnej dziedzinie zainteresowań
+            </Typography>
+          </div>
+        )}
+      </TabPanel>
+      <TabPanel value={groupTabType} index={2}>
+        <div className={classes.groupsListContainer}>
+          {groupInvitations ? (
+            groupInvitations.map((groupInvitation) => (
+              <Group
+                key={groupInvitation.groupId}
+                groupId={groupInvitation.groupId}
+                name={groupInvitation.groupName}
+                interests={groupInvitation.groupInterests}
+                groupCreationDate={groupInvitation.groupCreatedAt}
+                membersNumber={groupInvitation.groupMembers.length}
+                members={groupInvitation.groupMembers}
+                postsNumber={groupInvitation.groupPostsNumber}
+                groupImage={groupInvitation.groupImage}
+                invitation
+                invitationDate={groupInvitation.invitationDate}
+              />
+            ))
+          ) : (
+            <div className={classes.loadingContainer}>
+              <CircularProgress color="secondary" size="150px" />
+            </div>
+          )}
+        </div>
+        {groupInvitations.length === 0 && (
+          <div className={classes.noContent}>
+            <Typography variant="h6" fontWeight="bold">
+              Brak zaproszeń
+            </Typography>
+          </div>
+        )}
+      </TabPanel>
     </div>
   );
 };

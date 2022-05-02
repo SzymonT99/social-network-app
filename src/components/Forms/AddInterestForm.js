@@ -56,16 +56,8 @@ const AddInterestForm = (props) => {
   };
 
   return (
-    <form
-      noValidate
-      style={{
-        margin: '15px 0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
-      <FormControl sx={{ width: '60%', paddingRight: '15px', marginBottom: 0 }}>
+    <form noValidate className={classes.interestsForm}>
+      <FormControl className={classes.interestSelect}>
         <InputLabel id="interest-select-label">Zainteresowanie</InputLabel>
         <Select
           labelId="interest-select-label"
@@ -85,8 +77,7 @@ const AddInterestForm = (props) => {
       </FormControl>
 
       <Button
-        className={classes.userFavouriteActionBtn}
-        sx={{ width: '120px', marginRight: '10px' }}
+        className={classes.interestBtn}
         color="secondary"
         variant="contained"
         onClick={handleClickAddInterest}
@@ -94,8 +85,7 @@ const AddInterestForm = (props) => {
         Dodaj
       </Button>
       <Button
-        className={classes.userFavouriteActionBtn}
-        sx={{ width: '120px' }}
+        className={classes.interestBtn}
         color="primary"
         variant="contained"
         onClick={onCloseForm}

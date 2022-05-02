@@ -23,6 +23,9 @@ const styles = (theme) => ({
       '&:hover': {
         backgroundColor: '#949494',
       },
+      '& .MuiSvgIcon-root': {
+        marginRight: '7px',
+      },
     },
   },
   groupImage: {
@@ -46,6 +49,9 @@ const styles = (theme) => ({
   alignCenterRowInfo: {
     display: 'flex',
     alignItems: 'center',
+    '& .MuiSvgIcon-root': {
+      marginRight: '8px',
+    },
   },
   groupHeadingDetails: {
     display: 'flex',
@@ -56,6 +62,15 @@ const styles = (theme) => ({
     '&.MuiButton-root': {
       marginLeft: '26px',
       fontSize: '17px',
+      '& .MuiSvgIcon-root ': {
+        marginRight: '7px',
+      },
+    },
+  },
+  groupInfoDescription: {
+    '&.MuiTypography-root': {
+      marginLeft: '32px',
+      fontWeight: 300,
     },
   },
   groupNavContainer: {
@@ -129,6 +144,9 @@ const styles = (theme) => ({
       },
     },
   },
+  rulesContainer: {
+    margin: '20px 0px',
+  },
   groupCreatorLink: {
     marginLeft: '4px',
     '&:hover': {
@@ -193,6 +211,12 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  noGroupMembers: {
+    width: '100%',
+    marginTop: '10px',
+    marginBottom: '10px',
+    textAlign: 'center',
   },
   informationSectionElement: {
     '&.MuiPaper-root': {

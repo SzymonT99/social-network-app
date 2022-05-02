@@ -26,8 +26,6 @@ const AddressForm = (props) => {
 
   const dispatch = useDispatch();
 
-  const loggedUser = useSelector((state) => state.auth.user);
-
   const validationSchema = yup.object({
     country: yup.string().required('Wymagane'),
     city: yup.string().required('Wymagane'),
@@ -56,10 +54,7 @@ const AddressForm = (props) => {
   });
 
   return (
-    <form
-      onSubmit={formik.handleSubmit}
-      style={{ display: 'flex', flexDirection: 'column' }}
-    >
+    <form onSubmit={formik.handleSubmit} className={classes.formContainer}>
       <Grid container columnSpacing={{ xs: 2 }} rowSpacing={{ xs: 2 }}>
         <Grid item xs={12}>
           <TextField
@@ -120,7 +115,7 @@ const AddressForm = (props) => {
       </Grid>
       <Divider />
       <Button
-        style={{ marginTop: '20px' }}
+        sx={{ marginTop: '20px' }}
         color="secondary"
         className={classes.profileFormConfirmBtn}
         variant="contained"

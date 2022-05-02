@@ -293,6 +293,37 @@ const styles = (theme) => ({
       },
     },
   },
+  interestsForm: {
+    margin: '15px 0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  interestSelect: {
+    '&.MuiFormControl-root': {
+      width: '60%',
+      paddingRight: '15px',
+      marginBottom: 0,
+    },
+  },
+  interestBtn: {
+    '&.MuiButton-root': {
+      width: '120px',
+      marginRight: '10px',
+      fontSize: '17px',
+    },
+  },
+  formContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  favouriteSelect: {
+    '&.MuiFormControl-root': {
+      width: '35%',
+      paddingRight: '15px',
+      marginBottom: 0,
+    },
+  },
 });
 
 export default styles;

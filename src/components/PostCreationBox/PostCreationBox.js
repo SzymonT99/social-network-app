@@ -58,7 +58,7 @@ const PostCreationBox = (props) => {
         <PostForm
           closePopup={handleClosePostCreation}
           groupPost={groupId !== undefined}
-          groupId={groupId}
+          groupId={groupId !== undefined && groupId}
         />
       </Popup>
     </Paper>

@@ -18,6 +18,7 @@ const ChangePasswordForm = (props) => {
 
   const dispatch = useDispatch();
 
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatedPassword, setShowRepeatedPassword] = useState(false);
 
@@ -25,7 +26,7 @@ const ChangePasswordForm = (props) => {
     oldPassword: yup.string().required('Wymagane'),
     newPassword: yup
       .string()
-      .min(10, 'Hasło powinno mieć minimum 8 znaków')
+      .min(10, 'Hasło powinno mieć minimum 10 znaków')
       .max(100, 'Hasło powinno mieć maksymalnie 100 znaków')
       .required('Wymagane'),
     repeatedNewPassword: yup.string().required('Wymagane'),
@@ -49,6 +50,10 @@ const ChangePasswordForm = (props) => {
     },
   });
 
+  const handleClickShowCurrentPassword = () => {
+    setShowCurrentPassword(!showCurrentPassword);
+  };
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -65,8 +70,22 @@ const ChangePasswordForm = (props) => {
         id="oldPassword"
         name="oldPassword"
         label="Obecne hasło"
+        type={showCurrentPassword ? 'text' : 'password'}
         value={formik.values.oldPassword}
         onChange={formik.handleChange}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={handleClickShowCurrentPassword} edge="end">
+                {showCurrentPassword ? (
+                  <VisibilityOffIcon />
+                ) : (
+                  <VisibilityIcon />
+                )}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
         error={formik.touched.oldPassword && Boolean(formik.errors.oldPassword)}
         helperText={
           formik.touched.oldPassword && formik.errors.oldPassword
@@ -78,7 +97,7 @@ const ChangePasswordForm = (props) => {
         fullWidth
         id="newPassword"
         name="newPassword"
-        label="Nowy hasło"
+        label="Nowe hasło"
         type={showPassword ? 'text' : 'password'}
         value={formik.values.newPassword}
         onChange={formik.handleChange}

@@ -212,7 +212,12 @@ export const inviteToGroup =
             )
           );
         } else if (response.status === 409) {
-          dispatch(showNotification('warning', 'Już wysłano zaproszenie'));
+          dispatch(
+            showNotification(
+              'warning',
+              'Już wysłano zaproszenie lub użytkownik wysłał prośbę dołączenia'
+            )
+          );
         } else if (response.status === 410) {
           dispatch(
             showNotification(

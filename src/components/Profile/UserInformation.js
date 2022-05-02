@@ -155,7 +155,7 @@ const UserInformation = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <CheckCircleOutlineIcon sx={{ paddingRight: '7px' }} /> Akceptuj
+          <CheckCircleOutlineIcon /> Akceptuj
         </Typography>
       );
     } else if (!isUserFriend && !isInvitedToFriend) {
@@ -164,7 +164,7 @@ const UserInformation = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <PersonAddIcon sx={{ marginRight: '7px' }} /> Dodaj
+          <PersonAddIcon /> Dodaj
         </Typography>
       );
     } else if (!isUserFriend && isInvitedToFriend) {
@@ -173,7 +173,7 @@ const UserInformation = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <DoNotDisturbIcon sx={{ marginRight: '7px' }} />
+          <DoNotDisturbIcon />
           Anuluj
         </Typography>
       );
@@ -183,7 +183,7 @@ const UserInformation = (props) => {
           variant="subtitle1"
           className={classes.friendManageBtnContent}
         >
-          <PersonIcon sx={{ marginRight: '7px' }} />
+          <PersonIcon />
           Znajomy
         </Typography>
       );
@@ -240,7 +240,7 @@ const UserInformation = (props) => {
                 variant="subtitle1"
                 className={classes.friendManageBtnContent}
               >
-                <PersonRemoveIcon sx={{ marginRight: '7px' }} />
+                <PersonRemoveIcon />
                 Usuń
               </Typography>
             ) : (

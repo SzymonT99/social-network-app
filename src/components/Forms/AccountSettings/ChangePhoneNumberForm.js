@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import styles from '../form-jss';
 import { PropTypes } from 'prop-types';
@@ -40,6 +40,10 @@ const ChangePhoneNumberForm = (props) => {
       ).then((status) => status === 200 && resetForm());
     },
   });
+
+  useEffect(() => {
+    formik.setFieldValue('oldPhoneNumber', currentPhoneNumber);
+  }, [currentPhoneNumber]);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
