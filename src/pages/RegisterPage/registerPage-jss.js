@@ -1,9 +1,19 @@
 const styles = (theme) => ({
   registerContainer: {
     '&.MuiPaper-root': {
-      width: '60vw',
       padding: '60px',
       borderRadius: '20px',
+      margin: '20px 0px',
+      [theme.breakpoints.down('md')]: {
+        width: '90vw',
+        padding: '30px',
+      },
+      [theme.breakpoints.up('md')]: {
+        width: '80vw',
+      },
+      [theme.breakpoints.up('lg')]: {
+        width: '60vw',
+      },
     },
   },
   registerForm: {
@@ -28,6 +38,10 @@ const styles = (theme) => ({
       fontSize: '17px',
       fontWeight: 'bold',
       width: '50%',
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '10px',
+        width: '100%',
+      },
     },
   },
 });

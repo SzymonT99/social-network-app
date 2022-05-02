@@ -7,11 +7,15 @@ const useStyles = makeStyles((theme) => ({
     height: '50px',
     position: 'relative',
     backgroundColor: theme.palette.primary.dark,
+    [theme.breakpoints.down('sm')]: {
+      height: '80px',
+    },
   },
   content: {
     position: 'absolute',
     width: '100%',
     height: '100%',
+    textAlign: 'center',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

@@ -1,8 +1,18 @@
 import { createTheme } from '@mui/material/styles';
 import { plPL } from '@mui/x-data-grid';
 
-const theme = createTheme(
+let theme = createTheme();
+theme = createTheme(
   {
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 900,
+        lg: 1200,
+        xl: 1536,
+      },
+    },
     palette: {
       primary: {
         dark: '#001226',
@@ -22,10 +32,31 @@ const theme = createTheme(
       h1: {
         fontSize: '70px',
         fontWeight: 'bold',
+        [theme.breakpoints.down('lg')]: {
+          fontSize: '55px',
+        },
+        [theme.breakpoints.down('md')]: {
+          fontSize: '50px',
+        },
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '40px',
+        },
+      },
+      h3: {
+        fontSize: '50px',
+        [theme.breakpoints.down('md')]: {
+          fontSize: '35px',
+        },
       },
       h4: {
         fontSize: '28px',
         fontWeight: 400,
+        [theme.breakpoints.down('md')]: {
+          fontSize: '24px',
+        },
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '20px',
+        },
       },
       h6: {
         fontWeight: 400,

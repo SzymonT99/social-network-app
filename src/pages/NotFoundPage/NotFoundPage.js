@@ -27,12 +27,19 @@ const useStyles = makeStyles((theme) => ({
       '&:hover': {
         cursor: 'pointer',
       },
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column',
+      },
     },
   },
   logo: {
     width: '122px',
     height: '105px',
     marginRight: '40px',
+    [theme.breakpoints.down('sm')]: {
+      marginRight: '0px',
+      marginBottom: '20px',
+    },
   },
   codeText: {
     '&.MuiTypography-root': {
