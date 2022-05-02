@@ -9,6 +9,7 @@ import defaultImg from '../../assets/default-image.png';
 import Avatar from '@mui/material/Avatar';
 import { useHistory } from 'react-router-dom';
 import { formatActivityDate } from '../../utils/formatActivityDate';
+import { formatDateWithTime } from '../../utils/formatDateWithTime';
 
 const ActivityHeading = (props) => {
   const {
@@ -115,7 +116,7 @@ const ActivityHeading = (props) => {
           </Typography>
           {isEdited && !postGroupActivity && (
             <Typography variant="body2" fontWeight={500}>
-              {'edytowano ' + editionDate.substring(0, editionDate.length - 3)}
+              {'edytowano ' + formatDateWithTime(editionDate)}
             </Typography>
           )}
         </div>

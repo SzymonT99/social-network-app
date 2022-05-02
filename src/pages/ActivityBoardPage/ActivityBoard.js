@@ -142,7 +142,7 @@ const ActivityBoard = (props) => {
                       isEdited={item.activity.isEdited}
                       isPublic={item.activity.isPublic}
                       isCommentingBlocked={item.activity.isCommentingBlocked}
-                      editionDate={item.activity.editedAt}
+                      editionDate={new Date(item.activity.editedAt)}
                       accessToManagement={loggedUser.roles.includes(
                         'ROLE_ADMIN'
                       )}
@@ -177,7 +177,7 @@ const ActivityBoard = (props) => {
                       isCommentingBlocked={
                         item.activity.post.isCommentingBlocked
                       }
-                      editionDate={item.activity.post.editedAt}
+                      editionDate={new Date(item.activity.post.editedAt)}
                       highlightCommentById={
                         item.activityType === 'COMMENT_POST'
                           ? item.activity.commentId
@@ -304,7 +304,7 @@ const ActivityBoard = (props) => {
                       isEdited={item.activity.isEdited}
                       isPublic={item.activity.isPublic}
                       isCommentingBlocked={item.activity.isCommentingBlocked}
-                      editionDate={item.activity.editedAt}
+                      editionDate={new Date(item.activity.editedAt)}
                       isGroupPostActivity
                       groupId={item.activity.group.groupId}
                       groupName={item.activity.group.name}
@@ -344,7 +344,9 @@ const ActivityBoard = (props) => {
                       isCommentingBlocked={
                         item.activity.changePhotoPost.isCommentingBlocked
                       }
-                      editionDate={item.activity.changePhotoPost.editedAt}
+                      editionDate={
+                        new Date(item.activity.changePhotoPost.editedAt)
+                      }
                       isChangeProfilePhotoPost
                       accessToManagement={loggedUser.roles.includes(
                         'ROLE_ADMIN'

@@ -10,15 +10,12 @@ import Typography from '@mui/material/Typography';
 import {
   Autocomplete,
   Badge,
-  Divider,
   IconButton,
   InputAdornment,
   ListItem,
   ListItemAvatar,
-  ListItemIcon,
   ListItemText,
   Menu,
-  MenuItem,
   TextField,
   Tooltip,
 } from '@mui/material';
@@ -29,10 +26,6 @@ import MessageIcon from '@mui/icons-material/Message';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
-import { Logout, Settings } from '@mui/icons-material';
-import { logoutUser } from '../../redux/actions/authActions';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { changeUserStatus } from '../../redux/actions/userProfileActions';
 import ClearIcon from '@mui/icons-material/Clear';
 import CheckIcon from '@mui/icons-material/Check';
 import {
@@ -46,6 +39,7 @@ import {
   getUserChats,
   setActiveChat,
 } from '../../redux/actions/chatAction';
+import UserMenu from '../UserMenu/UserMenu';
 
 const activeStatus = {
   ONLINE: '#1CCD16',
@@ -285,7 +279,10 @@ const Header = (props) => {
           className={classes.actionIcons}
           style={{ display: !isUserLoggedIn && 'none' }}
         >
-          <IconButton onClick={handleClickFriendNotification}>
+          <IconButton
+            onClick={handleClickFriendNotification}
+            className={classes.notificationBtn}
+          >
             <Badge
               sx={{
                 '& .MuiBadge-badge': {
@@ -300,10 +297,7 @@ const Header = (props) => {
                 ).length
               }
             >
-              <PersonIcon
-                color="primary"
-                sx={{ fontSize: '45px', cursor: 'pointer' }}
-              />
+              <PersonIcon color="primary" />
             </Badge>
           </IconButton>
           <Menu
@@ -416,7 +410,10 @@ const Header = (props) => {
               </Typography>
             )}
           </Menu>
-          <IconButton onClick={handleClickActivityNotification}>
+          <IconButton
+            onClick={handleClickActivityNotification}
+            className={classes.notificationBtn}
+          >
             <Badge
               sx={{
                 '& .MuiBadge-badge': {
@@ -431,10 +428,7 @@ const Header = (props) => {
                 ).length
               }
             >
-              <NotificationsIcon
-                color="primary"
-                sx={{ fontSize: '45px', cursor: 'pointer' }}
-              />
+              <NotificationsIcon color="primary" />
             </Badge>
           </IconButton>
           <Menu
@@ -554,7 +548,10 @@ const Header = (props) => {
               </Typography>
             )}
           </Menu>
-          <IconButton onClick={handleClickChatNotification}>
+          <IconButton
+            onClick={handleClickChatNotification}
+            className={classes.notificationBtn}
+          >
             <Badge
               sx={{
                 '& .MuiBadge-badge': {
@@ -575,10 +572,7 @@ const Header = (props) => {
                   : 0
               }
             >
-              <MessageIcon
-                color="primary"
-                sx={{ fontSize: '45px', cursor: 'pointer' }}
-              />
+              <MessageIcon color="primary" />
             </Badge>
           </IconButton>
           <Menu
@@ -701,7 +695,7 @@ const Header = (props) => {
                         </div>
                       </div>
                       {chat.newMessages > 0 && (
-                        <div style={{ width: '10%', textAlign: 'right' }}>
+                        <div className={classes.notificationNumberBox}>
                           <span className={classes.notificationNumber}>
                             {chat.newMessages}
                           </span>
@@ -752,149 +746,12 @@ const Header = (props) => {
               className={classes.userPhoto}
             />
           </IconButton>
-          <Menu
+          <UserMenu
+            userProfile={loggedUserProfile}
+            userId={loggedUser.userId}
             anchorEl={anchorElAccountMenu}
-            id="account-menu"
-            open={Boolean(anchorElAccountMenu)}
-            onClose={handleCloseAccountMenu}
-            onClick={handleCloseAccountMenu}
-            disableScrollLock={true}
-            PaperProps={{
-              elevation: 2,
-              className: classes.userMenu,
-            }}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            <MenuItem
-              className={classes.userMenuItem}
-              onClick={() =>
-                history.push('/app/profile/' + loggedUserProfile.userProfileId)
-              }
-            >
-              <Avatar
-                src={
-                  loggedUserProfile && loggedUserProfile.profilePhoto !== null
-                    ? loggedUserProfile.profilePhoto.url
-                    : defaultUserPhoto
-                }
-                alt={
-                  loggedUserProfile
-                    ? loggedUserProfile.firstName +
-                      ' ' +
-                      loggedUserProfile.lastName
-                    : defaultUserPhoto
-                }
-              />
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle1" fontWeight={500}>
-                    Mój profil
-                  </Typography>
-                }
-              />
-            </MenuItem>
-            <Divider className={classes.divider} />
-            <MenuItem className={classes.userMenuItem} disabled>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2" fontWeight="bold">
-                    Ustaw status aktywności
-                  </Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.userMenuItem}
-              onClick={() => dispatch(changeUserStatus('ONLINE'))}
-            >
-              <ListItemIcon>
-                <FiberManualRecordIcon
-                  style={{ color: activeStatus['ONLINE'] }}
-                />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={<Typography variant="body1">Dostępny</Typography>}
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.userMenuItem}
-              onClick={() => dispatch(changeUserStatus('BUSY'))}
-            >
-              <ListItemIcon>
-                <FiberManualRecordIcon
-                  style={{ color: activeStatus['BUSY'] }}
-                />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={<Typography variant="body1">Zajęty</Typography>}
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.userMenuItem}
-              onClick={() => dispatch(changeUserStatus('BE_RIGHT_BACK'))}
-            >
-              <ListItemIcon>
-                <FiberManualRecordIcon
-                  style={{ color: activeStatus['BE_RIGHT_BACK'] }}
-                />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={<Typography variant="body1">Zaraz wracam</Typography>}
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.userMenuItem}
-              onClick={() => dispatch(changeUserStatus('OFFLINE'))}
-            >
-              <ListItemIcon>
-                <FiberManualRecordIcon
-                  style={{ color: activeStatus['OFFLINE'] }}
-                />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={<Typography variant="body1">Niedostępny</Typography>}
-              />
-            </MenuItem>
-            <Divider className={classes.divider} />
-            <MenuItem
-              className={classes.userMenuItem}
-              onClick={() => history.push('/app/settings')}
-            >
-              <ListItemIcon>
-                <Settings fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Ustawienia konta</Typography>
-                }
-              />
-            </MenuItem>
-            <MenuItem
-              className={classes.userMenuItem}
-              onClick={() => {
-                history.push('/auth/login');
-                dispatch(logoutUser(loggedUser.userId));
-              }}
-            >
-              <ListItemIcon>
-                <Logout fontSize="medium" />
-              </ListItemIcon>
-              <ListItemText
-                disableTypography
-                primary={
-                  <Typography variant="subtitle2">Wyloguj się</Typography>
-                }
-              />
-            </MenuItem>
-          </Menu>
+            closeAccountMenu={handleCloseAccountMenu}
+          />
         </div>
         {!isUserLoggedIn && (
           <div>

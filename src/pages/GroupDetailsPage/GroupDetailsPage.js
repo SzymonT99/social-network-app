@@ -733,7 +733,7 @@ const GroupDetailsPage = (props) => {
                     <Typography
                       variant="subtitle1"
                       className={classes.groupBasicInfoItem}
-                      sx={{ marginTop: '5px' }}
+                      marginTop="5px"
                     >
                       <InfoIcon fontSize="medium" /> Tematyka grupy:
                     </Typography>
@@ -1421,7 +1421,7 @@ const GroupDetailsPage = (props) => {
                   />
                   <Typography
                     variant="h5"
-                    sx={{ marginTop: '15px' }}
+                    marginTop="15px"
                     className={classes.settingsInformationHeading}
                   >
                     Tematyka grupy
