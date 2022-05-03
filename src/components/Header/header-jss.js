@@ -7,19 +7,49 @@ const styles = (theme) => ({
     top: 0,
     zIndex: 100,
     display: 'flex',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column-reverse',
+      height: '140px',
+    },
   },
   logoContainer: {
-    flex: 2,
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: theme.palette.primary.main,
-    borderBottom: `1px ${theme.palette.secondary.main} solid`,
-    color: 'white',
+    '&.MuiTypography-root': {
+      flex: 2,
+      display: 'flex',
+      alignItems: 'center',
+      backgroundColor: theme.palette.primary.main,
+      borderBottom: `1px ${theme.palette.secondary.main} solid`,
+      color: 'white',
+    },
+  },
+  '@media (max-width: 1800px)': {
+    logoContainer: {
+      '&.MuiTypography-root': {
+        backgroundColor: theme.palette.secondary.main,
+        borderBottom: 'none',
+        fontWeight: 500,
+        flex: 3,
+      },
+    },
+  },
+  '@media (max-width: 1350px)': {
+    logoContainer: {
+      '&.MuiTypography-root': {
+        flex: 4,
+      },
+    },
+  },
+  '@media (max-width: 1000px)': {
+    logoContainer: {
+      '&.MuiTypography-root': {
+        display: 'none',
+      },
+    },
   },
   logo: {
     width: '58px',
     height: '50px',
-    margin: '20px',
+    margin: '0px 20px',
   },
   searchContainer: {
     flex: 6,
@@ -33,34 +63,86 @@ const styles = (theme) => ({
     '& .MuiFormControl-root': {
       marginBottom: 0,
     },
+    [theme.breakpoints.down('xl')]: {
+      width: '90%',
+    },
+    [theme.breakpoints.down('lg')]: {
+      marginLeft: '20px',
+      width: '100%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      margin: '0px 10px 10px 10px',
+    },
   },
   actionContainer: {
     flex: 4,
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('lg')]: {
+      flex: 2,
+    },
+    [theme.breakpoints.down('lg')]: {
+      flex: 2,
+    },
+    [theme.breakpoints.down('sm')]: {
+      alignItems: 'flex-end',
+    },
   },
   actionIcons: {
     display: 'flex',
     justifyContent: 'space-around',
     width: '25%',
     paddingLeft: '10px',
-  },
-  iconItem: {
-    marginRight: '24px',
-    cursor: 'pointer',
+    [theme.breakpoints.down('lg')]: {
+      width: '75%',
+      paddingRight: '30px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '25%',
+      justifyContent: 'flex-start',
+    },
   },
   userInfoBox: {
     display: 'flex',
     alignItems: 'center',
-    width: '75%',
     justifyContent: 'flex-end',
     marginRight: '24px',
+    width: '75%',
+    [theme.breakpoints.down('xl')]: {
+      marginRight: '10px',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '25%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '75%',
+      marginRight: '0px',
+    },
   },
   nameAndSurname: {
-    textAlign: 'right',
-    width: '320px',
-    color: 'white',
-    paddingRight: '30px',
+    '&.MuiTypography-root': {
+      textAlign: 'right',
+      width: '320px',
+      color: 'white',
+      paddingRight: '30px',
+      [theme.breakpoints.down('xl')]: {
+        width: '250px',
+        paddingRight: '10px',
+      },
+      [theme.breakpoints.down('lg')]: {
+        display: 'none',
+      },
+      [theme.breakpoints.down('sm')]: {
+        display: 'block',
+      },
+    },
+  },
+  '@media (max-width: 420px)': {
+    nameAndSurname: {
+      '&.MuiTypography-root': {
+        display: 'none',
+      },
+    },
   },
   userPhoto: {
     '&.MuiAvatar-root': {
@@ -70,9 +152,18 @@ const styles = (theme) => ({
   },
   friendNotificationMenu: {
     '& .MuiPaper-root': {
-      width: '18%',
+      width: '20%',
       borderRadius: '5px',
       maxHeight: '80%',
+      [theme.breakpoints.down('xl')]: {
+        width: '30%',
+      },
+      [theme.breakpoints.down('lg')]: {
+        width: '50%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '90%',
+      },
     },
   },
   activityNotificationMenu: {
@@ -80,6 +171,15 @@ const styles = (theme) => ({
       width: '24%',
       borderRadius: '5px',
       maxHeight: '80%',
+      [theme.breakpoints.down('xl')]: {
+        width: '30%',
+      },
+      [theme.breakpoints.down('lg')]: {
+        width: '50%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '90%',
+      },
       '& .MuiList-root': {
         padding: 0,
       },
@@ -90,6 +190,15 @@ const styles = (theme) => ({
       width: '20%',
       borderRadius: '5px',
       maxHeight: '80%',
+      [theme.breakpoints.down('xl')]: {
+        width: '30%',
+      },
+      [theme.breakpoints.down('lg')]: {
+        width: '50%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '90%',
+      },
       '& .MuiList-root': {
         padding: 0,
       },

@@ -11,6 +11,15 @@ const styles = (theme) => ({
     '&::-webkit-scrollbar': {
       width: '0px',
     },
+    [theme.breakpoints.down('xl')]: {
+      flex: 2.5,
+    },
+    [theme.breakpoints.down('lg')]: {
+      flex: 3,
+    },
+    [theme.breakpoints.down('md')]: {
+      display: 'none',
+    },
   },
   sidebarWrapper: {
     padding: '15px 15px 0px 15px',
@@ -49,8 +58,35 @@ const styles = (theme) => ({
   divider: {
     backgroundColor: theme.palette.primary.contrastText,
   },
-  iconItem: {
-    color: 'white',
+  '@media (max-width: 1800px)': {
+    navigationBtn: {
+      '&.MuiListItemButton-root': {
+        padding: '8px 4px',
+        '& .MuiListItemIcon-root': {
+          minWidth: '42px',
+          '& .MuiSvgIcon-root': {
+            fontSize: '30px',
+          },
+        },
+        '& .MuiListItemText-root': {
+          '& .MuiTypography-root': {
+            fontSize: '18px',
+          },
+        },
+      },
+    },
+  },
+  navigationBtn: {
+    '&.MuiListItemButton-root': {
+      '& .MuiListItemIcon-root': {
+        color: 'white',
+      },
+      '& .MuiListItemText-root': {
+        '& .MuiTypography-root': {
+          fontWeight: 'bold',
+        },
+      },
+    },
   },
   avatarBadge: {
     '& .MuiBadge-badge': {

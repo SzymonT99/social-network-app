@@ -32,10 +32,10 @@ const Popup = (props) => {
       onBackdropClick={onClose}
       open={open}
       fullWidth
-      className={classes.dialogContainer}
       sx={{
         '& .MuiPaper-root': { maxWidth: widthValues[type] },
       }}
+      className={classes.dialogContainer}
     >
       <DialogTitle className={classes.dialogTitle}>
         <div className={classes.dialogTitleContainer}>

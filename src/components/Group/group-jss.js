@@ -37,22 +37,43 @@ const styles = (theme) => ({
     textOverflow: 'ellipsis',
     width: '320px',
   },
+  '@media (max-width: 450px)': {
+    groupTitleText: {
+      '&.MuiTypography-root': {
+        width: '200px',
+      },
+    },
+    groupInterestsBox: {
+      width: '200px',
+    },
+  },
   groupBtnContainer: {
     marginTop: '10px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   groupBtn: {
     '&.MuiButton-root': {
       width: '47%',
       borderRadius: '5px',
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '10px',
+        width: '100%',
+      },
     },
   },
   groupInvitationBtn: {
     '&.MuiButton-root': {
       width: '30%',
       borderRadius: '5px',
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '5px',
+        width: '100%',
+      },
     },
   },
   showGroupBtn: {

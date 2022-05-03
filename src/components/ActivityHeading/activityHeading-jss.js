@@ -25,6 +25,10 @@ const styles = (theme) => ({
   actionName: {
     fontSize: 16,
     fontWeight: 300,
+    [theme.breakpoints.down('sm')]: {
+      display: 'block',
+      fontSize: '13px',
+    },
   },
   groupActivityContainer: {
     position: 'relative',

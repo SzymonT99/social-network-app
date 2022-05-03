@@ -78,6 +78,9 @@ const styles = (theme) => ({
       borderRadius: '15px',
       fontSize: '17px',
       border: 'none',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '14px',
+      },
       '&.Mui-focused': {
         '& .MuiOutlinedInput-notchedOutline': {
           borderWidth: 0,
@@ -134,6 +137,9 @@ const styles = (theme) => ({
   activityInformationContainer: {
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      alignItems: 'flex-end',
+    },
   },
   activityUserNameText: {
     '&.MuiTypography-root': {
@@ -149,10 +155,14 @@ const styles = (theme) => ({
   },
   activityActionDescription: {
     fontWeight: 300,
+    [theme.breakpoints.down('sm')]: {
+      display: 'block',
+      lineHeight: 1,
+    },
   },
   activityDateText: {
     '&.MuiTypography-root': {
-      lineHeight: 0,
+      lineHeight: 1,
       marginLeft: '3px',
     },
   },
@@ -160,6 +170,9 @@ const styles = (theme) => ({
     '&.MuiSvgIcon-root': {
       fontSize: '35px',
       marginRight: '6px',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '25px',
+      },
     },
   },
 });

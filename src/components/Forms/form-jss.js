@@ -1,3 +1,5 @@
+import theme from '../../theme/appTheme';
+
 const styles = (theme) => ({
   postFormContainer: {
     width: '100%',
@@ -42,19 +44,50 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '15px 0',
+    [theme.breakpoints.down('xl')]: {
+      alignItems: 'center',
+      flexDirection: 'column',
+    },
+  },
+  sharedPostFormAction: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '15px 0',
+  },
+  '@media (max-width: 1800px)': {
+    sharedPostFormAction: {
+      alignItems: 'center',
+      flexDirection: 'column',
+    },
+    accessPostContainer: {
+      margin: '5px 0px',
+    },
   },
   accessPostContainer: {
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   accessPostSelect: {
     width: '230px',
+    '&.MuiFormControl-root': {
+      marginBottom: 0,
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '180px',
+    },
   },
   uploadImageToPostBtn: {
     '&.MuiButton-root': {
       fontSize: '16px',
       textTransform: 'none',
       width: '200px',
+      height: '55px',
+      [theme.breakpoints.down('xl')]: {
+        marginTop: '10px',
+      },
     },
   },
   publishPostBtn: {
@@ -66,6 +99,9 @@ const styles = (theme) => ({
       alignSelf: 'center',
       margin: '15px',
       borderRadius: '5px',
+      [theme.breakpoints.down('md')]: {
+        width: '100%',
+      },
     },
   },
   postImageList: {
@@ -79,6 +115,9 @@ const styles = (theme) => ({
     '&.MuiImageListItem-root': {
       position: 'relative',
       height: '500px',
+      [theme.breakpoints.down('sm')]: {
+        height: '250px !important',
+      },
       '&:hover $img': {
         opacity: '0.6',
         cursor: 'pointer',
@@ -211,6 +250,9 @@ const styles = (theme) => ({
       alignSelf: 'center',
       margin: '15px',
       borderRadius: '5px',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
     },
   },
   editAccountForm: {

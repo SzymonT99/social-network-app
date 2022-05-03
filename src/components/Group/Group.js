@@ -125,7 +125,6 @@ const Group = (props) => {
             <span className={classes.statsDescription}>Data założenia</span>
           </Typography>
         </div>
-
         {!asInformation && (
           <div className={classes.groupBtnContainer}>
             {!invitation && (

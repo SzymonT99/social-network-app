@@ -9,6 +9,10 @@ const styles = (theme) => ({
       width: '50px',
       height: '50px',
       cursor: 'pointer',
+      [theme.breakpoints.down('lg')]: {
+        width: '40px',
+        height: '40px',
+      },
     },
   },
   commentContent: {
@@ -19,6 +23,9 @@ const styles = (theme) => ({
     backgroundColor: '#ECEEF1',
     borderRadius: '15px',
     padding: '10px 15px',
+    [theme.breakpoints.down('lg')]: {
+      padding: '5px 10px',
+    },
   },
   commentTextHighlight: {
     width: '100%',
@@ -62,6 +69,9 @@ const styles = (theme) => ({
         WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)',
       },
       fontSize: '15px',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '14px',
+      },
       padding: 0,
       margin: 0,
       '&.Mui-focused': {

@@ -11,6 +11,9 @@ const styles = (theme) => ({
       width: '7px',
       backgroundColor: 'rgb(240,240,240)',
     },
+    [theme.breakpoints.down('lg')]: {
+      display: 'none',
+    },
   },
   rightbarWrapper: {
     padding: '15px',

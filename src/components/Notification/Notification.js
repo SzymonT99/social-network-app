@@ -38,7 +38,7 @@ const Notification = () => {
           severity={variant}
           sx={{
             width: '100%',
-            fontSize: '20px',
+            fontSize: '20px !important',
             alignItems: 'center',
           }}
         >

@@ -4,6 +4,7 @@ const styles = (theme) => ({
       borderRadius: '10px',
       padding: '15px',
       marginBottom: '15px',
+      width: '100%',
     },
   },
   headingBox: {
@@ -52,8 +53,19 @@ const styles = (theme) => ({
     padding: '15px 0',
   },
   postReactionItem: {
-    display: 'flex',
-    alignItems: 'center',
+    '&.MuiTypography-root': {
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: '16px',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '12px',
+      },
+    },
+  },
+  '@media (max-width: 440px)': {
+    reactionContent: {
+      display: 'none',
+    },
   },
   commentInput: {
     '& .MuiInputBase-root': {
@@ -61,6 +73,9 @@ const styles = (theme) => ({
       borderRadius: '15px',
       fontSize: '17px',
       border: 'none',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '14px',
+      },
       '&.Mui-focused': {
         '& .MuiOutlinedInput-notchedOutline': {
           borderWidth: 0,
@@ -127,6 +142,9 @@ const styles = (theme) => ({
   activityInformationContainer: {
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      alignItems: 'flex-end',
+    },
   },
   activityUserNameText: {
     '&.MuiTypography-root': {
@@ -142,10 +160,14 @@ const styles = (theme) => ({
   },
   activityActionDescription: {
     fontWeight: 300,
+    [theme.breakpoints.down('sm')]: {
+      display: 'block',
+      lineHeight: 1,
+    },
   },
   activityDateText: {
     '&.MuiTypography-root': {
-      lineHeight: 0,
+      lineHeight: 1,
       marginLeft: '3px',
     },
   },
@@ -158,11 +180,17 @@ const styles = (theme) => ({
     width: '100%',
     height: '250px',
     objectFit: 'cover',
+    [theme.breakpoints.down('sm')]: {
+      height: '200px',
+    },
   },
   postLargeImage: {
     width: '100%',
     height: '400px',
     objectFit: 'cover',
+    [theme.breakpoints.down('sm')]: {
+      height: '300px',
+    },
   },
   activityAuthorNameLink: {
     '&:hover': {
@@ -183,6 +211,9 @@ const styles = (theme) => ({
     '&.MuiSvgIcon-root': {
       fontSize: '35px',
       marginRight: '6px',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '25px',
+      },
     },
   },
 });

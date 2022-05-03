@@ -51,6 +51,9 @@ theme = createTheme(
       h4: {
         fontSize: '28px',
         fontWeight: 400,
+        [theme.breakpoints.down('xl')]: {
+          fontSize: '26px',
+        },
         [theme.breakpoints.down('md')]: {
           fontSize: '24px',
         },
@@ -61,19 +64,34 @@ theme = createTheme(
       h6: {
         fontWeight: 400,
         fontSize: '20px',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '17px',
+        },
       },
       subtitle1: {
         fontSize: '17px',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '15px',
+        },
       },
       subtitle2: {
         fontSize: '16px',
         fontWeight: 400,
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '13px',
+        },
       },
       body1: {
         fontSize: '15px',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '13px',
+        },
       },
       body2: {
         fontSize: '13px',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '11px',
+        },
       },
     },
     components: {
@@ -82,13 +100,30 @@ theme = createTheme(
           root: {
             borderRadius: '5px',
             textTransform: 'none',
+            '&.MuiButton-root': {
+              [theme.breakpoints.down('sm')]: {
+                fontSize: '13px',
+              },
+            },
           },
         },
       },
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
+            [theme.breakpoints.down('sm')]: {
+              fontSize: '12px',
+            },
             borderRadius: '5px',
+          },
+        },
+      },
+      MuiInputBase: {
+        styleOverrides: {
+          root: {
+            [theme.breakpoints.down('sm')]: {
+              fontSize: '12px',
+            },
           },
         },
       },

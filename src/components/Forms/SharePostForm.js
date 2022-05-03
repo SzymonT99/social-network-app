@@ -18,7 +18,7 @@ import { sharePost } from '../../redux/actions/postActions';
 import { showNotification } from '../../redux/actions/notificationActions';
 
 const SharePostForm = (props) => {
-  const { classes, basePostId, postAuthorId, closePopup } = props;
+  const { classes, basePostId, closePopup } = props;
 
   const dispatch = useDispatch();
 
@@ -83,7 +83,7 @@ const SharePostForm = (props) => {
         />
       </div>
       <Divider />
-      <div className={classes.postFormAction}>
+      <div className={classes.sharedPostFormAction}>
         <div className={classes.accessPostContainer}>
           <Typography variant="subtitle1" style={{ marginRight: '20px' }}>
             Dostępność:

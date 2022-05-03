@@ -573,16 +573,14 @@ const Post = (props) => {
                   : classes.postBtn
               }
             >
-              <Typography
-                variant="subtitle2"
-                className={classes.postReactionItem}
-              >
+              <Typography className={classes.postReactionItem}>
                 {loggedUser && postIsLiked(likes, loggedUser.userId) ? (
                   <ThumbUpIcon className={classes.postActionIcon} />
                 ) : (
                   <ThumbUpAltOutlinedIcon className={classes.postActionIcon} />
                 )}
-                {'Lubię to | ' + likesNumber}
+                <span className={classes.reactionContent}>{'Lubię to | '}</span>
+                {' ' + likesNumber}
               </Typography>
             </Button>
             {!isCommentingBlocked && (
@@ -597,7 +595,10 @@ const Post = (props) => {
                   <ChatBubbleOutlineOutlinedIcon
                     className={classes.postActionIcon}
                   />
-                  {'Komentarze | ' + commentsNumber}
+                  <span className={classes.reactionContent}>
+                    {'Komentarze | '}
+                  </span>
+                  {' ' + commentsNumber}
                 </Typography>
               </Button>
             )}
@@ -608,7 +609,10 @@ const Post = (props) => {
                   className={classes.postReactionItem}
                 >
                   <ShareOutlinedIcon className={classes.postActionIcon} />
-                  {'Udostępnij | ' + sharesNumber}
+                  <span className={classes.reactionContent}>
+                    {'Udostępnij | '}
+                  </span>
+                  {' ' + sharesNumber}
                 </Typography>
               </Button>
             )}

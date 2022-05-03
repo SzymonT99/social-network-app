@@ -313,6 +313,7 @@ const Header = (props) => {
             {loggedUserFriendInvitations.map((friendInvitation, index) => (
               <ListItem
                 key={friendInvitation.friendId}
+                className={classes.activityNotificationItem}
                 sx={{
                   borderBottom:
                     index + 1 < loggedUserFriendInvitations.length &&
@@ -378,7 +379,6 @@ const Header = (props) => {
                   primary={
                     <Typography
                       noWrap
-                      className={classes.activityAuthorName}
                       variant="subtitle2"
                       onClick={() =>
                         history.push(
@@ -720,12 +720,7 @@ const Header = (props) => {
           className={classes.userInfoBox}
           style={{ display: !isUserLoggedIn && 'none' }}
         >
-          <Typography
-            variant="h4"
-            component="div"
-            noWrap
-            className={classes.nameAndSurname}
-          >
+          <Typography variant="h4" noWrap className={classes.nameAndSurname}>
             {loggedUserProfile &&
               loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName}
           </Typography>
@@ -746,12 +741,14 @@ const Header = (props) => {
               className={classes.userPhoto}
             />
           </IconButton>
-          <UserMenu
-            userProfile={loggedUserProfile}
-            userId={loggedUser.userId}
-            anchorEl={anchorElAccountMenu}
-            closeAccountMenu={handleCloseAccountMenu}
-          />
+          {loggedUserProfile && (
+            <UserMenu
+              userProfile={loggedUserProfile}
+              userId={loggedUser.userId}
+              anchorEl={anchorElAccountMenu}
+              closeAccountMenu={handleCloseAccountMenu}
+            />
+          )}
         </div>
         {!isUserLoggedIn && (
           <div>

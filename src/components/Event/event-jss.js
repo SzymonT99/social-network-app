@@ -25,20 +25,17 @@ const styles = (theme) => ({
   eventTitleText: {
     '&.MuiTypography-root': {
       fontWeight: 'bold',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      width: '320px',
     },
   },
   eventInformationRow: {
     display: 'flex',
     alignItems: 'center',
     margin: '5px 0',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    width: '320px',
+  },
+  '@media (max-width: 400px)': {
+    eventInformationRow: {
+      width: '200px',
+    },
   },
   timeIcon: {
     '&.MuiSvgIcon-root': {
@@ -51,10 +48,20 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column',
+    },
   },
   eventReactionBtn: {
     '&.MuiButton-root': {
       borderRadius: '5px',
+      [theme.breakpoints.down('md')]: {
+        marginTop: '10px',
+        width: '50% !important',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100% !important',
+      },
     },
   },
   invitationInfo: {

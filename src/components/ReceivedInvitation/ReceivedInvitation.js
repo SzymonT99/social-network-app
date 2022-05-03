@@ -51,6 +51,15 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: '16px',
     },
   },
+  '@media (max-width: 1700px)': {
+    invitationBtn: {
+      '&.MuiButton-root': {
+        width: '90px',
+        marginRight: '5px',
+        borderRadius: '16px',
+      },
+    },
+  },
   rejectBtn: {
     '&.MuiButton-root': {
       backgroundColor: '#D4D4D4',
