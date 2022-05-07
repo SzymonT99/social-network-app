@@ -5,17 +5,23 @@ const styles = (theme) => ({
     padding: '5px 0',
   },
   profileInformationItemTitle: {
-    width: '30%',
-    paddingRight: '20px',
     '&.MuiTypography-root': {
-      textOverflow: 'ellipsis',
+      paddingRight: '20px',
+      width: '200px',
       fontWeight: 'bold',
+      [theme.breakpoints.down('sm')]: {
+        width: '150px',
+        paddingRight: '5px',
+      },
     },
   },
   profileInformationItemContent: {
-    width: '70%',
     '&.MuiTypography-root': {
-      textOverflow: 'ellipsis',
+      flex: 1,
+      width: '120px',
+      [theme.breakpoints.down('sm')]: {
+        width: '100px',
+      },
     },
   },
   profileInfoItemContainer: {
@@ -33,6 +39,10 @@ const styles = (theme) => ({
   profileInfoItemDetails: {
     marginLeft: '20px',
     flex: 1,
+    width: '200px',
+    [theme.breakpoints.down('sm')]: {
+      width: '120px',
+    },
   },
   profileInfoItemSettingsBtn: {
     '&.MuiButtonBase-root': {
@@ -68,6 +78,13 @@ const styles = (theme) => ({
     display: 'flex',
     border: '1px solid rgba(0, 0, 0, 0.22)',
     margin: '10px 0px',
+    [theme.breakpoints.down('md')]: {
+      width: '90%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      height: '130px',
+    },
   },
   friendPhoto: {
     height: '100%',
@@ -83,6 +100,12 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '0px 20px',
+    [theme.breakpoints.down('md')]: {
+      padding: '0px 10px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      padding: '0px 8px',
+    },
   },
   userNameLink: {
     '&.MuiTypography-root': {
@@ -91,6 +114,9 @@ const styles = (theme) => ({
       '&:hover': {
         cursor: 'pointer',
         textDecoration: 'underline',
+      },
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '15px',
       },
     },
   },
@@ -105,6 +131,27 @@ const styles = (theme) => ({
       '&:hover': {
         backgroundColor: '#FF1C00',
       },
+    },
+  },
+  '@media (max-width: 1800px)': {
+    userInfoContent: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+    },
+  },
+  '@media (max-width: 900px)': {
+    userInfoContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+  },
+  '@media (max-width: 600px)': {
+    userInfoContent: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
     },
   },
   friendManageBtnContent: {

@@ -18,6 +18,7 @@ import {
   Menu,
   TextField,
   Tooltip,
+  useMediaQuery,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
@@ -40,13 +41,7 @@ import {
   setActiveChat,
 } from '../../redux/actions/chatAction';
 import UserMenu from '../UserMenu/UserMenu';
-
-const activeStatus = {
-  ONLINE: '#1CCD16',
-  BE_RIGHT_BACK: '#f59c11',
-  BUSY: '#67207c',
-  OFFLINE: '#FF1C00',
-};
+import MenuIcon from '@mui/icons-material/Menu';
 
 const Header = (props) => {
   const { classes } = props;
@@ -217,8 +212,36 @@ const Header = (props) => {
     history.push('/app/chat');
   };
 
+  const handleClickShowDrawer = () => {
+    let drawerEl = document.getElementById('drawer');
+    if (drawerEl.style.display === 'block') {
+      drawerEl.style.display = 'none';
+    } else {
+      drawerEl.style.display = 'block';
+    }
+  };
+
+  const handleClickShowFriendList = () => {
+    let rightbarEl = document.getElementById('rightbar');
+    if (rightbarEl.style.display === 'block') {
+      rightbarEl.style.display = 'none';
+    } else {
+      rightbarEl.style.display = 'block';
+    }
+  };
+
+  const matchesBpSM = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+
   return (
     <div className={classes.headerContainer}>
+      <div className={classes.drawerBtnContainer}>
+        <IconButton
+          className={classes.drawerBtn}
+          onClick={handleClickShowDrawer}
+        >
+          <MenuIcon fontSize="large" color="primary" />
+        </IconButton>
+      </div>
       <Typography
         variant="h4"
         component="div"
@@ -279,6 +302,14 @@ const Header = (props) => {
           className={classes.actionIcons}
           style={{ display: !isUserLoggedIn && 'none' }}
         >
+          {matchesBpSM && (
+            <IconButton
+              className={classes.drawerBtn}
+              onClick={handleClickShowDrawer}
+            >
+              <MenuIcon fontSize="large" color="primary" />
+            </IconButton>
+          )}
           <IconButton
             onClick={handleClickFriendNotification}
             className={classes.notificationBtn}
@@ -760,6 +791,13 @@ const Header = (props) => {
             </Link>
           </div>
         )}
+      </div>
+      <div
+        className={classes.friendListBtn}
+        onClick={handleClickShowFriendList}
+        style={{ display: !isUserLoggedIn && 'none' }}
+      >
+        <Typography>Lista znajomych</Typography>
       </div>
     </div>
   );

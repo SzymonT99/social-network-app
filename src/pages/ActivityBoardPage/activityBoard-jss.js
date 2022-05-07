@@ -36,7 +36,7 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
+    height: '100vh',
   },
 });
 

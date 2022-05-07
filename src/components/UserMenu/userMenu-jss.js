@@ -29,6 +29,9 @@ const styles = (theme) => ({
   },
   userMenuItem: {
     '&.MuiMenuItem-root': {
+      [theme.breakpoints.down('sm')]: {
+        minHeight: '35px',
+      },
       '&.Mui-disabled': {
         color: 'rgba(0, 0, 0, 0.87)',
         opacity: 1,

@@ -4,19 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './eventsPage-jss';
 import { PropTypes } from 'prop-types';
-import {
-  Button,
-  FormControl,
-  InputAdornment,
-  MenuItem,
-  Pagination,
-  Select,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Button, Pagination, Tab, Tabs, Typography } from '@mui/material';
 import Event from '../../components/Event/Event';
 import {
   getEventInvitations,
@@ -30,6 +18,7 @@ import {
   setTokenRefreshing,
 } from '../../redux/actions/authActions';
 import PageHeader from '../../components/PageHeader/PageHeader';
+import SearchItemsBox from '../../components/SearchItemsBox/SearchItemsBox';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -61,7 +50,6 @@ const EventsPage = (props) => {
   const [eventTabType, setEventTabType] = useState(0);
   const [eventsOrder, setEventsOrder] = useState(1);
   const [openEventCreation, setOpenEventCreation] = useState(false);
-  const [searchedEventText, setSearchedEventText] = useState('');
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [eventsPageNumber, setEventsPageNumber] = useState(1);
 
@@ -129,13 +117,10 @@ const EventsPage = (props) => {
     setOpenEventCreation(false);
   };
 
-  const handleChangeSearchedEvent = (event) => {
-    const typedText = event.target.value;
-    setSearchedEventText(typedText);
-
+  const renderEventsByName = (value) => {
     setFilteredEvents(
       events.filter((event) =>
-        event.title.toUpperCase().includes(typedText.toUpperCase())
+        event.title.toUpperCase().includes(value.toUpperCase())
       )
     );
   };
@@ -192,42 +177,17 @@ const EventsPage = (props) => {
       )}
       {eventTabType !== 1 && (
         <Paper elevation={4} className={classes.eventSearchbarContainer}>
-          <TextField
-            id="event-searchbar"
-            placeholder="Szukaj wydarzenia"
-            className={classes.eventSearchbar}
-            value={searchedEventText}
-            onChange={handleChangeSearchedEvent}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
+          <SearchItemsBox
+            searchbarPlaceholder="Szukaj wydarzenia"
+            updateList={renderEventsByName}
+            itemsOrder={eventsOrder}
+            handleChangeItemsOrder={handleChangeEventsOrder}
+            orderOptions={[
+              'Daty utworzenia',
+              'Ilości uczestników',
+              'Kolejności alfabetycznej',
+            ]}
           />
-          <div className={classes.eventsOrderBox}>
-            <Typography
-              component="p"
-              variant="subtitle1"
-              fontWeight="bold"
-              marginRight="10px"
-            >
-              Sortuj według:
-            </Typography>
-            <FormControl>
-              <Select
-                className={classes.eventOrderSelect}
-                value={eventsOrder}
-                onChange={handleChangeEventsOrder}
-                MenuProps={{ disableScrollLock: true }}
-              >
-                <MenuItem value={1}>Daty utworzenia</MenuItem>
-                <MenuItem value={2}>Ilości uczestników</MenuItem>
-                <MenuItem value={3}>Kolejności alfabetycznej</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
         </Paper>
       )}
       <TabPanel value={eventTabType} index={0}>

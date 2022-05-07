@@ -84,7 +84,7 @@ const Group = (props) => {
         alt="Zdjęcie Grupy"
       />
       <div className={classes.groupInformationContainer}>
-        <Typography variant="h6" className={classes.groupTitleText}>
+        <Typography variant="h6" className={classes.groupTitleText} noWrap>
           {name}
         </Typography>
         <Typography variant="subtitle2">Tematyka grupy:</Typography>
@@ -95,6 +95,7 @@ const Group = (props) => {
                 key={interest.interestId}
                 variant="body1"
                 component="span"
+                noWrap
               >
                 {interest.name + (index + 1 < interests.length ? ', ' : '')}
               </Typography>

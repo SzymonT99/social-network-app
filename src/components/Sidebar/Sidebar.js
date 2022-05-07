@@ -27,7 +27,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import ShieldIcon from '@mui/icons-material/Shield';
 import Avatar from '@mui/material/Avatar';
-import { Badge } from '@mui/material';
+import { Badge, useMediaQuery } from '@mui/material';
 
 const ListItem = withStyles((theme) => ({
   root: {
@@ -151,8 +151,14 @@ const Sidebar = (props) => {
     setNavByLocation(location);
   }, [location]);
 
+  const matchesBpMD = useMediaQuery((theme) => theme.breakpoints.up('md'));
+
   return (
-    <div className={classes.sidebarContainer}>
+    <div
+      id="drawer"
+      className={classes.sidebarContainer}
+      style={{ display: matchesBpMD ? 'block' : 'none' }}
+    >
       <div className={classes.sidebarWrapper}>
         <Link
           className={classes.userProfileBox}

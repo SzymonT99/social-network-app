@@ -20,6 +20,10 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column-reverse',
+      alignItems: 'flex-start',
+    },
   },
   answerTime: {
     fontSize: 13,
@@ -29,6 +33,9 @@ const styles = (theme) => ({
     '&:hover': {
       textDecoration: 'underline',
       cursor: 'pointer',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '120px',
     },
   },
   answerInput: {

@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import defaultUserPhoto from '../../../assets/default-profile-photo.jpg';
-import defaultImg from '../../../assets/default-image.png';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -98,7 +97,7 @@ const GroupThread = (props) => {
   return (
     <Accordion
       elevation={4}
-      style={{ borderRadius: '10px' }}
+      sx={{ borderRadius: '10px' }}
       className={classes.threadContainer}
       expanded={threadExpanded}
       onChange={changeThreadExpanded}

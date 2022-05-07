@@ -85,7 +85,7 @@ const ProfileEditionForm = (props) => {
   return (
     <form onSubmit={formik.handleSubmit} className={classes.formContainer}>
       <Grid container columnSpacing={{ xs: 2 }} rowSpacing={{ xs: 3 }}>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="firstName"
@@ -101,7 +101,7 @@ const ProfileEditionForm = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="lastName"
@@ -117,7 +117,7 @@ const ProfileEditionForm = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Płeć</FormLabel>
             <RadioGroup
@@ -144,7 +144,7 @@ const ProfileEditionForm = (props) => {
             </RadioGroup>
           </FormControl>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             id="dateOfBirth"
             label="Data urodzenia"
@@ -165,7 +165,7 @@ const ProfileEditionForm = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             id="job"
@@ -176,7 +176,7 @@ const ProfileEditionForm = (props) => {
             error={formik.touched.job && Boolean(formik.errors.job)}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             variant="outlined"
@@ -222,7 +222,7 @@ const ProfileEditionForm = (props) => {
             error={formik.touched.skills && Boolean(formik.errors.skills)}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <FormControl component="fieldset">
             <FormLabel component="legend">Dostępność profilu</FormLabel>
             <RadioGroup value={access} onChange={handleChangeAccess} row>

@@ -9,19 +9,7 @@ import {
 } from '../../redux/actions/authActions';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import Paper from '@mui/material/Paper';
-import {
-  Button,
-  FormControl,
-  InputAdornment,
-  MenuItem,
-  Pagination,
-  Select,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Button, Pagination, Tab, Tabs, Typography } from '@mui/material';
 import {
   getGroupInvitations,
   getGroups,
@@ -32,6 +20,7 @@ import Group from '../../components/Group/Group';
 import Popup from '../../components/Popup/Popup';
 import GroupForm from '../../components/Forms/GroupForm';
 import { getPossibleInterests } from '../../redux/actions/userProfileActions';
+import SearchItemsBox from '../../components/SearchItemsBox/SearchItemsBox';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -42,7 +31,7 @@ const TabPanel = (props) => {
       id={`tabpanel-${index}`}
       {...other}
     >
-      {value === index && <div>{children}</div>}
+      {value === index && <>{children}</>}
     </div>
   );
 };
@@ -66,7 +55,6 @@ const GroupsPage = (props) => {
 
   const [groupTabType, setGroupTabType] = useState(0);
   const [openGroupCreation, setOpenGroupCreation] = useState(false);
-  const [searchedGroupText, setSearchedGroupText] = useState('');
   const [groupsOrder, setGroupsOrder] = useState(1);
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [groupsPageNumber, setGroupsPageNumber] = useState(1);
@@ -104,13 +92,10 @@ const GroupsPage = (props) => {
     setOpenGroupCreation(false);
   };
 
-  const handleChangeSearchedGroup = (group) => {
-    const typedText = group.target.value;
-    setSearchedGroupText(typedText);
-
+  const renderGroupsByName = (value) => {
     setFilteredGroups(
       groups.filter((group) =>
-        group.name.toUpperCase().includes(typedText.toUpperCase())
+        group.name.toUpperCase().includes(value.toUpperCase())
       )
     );
   };
@@ -203,43 +188,18 @@ const GroupsPage = (props) => {
       )}
       {groupTabType === 0 && (
         <Paper elevation={4} className={classes.groupSearchbarContainer}>
-          <TextField
-            id="group-searchbar"
-            placeholder="Szukaj grupy"
-            className={classes.groupSearchbar}
-            value={searchedGroupText}
-            onChange={handleChangeSearchedGroup}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
+          <SearchItemsBox
+            searchbarPlaceholder="Szukaj grupy"
+            updateList={renderGroupsByName}
+            itemsOrder={groupsOrder}
+            handleChangeItemsOrder={handleChangeGroupsOrder}
+            orderOptions={[
+              'Daty założenia',
+              'Ilości członków',
+              'Aktywności',
+              'Kolejności alfabetycznej',
+            ]}
           />
-          <div className={classes.groupOrderBox}>
-            <Typography
-              component="p"
-              variant="subtitle1"
-              fontWeight="bold"
-              marginRight="10px"
-            >
-              Sortuj według:
-            </Typography>
-            <FormControl>
-              <Select
-                className={classes.groupOrderSelect}
-                value={groupsOrder}
-                onChange={handleChangeGroupsOrder}
-                MenuProps={{ disableScrollLock: true }}
-              >
-                <MenuItem value={1}>Daty założenia</MenuItem>
-                <MenuItem value={2}>Ilości członków</MenuItem>
-                <MenuItem value={3}>Aktywności</MenuItem>
-                <MenuItem value={4}>Kolejności alfabetycznej</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
         </Paper>
       )}
       <TabPanel value={groupTabType} index={0}>

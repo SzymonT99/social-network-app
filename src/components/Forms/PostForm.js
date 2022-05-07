@@ -116,7 +116,7 @@ const PostForm = (props) => {
       }
       closePopup();
     } else {
-      dispatch(showNotification('warning', 'Podaj treść postu'));
+      dispatch(showNotification('warning', 'Podaj treść posta'));
     }
   };
 

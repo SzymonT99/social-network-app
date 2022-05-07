@@ -268,10 +268,10 @@ export const dislikePost =
           }
 
           if (getState().activity.postDetails) dispatch(getPostDetails(postId));
-          dispatch(showNotification('success', 'Usunięto polubienie postu'));
+          dispatch(showNotification('success', 'Usunięto polubienie posta'));
         } else if (response.status === 409) {
           dispatch(
-            showNotification('warning', 'Użytkownik nie lubił tego postu')
+            showNotification('warning', 'Użytkownik nie lubił tego posta')
           );
         } else {
           dispatch(showNotification('error', 'Błąd połączenia z serwerem'));

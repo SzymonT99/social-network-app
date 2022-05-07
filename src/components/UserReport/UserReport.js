@@ -8,7 +8,7 @@ import { Button, Divider, MenuItem, Typography } from '@mui/material';
 import { manageUserReport } from '../../redux/actions/adminActions';
 
 const reportTypes = {
-  RUDE_POST: 'Nieodpowiednia treść postu',
+  RUDE_POST: 'Nieodpowiednia treść posta',
   RUDE_COMMENT: 'Obraźliwy komentarz',
   OFFENSIVE_NAME: 'Nieodpowiednia nazwa użytkownika',
   VULGAR_PICTURE: 'Wulgarne zdjęcie',

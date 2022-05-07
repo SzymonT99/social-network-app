@@ -29,6 +29,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  useMediaQuery,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -66,9 +67,7 @@ import {
 } from '../../redux/actions/groupActions';
 import InfoIcon from '@mui/icons-material/Info';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
-import PhotoIcon from '@mui/icons-material/Photo';
 import Popup from '../../components/Popup/Popup';
-import PostForm from '../../components/Forms/PostForm';
 import PersonIcon from '@mui/icons-material/Person';
 import Post from '../../components/Post/Post';
 import SearchIcon from '@mui/icons-material/Search';
@@ -90,6 +89,7 @@ import GroupForum from '../../components/GroupForum/GroupForum';
 import { formatDateWithTime } from '../../utils/formatDateWithTime';
 import ExpandListButton from '../../components/ExpandListButton/ExpandListButton';
 import PostCreationBox from '../../components/PostCreationBox/PostCreationBox';
+import SearchItemsBox from '../../components/SearchItemsBox/SearchItemsBox';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -402,17 +402,13 @@ const GroupDetailsPage = (props) => {
     return names;
   };
 
-  const handleChangeSearchedMember = (event) => {
-    let searchedMemberName = event.target.value;
-
-    setSearchedMember(searchedMemberName);
-
+  const renderMembersByName = (value) => {
     setFilteredMembers(
       group.members.filter(
         (member) =>
           (member.user.firstName + member.user.lastName)
             .toUpperCase()
-            .includes(searchedMemberName.toUpperCase()) &&
+            .includes(value.toUpperCase()) &&
           member.groupPermissionType === 'MEMBER'
       )
     );
@@ -507,6 +503,8 @@ const GroupDetailsPage = (props) => {
     history.push('/app/groups');
   };
 
+  const matchesBp = useMediaQuery((theme) => theme.breakpoints.down('md'));
+
   return (
     <>
       {group ? (
@@ -557,9 +555,9 @@ const GroupDetailsPage = (props) => {
                       'Liczba członków: ' + group.members.length}
                   </Typography>
                 </div>
-                <div className={classes.alignCenterRowInfo}>
+                <div className={classes.alignCenterRow}>
                   <AvatarGroup
-                    max={10}
+                    max={!matchesBp ? 10 : 5}
                     className={classes.memberPhotosHover}
                     onClick={() => setGroupNavIndex(2)}
                   >
@@ -665,7 +663,7 @@ const GroupDetailsPage = (props) => {
                       <Typography
                         variant="subtitle1"
                         className={classes.groupBasicInfoItem}
-                        sx={{ marginTop: '5px' }}
+                        marginTop="5px"
                       >
                         <PublicIcon fontSize="medium" /> Grupa puliczna
                       </Typography>
@@ -825,7 +823,7 @@ const GroupDetailsPage = (props) => {
               </Paper>
             </div>
             <div className={classes.rightActivityContent}>
-              {memberStatusOfUser !== 'NOT_MEMBER' && (
+              {memberStatusOfUser !== 'NOT_MEMBER' && loggedUserProfile && (
                 <PostCreationBox
                   profilePhoto={loggedUserProfile.profilePhoto}
                   userNameAndSurname={
@@ -903,7 +901,7 @@ const GroupDetailsPage = (props) => {
                     <Typography
                       variant="subtitle1"
                       className={classes.groupBasicInfoItem}
-                      sx={{ marginTop: '5px' }}
+                      marginTop="5px"
                     >
                       <PublicIcon fontSize="medium" /> Grupa publiczna
                     </Typography>
@@ -920,7 +918,7 @@ const GroupDetailsPage = (props) => {
                     <Typography
                       variant="subtitle1"
                       className={classes.groupBasicInfoItem}
-                      sx={{ marginTop: '5px' }}
+                      marginTop="5px"
                     >
                       <LockIcon fontSize="medium" /> Grupa prywatna
                     </Typography>
@@ -1249,44 +1247,17 @@ const GroupDetailsPage = (props) => {
                   </span>
                 </Typography>
                 <Divider />
-                <div className={classes.membersActionContainer}>
-                  <TextField
-                    id="member-searchbar"
-                    placeholder="Wyszukaj członka"
-                    className={classes.memberSearchbar}
-                    value={searchedMember}
-                    onChange={handleChangeSearchedMember}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <div className={classes.membersOrderBox}>
-                    <Typography
-                      component="p"
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      marginRight="10px"
-                    >
-                      Sortuj według:
-                    </Typography>
-                    <FormControl sx={{ margin: 0 }}>
-                      <Select
-                        className={classes.memberOrderSelect}
-                        value={membersOrder}
-                        onChange={handleChangeMembersOrder}
-                        MenuProps={{ disableScrollLock: true }}
-                      >
-                        <MenuItem value={1}>Kolejności alfabetycznej</MenuItem>
-                        <MenuItem value={2}>Daty dołączenia</MenuItem>
-                        <MenuItem value={3}>Miejsca zamieszkania</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                </div>
+                <SearchItemsBox
+                  searchbarPlaceholder="Wyszukaj członka"
+                  updateList={renderMembersByName}
+                  itemsOrder={membersOrder}
+                  handleChangeItemsOrder={handleChangeMembersOrder}
+                  orderOptions={[
+                    'Kolejności alfabetycznej',
+                    'Daty dołączenia',
+                    'Miejsca zamieszkania',
+                  ]}
+                />
                 <Divider />
               </div>
               <div

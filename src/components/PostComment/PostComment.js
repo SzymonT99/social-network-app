@@ -209,7 +209,7 @@ const PostComment = (props) => {
         <div className={classes.commentActions}>
           <div className={classes.likesContainer}>
             <Button
-              style={{ display: 'block' }}
+              sx={{ display: 'block' }}
               className={classes.commentActionItem}
               variant="text"
               onClick={commentReaction}

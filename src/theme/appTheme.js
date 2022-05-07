@@ -11,6 +11,7 @@ theme = createTheme(
         md: 900,
         lg: 1200,
         xl: 1536,
+        xxl: 1900,
       },
     },
     palette: {
@@ -44,8 +45,14 @@ theme = createTheme(
       },
       h3: {
         fontSize: '50px',
+        [theme.breakpoints.down('xl')]: {
+          fontSize: '42px',
+        },
         [theme.breakpoints.down('md')]: {
           fontSize: '35px',
+        },
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '28px',
         },
       },
       h4: {
@@ -59,6 +66,14 @@ theme = createTheme(
         },
         [theme.breakpoints.down('sm')]: {
           fontSize: '20px',
+        },
+      },
+      h5: {
+        [theme.breakpoints.down('md')]: {
+          fontSize: '26px',
+        },
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '18px',
         },
       },
       h6: {
@@ -131,6 +146,15 @@ theme = createTheme(
         styleOverrides: {
           root: {
             marginBottom: '10px',
+          },
+        },
+      },
+      MuiSvgIcon: {
+        styleOverrides: {
+          root: {
+            [theme.breakpoints.down('sm')]: {
+              fontSize: '18px',
+            },
           },
         },
       },

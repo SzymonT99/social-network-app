@@ -136,7 +136,7 @@ const EventsPageDetails = (props) => {
   return (
     <>
       {event ? (
-        <div>
+        <div className={classes.wrapper}>
           <Paper elevation={4} className={classes.eventHeadingContainer}>
             <Button
               variant="contained"
@@ -159,43 +159,45 @@ const EventsPageDetails = (props) => {
                 {'• ' + event.description}
               </Typography>
               <div className={classes.dateInfoBox}>
-                <div className={classes.dateItem}>
-                  <Typography variant="body1" fontWeight="bold">
-                    Dzień
+                <div className={classes.dateInfoContent}>
+                  <div className={classes.dateItem}>
+                    <Typography variant="body1" fontWeight="bold">
+                      Dzień
+                    </Typography>
+                    {new Date(event.eventDate).getDate()}
+                  </div>
+                  <div className={classes.dateItem}>
+                    <Typography variant="body1" fontWeight="bold">
+                      Miesiąc
+                    </Typography>
+                    {new Date(event.eventDate).toLocaleString('default', {
+                      month: 'long',
+                    })}
+                  </div>
+                  <div className={classes.dateItem}>
+                    <Typography variant="body1" fontWeight="bold">
+                      Rok
+                    </Typography>
+                    {new Date(event.eventDate).getFullYear()}
+                  </div>
+                  <div className={classes.dateItem}>
+                    <Typography variant="body1" fontWeight="bold">
+                      Dzień tygodnia
+                    </Typography>
+                    {new Date(event.eventDate).toLocaleDateString('default', {
+                      weekday: 'long',
+                    })}
+                  </div>
+                  <Typography
+                    variant="subtitle1"
+                    className={classes.eventTimeText}
+                  >
+                    {'o godz. ' +
+                      new Date(event.eventDate)
+                        .toLocaleTimeString()
+                        .substring(0, 5)}
                   </Typography>
-                  {new Date(event.eventDate).getDate()}
                 </div>
-                <div className={classes.dateItem}>
-                  <Typography variant="body1" fontWeight="bold">
-                    Miesiąc
-                  </Typography>
-                  {new Date(event.eventDate).toLocaleString('default', {
-                    month: 'long',
-                  })}
-                </div>
-                <div className={classes.dateItem}>
-                  <Typography variant="body1" fontWeight="bold">
-                    Rok
-                  </Typography>
-                  {new Date(event.eventDate).getFullYear()}
-                </div>
-                <div className={classes.dateItem}>
-                  <Typography variant="body1" fontWeight="bold">
-                    Dzień tygodnia
-                  </Typography>
-                  {new Date(event.eventDate).toLocaleDateString('default', {
-                    weekday: 'long',
-                  })}
-                </div>
-                <Typography
-                  variant="subtitle1"
-                  className={classes.eventTimeText}
-                >
-                  {'o godz. ' +
-                    new Date(event.eventDate)
-                      .toLocaleTimeString()
-                      .substring(0, 5)}
-                </Typography>
                 {loggedUser &&
                   (event.eventAuthor.userId === loggedUser.userId ||
                     isAdmin) && (
@@ -257,93 +259,97 @@ const EventsPageDetails = (props) => {
             </div>
             {isUserLoggedIn && (
               <div className={classes.eventActionContainer}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.eventActionBtn}
-                  onClick={() => handleClickEventReaction('TAKE_PART')}
-                  disabled={
-                    event.members.filter(
-                      (member) =>
-                        member.eventMember.userId === loggedUser.userId &&
-                        member.participationStatus === 'TAKE_PART'
-                    ).length > 0
-                  }
-                >
-                  <CheckCircleIcon />
-                  Weź udział
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.eventActionBtn}
-                  onClick={() => handleClickEventReaction('INTERESTED')}
-                  disabled={
-                    event.members.filter(
-                      (member) =>
-                        member.eventMember.userId === loggedUser.userId &&
-                        member.participationStatus === 'INTERESTED'
-                    ).length > 0
-                  }
-                >
-                  <GradeIcon />
-                  Interesuje mnie
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  className={classes.eventActionBtn}
-                  onClick={() => setOpenEventInvitationsPopup(true)}
-                >
-                  <PersonAddAlt1Icon />
-                  Zaproś na wydarzenie
-                </Button>
-                <Popup
-                  open={openEventInvitationsPopup}
-                  type="eventInvitations"
-                  title="Zaproś na wydarzenie"
-                  onClose={handleCloseEventInvitationsPopup}
-                >
-                  <div className={classes.eventInvitationsList}>
-                    {loggedUserFriends.map((friend) => (
-                      <SentInvitation
-                        key={friend.user.userId}
-                        eventInvitation
-                        eventId={parseInt(eventId)}
-                        userId={friend.user.userId}
-                        name={
-                          friend.user.firstName + ' ' + friend.user.lastName
-                        }
-                        avatar={friend.user.profilePhoto}
-                        disabled={
-                          event.members.filter(
-                            (member) =>
-                              member.eventMember.userId === friend.user.userId
-                          ).length !== 0
-                        }
-                      />
-                    ))}
-                    {loggedUserFriends.length === 0 && (
-                      <Typography
-                        fontWeight="bold"
-                        textAlign="center"
-                        variant="h6"
-                        marginBottom="20px"
-                      >
-                        Brak znajomych
-                      </Typography>
-                    )}
-                  </div>
-                </Popup>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  className={classes.eventActionBtn}
-                  onClick={handleClickShareEvent}
-                >
-                  <ShareIcon />
-                  Udostępnij
-                </Button>
+                <div className={classes.eventActionBtnRow}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.eventActionBtn}
+                    onClick={() => handleClickEventReaction('TAKE_PART')}
+                    disabled={
+                      event.members.filter(
+                        (member) =>
+                          member.eventMember.userId === loggedUser.userId &&
+                          member.participationStatus === 'TAKE_PART'
+                      ).length > 0
+                    }
+                  >
+                    <CheckCircleIcon />
+                    Weź udział
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.eventActionBtn}
+                    onClick={() => handleClickEventReaction('INTERESTED')}
+                    disabled={
+                      event.members.filter(
+                        (member) =>
+                          member.eventMember.userId === loggedUser.userId &&
+                          member.participationStatus === 'INTERESTED'
+                      ).length > 0
+                    }
+                  >
+                    <GradeIcon />
+                    Interesuje mnie
+                  </Button>
+                </div>
+                <div className={classes.eventActionBtnRow}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classes.eventActionBtn}
+                    onClick={() => setOpenEventInvitationsPopup(true)}
+                  >
+                    <PersonAddAlt1Icon />
+                    Zaproś na wydarzenie
+                  </Button>
+                  <Popup
+                    open={openEventInvitationsPopup}
+                    type="eventInvitations"
+                    title="Zaproś na wydarzenie"
+                    onClose={handleCloseEventInvitationsPopup}
+                  >
+                    <div className={classes.eventInvitationsList}>
+                      {loggedUserFriends.map((friend) => (
+                        <SentInvitation
+                          key={friend.user.userId}
+                          eventInvitation
+                          eventId={parseInt(eventId)}
+                          userId={friend.user.userId}
+                          name={
+                            friend.user.firstName + ' ' + friend.user.lastName
+                          }
+                          avatar={friend.user.profilePhoto}
+                          disabled={
+                            event.members.filter(
+                              (member) =>
+                                member.eventMember.userId === friend.user.userId
+                            ).length !== 0
+                          }
+                        />
+                      ))}
+                      {loggedUserFriends.length === 0 && (
+                        <Typography
+                          fontWeight="bold"
+                          textAlign="center"
+                          variant="h6"
+                          marginBottom="20px"
+                        >
+                          Brak znajomych
+                        </Typography>
+                      )}
+                    </div>
+                  </Popup>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    className={classes.eventActionBtn}
+                    onClick={handleClickShareEvent}
+                  >
+                    <ShareIcon />
+                    Udostępnij
+                  </Button>
+                </div>
               </div>
             )}
           </Paper>

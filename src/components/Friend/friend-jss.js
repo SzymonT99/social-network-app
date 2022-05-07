@@ -2,6 +2,15 @@ const styles = (theme) => ({
   wrapper: {
     width: '25%',
     padding: '5px',
+    [theme.breakpoints.down('xl')]: {
+      width: '33.3%',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '50%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+    },
   },
   friendContainer: {
     border: '1px solid rgba(0, 0, 0, 0.22)',

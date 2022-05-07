@@ -92,6 +92,7 @@ import PostCreationBox from '../../components/PostCreationBox/PostCreationBox';
 import BasicInformationBox from '../../components/Profile/BasicInformationBox';
 import UserFriendsBox from '../../components/Profile/UserFriendsBox';
 import UserImagesBox from '../../components/Profile/UserImagesBox';
+import SearchItemsBox from '../../components/SearchItemsBox/SearchItemsBox';
 
 const TabPanel = (props) => {
   const { children, value, classes, index, ...other } = props;
@@ -173,7 +174,6 @@ const ProfilePage = (props) => {
   const [isUserFriend, setIsUserFriend] = useState(false);
   const [isInvitedToFriend, setIsInvitedToFriend] = useState(false);
   const [friendBtnHover, setFriendBtnHover] = useState(false);
-  const [searchedFriend, setSearchedFriend] = useState('');
   const [friendsOrder, setFriendsOrder] = useState(1);
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [friendsPageNumber, setFriendsPageNumber] = useState(1);
@@ -388,16 +388,12 @@ const ProfilePage = (props) => {
     }
   };
 
-  const handleChangeSearchedFriend = (event) => {
-    let searchedFriendName = event.target.value;
-
-    setSearchedFriend(searchedFriendName);
-
+  const renderFriendsByName = (value) => {
     setFilteredFriends(
       userFriends.filter((friend) =>
         (friend.user.firstName + friend.user.lastName)
           .toUpperCase()
-          .includes(searchedFriendName.toUpperCase())
+          .includes(value.toUpperCase())
       )
     );
   };
@@ -540,11 +536,13 @@ const ProfilePage = (props) => {
                         className={classes.profileHeadingText}
                         fontWeight={400}
                         variant="h2"
+                        noWrap
                       >
                         {userProfile.firstName + ' ' + userProfile.lastName}
                       </Typography>
                       <Typography
                         className={classes.profileHeadingText}
+                        noWrap
                         variant="h6"
                       >
                         {userProfile.email}
@@ -637,7 +635,7 @@ const ProfilePage = (props) => {
             </div>
           </Paper>
           {isUserLoggedIn && (
-            <Paper elevation={4} sx={{ borderRadius: '10px' }}>
+            <Paper elevation={4} className={classes.profileNavigationContainer}>
               <Tabs
                 value={profileNavIndex}
                 onChange={handleChangeProfileNav}
@@ -698,7 +696,10 @@ const ProfilePage = (props) => {
                     elevation={4}
                     className={classes.profileActivityNavigation}
                   >
-                    <TabList onChange={handleChangeActivityValue}>
+                    <TabList
+                      onChange={handleChangeActivityValue}
+                      className={classes.activityTabList}
+                    >
                       <Tab
                         className={classes.activityTabItem}
                         label="Posty"
@@ -1594,45 +1595,18 @@ const ProfilePage = (props) => {
                   </span>
                 </Typography>
                 <Divider />
-                <div className={classes.userFriendsActionContainer}>
-                  <TextField
-                    id="friend-searchbar"
-                    placeholder="Wyszukaj znajomego"
-                    className={classes.friendSearchbar}
-                    value={searchedFriend}
-                    onChange={handleChangeSearchedFriend}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <div className={classes.friendsOrderBox}>
-                    <Typography
-                      component="p"
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      marginRight="10px"
-                    >
-                      Sortuj według:
-                    </Typography>
-                    <FormControl sx={{ margin: 0 }}>
-                      <Select
-                        className={classes.friendOrderSelect}
-                        value={friendsOrder}
-                        onChange={handleChangeFriendsOrder}
-                        MenuProps={{ disableScrollLock: true }}
-                      >
-                        <MenuItem value={1}>Kolejności alfabetycznej</MenuItem>
-                        <MenuItem value={2}>Daty dodania</MenuItem>
-                        <MenuItem value={3}>Ilości znajomych</MenuItem>
-                        <MenuItem value={4}>Miejsca zamieszkania</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </div>
-                </div>
+                <SearchItemsBox
+                  searchbarPlaceholder="Wyszukaj znajomego"
+                  updateList={renderFriendsByName}
+                  itemsOrder={friendsOrder}
+                  handleChangeItemsOrder={handleChangeFriendsOrder}
+                  orderOptions={[
+                    'Kolejności alfabetycznej',
+                    'Daty dodania',
+                    'Ilości znajomych',
+                    'Miejsca zamieszkania',
+                  ]}
+                />
                 <Divider />
               </div>
               <div className={classes.friendInformationContainer}>
@@ -1673,7 +1647,7 @@ const ProfilePage = (props) => {
             </Paper>
           </TabPanel>
           <TabPanel classes={classes} value={profileNavIndex} index={4}>
-            <div>
+            <div style={{ width: '100%' }}>
               <div className={classes.groupsListContainer}>
                 {userGroups
                   .slice((groupsPageNumber - 1) * 6, groupsPageNumber * 6)

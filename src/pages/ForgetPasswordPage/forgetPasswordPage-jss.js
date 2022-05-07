@@ -54,7 +54,7 @@ const styles = (theme) => ({
       },
       [theme.breakpoints.down('sm')]: {
         margin: '0px',
-        padding: '20px 30px',
+        padding: '15px 20px',
       },
     },
   },
@@ -71,6 +71,9 @@ const styles = (theme) => ({
     textDecoration: 'none',
     alignSelf: 'center',
     fontSize: '17px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '15px',
+    },
     color: theme.palette.secondary.main,
     '&:hover': {
       textDecoration: 'underline',

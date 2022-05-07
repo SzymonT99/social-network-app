@@ -1,6 +1,12 @@
 const styles = (theme) => ({
   wrapper: {
     margin: '20px 0px',
+    [theme.breakpoints.down('lg')]: {
+      margin: '10px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      margin: '5px',
+    },
   },
   adminPanelContainer: {
     '&.MuiPaper-root': {

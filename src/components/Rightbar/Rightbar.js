@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import FriendListItem from '../FriendListItem/FriendListItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserFriends } from '../../redux/actions/friendAction';
+import { useMediaQuery } from '@mui/material';
 
 const Rightbar = (props) => {
   const { classes } = props;
@@ -30,13 +31,19 @@ const Rightbar = (props) => {
     }
   }, [isTokenRefreshing]);
 
+  const matchesBpLG = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+
   return (
-    <div className={classes.rightbarContainer}>
+    <div
+      id="rightbar"
+      className={classes.rightbarContainer}
+      style={{ display: matchesBpLG ? 'block' : 'none' }}
+    >
       <div
         className={classes.rightbarWrapper}
         style={{ display: !isUserLoggedIn && 'none' }}
       >
-        <Typography variant="h6" fontWeight="bold">
+        <Typography variant="h6" className={classes.friendListTitle}>
           Lista znajomych
         </Typography>
         {loggedUserFriends.map((friend) => (

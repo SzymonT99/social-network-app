@@ -107,7 +107,7 @@ const AddUserFavouriteForm = (props) => {
           </Select>
         </FormControl>
         <TextField
-          sx={{ width: '65%' }}
+          className={classes.favouriteInput}
           label="Nazwa"
           variant="outlined"
           value={favouriteName}

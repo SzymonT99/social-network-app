@@ -15,10 +15,24 @@ const styles = (theme) => ({
       flex: 2.5,
     },
     [theme.breakpoints.down('lg')]: {
-      flex: 3,
+      flex: 2.7,
     },
     [theme.breakpoints.down('md')]: {
       display: 'none',
+      position: 'fixed',
+      top: '80px',
+      left: '0px',
+      zIndex: 100,
+      width: '45%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      top: '140px',
+      width: '55%',
+    },
+  },
+  '@media (max-width: 440px)': {
+    sidebarContainer: {
+      width: '70%',
     },
   },
   sidebarWrapper: {
@@ -84,6 +98,9 @@ const styles = (theme) => ({
       '& .MuiListItemText-root': {
         '& .MuiTypography-root': {
           fontWeight: 'bold',
+          [theme.breakpoints.down('sm')]: {
+            fontSize: '14px',
+          },
         },
       },
     },

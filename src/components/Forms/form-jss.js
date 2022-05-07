@@ -196,8 +196,14 @@ const styles = (theme) => ({
       alignItems: 'center',
     },
   },
+  favouriteInput: {
+    '&.MuiTextField-root': {
+      width: '65%',
+      marginBottom: 0,
+    },
+  },
   userFavouriteItemFormAction: {
-    marginTop: '15px',
+    marginTop: '10px',
   },
   userFavouriteActionBtn: {
     '&.MuiButton-root': {
@@ -259,6 +265,15 @@ const styles = (theme) => ({
     textAlign: 'center',
     marginTop: '20px',
     padding: '30px 80px',
+    [theme.breakpoints.down('xl')]: {
+      padding: '30px 60px',
+    },
+    [theme.breakpoints.down('lg')]: {
+      padding: '30px 40px',
+    },
+    [theme.breakpoints.down('md')]: {
+      padding: '30px 20px',
+    },
   },
   resendActivationLinkForm: {
     textAlign: 'center',
@@ -271,6 +286,9 @@ const styles = (theme) => ({
       fontSize: '16px',
       width: '50%',
       height: '55px',
+      [theme.breakpoints.down('xl')]: {
+        width: '100%',
+      },
     },
   },
   disabledFormBtn: {
@@ -340,12 +358,24 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('xl')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
   },
   interestSelect: {
     '&.MuiFormControl-root': {
       width: '60%',
       paddingRight: '15px',
       marginBottom: 0,
+      [theme.breakpoints.down('xxl')]: {
+        width: '50%',
+      },
+      [theme.breakpoints.down('xl')]: {
+        width: '100%',
+        paddingRight: '0px',
+        marginBottom: '10px',
+      },
     },
   },
   interestBtn: {

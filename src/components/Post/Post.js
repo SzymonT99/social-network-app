@@ -332,7 +332,7 @@ const Post = (props) => {
             ? ' dodał(a) nowy post'
             : ' zmienił(a) zdjęcie profilowe'
         }
-        editionDate={editionDate}
+        editionDate={new Date(editionDate)}
         userStatus={userStatus}
         isEdited={isEdited}
         postGroupActivity={isGroupPostActivity}
@@ -497,7 +497,7 @@ const Post = (props) => {
       <Popup
         open={openDeletePostPopup}
         type="confirmation"
-        title="Usuwanie postu"
+        title="Usuwanie posta"
         onClose={handleClosePostDeletePopup}
       >
         <ActionConfirmation
@@ -579,8 +579,10 @@ const Post = (props) => {
                 ) : (
                   <ThumbUpAltOutlinedIcon className={classes.postActionIcon} />
                 )}
-                <span className={classes.reactionContent}>{'Lubię to | '}</span>
-                {' ' + likesNumber}
+                <span className={classes.reactionContent}>
+                  Lubię to |&nbsp;
+                </span>
+                {likesNumber}
               </Typography>
             </Button>
             {!isCommentingBlocked && (
@@ -596,9 +598,9 @@ const Post = (props) => {
                     className={classes.postActionIcon}
                   />
                   <span className={classes.reactionContent}>
-                    {'Komentarze | '}
+                    Komentarze |&nbsp;
                   </span>
-                  {' ' + commentsNumber}
+                  {commentsNumber}
                 </Typography>
               </Button>
             )}
@@ -610,9 +612,9 @@ const Post = (props) => {
                 >
                   <ShareOutlinedIcon className={classes.postActionIcon} />
                   <span className={classes.reactionContent}>
-                    {'Udostępnij | '}
+                    Udostępnij |&nbsp;
                   </span>
-                  {' ' + sharesNumber}
+                  {sharesNumber}
                 </Typography>
               </Button>
             )}

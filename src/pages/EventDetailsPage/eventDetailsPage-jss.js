@@ -1,7 +1,15 @@
 const styles = (theme) => ({
+  wrapper: {
+    margin: '20px 0px',
+    [theme.breakpoints.down('lg')]: {
+      margin: '20px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      margin: '10px',
+    },
+  },
   eventHeadingContainer: {
     '&.MuiPaper-root': {
-      marginTop: '20px',
       borderRadius: '10px',
       position: 'relative',
     },
@@ -40,6 +48,18 @@ const styles = (theme) => ({
     padding: '10px 0',
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('xl')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
+  },
+  dateInfoContent: {
+    display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+    },
   },
   dateItem: {
     borderRadius: '10px',
@@ -48,11 +68,32 @@ const styles = (theme) => ({
     padding: '10px',
     textAlign: 'center',
     marginRight: '10px',
+    [theme.breakpoints.down('sm')]: {
+      padding: '5px',
+      marginRight: '5px',
+      marginBottom: '5px',
+    },
+  },
+  eventActionBtnRow: {
+    display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.down('xl')]: {
+      margin: '5px 0px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      width: '100%',
+      margin: '0px',
+    },
   },
   eventActionContainer: {
     padding: '20px',
     display: 'flex',
     justifyContent: 'flex-end',
+    [theme.breakpoints.down('xl')]: {
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
   },
   eventActionBtn: {
     '&.MuiButton-root': {
@@ -61,6 +102,10 @@ const styles = (theme) => ({
       marginLeft: '20px',
       display: 'flex',
       alignItems: 'center',
+      [theme.breakpoints.down('sm')]: {
+        width: '80%',
+        margin: '5px 0px 5px 0px',
+      },
       '& .MuiSvgIcon-root': {
         marginRight: '5px',
       },
@@ -70,6 +115,18 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     marginLeft: '80px',
+    [theme.breakpoints.down('xxl')]: {
+      flexDirection: 'column',
+    },
+    [theme.breakpoints.down('xl')]: {
+      flexDirection: 'row',
+      marginLeft: '0px',
+      marginTop: '10px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      width: '100%',
+    },
   },
   eventManageActionBtn: {
     '&.MuiButton-root': {
@@ -82,6 +139,12 @@ const styles = (theme) => ({
       display: 'flex',
       alignItems: 'center',
       marginLeft: '20px',
+      [theme.breakpoints.down('xxl')]: {
+        margin: '0px 10px 10px 0px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '80%',
+      },
       '& .MuiSvgIcon-root': {
         marginRight: '5px',
       },
@@ -92,14 +155,24 @@ const styles = (theme) => ({
   },
   eventDetailsContainer: {
     display: 'flex',
+    [theme.breakpoints.down('xl')]: {
+      flexDirection: 'column',
+    },
   },
   eventDetailsLeftContent: {
     flex: 3.5,
     padding: '20px 10px 20px 0px',
+    [theme.breakpoints.down('xl')]: {
+      padding: 0,
+      margin: '20px 0px',
+    },
   },
   eventDetailsRightContent: {
     flex: 2.5,
     padding: '20px 0px 20px 10px',
+    [theme.breakpoints.down('xl')]: {
+      padding: 0,
+    },
   },
   eventDetailsInfo: {
     '&.MuiPaper-root': {
@@ -155,6 +228,9 @@ const styles = (theme) => ({
       fontWeight: 'bold',
       marginLeft: '40px',
       color: '#FF1C00',
+      [theme.breakpoints.down('sm')]: {
+        marginLeft: '0px',
+      },
     },
   },
 });

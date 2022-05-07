@@ -97,6 +97,9 @@ const styles = (theme) => ({
       borderRadius: '10px',
       fontWeight: 500,
       marginRight: '15px',
+      [theme.breakpoints.down('sm')]: {
+        marginRight: '5px',
+      },
     },
   },
   likesContainer: {

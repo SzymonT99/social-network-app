@@ -45,6 +45,9 @@ const styles = (theme) => ({
       textAlign: 'center',
       marginTop: '5px',
       fontWeight: 300,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '9px',
+      },
     },
   },
   manageMessageBox: { display: 'none' },

@@ -245,7 +245,7 @@ const EventForm = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             id="date"
             name="date"
@@ -265,7 +265,7 @@ const EventForm = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel id="event-time-select-label">
               Czas rozpoczęcia wydarzenia
@@ -293,7 +293,7 @@ const EventForm = (props) => {
             Adres wydarzenia
           </Typography>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             id="country"
             name="country"
@@ -309,7 +309,7 @@ const EventForm = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             id="city"
             name="city"
@@ -325,17 +325,18 @@ const EventForm = (props) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             id="street"
             name="street"
             label="Ulica"
+            sx={{ paddingBottom: '20px' }}
             fullWidth
             value={formik.values.street}
             onChange={formik.handleChange}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             id="zipCode"
             name="zipCode"

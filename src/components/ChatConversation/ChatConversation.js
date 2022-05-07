@@ -102,7 +102,7 @@ const ChatConversation = (props) => {
           {generateChatActivityInformation()}
         </Typography>
         {activityDate && (
-          <Typography fontSize="10px" fontWeight={300} lineHeight={1}>
+          <Typography className={classes.conversationDate}>
             {formatActivityDate(new Date(activityDate))}
           </Typography>
         )}

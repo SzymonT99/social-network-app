@@ -31,6 +31,12 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     margin: '5px 0',
+    [theme.breakpoints.down('xl')]: {
+      width: '270px',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '300px',
+    },
   },
   '@media (max-width: 400px)': {
     eventInformationRow: {
@@ -48,18 +54,15 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
     },
   },
   eventReactionBtn: {
     '&.MuiButton-root': {
       borderRadius: '5px',
-      [theme.breakpoints.down('md')]: {
-        marginTop: '10px',
-        width: '50% !important',
-      },
       [theme.breakpoints.down('sm')]: {
+        marginTop: '10px',
         width: '100% !important',
       },
     },

@@ -29,6 +29,15 @@ const styles = (theme) => ({
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       width: '320px',
+      [theme.breakpoints.down('xl')]: {
+        width: '300px',
+      },
+      [theme.breakpoints.down('lg')]: {
+        width: '240px',
+      },
+      [theme.breakpoints.down('md')]: {
+        width: '400px',
+      },
     },
   },
   groupInterestsBox: {
@@ -36,15 +45,24 @@ const styles = (theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '320px',
+    [theme.breakpoints.down('xl')]: {
+      width: '300px',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '240px',
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '400px',
+    },
   },
   '@media (max-width: 450px)': {
     groupTitleText: {
       '&.MuiTypography-root': {
-        width: '200px',
+        width: '240px',
       },
     },
     groupInterestsBox: {
-      width: '200px',
+      width: '240px',
     },
   },
   groupBtnContainer: {

@@ -107,7 +107,7 @@ const Event = (props) => {
               members.filter(
                 (member) => member.participationStatus === 'INTERESTED'
               ).length
-            } os. interesuje sie | ${
+            } os. interesuje się | ${
               members.filter(
                 (member) => member.participationStatus === 'TAKE_PART'
               ).length

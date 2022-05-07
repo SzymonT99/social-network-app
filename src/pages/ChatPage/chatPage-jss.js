@@ -2,16 +2,34 @@ const styles = (theme) => ({
   wrapper: {
     height: 'calc(100vh - 80px)',
     padding: '20px 0px',
+    [theme.breakpoints.down('lg')]: {
+      margin: '10px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      margin: '5px',
+    },
   },
   chatContainer: {
     '&.MuiPaper-root': {
       borderRadius: '10px',
       display: 'flex',
       height: '100%',
+      position: 'relative',
     },
   },
   conversationsContainer: {
     flex: 1,
+    [theme.breakpoints.down('md')]: {
+      flex: 0,
+      position: 'absolute',
+      left: '0px',
+      top: '66px',
+      zIndex: 10,
+      backgroundColor: '#FFF',
+      height: 'calc(100% - 66px)',
+      borderRight: '1px solid rgba(0, 0, 0, 0.22)',
+      width: '50%',
+    },
   },
   conversationsContent: {
     '&::-webkit-scrollbar': {
@@ -37,6 +55,16 @@ const styles = (theme) => ({
     borderRight: '1px solid rgba(0, 0, 0, 0.22)',
     flex: 3,
     height: '100%',
+    position: 'relative',
+    [theme.breakpoints.down('xl')]: {
+      borderRight: 'none',
+      borderTopRightRadius: '10px',
+      paddingTop: '10px',
+    },
+    [theme.breakpoints.down('md')]: {
+      borderLeft: 'none',
+      borderLeftRightRadius: '10px',
+    },
   },
   messagesContent: {
     height: '90%',
@@ -51,8 +79,81 @@ const styles = (theme) => ({
     display: 'flex',
     flexDirection: 'column-reverse',
   },
+  showConversationsBtn: {
+    '&.MuiIconButton-root': {
+      padding: '5px 10px',
+      display: 'block',
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
+    },
+  },
+  chatHeader: {
+    display: 'none',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: '67px',
+    width: '100%',
+    padding: '10px',
+    borderBottom: '1px solid rgba(0, 0, 0, 0.22)',
+    zIndex: 10,
+    backgroundColor: '#FFF',
+    borderTopRightRadius: '10px',
+    '& .MuiIconButton-root': {
+      '& .MuiSvgIcon-root': {
+        backgroundColor: 'transparent !important',
+        fontSize: '36px',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '28px !important',
+        },
+      },
+    },
+    [theme.breakpoints.down('xl')]: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    [theme.breakpoints.down('md')]: {
+      borderTopLeftRadius: '10px',
+    },
+  },
+  headerTitle: {
+    '&.MuiTypography-root': {
+      flex: 1,
+      fontWeight: 500,
+      lineHeight: 1,
+      textAlign: 'center',
+      width: '200px',
+    },
+  },
   chatSettingsContainer: {
     flex: 1.1,
+    [theme.breakpoints.down('xl')]: {
+      flex: 0,
+      position: 'absolute',
+      right: '0px',
+      top: '66px',
+      zIndex: 10,
+      backgroundColor: '#FFF',
+      width: '35%',
+      height: 'calc(100% - 66px)',
+      borderLeft: '1px solid rgba(0, 0, 0, 0.22)',
+      borderTop: '1px solid rgba(0, 0, 0, 0.22)',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '40%',
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '50%',
+    },
+  },
+  '@media (max-width: 750px)': {
+    conversationsContainer: {
+      display: 'none',
+    },
+    chatMessagesContainer: {
+      borderLeft: 'none',
+    },
   },
   chatSettingsContent: {
     display: 'flex',
@@ -190,13 +291,16 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
+    height: '100vh',
     width: '100%',
   },
   chatImageListContainer: {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
     gridGap: '10px',
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: 'repeat(1, 1fr)',
+    },
   },
   chatImageListItem: {
     height: '120px',

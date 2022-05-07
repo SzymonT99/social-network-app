@@ -26,6 +26,9 @@ const styles = (theme) => ({
   },
   contentApp: {
     width: '85%',
+    [theme.breakpoints.down('xl')]: {
+      width: '90%',
+    },
     [theme.breakpoints.down('lg')]: {
       width: '100%',
     },

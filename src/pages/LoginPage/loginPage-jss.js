@@ -43,7 +43,7 @@ const styles = (theme) => ({
         width: '100%',
       },
       [theme.breakpoints.down('sm')]: {
-        padding: '20px 30px',
+        padding: '15px 20px',
       },
     },
   },
@@ -52,6 +52,9 @@ const styles = (theme) => ({
     textDecoration: 'none',
     alignSelf: 'center',
     fontSize: '17px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '15px',
+    },
     color: theme.palette.secondary.main,
     '&:hover': {
       textDecoration: 'underline',
@@ -166,6 +169,9 @@ const styles = (theme) => ({
     textDecoration: 'none',
     color: 'black',
     fontSize: '17px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '15px',
+    },
     '&:hover': {
       textDecoration: 'underline',
     },

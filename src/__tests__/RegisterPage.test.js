@@ -1,32 +1,15 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '../utils/testsWrapper';
 import RegisterPage from '../pages/RegisterPage/RegisterPage';
 import { ThemeProvider } from '@mui/material/styles';
 import appTheme from '../theme/appTheme';
-import { Provider } from 'react-redux';
 import React from 'react';
-import { loadState } from '../localStorage';
-import configureStore from '../redux/configureStore';
 import { BrowserRouter } from 'react-router-dom';
-
-const initialState = loadState();
-
-const store = configureStore(initialState, {});
-
-jest.mock('react-redux', () => {
-  return {
-    ...jest.requireActual('react-redux'),
-    useSelector: jest.fn().mockImplementation(() => ({})),
-    useDispatch: () => jest.fn(),
-  };
-});
 
 const MockRegisterPage = () => (
   <ThemeProvider theme={appTheme}>
-    <Provider store={store}>
-      <BrowserRouter>
-        <RegisterPage />
-      </BrowserRouter>
-    </Provider>
+    <BrowserRouter>
+      <RegisterPage />
+    </BrowserRouter>
   </ThemeProvider>
 );
 
