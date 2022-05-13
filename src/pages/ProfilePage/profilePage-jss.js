@@ -499,7 +499,6 @@ const styles = (theme) => ({
   },
   friendsPagination: {
     '&.MuiPagination-root': {
-      marginBottom: '10px',
       '& .MuiPagination-ul': {
         justifyContent: 'center',
       },

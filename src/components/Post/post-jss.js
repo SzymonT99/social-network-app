@@ -142,9 +142,6 @@ const styles = (theme) => ({
   activityInformationContainer: {
     display: 'flex',
     alignItems: 'center',
-    [theme.breakpoints.down('sm')]: {
-      alignItems: 'flex-end',
-    },
   },
   activityUserNameText: {
     '&.MuiTypography-root': {
@@ -169,6 +166,9 @@ const styles = (theme) => ({
     '&.MuiTypography-root': {
       lineHeight: 1,
       marginLeft: '3px',
+      [theme.breakpoints.down('sm')]: {
+        marginLeft: '6px',
+      },
     },
   },
   postImageListContainer: {

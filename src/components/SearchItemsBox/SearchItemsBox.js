@@ -64,7 +64,9 @@ const SearchItemsBox = (props) => {
             MenuProps={{ disableScrollLock: true }}
           >
             {orderOptions.map((name, index) => (
-              <MenuItem value={index + 1}>{name}</MenuItem>
+              <MenuItem key={index} value={index + 1}>
+                {name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

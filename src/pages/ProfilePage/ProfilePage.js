@@ -8,20 +8,15 @@ import Typography from '@mui/material/Typography';
 import {
   Button,
   Divider,
-  FormControl,
   IconButton,
   Input,
-  InputAdornment,
   Link,
   List,
   ListItem,
   ListItemText,
-  MenuItem,
   Pagination,
-  Select,
   Tab,
   Tabs,
-  TextField,
   Tooltip,
 } from '@mui/material';
 import defaultUserPhoto from '../../assets/default-profile-photo.jpg';
@@ -75,7 +70,6 @@ import {
 import { setLoading } from '../../redux/actions/userActivityActions';
 import UserInformation from '../../components/Profile/UserInformation';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import SearchIcon from '@mui/icons-material/Search';
 import {
   refreshUserToken,
   setTokenRefreshing,
@@ -726,14 +720,15 @@ const ProfilePage = (props) => {
                     value="a1"
                     className={classes.tabPanelActivityContainer}
                   >
-                    {parseInt(selectedUserId) === loggedUser.userId && (
-                      <PostCreationBox
-                        profilePhoto={userProfile.profilePhoto}
-                        userNameAndSurname={
-                          userProfile.firstName + ' ' + userProfile.lastName
-                        }
-                      />
-                    )}
+                    {parseInt(selectedUserId) === loggedUser.userId &&
+                      userProfile && (
+                        <PostCreationBox
+                          profilePhoto={userProfile.profilePhoto}
+                          userNameAndSurname={
+                            userProfile.firstName + ' ' + userProfile.lastName
+                          }
+                        />
+                      )}
                     {userActivity.createdPosts.map((post, index) => {
                       if (index < numberItemsShown.posts) {
                         return (
@@ -1680,14 +1675,14 @@ const ProfilePage = (props) => {
                   />
                 </Paper>
               )}
+              {userGroups.length === 0 && (
+                <div className={classes.noContent}>
+                  <Typography variant="h6" fontWeight="bold">
+                    Brak grup
+                  </Typography>
+                </div>
+              )}
             </div>
-            {userGroups.length === 0 && (
-              <div className={classes.noContent}>
-                <Typography variant="h6" fontWeight="bold">
-                  Brak grup
-                </Typography>
-              </div>
-            )}
           </TabPanel>
         </div>
       ) : (

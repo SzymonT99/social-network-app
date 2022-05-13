@@ -57,7 +57,7 @@ export const getPostDetails = (postId) => (dispatch) => {
           });
         });
       } else if (response.status === 403) {
-        dispatch(showNotification('warning', 'Post został usunięty'));
+        dispatch(showNotification('success', 'Post został usunięty'));
       } else {
         dispatch(showNotification('error', 'Błąd połączenia z serwerem'));
       }
@@ -144,7 +144,9 @@ export const deletePost =
                 getState().selectedProfile.userProfile.userProfileId
               )
             );
-          if (getState().activity.postDetails) dispatch(getPostDetails(postId));
+          if (getState().activity.postDetails) {
+            dispatch(getPostDetails(postId));
+          }
           dispatch(showNotification('success', 'Usunięto post'));
         } else if (response.status === 403) {
           dispatch(showNotification('warning', 'Zabroniona akcja'));
