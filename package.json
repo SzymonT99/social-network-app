@@ -64,8 +64,7 @@
   },
   "devDependencies": {
     "prettier": "2.5.1",
-    "redux-devtools-extension": "^2.13.9",
-    "redux-mock-store": "^1.5.4"
+    "redux-devtools-extension": "^2.13.9"
   },
   "prettier": {
     "singleQuote": true

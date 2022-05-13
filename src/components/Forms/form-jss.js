@@ -1,3 +1,5 @@
+import theme from '../../theme/appTheme';
+
 const styles = (theme) => ({
   postFormContainer: {
     width: '100%',
@@ -42,19 +44,50 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '15px 0',
+    [theme.breakpoints.down('xl')]: {
+      alignItems: 'center',
+      flexDirection: 'column',
+    },
+  },
+  sharedPostFormAction: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '15px 0',
+  },
+  '@media (max-width: 1800px)': {
+    sharedPostFormAction: {
+      alignItems: 'center',
+      flexDirection: 'column',
+    },
+    accessPostContainer: {
+      margin: '5px 0px',
+    },
   },
   accessPostContainer: {
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   accessPostSelect: {
     width: '230px',
+    '&.MuiFormControl-root': {
+      marginBottom: 0,
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '180px',
+    },
   },
   uploadImageToPostBtn: {
     '&.MuiButton-root': {
       fontSize: '16px',
       textTransform: 'none',
       width: '200px',
+      height: '55px',
+      [theme.breakpoints.down('xl')]: {
+        marginTop: '10px',
+      },
     },
   },
   publishPostBtn: {
@@ -66,6 +99,9 @@ const styles = (theme) => ({
       alignSelf: 'center',
       margin: '15px',
       borderRadius: '5px',
+      [theme.breakpoints.down('md')]: {
+        width: '100%',
+      },
     },
   },
   postImageList: {
@@ -79,6 +115,9 @@ const styles = (theme) => ({
     '&.MuiImageListItem-root': {
       position: 'relative',
       height: '500px',
+      [theme.breakpoints.down('sm')]: {
+        height: '250px !important',
+      },
       '&:hover $img': {
         opacity: '0.6',
         cursor: 'pointer',
@@ -157,8 +196,14 @@ const styles = (theme) => ({
       alignItems: 'center',
     },
   },
+  favouriteInput: {
+    '&.MuiTextField-root': {
+      width: '65%',
+      marginBottom: 0,
+    },
+  },
   userFavouriteItemFormAction: {
-    marginTop: '15px',
+    marginTop: '10px',
   },
   userFavouriteActionBtn: {
     '&.MuiButton-root': {
@@ -211,12 +256,24 @@ const styles = (theme) => ({
       alignSelf: 'center',
       margin: '15px',
       borderRadius: '5px',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
     },
   },
   editAccountForm: {
     textAlign: 'center',
     marginTop: '20px',
     padding: '30px 80px',
+    [theme.breakpoints.down('xl')]: {
+      padding: '30px 60px',
+    },
+    [theme.breakpoints.down('lg')]: {
+      padding: '30px 40px',
+    },
+    [theme.breakpoints.down('md')]: {
+      padding: '30px 20px',
+    },
   },
   resendActivationLinkForm: {
     textAlign: 'center',
@@ -229,6 +286,9 @@ const styles = (theme) => ({
       fontSize: '16px',
       width: '50%',
       height: '55px',
+      [theme.breakpoints.down('xl')]: {
+        width: '100%',
+      },
     },
   },
   disabledFormBtn: {
@@ -298,12 +358,24 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('xl')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
   },
   interestSelect: {
     '&.MuiFormControl-root': {
       width: '60%',
       paddingRight: '15px',
       marginBottom: 0,
+      [theme.breakpoints.down('xxl')]: {
+        width: '50%',
+      },
+      [theme.breakpoints.down('xl')]: {
+        width: '100%',
+        paddingRight: '0px',
+        marginBottom: '10px',
+      },
     },
   },
   interestBtn: {

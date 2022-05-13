@@ -124,7 +124,7 @@ const RegisterPage = (props) => {
           data-testid="register-form"
         >
           <Grid container columnSpacing={{ xs: 2 }}>
-            <Grid item xs={6}>
+            <Grid item sm={6} xs={12}>
               <TextField
                 fullWidth
                 id="firstName"
@@ -142,7 +142,7 @@ const RegisterPage = (props) => {
                 }
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item sm={6} xs={12}>
               <TextField
                 fullWidth
                 id="lastName"
@@ -177,7 +177,7 @@ const RegisterPage = (props) => {
                 }
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item sm={6} xs={12}>
               <TextField
                 fullWidth
                 id="username"
@@ -195,7 +195,7 @@ const RegisterPage = (props) => {
                 }
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item sm={6} xs={12}>
               <TextField
                 fullWidth
                 id="phoneNumber"
@@ -284,7 +284,7 @@ const RegisterPage = (props) => {
                 }
               />
             </Grid>
-            <Grid item xs={7}>
+            <Grid item sm={7} xs={12}>
               <FormControl component="fieldset" required>
                 <FormLabel component="legend">Płeć</FormLabel>
                 <RadioGroup
@@ -311,7 +311,7 @@ const RegisterPage = (props) => {
                 </RadioGroup>
               </FormControl>
             </Grid>
-            <Grid item xs={5}>
+            <Grid item sm={5} xs={12}>
               <TextField
                 id="dateOfBirth"
                 label="Data urodzenia"

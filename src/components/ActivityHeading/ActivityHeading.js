@@ -93,6 +93,7 @@ const ActivityHeading = (props) => {
               variant="subtitle1"
               className={classes.groupNameText}
               onClick={() => history.push('/app/groups/' + groupId)}
+              noWrap
             >
               {groupName}
             </Typography>
@@ -100,6 +101,7 @@ const ActivityHeading = (props) => {
           <Typography
             variant={!postGroupActivity ? 'subtitle1' : 'body1'}
             fontWeight="bold"
+            sx={{ lineHeight: { xs: 1.2, sm: 1.75 } }}
           >
             <span
               className={classes.authorName}
@@ -111,7 +113,7 @@ const ActivityHeading = (props) => {
               {activityTitle + (postGroupActivity ? ' w grupie' : '')}
             </span>
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" noWrap>
             {formatActivityDate(createdDate)}
           </Typography>
           {isEdited && !postGroupActivity && (
@@ -137,7 +139,7 @@ ActivityHeading.propTypes = {
   createdDate: PropTypes.object.isRequired,
   postGroupActivity: PropTypes.bool,
   isEdited: PropTypes.bool,
-  editionDate: PropTypes.string,
+  editionDate: PropTypes.object,
   groupId: PropTypes.number,
   groupName: PropTypes.string,
   groupImage: PropTypes.object,

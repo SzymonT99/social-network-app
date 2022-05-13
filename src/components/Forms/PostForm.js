@@ -116,7 +116,7 @@ const PostForm = (props) => {
       }
       closePopup();
     } else {
-      dispatch(showNotification('warning', 'Podaj treść postu'));
+      dispatch(showNotification('warning', 'Podaj treść posta'));
     }
   };
 
@@ -197,7 +197,7 @@ const PostForm = (props) => {
       <Divider />
       <div className={classes.postFormAction}>
         <div className={classes.accessPostContainer}>
-          <Typography variant="subtitle1" style={{ marginRight: '20px' }}>
+          <Typography variant="subtitle1" marginRight="20px">
             Dostępność:
           </Typography>
           <FormControl className={classes.accessPostSelect}>

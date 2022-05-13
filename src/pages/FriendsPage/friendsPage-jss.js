@@ -1,6 +1,12 @@
 const styles = (theme) => ({
   wrapper: {
     margin: '20px 0px',
+    [theme.breakpoints.down('lg')]: {
+      margin: '20px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      margin: '10px',
+    },
   },
   friendsContainer: {
     '&.MuiPaper-root': {
@@ -19,6 +25,16 @@ const styles = (theme) => ({
   tabsContainer: {
     '&.MuiTabs-root': {
       minHeight: 'auto',
+      '& .MuiTabs-flexContainer': {
+        [theme.breakpoints.down('xl')]: {
+          flexDirection: 'column',
+        },
+      },
+      '& .MuiTabs-indicator': {
+        [theme.breakpoints.down('xl')]: {
+          display: 'none',
+        },
+      },
     },
   },
   tabItem: {
@@ -32,8 +48,18 @@ const styles = (theme) => ({
         fontSize: '17px',
         fontWeight: 400,
         marginRight: '20px',
+        [theme.breakpoints.down('xl')]: {
+          padding: '10px',
+          alignItems: 'flex-start',
+        },
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '15px',
+        },
         '&.Mui-selected': {
           fontWeight: 700,
+          [theme.breakpoints.down('xl')]: {
+            backgroundColor: theme.palette.secondary.light,
+          },
         },
       },
     },
@@ -48,6 +74,9 @@ const styles = (theme) => ({
     display: 'flex',
     flexWrap: 'wrap',
     margin: '10px -5px 10px -5px',
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'center',
+    },
   },
   noContent: {
     width: '100%',

@@ -27,6 +27,16 @@ const setup = (store) => {
           new Date(loggedUser.accessTokenExpirationDate).getTime() - 5000
         );
 
+      console.log(loggedUser.accessTokenExpirationDate);
+      console.log(
+        new Date() >
+          new Date(
+            new Date(loggedUser.accessTokenExpirationDate).getTime() - 5000
+          )
+      );
+      console.log('isUserRemember: ' + isUserRemember);
+      console.log('isTokenExpired: ' + isTokenExpired);
+
       if (isTokenExpired && isUserRemember) {
         const refreshTokenResponse = await fetch(endpoints.refreshToken, {
           method: 'POST',
@@ -73,8 +83,8 @@ const setup = (store) => {
       } else {
         response = await originalFetch(resource, config);
         if (response.status === 401) {
-          dispatch(logoutUser(loggedUser.userId));
-          window.location.href = '/auth/login';
+          // dispatch(logoutUser(loggedUser.userId));
+          //  window.location.href = '/auth/login';
           dispatch(
             showNotification(
               'error',

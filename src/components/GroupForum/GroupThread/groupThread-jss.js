@@ -36,6 +36,11 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  '@media (max-width: 450px)': {
+    threadAnswersNumberInfo: {
+      display: 'none',
+    },
+  },
   threadManageContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -86,6 +91,10 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('xxl')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
   },
   memberPhotoSmall: {
     '&.MuiAvatar-root': {
@@ -98,11 +107,19 @@ const styles = (theme) => ({
     '&.MuiFormControl-root': {
       width: '70%',
       marginBottom: 0,
+      [theme.breakpoints.down('xxl')]: {
+        width: '100%',
+        marginBottom: '10px',
+      },
       '& .MuiInputBase-root': {
         minHeight: '55px',
         borderRadius: '10px',
         fontSize: '15px',
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '13px',
+        },
         border: '1px solid rgba(0, 0, 0, 0.22)',
+
         '&.Mui-focused': {
           '& .MuiOutlinedInput-notchedOutline': {
             borderWidth: 0,
@@ -121,6 +138,13 @@ const styles = (theme) => ({
       fontSize: '17px',
       height: '55px',
       width: '26%',
+      [theme.breakpoints.down('xxl')]: {
+        marginLeft: '0px',
+        width: '40%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '60%',
+      },
     },
   },
   avatarBadge: {

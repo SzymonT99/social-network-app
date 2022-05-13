@@ -11,6 +11,13 @@ export const inviteToFriend = (inviterUserId) => (dispatch, getState) => {
         dispatch(getSentFriendInvitations(getState().auth.user.userId));
         dispatch(getUserFriendsSuggestions());
         dispatch(getUserFriends(getState().auth.user.userId, true));
+        if (getState().selectedProfile.userProfile) {
+          dispatch(
+            getReceivedFriendInvitations(
+              getState().selectedProfile.userProfile.userProfileId
+            )
+          );
+        }
         dispatch(showNotification('success', 'Wysłano zaproszenie'));
       } else if (response.status === 403) {
         dispatch(showNotification('warning', 'Zabroniona akcja'));

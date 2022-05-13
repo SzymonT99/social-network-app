@@ -24,6 +24,9 @@ const styles = (theme) => ({
     alignItems: 'center',
     flex: 1,
     margin: '0px 10px',
+    [theme.breakpoints.down('sm')]: {
+      margin: '0px 5px',
+    },
   },
   memberPhoto: {
     '&.MuiAvatar-root': {
@@ -34,6 +37,16 @@ const styles = (theme) => ({
   memberNameText: {
     '&.MuiTypography-root': {
       marginLeft: '8px',
+      width: '150px',
+      [theme.breakpoints.down('xl')]: {
+        width: '280px',
+      },
+      [theme.breakpoints.down('md')]: {
+        width: '240px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '140px',
+      },
       '&:hover': {
         cursor: 'pointer',
         textDecoration: 'underline',

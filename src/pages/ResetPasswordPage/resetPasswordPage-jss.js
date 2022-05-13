@@ -4,11 +4,23 @@ const styles = (theme) => ({
     flexDirection: 'column',
     marginBottom: '90px',
     width: '43%',
+    [theme.breakpoints.down('xl')]: {
+      width: '55%',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '70%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+    },
   },
   logo: {
     width: '122px',
     height: '105px',
     marginRight: '40px',
+    [theme.breakpoints.down('md')]: {
+      marginRight: '0px',
+    },
   },
   appName: {
     '&.MuiTypography-root': {
@@ -18,6 +30,9 @@ const styles = (theme) => ({
       color: theme.palette.secondary.main,
       '&:hover': {
         cursor: 'pointer',
+      },
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
       },
     },
   },
@@ -31,6 +46,16 @@ const styles = (theme) => ({
       margin: '0px 20px',
       display: 'flex',
       flexDirection: 'column',
+      [theme.breakpoints.down('lg')]: {
+        padding: '30px 60px',
+      },
+      [theme.breakpoints.down('md')]: {
+        padding: '20px 50px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        margin: '0px',
+        padding: '20px 30px',
+      },
     },
   },
   resetPassBtn: {

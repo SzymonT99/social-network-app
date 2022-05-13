@@ -89,11 +89,11 @@ const ChatMember = (props) => {
         className={classes.memberPhoto}
         onClick={() => history.push('/app/profile/' + userMember.userId)}
       />
-      <div>
+      <div className={classes.memberContent}>
         <Typography variant="body1" fontWeight={500} noWrap>
           {userMember.firstName + ' ' + userMember.lastName}
         </Typography>
-        <Typography fontSize="12px" noWrap lineHeight={1.2}>
+        <Typography className={classes.memberJoiningDate}>
           {'Dołączył(a): ' + formatDateWithTime(addedIn)}
         </Typography>
         {!isPrivateChat && chatCreator && (

@@ -29,6 +29,15 @@ const styles = (theme) => ({
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       width: '320px',
+      [theme.breakpoints.down('xl')]: {
+        width: '300px',
+      },
+      [theme.breakpoints.down('lg')]: {
+        width: '240px',
+      },
+      [theme.breakpoints.down('md')]: {
+        width: '400px',
+      },
     },
   },
   groupInterestsBox: {
@@ -36,23 +45,53 @@ const styles = (theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '320px',
+    [theme.breakpoints.down('xl')]: {
+      width: '300px',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '240px',
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '400px',
+    },
+  },
+  '@media (max-width: 450px)': {
+    groupTitleText: {
+      '&.MuiTypography-root': {
+        width: '240px',
+      },
+    },
+    groupInterestsBox: {
+      width: '240px',
+    },
   },
   groupBtnContainer: {
     marginTop: '10px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   groupBtn: {
     '&.MuiButton-root': {
       width: '47%',
       borderRadius: '5px',
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '10px',
+        width: '100%',
+      },
     },
   },
   groupInvitationBtn: {
     '&.MuiButton-root': {
       width: '30%',
       borderRadius: '5px',
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '5px',
+        width: '100%',
+      },
     },
   },
   showGroupBtn: {

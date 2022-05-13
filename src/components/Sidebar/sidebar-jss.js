@@ -11,6 +11,29 @@ const styles = (theme) => ({
     '&::-webkit-scrollbar': {
       width: '0px',
     },
+    [theme.breakpoints.down('xl')]: {
+      flex: 2.5,
+    },
+    [theme.breakpoints.down('lg')]: {
+      flex: 2.7,
+    },
+    [theme.breakpoints.down('md')]: {
+      display: 'none',
+      position: 'fixed',
+      top: '80px',
+      left: '0px',
+      zIndex: 100,
+      width: '45%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      top: '140px',
+      width: '55%',
+    },
+  },
+  '@media (max-width: 440px)': {
+    sidebarContainer: {
+      width: '70%',
+    },
   },
   sidebarWrapper: {
     padding: '15px 15px 0px 15px',
@@ -49,8 +72,38 @@ const styles = (theme) => ({
   divider: {
     backgroundColor: theme.palette.primary.contrastText,
   },
-  iconItem: {
-    color: 'white',
+  '@media (max-width: 1800px)': {
+    navigationBtn: {
+      '&.MuiListItemButton-root': {
+        padding: '8px 4px',
+        '& .MuiListItemIcon-root': {
+          minWidth: '42px',
+          '& .MuiSvgIcon-root': {
+            fontSize: '30px',
+          },
+        },
+        '& .MuiListItemText-root': {
+          '& .MuiTypography-root': {
+            fontSize: '18px',
+          },
+        },
+      },
+    },
+  },
+  navigationBtn: {
+    '&.MuiListItemButton-root': {
+      '& .MuiListItemIcon-root': {
+        color: 'white',
+      },
+      '& .MuiListItemText-root': {
+        '& .MuiTypography-root': {
+          fontWeight: 'bold',
+          [theme.breakpoints.down('sm')]: {
+            fontSize: '14px',
+          },
+        },
+      },
+    },
   },
   avatarBadge: {
     '& .MuiBadge-badge': {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@mui/styles';
 import styles from './chatPage-jss';
@@ -20,6 +20,7 @@ import {
   Paper,
   TextField,
   Tooltip,
+  useMediaQuery,
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Popup from '../../components/Popup/Popup';
@@ -60,6 +61,8 @@ import classNames from 'classnames';
 import ModalImage from 'react-modal-image-responsive';
 import { formatBaseDate } from '../../utils/formatBaseDate';
 import ChatInput from '../../components/ChatInput/ChatInput';
+import InfoIcon from '@mui/icons-material/Info';
+import ForumIcon from '@mui/icons-material/Forum';
 
 let stompClient = null;
 
@@ -93,6 +96,12 @@ const ChatPage = (props) => {
   const [searchedUserName, setSearchedUserName] = useState('');
   const [searchedUsers, setSearchedUsers] = useState([]);
   const [chatMuted, setChatMuted] = useState(false);
+
+  const settingsBoxRef = useRef(null);
+  const settingsBtnRef = useRef(null);
+
+  const conversationsBoxRef = useRef(null);
+  const conversationsBtnRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -411,10 +420,37 @@ const ChatPage = (props) => {
     setChatMuted(!chatMuted);
   };
 
+  const handleClickChatDetails = () => {
+    if (settingsBoxRef.current.style.display === 'block') {
+      settingsBoxRef.current.style.display = 'none';
+      settingsBtnRef.current.style.backgroundColor = 'white';
+    } else {
+      settingsBoxRef.current.style.display = 'block';
+      settingsBtnRef.current.style.backgroundColor = 'rgb(212, 212, 212)';
+    }
+  };
+
+  const handleClickShowConversations = () => {
+    if (conversationsBoxRef.current.style.display === 'block') {
+      conversationsBoxRef.current.style.display = 'none';
+      conversationsBtnRef.current.style.backgroundColor = 'white';
+    } else {
+      conversationsBoxRef.current.style.display = 'block';
+      conversationsBtnRef.current.style.backgroundColor = 'rgb(212, 212, 212)';
+    }
+  };
+
+  const matchesBpXl = useMediaQuery((theme) => theme.breakpoints.up('xl'));
+  const matchesBpMD = useMediaQuery((theme) => theme.breakpoints.up('md'));
+
   return (
     <div className={classes.wrapper}>
       <Paper elevation={4} className={classes.chatContainer}>
-        <div className={classes.conversationsContainer}>
+        <div
+          className={classes.conversationsContainer}
+          ref={conversationsBoxRef}
+          style={{ display: matchesBpMD ? 'block' : 'none' }}
+        >
           <div className={classes.conversationsHeadingBox}>
             <Typography variant="h4">Czaty</Typography>
             <Tooltip title="Utwórz nowy czat" placement="top">
@@ -509,6 +545,44 @@ const ChatPage = (props) => {
         <div className={classes.chatMessagesContainer}>
           {currentChat && currentChat.messages && currentChat.addedImages && (
             <>
+              <div className={classes.chatHeader}>
+                <IconButton
+                  ref={conversationsBtnRef}
+                  onClick={handleClickShowConversations}
+                  className={classes.showConversationsBtn}
+                >
+                  <ForumIcon fontSize="large" color="primary" />
+                </IconButton>
+                {!currentChat.isPrivate ? (
+                  <Typography
+                    variant="h5"
+                    noWrap
+                    className={classes.headerTitle}
+                  >
+                    {currentChat.name}
+                  </Typography>
+                ) : (
+                  <Typography
+                    variant="h5"
+                    noWrap
+                    className={classes.headerTitle}
+                  >
+                    {currentChat.chatMembers.find(
+                      (member) => member.user.userId !== loggedUser.userId
+                    ).user.firstName +
+                      ' ' +
+                      currentChat.chatMembers.find(
+                        (member) => member.user.userId !== loggedUser.userId
+                      ).user.lastName}
+                  </Typography>
+                )}
+                <IconButton
+                  ref={settingsBtnRef}
+                  onClick={handleClickChatDetails}
+                >
+                  <InfoIcon fontSize="large" color="primary" />
+                </IconButton>
+              </div>
               <div id="scrollableDiv" className={classes.messagesContent}>
                 <InfiniteScroll
                   dataLength={maxShowedMessages}
@@ -561,7 +635,11 @@ const ChatPage = (props) => {
             </>
           )}
         </div>
-        <div className={classes.chatSettingsContainer}>
+        <div
+          ref={settingsBoxRef}
+          className={classes.chatSettingsContainer}
+          style={{ display: matchesBpXl ? 'block' : 'none' }}
+        >
           {currentChat && currentChat.messages && currentChat.addedImages && (
             <>
               <div className={classes.chatInfoContainer}>

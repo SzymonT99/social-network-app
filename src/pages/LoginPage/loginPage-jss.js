@@ -2,6 +2,13 @@ const styles = (theme) => ({
   wrapper: {
     width: '90%',
     display: 'flex',
+    [theme.breakpoints.down('lg')]: {
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
   },
   contentColumn: {
     flex: 1,
@@ -9,6 +16,20 @@ const styles = (theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     margin: '0 50px',
+    [theme.breakpoints.down('xl')]: {
+      margin: '0 7px',
+    },
+    [theme.breakpoints.down('lg')]: {
+      margin: '20px 0px',
+      width: '65%',
+      textAlign: 'center',
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '90%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+    },
   },
   loginForm: {
     '&.MuiPaper-root': {
@@ -18,6 +39,12 @@ const styles = (theme) => ({
       padding: '60px 70px',
       display: 'flex',
       flexDirection: 'column',
+      [theme.breakpoints.down('xl')]: {
+        width: '100%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        padding: '15px 20px',
+      },
     },
   },
   registerLink: {
@@ -25,6 +52,9 @@ const styles = (theme) => ({
     textDecoration: 'none',
     alignSelf: 'center',
     fontSize: '17px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '15px',
+    },
     color: theme.palette.secondary.main,
     '&:hover': {
       textDecoration: 'underline',
@@ -34,11 +64,22 @@ const styles = (theme) => ({
     width: '122px',
     height: '105px',
     marginRight: '40px',
+    [theme.breakpoints.down('sm')]: {
+      marginRight: '0px',
+    },
   },
   appName: {
-    display: 'flex',
-    alignItems: 'center',
-    color: theme.palette.secondary.main,
+    '&.MuiTypography-root': {
+      display: 'flex',
+      alignItems: 'center',
+      color: theme.palette.secondary.main,
+      [theme.breakpoints.down('lg')]: {
+        justifyContent: 'center',
+      },
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column',
+      },
+    },
   },
   appDescription: {
     color: 'white',
@@ -47,12 +88,30 @@ const styles = (theme) => ({
   btnContainer: {
     display: 'flex',
     marginTop: '60px',
+    [theme.breakpoints.down('lg')]: {
+      marginTop: '20px',
+      justifyContent: 'center',
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      width: '80%',
+      alignSelf: 'center',
+    },
   },
   registerBtn: {
     '&.MuiButton-root': {
       border: '1.5px white solid',
       borderRadius: '10px',
       padding: '15px 60px',
+      [theme.breakpoints.down('xl')]: {
+        padding: '15px 20px',
+        marginRight: '40px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '15px',
+        padding: '10px 15px',
+        marginRight: '0px',
+      },
       marginRight: '60px',
       '&:hover': {
         border: `1.5px ${theme.palette.secondary.main} solid`,
@@ -71,6 +130,15 @@ const styles = (theme) => ({
       textTransform: 'none',
       borderRadius: '10px',
       padding: '15px 60px',
+      [theme.breakpoints.down('xl')]: {
+        padding: '15px 20px',
+        marginRight: '0px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '15px',
+        padding: '10px 15px',
+        marginTop: '20px',
+      },
       marginRight: '60px',
       backgroundColor: '#07DCC0',
       '&:hover': {
@@ -101,6 +169,9 @@ const styles = (theme) => ({
     textDecoration: 'none',
     color: 'black',
     fontSize: '17px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '15px',
+    },
     '&:hover': {
       textDecoration: 'underline',
     },

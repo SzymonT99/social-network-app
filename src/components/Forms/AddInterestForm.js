@@ -75,23 +75,24 @@ const AddInterestForm = (props) => {
             ))}
         </Select>
       </FormControl>
-
-      <Button
-        className={classes.interestBtn}
-        color="secondary"
-        variant="contained"
-        onClick={handleClickAddInterest}
-      >
-        Dodaj
-      </Button>
-      <Button
-        className={classes.interestBtn}
-        color="primary"
-        variant="contained"
-        onClick={onCloseForm}
-      >
-        Anuluj
-      </Button>
+      <div>
+        <Button
+          className={classes.interestBtn}
+          color="secondary"
+          variant="contained"
+          onClick={handleClickAddInterest}
+        >
+          Dodaj
+        </Button>
+        <Button
+          className={classes.interestBtn}
+          color="primary"
+          variant="contained"
+          onClick={onCloseForm}
+        >
+          Anuluj
+        </Button>
+      </div>
     </form>
   );
 };

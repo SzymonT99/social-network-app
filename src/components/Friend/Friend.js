@@ -79,7 +79,7 @@ const Friend = (props) => {
               {'Miejscowość: ' + (city !== null ? city : 'nie podano')}
             </Typography>
           )}
-          <Typography variant="body1">
+          <Typography variant="body1" noWrap>
             {'Znajomi: ' + friendList.length}
             {mutualFriendList && (
               <span>{' (wspólnych: ' + mutualFriendList.length + ')'}</span>

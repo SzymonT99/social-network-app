@@ -167,7 +167,7 @@ const UserMenu = (props) => {
 
 UserMenu.propTypes = {
   classes: PropTypes.object.isRequired,
-  anchorEl: PropTypes.object.isRequired,
+  anchorEl: PropTypes.object,
   closeAccountMenu: PropTypes.func.isRequired,
   userId: PropTypes.number.isRequired,
   userProfile: PropTypes.object.isRequired,

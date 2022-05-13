@@ -1,6 +1,12 @@
 const styles = (theme) => ({
   wrapper: {
     margin: '20px 0',
+    [theme.breakpoints.down('lg')]: {
+      margin: '20px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      margin: '10px',
+    },
   },
   eventsTopContainer: {
     '&.MuiPaper-root': {
@@ -9,11 +15,25 @@ const styles = (theme) => ({
       justifyContent: 'space-between',
       marginTop: '15px',
       padding: '26px',
+      alignItems: 'center',
+      [theme.breakpoints.down('sm')]: {
+        padding: '15px',
+      },
     },
   },
   tabsContainer: {
     '&.MuiTabs-root': {
       minHeight: 'auto',
+      '& .MuiTabs-flexContainer': {
+        [theme.breakpoints.down('xl')]: {
+          flexDirection: 'column',
+        },
+      },
+      '& .MuiTabs-indicator': {
+        [theme.breakpoints.down('xl')]: {
+          display: 'none',
+        },
+      },
     },
   },
   tabItem: {
@@ -27,8 +47,18 @@ const styles = (theme) => ({
         fontSize: '17px',
         fontWeight: 400,
         marginRight: '20px',
+        [theme.breakpoints.down('xl')]: {
+          padding: '10px',
+          alignItems: 'flex-start',
+        },
+        [theme.breakpoints.down('sm')]: {
+          fontSize: '15px',
+        },
         '&.Mui-selected': {
           fontWeight: 700,
+          [theme.breakpoints.down('xl')]: {
+            backgroundColor: theme.palette.secondary.light,
+          },
         },
       },
     },
@@ -44,37 +74,33 @@ const styles = (theme) => ({
       backgroundColor: theme.palette.primary.light,
       marginTop: '15px',
       minHeight: '92px',
+      padding: '0px 60px',
+      [theme.breakpoints.down('md')]: {
+        padding: '0px 20px',
+      },
       borderRadius: '10px',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
-      '& .MuiFormControl-root': {
-        marginBottom: '0px',
-      },
     },
-  },
-  eventSearchbar: {
-    '&.MuiTextField-root': {
-      backgroundColor: 'white',
-      borderRadius: '5px',
-      width: '50%',
-      marginRight: '15px',
-    },
-  },
-  eventsOrderBox: {
-    display: 'flex',
-    alignItems: 'center',
   },
   eventsListContainer: {
-    margin: '15px 0px',
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
     gridGap: '15px',
-  },
-  eventOrderSelect: {
-    '&.MuiOutlinedInput-root': {
-      backgroundColor: 'white',
-      width: '220px',
+    margin: '15px auto',
+    [theme.breakpoints.down('xxl')]: {
+      width: '80%',
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+    [theme.breakpoints.down('xl')]: {
+      width: '100%',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '70%',
+      gridTemplateColumns: 'repeat(1, 1fr)',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
     },
   },
   eventsPagination: {

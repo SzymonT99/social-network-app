@@ -2,6 +2,18 @@ const styles = (theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
       borderRadius: '10px',
+      [theme.breakpoints.down('xl')]: {
+        maxWidth: '65% !important',
+      },
+      [theme.breakpoints.down('lg')]: {
+        maxWidth: '75% !important',
+      },
+      [theme.breakpoints.down('md')]: {
+        maxWidth: '80% !important',
+      },
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: '90% !important',
+      },
     },
   },
   dialogTitle: {

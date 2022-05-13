@@ -81,7 +81,7 @@ const Event = (props) => {
         alt="Zdjęcie wydarzenia"
       />
       <div className={classes.eventInformationContainer}>
-        <Typography variant="h6" className={classes.eventTitleText}>
+        <Typography variant="h6" className={classes.eventTitleText} noWrap>
           {title}
         </Typography>
         <div className={classes.eventInformationRow}>
@@ -90,10 +90,7 @@ const Event = (props) => {
             {formatDateWithTime(date)}
           </Typography>
         </div>
-        <div
-          className={classes.eventInformationRow}
-          style={{ width: activityItem && '550px' }}
-        >
+        <div className={classes.eventInformationRow}>
           <LocationOn className={classes.timeIcon} />
           <Typography variant="subtitle2" noWrap>
             {address.country +
@@ -105,12 +102,12 @@ const Event = (props) => {
           </Typography>
         </div>
         {!invitation && (
-          <Typography variant="body1" fontWeight={300}>
+          <Typography variant="body1" fontWeight={300} flex="1">
             {`${
               members.filter(
                 (member) => member.participationStatus === 'INTERESTED'
               ).length
-            } os. interesuje sie | ${
+            } os. interesuje się | ${
               members.filter(
                 (member) => member.participationStatus === 'TAKE_PART'
               ).length

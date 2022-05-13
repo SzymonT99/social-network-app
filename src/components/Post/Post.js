@@ -332,7 +332,7 @@ const Post = (props) => {
             ? ' dodał(a) nowy post'
             : ' zmienił(a) zdjęcie profilowe'
         }
-        editionDate={editionDate}
+        editionDate={new Date(editionDate)}
         userStatus={userStatus}
         isEdited={isEdited}
         postGroupActivity={isGroupPostActivity}
@@ -497,7 +497,7 @@ const Post = (props) => {
       <Popup
         open={openDeletePostPopup}
         type="confirmation"
-        title="Usuwanie postu"
+        title="Usuwanie posta"
         onClose={handleClosePostDeletePopup}
       >
         <ActionConfirmation
@@ -573,16 +573,16 @@ const Post = (props) => {
                   : classes.postBtn
               }
             >
-              <Typography
-                variant="subtitle2"
-                className={classes.postReactionItem}
-              >
+              <Typography className={classes.postReactionItem}>
                 {loggedUser && postIsLiked(likes, loggedUser.userId) ? (
                   <ThumbUpIcon className={classes.postActionIcon} />
                 ) : (
                   <ThumbUpAltOutlinedIcon className={classes.postActionIcon} />
                 )}
-                {'Lubię to | ' + likesNumber}
+                <span className={classes.reactionContent}>
+                  Lubię to |&nbsp;
+                </span>
+                {likesNumber}
               </Typography>
             </Button>
             {!isCommentingBlocked && (
@@ -597,7 +597,10 @@ const Post = (props) => {
                   <ChatBubbleOutlineOutlinedIcon
                     className={classes.postActionIcon}
                   />
-                  {'Komentarze | ' + commentsNumber}
+                  <span className={classes.reactionContent}>
+                    Komentarze |&nbsp;
+                  </span>
+                  {commentsNumber}
                 </Typography>
               </Button>
             )}
@@ -608,7 +611,10 @@ const Post = (props) => {
                   className={classes.postReactionItem}
                 >
                   <ShareOutlinedIcon className={classes.postActionIcon} />
-                  {'Udostępnij | ' + sharesNumber}
+                  <span className={classes.reactionContent}>
+                    Udostępnij |&nbsp;
+                  </span>
+                  {sharesNumber}
                 </Typography>
               </Button>
             )}

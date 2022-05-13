@@ -110,12 +110,14 @@ const ActivityBoard = (props) => {
       {!isLoading ? (
         <div className={classes.boardContainer}>
           <div className={classes.activityContent}>
-            <PostCreationBox
-              profilePhoto={loggedUserProfile.profilePhoto}
-              userNameAndSurname={
-                loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName
-              }
-            />
+            {loggedUserProfile && (
+              <PostCreationBox
+                profilePhoto={loggedUserProfile.profilePhoto}
+                userNameAndSurname={
+                  loggedUserProfile.firstName + ' ' + loggedUserProfile.lastName
+                }
+              />
+            )}
             {activityBoard.map((item, index) => {
               if (index < numberItemsShown) {
                 if (item.activityType === 'CREATE_POST') {

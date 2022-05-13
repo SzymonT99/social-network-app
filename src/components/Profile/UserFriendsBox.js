@@ -7,14 +7,6 @@ import {
   Link,
 } from '@mui/material';
 import { changeProfileNav } from '../../redux/actions/userProfileActions';
-import PublicIcon from '@mui/icons-material/Public';
-import LockIcon from '@mui/icons-material/Lock';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import CakeIcon from '@mui/icons-material/Cake';
-import WorkIcon from '@mui/icons-material/Work';
-import SchoolIcon from '@mui/icons-material/School';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import PeopleIcon from '@mui/icons-material/People';
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import { withStyles } from '@mui/styles';
@@ -52,7 +44,11 @@ const UserFriendsBox = (props) => {
           rowHeight={120}
           sx={{
             height:
-              userFriends.length < 3 ? 190 : userFriends.length > 6 ? 560 : 370,
+              userFriends.length <= 3
+                ? 190
+                : userFriends.length > 6
+                ? 560
+                : 370,
           }}
           className={classes.imageList}
           gap={3}

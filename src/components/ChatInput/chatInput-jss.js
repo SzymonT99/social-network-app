@@ -15,20 +15,33 @@ const styles = (theme) => ({
       backgroundColor: theme.palette.secondary.main,
       color: '#FFF',
       fontSize: '12px',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '10px',
+      },
     },
   },
   sendMessageBtn: {
     '&.MuiButton-root': {
       padding: '6px 30px',
       fontSize: '17px',
+      height: '55px',
       '& .MuiSvgIcon-root': {
         marginLeft: '7px',
       },
     },
   },
   messageImageList: {
-    minHeight: '280px',
-    width: '100%',
+    '&.MuiImageList-root': {
+      minHeight: '280px',
+      width: '100%',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      [theme.breakpoints.down('md')]: {
+        gridTemplateColumns: 'repeat(2, 1fr)',
+      },
+      [theme.breakpoints.down('sm')]: {
+        gridTemplateColumns: 'repeat(1, 1fr)',
+      },
+    },
   },
   uploadImageDeleteBtn: {},
   uploadImageItem: {

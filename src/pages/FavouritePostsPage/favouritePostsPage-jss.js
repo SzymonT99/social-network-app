@@ -1,6 +1,12 @@
 const styles = (theme) => ({
   wrapper: {
     margin: '20px 0px',
+    [theme.breakpoints.down('lg')]: {
+      margin: '20px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      margin: '10px',
+    },
   },
   favouritesContainer: {
     display: 'flex',
@@ -10,6 +16,12 @@ const styles = (theme) => ({
   },
   favouritesContent: {
     width: '70%',
+    [theme.breakpoints.down('md')]: {
+      width: '80%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
   },
   paginationContainer: {
     '&.MuiPaper-root': {

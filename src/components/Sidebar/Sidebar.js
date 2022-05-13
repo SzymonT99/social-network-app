@@ -27,7 +27,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import ShieldIcon from '@mui/icons-material/Shield';
 import Avatar from '@mui/material/Avatar';
-import { Badge } from '@mui/material';
+import { Badge, useMediaQuery } from '@mui/material';
 
 const ListItem = withStyles((theme) => ({
   root: {
@@ -151,8 +151,14 @@ const Sidebar = (props) => {
     setNavByLocation(location);
   }, [location]);
 
+  const matchesBpMD = useMediaQuery((theme) => theme.breakpoints.up('md'));
+
   return (
-    <div className={classes.sidebarContainer}>
+    <div
+      id="drawer"
+      className={classes.sidebarContainer}
+      style={{ display: matchesBpMD ? 'block' : 'none' }}
+    >
       <div className={classes.sidebarWrapper}>
         <Link
           className={classes.userProfileBox}
@@ -209,19 +215,14 @@ const Sidebar = (props) => {
                 selected={selectedItem === 9}
                 onClick={() => handleListItemClick(9)}
               >
-                <ListItemButton>
+                <ListItemButton className={classes.navigationBtn}>
                   <ListItemIcon>
-                    <AdminPanelSettingsIcon
-                      fontSize="large"
-                      className={classes.iconItem}
-                    />
+                    <AdminPanelSettingsIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
                     primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Panel administratora
-                      </Typography>
+                      <Typography variant="h6">Panel administratora</Typography>
                     }
                   />
                 </ListItemButton>
@@ -235,16 +236,14 @@ const Sidebar = (props) => {
                   handleListItemClick(0);
                 }}
               >
-                <ListItemButton>
+                <ListItemButton className={classes.navigationBtn}>
                   <ListItemIcon>
-                    <HomeIcon fontSize="large" className={classes.iconItem} />
+                    <HomeIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
                     primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Tablica aktywności
-                      </Typography>
+                      <Typography variant="h6">Tablica aktywności</Typography>
                     }
                   />
                 </ListItemButton>
@@ -258,16 +257,14 @@ const Sidebar = (props) => {
                   handleListItemClick(8);
                 }}
               >
-                <ListItemButton>
+                <ListItemButton className={classes.navigationBtn}>
                   <ListItemIcon>
-                    <ChatIcon fontSize="large" className={classes.iconItem} />
+                    <ChatIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
                     primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Publiczne posty
-                      </Typography>
+                      <Typography variant="h6">Publiczne posty</Typography>
                     }
                   />
                 </ListItemButton>
@@ -279,19 +276,14 @@ const Sidebar = (props) => {
                 selected={selectedItem === 1}
                 onClick={() => handleListItemClick(1)}
               >
-                <ListItemButton>
+                <ListItemButton className={classes.navigationBtn}>
                   <ListItemIcon>
-                    <AccountCircleIcon
-                      fontSize="large"
-                      className={classes.iconItem}
-                    />
+                    <AccountCircleIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
                     primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Profil użytkownika
-                      </Typography>
+                      <Typography variant="h6">Profil użytkownika</Typography>
                     }
                   />
                 </ListItemButton>
@@ -303,17 +295,13 @@ const Sidebar = (props) => {
                 selected={selectedItem === 2}
                 onClick={() => handleListItemClick(2)}
               >
-                <ListItemButton>
+                <ListItemButton className={classes.navigationBtn}>
                   <ListItemIcon>
-                    <PeopleIcon fontSize="large" className={classes.iconItem} />
+                    <PeopleIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
-                    primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Znajomi
-                      </Typography>
-                    }
+                    primary={<Typography variant="h6">Znajomi</Typography>}
                   />
                 </ListItemButton>
               </ListItem>
@@ -323,16 +311,14 @@ const Sidebar = (props) => {
               selected={selectedItem === 3}
               onClick={() => handleListItemClick(3)}
             >
-              <ListItemButton>
+              <ListItemButton className={classes.navigationBtn}>
                 <ListItemIcon>
-                  <GroupsIcon fontSize="large" className={classes.iconItem} />
+                  <GroupsIcon fontSize="large" />
                 </ListItemIcon>
                 <ListItemText
                   disableTypography
                   primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Grupy tematyczne
-                    </Typography>
+                    <Typography variant="h6">Grupy tematyczne</Typography>
                   }
                 />
               </ListItemButton>
@@ -343,20 +329,13 @@ const Sidebar = (props) => {
                 selected={selectedItem === 4}
                 onClick={() => handleListItemClick(4)}
               >
-                <ListItemButton>
+                <ListItemButton className={classes.navigationBtn}>
                   <ListItemIcon>
-                    <ChatBubbleIcon
-                      fontSize="large"
-                      className={classes.iconItem}
-                    />
+                    <ChatBubbleIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
-                    primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Czat
-                      </Typography>
-                    }
+                    primary={<Typography variant="h6">Czat</Typography>}
                   />
                 </ListItemButton>
               </ListItem>
@@ -366,17 +345,13 @@ const Sidebar = (props) => {
               selected={selectedItem === 5}
               onClick={() => handleListItemClick(5)}
             >
-              <ListItemButton>
+              <ListItemButton className={classes.navigationBtn}>
                 <ListItemIcon>
-                  <EventIcon fontSize="large" className={classes.iconItem} />
+                  <EventIcon fontSize="large" />
                 </ListItemIcon>
                 <ListItemText
                   disableTypography
-                  primary={
-                    <Typography fontWeight="bold" variant="h6">
-                      Wydarzenia
-                    </Typography>
-                  }
+                  primary={<Typography variant="h6">Wydarzenia</Typography>}
                 />
               </ListItemButton>
             </ListItem>
@@ -386,19 +361,14 @@ const Sidebar = (props) => {
                 selected={selectedItem === 6}
                 onClick={() => handleListItemClick(6)}
               >
-                <ListItemButton>
+                <ListItemButton className={classes.navigationBtn}>
                   <ListItemIcon>
-                    <BookmarkIcon
-                      fontSize="large"
-                      className={classes.iconItem}
-                    />
+                    <BookmarkIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
                     primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Ulubione posty
-                      </Typography>
+                      <Typography variant="h6">Ulubione posty</Typography>
                     }
                   />
                 </ListItemButton>
@@ -410,42 +380,34 @@ const Sidebar = (props) => {
                 selected={selectedItem === 7}
                 onClick={() => handleListItemClick(7)}
               >
-                <ListItemButton>
+                <ListItemButton className={classes.navigationBtn}>
                   <ListItemIcon>
-                    <SettingsIcon
-                      fontSize="large"
-                      className={classes.iconItem}
-                    />
+                    <SettingsIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
                     primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Ustawienia konta
-                      </Typography>
+                      <Typography variant="h6">Ustawienia konta</Typography>
                     }
                   />
                 </ListItemButton>
               </ListItem>
             )}
             {isUserLoggedIn && (
-              <ListItem disablePadding style={{ marginTop: '75px' }}>
+              <ListItem disablePadding sx={{ marginTop: '75px' }}>
                 <ListItemButton
+                  className={classes.navigationBtn}
                   onClick={() => {
                     dispatch(logoutUser(loggedUser.userId));
                     history.push('/auth/login');
                   }}
                 >
                   <ListItemIcon>
-                    <LogoutIcon fontSize="large" className={classes.iconItem} />
+                    <LogoutIcon fontSize="large" />
                   </ListItemIcon>
                   <ListItemText
                     disableTypography
-                    primary={
-                      <Typography fontWeight="bold" variant="h6">
-                        Wyloguj się
-                      </Typography>
-                    }
+                    primary={<Typography variant="h6">Wyloguj się</Typography>}
                   />
                 </ListItemButton>
               </ListItem>

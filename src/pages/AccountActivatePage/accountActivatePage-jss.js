@@ -4,11 +4,23 @@ const styles = (theme) => ({
     flexDirection: 'column',
     marginBottom: '200px',
     width: '43%',
+    [theme.breakpoints.down('xl')]: {
+      width: '55%',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '70%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+    },
   },
   logo: {
     width: '122px',
     height: '105px',
     marginRight: '40px',
+    [theme.breakpoints.down('md')]: {
+      marginRight: '0px',
+    },
   },
   appName: {
     '&.MuiTypography-root': {
@@ -18,6 +30,9 @@ const styles = (theme) => ({
       color: theme.palette.secondary.main,
       '&:hover': {
         cursor: 'pointer',
+      },
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
       },
     },
   },
@@ -31,6 +46,12 @@ const styles = (theme) => ({
       margin: '0px 20px',
       display: 'flex',
       flexDirection: 'column',
+      [theme.breakpoints.down('md')]: {
+        padding: '40px 20px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        padding: '30px 15px',
+      },
     },
   },
   activateAccountHeading: {
@@ -59,13 +80,19 @@ const styles = (theme) => ({
       fontSize: '17px',
       width: '50%',
       alignSelf: 'center',
+      [theme.breakpoints.down('md')]: {
+        width: '70%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '90%',
+      },
     },
   },
   loadingContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100px',
+    height: '100vh',
   },
 });
 

@@ -97,7 +97,11 @@ const ChatInput = (props) => {
           />
         </Popup>
         <IconButton onClick={() => setOpenEmojiPickerPopup(true)}>
-          <SentimentSatisfiedAltIcon fontSize="medium" color="primary" />
+          <SentimentSatisfiedAltIcon
+            fontSize="medium"
+            color="primary"
+            data-testid="emoji-picker"
+          />
         </IconButton>
         <IconButton onClick={() => imagesInputRef.current.click()}>
           <ImageIcon fontSize="medium" color="primary" />
@@ -146,7 +150,7 @@ const ChatInput = (props) => {
         >
           {displayedImages.length > 0 ? (
             <ImageList
-              cols={3}
+              cols={{ xl: 3, md: 2, sm: 1 }}
               rowHeight={220}
               className={classes.messageImageList}
               gap={5}
@@ -179,7 +183,6 @@ const ChatInput = (props) => {
         <Button
           color="primary"
           variant="contained"
-          sx={{ height: '55px' }}
           onClick={handleClickSendMessage}
           className={classes.sendMessageBtn}
         >

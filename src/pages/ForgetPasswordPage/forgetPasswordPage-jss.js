@@ -4,11 +4,23 @@ const styles = (theme) => ({
     flexDirection: 'column',
     marginBottom: '200px',
     width: '43%',
+    [theme.breakpoints.down('xl')]: {
+      width: '55%',
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '70%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+    },
   },
   logo: {
     width: '122px',
     height: '105px',
     marginRight: '40px',
+    [theme.breakpoints.down('md')]: {
+      marginRight: '0px',
+    },
   },
   appName: {
     '&.MuiTypography-root': {
@@ -18,6 +30,9 @@ const styles = (theme) => ({
       color: theme.palette.secondary.main,
       '&:hover': {
         cursor: 'pointer',
+      },
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
       },
     },
   },
@@ -31,6 +46,16 @@ const styles = (theme) => ({
       margin: '0px 20px',
       display: 'flex',
       flexDirection: 'column',
+      [theme.breakpoints.down('lg')]: {
+        padding: '40px 90px',
+      },
+      [theme.breakpoints.down('md')]: {
+        padding: '30px 60px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        margin: '0px',
+        padding: '15px 20px',
+      },
     },
   },
   forgetPassBtn: {
@@ -46,6 +71,9 @@ const styles = (theme) => ({
     textDecoration: 'none',
     alignSelf: 'center',
     fontSize: '17px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '15px',
+    },
     color: theme.palette.secondary.main,
     '&:hover': {
       textDecoration: 'underline',

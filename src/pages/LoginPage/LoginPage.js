@@ -94,7 +94,7 @@ const LoginPage = (props) => {
               className={classes.registerBtn}
               onClick={() => history.push('/auth/register')}
             >
-              Założ konto
+              Załóż konto
             </Button>
             <Button
               variant="contained"

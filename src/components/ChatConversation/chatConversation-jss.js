@@ -55,12 +55,35 @@ const styles = (theme) => ({
       fontWeight: 500,
       lineHeight: 1,
       width: '130px',
+      [theme.breakpoints.down('md')]: {
+        width: '200px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100px',
+      },
     },
   },
   conversationMessageText: {
     '&.MuiTypography-root': {
       lineHeight: 1.5,
       width: '130px',
+      [theme.breakpoints.down('md')]: {
+        width: '200px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100px',
+      },
+    },
+  },
+  conversationDate: {
+    '&.MuiTypography-root': {
+      fontSize: '10px',
+      fontWeight: 300,
+      lineHeight: 1,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '8px',
+        width: '80px',
+      },
     },
   },
 });

@@ -31,6 +31,7 @@ const Notification = () => {
         vertical: 'bottom',
         horizontal: 'right',
       }}
+      data-testid="notification"
     >
       {variant !== 'none' ? (
         <Alert
@@ -38,8 +39,11 @@ const Notification = () => {
           severity={variant}
           sx={{
             width: '100%',
-            fontSize: '20px',
+            fontSize: '20px !important',
             alignItems: 'center',
+            '& .MuiAlert-action': {
+              padding: '0px 0px 0px 10px',
+            },
           }}
         >
           {message}

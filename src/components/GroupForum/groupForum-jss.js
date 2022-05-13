@@ -2,13 +2,29 @@ const styles = (theme) => ({
   forumContainer: {
     width: '100%',
     display: 'flex',
+    [theme.breakpoints.down('xl')]: {
+      flexDirection: 'column',
+    },
   },
   forumLeftContent: {
     flex: 5,
     paddingRight: '15px',
+    [theme.breakpoints.down('xl')]: {
+      padding: '0px 0px',
+    },
   },
   forumRightContent: {
     flex: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    [theme.breakpoints.down('xl')]: {
+      width: '70%',
+      margin: '0 auto',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+      margin: '0 auto',
+    },
   },
   forumActionsContainer: {
     '&.MuiPaper-root': {
@@ -19,16 +35,25 @@ const styles = (theme) => ({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column',
+      },
     },
   },
   threadsOrderBox: {
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   orderText: {
     '&.MuiTypography-root': {
       fontWeight: 'bold',
       marginRight: '20px',
+      [theme.breakpoints.down('sm')]: {
+        margin: '0px 0px 5px 0px',
+      },
     },
   },
   threadsOrderSelect: {
@@ -38,6 +63,12 @@ const styles = (theme) => ({
       },
       marginBottom: 0,
       width: '260px',
+      [theme.breakpoints.down('xxl')]: {
+        width: '240px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '300px',
+      },
     },
   },
   createThreadBtn: {
@@ -46,6 +77,10 @@ const styles = (theme) => ({
       borderRadius: '10px',
       fontSize: '16px',
       padding: '8px 20px',
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '10px',
+        width: '80%',
+      },
     },
   },
   noContent: {
@@ -55,7 +90,7 @@ const styles = (theme) => ({
     justifyContent: 'center',
   },
   loadingContainer: {
-    height: '100%',
+    height: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: ' center',

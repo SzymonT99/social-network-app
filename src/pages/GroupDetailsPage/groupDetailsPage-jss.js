@@ -1,6 +1,12 @@
 const styles = (theme) => ({
   wrapper: {
     margin: '20px 0px',
+    [theme.breakpoints.down('lg')]: {
+      margin: '20px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      margin: '10px',
+    },
   },
   groupHeadingContainer: {
     '&.MuiPaper-root': {
@@ -46,6 +52,17 @@ const styles = (theme) => ({
       },
     },
   },
+  alignCenterRow: {
+    display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.down('xl')]: {
+      width: '100%',
+      justifyContent: 'space-between',
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
+  },
   alignCenterRowInfo: {
     display: 'flex',
     alignItems: 'center',
@@ -57,11 +74,23 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    [theme.breakpoints.down('xl')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
+    [theme.breakpoints.down('sm')]: {
+      alignItems: 'center',
+    },
   },
   groupActionBtn: {
     '&.MuiButton-root': {
       marginLeft: '26px',
       fontSize: '17px',
+      [theme.breakpoints.down('sm')]: {
+        marginLeft: '0px',
+        marginTop: '10px',
+        width: '80%',
+      },
       '& .MuiSvgIcon-root ': {
         marginRight: '7px',
       },
@@ -83,6 +112,11 @@ const styles = (theme) => ({
     '&.MuiTabs-root': {
       width: '100%',
       marginBottom: '15px',
+      '& .MuiTabs-flexContainer': {
+        [theme.breakpoints.down('sm')]: {
+          flexDirection: 'column',
+        },
+      },
     },
   },
   tabItem: {
@@ -94,6 +128,12 @@ const styles = (theme) => ({
         textTransform: 'none',
         color: 'rgba(0, 0, 0, 0.87)',
         fontSize: '17px',
+        [theme.breakpoints.down('lg')]: {
+          fontSize: '15px',
+        },
+        [theme.breakpoints.down('sm')]: {
+          minWidth: '100%',
+        },
         '&.Mui-disabled': {
           color: 'rgb(166,174,193)',
           backgroundColor: 'rgb(224,224,224)',
@@ -114,10 +154,23 @@ const styles = (theme) => ({
   leftActivityContent: {
     flex: 2.8,
     marginRight: '10px',
+    [theme.breakpoints.down('xl')]: {
+      display: 'none',
+    },
   },
   rightActivityContent: {
     flex: 4.2,
     marginLeft: '10px',
+    [theme.breakpoints.down('xl')]: {
+      marginLeft: '0px',
+    },
+    [theme.breakpoints.down('xl')]: {
+      flex: 0.8,
+      margin: '0px auto',
+    },
+    [theme.breakpoints.down('sm')]: {
+      flex: 1,
+    },
   },
   groupInfoBoxHeading: {
     display: 'flex',
@@ -192,7 +245,7 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
+    height: '100vh',
     width: '100%',
   },
   newMemberBox: {
@@ -223,6 +276,12 @@ const styles = (theme) => ({
       borderRadius: '10px',
       width: '60%',
       marginBottom: '15px',
+      [theme.breakpoints.down('xl')]: {
+        width: '80%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
     },
   },
   groupInfoContainer: {
@@ -277,30 +336,9 @@ const styles = (theme) => ({
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-  },
-  membersActionContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: '15px 0px',
-  },
-  memberSearchbar: {
-    '&.MuiFormControl-root': {
-      margin: 0,
-    },
-    '&.MuiTextField-root': {
-      borderRadius: '5px',
-      width: '60%',
-      marginRight: '15px',
-    },
-  },
-  membersOrderBox: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  memberOrderSelect: {
-    '&.MuiOutlinedInput-root': {
-      width: '220px',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column',
+      alignItems: 'center',
     },
   },
   membersPagination: {
@@ -338,15 +376,35 @@ const styles = (theme) => ({
       marginBottom: '20px',
       display: 'flex',
       borderRadius: '10px',
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column',
+        padding: '15px',
+      },
     },
   },
   groupSettingsNav: {
     width: '30%',
     borderRight: '1px solid rgba(0, 0, 0, 0.22)',
+    [theme.breakpoints.down('lg')]: {
+      width: '35%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      borderRight: 'none',
+      paddingBottom: '15px',
+      borderBottom: `2px solid ${theme.palette.secondary.main}`,
+    },
   },
   settingsContent: {
     width: '70%',
     padding: '30px',
+    [theme.breakpoints.down('lg')]: {
+      width: '65%',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      padding: '30px 10px',
+    },
   },
   settingsTabList: {
     '&.MuiTabs-root': {
@@ -358,6 +416,12 @@ const styles = (theme) => ({
         display: 'flex',
         height: '100%',
         flexDirection: 'column',
+        [theme.breakpoints.down('sm')]: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          border: 'none',
+          justifyContent: 'center',
+        },
         '& .MuiButtonBase-root': {
           '&.Mui-disabled': {
             color: 'rgb(166,174,193)',
@@ -373,6 +437,15 @@ const styles = (theme) => ({
           fontSize: '17px',
           padding: '15px 20px',
           color: theme.palette.primary.main,
+          [theme.breakpoints.down('xl')]: {
+            paddingLeft: '10px',
+            fontSize: '15px',
+          },
+          [theme.breakpoints.down('sm')]: {
+            fontSize: '17px',
+            padding: '10px',
+            margin: 0,
+          },
           '& .MuiSvgIcon-root': {
             margin: '0px 8px 0px 0px',
           },
@@ -380,6 +453,9 @@ const styles = (theme) => ({
             fontWeight: 'bold',
             backgroundColor: 'rgba(90, 107, 133, 0.3)',
             borderLeft: `4px solid ${theme.palette.primary.main}`,
+            [theme.breakpoints.down('sm')]: {
+              border: 'none',
+            },
           },
         },
       },

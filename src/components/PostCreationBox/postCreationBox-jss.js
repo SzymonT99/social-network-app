@@ -1,3 +1,5 @@
+import theme from '../../theme/appTheme';
+
 const styles = (theme) => ({
   container: {
     '&.MuiPaper-root': {
@@ -25,6 +27,9 @@ const styles = (theme) => ({
       backgroundColor: '#ECEEF1',
       borderRadius: '15px',
       fontSize: '17px',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '14px',
+      },
       border: 'none',
       '& .MuiOutlinedInput-notchedOutline': {
         borderWidth: 0,
