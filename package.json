@@ -3,21 +3,48 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.5",
+    "@mui/lab": "^5.0.0-alpha.61",
+    "@mui/material": "^5.2.5",
+    "@mui/styles": "^5.2.3",
+    "@mui/x-data-grid": "^5.6.1",
+    "@mui/x-data-grid-pro": "^5.6.1",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "classnames": "^2.3.1",
+    "emoji-picker-react": "^3.5.1",
+    "formik": "^2.2.9",
+    "jss": "^10.9.0",
+    "lodash": "^4.17.21",
+    "prop-types": "^15.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-full-screen": "^1.1.0",
+    "react-helmet": "^6.1.0",
+    "react-imageslides": "^3.0.0-beta.2",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-modal-image-responsive": "^1.1.1",
+    "react-notifications": "^1.7.3",
+    "react-redux": "^7.2.6",
+    "react-router-dom": "^5.3.0",
     "react-scripts": "5.0.0",
-    "web-vitals": "^2.1.2"
+    "react-stomp": "^5.1.0",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1",
+    "web-vitals": "^2.1.2",
+    "whatwg-fetch": "^3.6.2",
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --env=jsdom --verbose",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
+  "eslintConfirg": {
     "extends": [
       "react-app",
       "react-app/jest"
@@ -34,5 +61,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "prettier": "2.5.1",
+    "redux-devtools-extension": "^2.13.9"
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }
