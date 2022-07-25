@@ -10,7 +10,7 @@ A web application to operate a social networking site. <br/>
 - React Testing Library
 - JavaScript
 - HTML
-- JSS
+- CSS
 
 ## Features
 1. User account
@@ -25,7 +25,7 @@ A web application to operate a social networking site. <br/>
 3. Posts and comments
     * publishing and managing a post
     * commenting and sharing
-    * like a post or comment,
+    * like a post or comment
 4. Friends
     * sending invitations to friends
     * accepting or declining invitations
@@ -43,8 +43,7 @@ A web application to operate a social networking site. <br/>
 8. Administrator panel
     * system content management by the administrator
     * viewing user reports
-
-
+    
 ## Setup
 To run the applications you must:
 1. Clone the server repository: <br>
@@ -57,25 +56,33 @@ To run the applications you must:
 
 ## Presentation
 - Start views
-  ![](./docs/film1-start-views.gif)
+
+  ![Film - Start views](./docs/film1-start-views.gif)
 
 - User activity view
-  ![](./docs/film2-posts.gif)
+
+  ![Film - user activity](./docs/film2-posts.gif)
 
 - User profile
-  ![](./docs/film3-profile.gif)
+
+  ![Film - profile](./docs/film3-profile.gif)
 
 - Friends
-  ![](./docs/film4-friends.gif)
+
+  ![Film - Friends](./docs/film4-friends.gif)
 
 - Chat
-  ![](./docs/film5-chat.gif)
+
+  ![Film - Chat](./docs/film5-chat.gif)
 
 - Thematic groups
-  ![](./docs/film6-groups.gif)
+
+  ![Film - Groups](./docs/film6-groups.gif)
 
 - Events
-  ![](./docs/film7-events.gif)
+
+  ![Film - Events](./docs/film7-events.gif)
 
 - Account settings
-  ![](./docs/film8-account-settings.gif)
+
+  ![Film - Accounts settings](./docs/film8-account-settings.gif)
